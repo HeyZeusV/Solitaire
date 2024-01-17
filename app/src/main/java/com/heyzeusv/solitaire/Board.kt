@@ -8,5 +8,5 @@ class Board {
     val deck = Deck()
     // creates Foundation for each Suit
     val foundations = Suits.entries.map { Foundation(it) }
-
+    val tableau = List(7) { Tableau() }
 }

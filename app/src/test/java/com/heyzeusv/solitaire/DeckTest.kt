@@ -10,7 +10,6 @@ class DeckTest {
     // Checking if Deck initializes with 52 Cards with correct values and suits
     @Test
     fun initialDeckCreation() {
-
         val expectedDeck = mutableListOf<Card>()
         // manually create 13 Cards of each suit and adds it to expected deck
         Suits.entries.forEach {
