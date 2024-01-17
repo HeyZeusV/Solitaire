@@ -30,9 +30,17 @@ class Tableau(private val _pile: MutableList<Card> = mutableListOf()) {
     }
 
     /**
-     *  Removes all cards from [pile] started from [tappedIndex] to the end of [pile].
+     *  Removes all cards from [pile] started from [tappedIndex] to the end of [pile] and flips the
+     *  last card if any.
      */
     fun removeCards(tappedIndex: Int) {
         _pile.subList(tappedIndex, _pile.size).clear()
+        // flip the last card up
+        if (_pile.isNotEmpty()) _pile.last().faceUp = true
+    }
+
+    init {
+        // flip the last card up
+        if (_pile.isNotEmpty()) _pile.last().faceUp = true
     }
 }
