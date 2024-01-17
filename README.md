@@ -1,0 +1,2 @@
+# Solitaire
+Ad free Solitaire
