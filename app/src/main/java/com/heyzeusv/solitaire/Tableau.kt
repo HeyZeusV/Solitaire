@@ -11,10 +11,10 @@ class Tableau(private val _pile: MutableList<Card> = mutableListOf()) {
 
     /**
      *  Attempts to add given [cards] to [pile] depending on [cards] first card value and suit and
-     *  [pile]'s last card value and suit.
+     *  [pile]'s last card value and suit. Returns true if added.
      */
-    fun addCards(cards: List<Card>) {
-        if (cards.isEmpty()) return
+    fun addCards(cards: List<Card>): Boolean {
+        if (cards.isEmpty()) return false
         val cFirst = cards.first()
         if (pile.isNotEmpty()) {
             val pLast = pile.last()
@@ -22,11 +22,14 @@ class Tableau(private val _pile: MutableList<Card> = mutableListOf()) {
             // and if they are different colors
             if (cFirst.value == pLast.value - 1 && cFirst.suit.color != pLast.suit.color) {
                 _pile.addAll(cards)
+                return true
             }
         // add cards if pile is empty and first card of new cards is the highest value
         } else if (cFirst.value == 12) {
             _pile.addAll(cards)
+            return true
         }
+        return false
     }
 
     /**
