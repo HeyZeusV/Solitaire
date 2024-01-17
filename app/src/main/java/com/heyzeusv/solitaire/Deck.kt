@@ -6,7 +6,7 @@ package com.heyzeusv.solitaire
 class Deck {
 
     private val baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
-    var gameDeck = baseDeck.shuffle()
+    var gameDeck = baseDeck
 
     /**
      *  Used during creation of deck to assign suit to each card.
