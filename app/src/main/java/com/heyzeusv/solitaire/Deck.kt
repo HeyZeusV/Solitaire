@@ -1,5 +1,16 @@
 package com.heyzeusv.solitaire
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.size
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+
 /**
  *  Class that handles 52 [Card] deck creation.
  */
@@ -39,5 +50,50 @@ class Deck {
 
     init {
         _gameDeck = baseDeck
+    }
+}
+
+/**
+ *  Composable that displays [Deck]. Show static image if [emptyDeck] else show a face down card.
+ */
+@Composable
+fun SolitaireDeck(emptyDeck: Boolean) {
+    // TODO: move this somewhere where all composables can access
+    // gets device size in order to scale card.
+    val config = LocalConfiguration.current
+    val sWidth = config.screenWidthDp.dp
+    val cardWidth = sWidth / 7
+    val cardHeight = cardWidth.times(1.4f)
+
+    val modifier = Modifier.size(width = cardWidth, height = cardHeight)
+    if (emptyDeck) {
+        Image(
+            modifier = modifier,
+            painter = painterResource(R.drawable.deck_empty),
+            contentDescription = "Deck is empty.",
+            contentScale = ContentScale.None
+        )
+    } else {
+        // won't be used in game, just for show
+        SolitaireCard(
+            modifier = modifier,
+            card = Card(100, Suits.CLUBS)
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SolitaireDeckEmptyPreview() {
+    SolitaireTheme {
+        SolitaireDeck(emptyDeck = true)
+    }
+}
+
+@Preview
+@Composable
+fun SolitaireDeckPreview() {
+    SolitaireTheme {
+        SolitaireDeck(emptyDeck = false)
     }
 }
