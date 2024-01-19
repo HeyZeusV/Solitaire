@@ -5,11 +5,9 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.SolitairePreview
 
 /**
  *  Class that handles 52 [Card] deck creation.
@@ -67,7 +65,7 @@ fun SolitaireDeck(emptyDeck: Boolean) {
             modifier = modifier,
             painter = painterResource(R.drawable.deck_empty),
             contentDescription = "Deck is empty.",
-            contentScale = ContentScale.None
+            contentScale = ContentScale.FillBounds
         )
     } else {
         // won't be used in game, just for show
@@ -81,7 +79,7 @@ fun SolitaireDeck(emptyDeck: Boolean) {
 @Preview
 @Composable
 fun SolitaireDeckEmptyPreview() {
-    SolitaireTheme {
+    SolitairePreview {
         SolitaireDeck(emptyDeck = true)
     }
 }
@@ -89,7 +87,7 @@ fun SolitaireDeckEmptyPreview() {
 @Preview
 @Composable
 fun SolitaireDeckPreview() {
-    SolitaireTheme {
+    SolitairePreview {
         SolitaireDeck(emptyDeck = false)
     }
 }
