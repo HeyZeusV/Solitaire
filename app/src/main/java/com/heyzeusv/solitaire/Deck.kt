@@ -58,12 +58,8 @@ class Deck {
  */
 @Composable
 fun SolitaireDeck(emptyDeck: Boolean) {
-    // TODO: move this somewhere where all composables can access
-    // gets device size in order to scale card.
-    val config = LocalConfiguration.current
-    val sWidth = config.screenWidthDp.dp
-    val cardWidth = sWidth / 7
-    val cardHeight = cardWidth.times(1.4f)
+    val cardWidth = LocalCardSize.current.width
+    val cardHeight = LocalCardSize.current.height
 
     val modifier = Modifier.size(width = cardWidth, height = cardHeight)
     if (emptyDeck) {
