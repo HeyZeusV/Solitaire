@@ -1,7 +1,6 @@
 package com.heyzeusv.solitaire
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -55,11 +54,7 @@ class Deck {
  *  Composable that displays [Deck]. Show static image if [emptyDeck] else show a face down card.
  */
 @Composable
-fun SolitaireDeck(emptyDeck: Boolean) {
-    val cardWidth = LocalCardSize.current.width
-    val cardHeight = LocalCardSize.current.height
-
-    val modifier = Modifier.size(width = cardWidth, height = cardHeight)
+fun SolitaireDeck(emptyDeck: Boolean, modifier: Modifier = Modifier) {
     if (emptyDeck) {
         Image(
             modifier = modifier,
@@ -71,7 +66,7 @@ fun SolitaireDeck(emptyDeck: Boolean) {
         // won't be used in game, just for show
         SolitaireCard(
             modifier = modifier,
-            card = Card(100, Suits.CLUBS)
+            card = Card(100, Suits.CLUBS, faceUp = true)
         )
     }
 }

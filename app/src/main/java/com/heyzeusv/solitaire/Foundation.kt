@@ -2,7 +2,6 @@ package com.heyzeusv.solitaire
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -51,11 +50,7 @@ class Foundation(val suit: Suits) {
  *  [emptyDeck].
  */
 @Composable
-fun SolitaireFoundation(suit: Suits, emptyDeck: Boolean) {
-    val cardWidth = LocalCardSize.current.width
-    val cardHeight = LocalCardSize.current.height
-
-    val modifier = Modifier.size(width = cardWidth, height = cardHeight)
+fun SolitaireFoundation(suit: Suits, emptyDeck: Boolean, modifier: Modifier = Modifier) {
     if (emptyDeck) {
         Image(
             modifier = modifier,

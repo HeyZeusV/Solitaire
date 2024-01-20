@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -15,7 +16,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -45,34 +45,30 @@ fun SolitaireCard(
 ) {
     Card(
         modifier = modifier,
-        shape = RectangleShape,
+        shape = RoundedCornerShape(4.dp),
         colors = CardDefaults.cardColors(
             containerColor = Color.White
         )
     ) {
         if (card.faceUp) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(4.dp),
+                modifier = Modifier.padding(4.dp),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Text(
                     text = cardsMap[card.value] ?: "A",
                     color = card.suit.color,
-                    style = MaterialTheme.typography.displayMedium
+                    style = MaterialTheme.typography.bodyMedium
                 )
                 Image(
-                    modifier = Modifier
-                        .fillMaxSize(0.9f),
+
                     painter = painterResource(card.suit.icon),
                     contentDescription = "Card Suit"
                 )
             }
         } else {
             Image(
-                modifier = Modifier.fillMaxSize(),
                 painter = painterResource(R.drawable.card_back),
                 contentDescription = "Back of a card",
                 contentScale = ContentScale.FillBounds

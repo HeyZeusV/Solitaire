@@ -21,8 +21,8 @@ class BoardViewModel : ViewModel() {
     private val _tableau = MutableStateFlow(MutableList(7) { Tableau() })
     val tableau: StateFlow<List<Tableau>> get() = _tableau
 
-    private val _waste = MutableStateFlow(mutableListOf<Card>())
-    val waste: StateFlow<List<Card>> get() = _waste
+    private val _waste = MutableStateFlow(Waste())
+    val waste: StateFlow<Waste> get() = _waste
 
     // goes through all card piles in the game and resets them for a new game
     fun reset() {
@@ -36,27 +36,27 @@ class BoardViewModel : ViewModel() {
             _tableau.value[i] = Tableau(cards)
         }
         // clear the waste pile
-        _waste.value.clear()
+        _waste.value.resetCards()
     }
 
     // runs when user taps on deck
     fun onDeckTap() {
         // add card to waste if deck is not empty and flip it face up
         if (_deck.value.gameDeck.isNotEmpty()) {
-            _waste.value.add(_deck.value.drawCard().apply { faceUp = true })
+            _waste.value.addCard(_deck.value.drawCard().apply { faceUp = true })
         } else {
             // add back all cards from waste to deck
-            _deck.value.replace(_waste.value)
-            _waste.value.clear()
+            _deck.value.replace(_waste.value.pile.toMutableList())
+            _waste.value.resetCards()
         }
     }
 
     // runs when user taps on waste
     fun onWasteTap() {
         _waste.value.let {
-            if (it.isNotEmpty()) {
+            if (it.pile.isNotEmpty()) {
                 // if any move is possible then remove card from waste
-                if (legalMove(listOf(it.last()))) it.removeLast()
+                if (legalMove(listOf(it.pile.last()))) it.removeCard()
             }
         }
     }
