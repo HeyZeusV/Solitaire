@@ -45,24 +45,23 @@ class Foundation(val suit: Suits) {
     }
 }
 
+// TODO: Check if this is needed at all, currently replaced by SolitaireDeck Composable
 /**
- *  Composable to display [Foundation] that corresponds to given [suit]. Shows static image if
- *  [emptyDeck].
+ *  Composable to display [Foundation] that corresponds to given [foundation].
  */
 @Composable
-fun SolitaireFoundation(suit: Suits, emptyDeck: Boolean, modifier: Modifier = Modifier) {
-    if (emptyDeck) {
+fun SolitaireFoundation(foundation: Foundation, modifier: Modifier = Modifier) {
+    if (foundation.pile.isEmpty()) {
         Image(
             modifier = modifier,
-            painter = painterResource(suit.emptyIcon),
-            contentDescription = "${suit.suit} Foundation pile is empty.",
+            painter = painterResource(foundation.suit.emptyIcon),
+            contentDescription = "${foundation.suit} Foundation pile is empty.",
             contentScale = ContentScale.FillBounds
         )
     } else {
-        // TODO: Use actual data
         SolitaireCard(
             modifier = modifier,
-            card = Card(100, suit)
+            card = foundation.pile.last()
         )
     }
 }
@@ -72,10 +71,10 @@ fun SolitaireFoundation(suit: Suits, emptyDeck: Boolean, modifier: Modifier = Mo
 fun SolitaireFoundationEmptyPreview() {
     SolitairePreview {
         Row {
-            SolitaireFoundation(suit = Suits.CLUBS, emptyDeck = true)
-            SolitaireFoundation(suit = Suits.DIAMONDS, emptyDeck = true)
-            SolitaireFoundation(suit = Suits.HEARTS, emptyDeck = true)
-            SolitaireFoundation(suit = Suits.SPADES, emptyDeck = true)
+            SolitaireFoundation(foundation = Foundation(Suits.CLUBS))
+            SolitaireFoundation(foundation = Foundation(Suits.DIAMONDS))
+            SolitaireFoundation(foundation = Foundation(Suits.HEARTS))
+            SolitaireFoundation(foundation = Foundation(Suits.SPADES))
         }
     }
 }
@@ -84,6 +83,6 @@ fun SolitaireFoundationEmptyPreview() {
 @Composable
 fun SolitaireFoundationPreview() {
     SolitairePreview {
-        SolitaireFoundation(suit = Suits.CLUBS, emptyDeck = false)
+        SolitaireFoundation(foundation = Foundation(Suits.CLUBS))
     }
 }

@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire
 
+import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -51,22 +52,22 @@ class Deck {
 }
 
 /**
- *  Composable that displays [Deck]. Show static image if [emptyDeck] else show a face down card.
+ *  Composable that displays [pile]. If given [pile] is empty, [emptyIconId] is displayed.
  */
 @Composable
-fun SolitaireDeck(emptyDeck: Boolean, modifier: Modifier = Modifier) {
-    if (emptyDeck) {
+fun SolitaireDeck(pile: List<Card>, @DrawableRes emptyIconId: Int, modifier: Modifier = Modifier) {
+    if (pile.isEmpty()) {
         Image(
             modifier = modifier,
-            painter = painterResource(R.drawable.deck_empty),
-            contentDescription = "Deck is empty.",
+            painter = painterResource(emptyIconId),
+            contentDescription = "Pile is empty.",
             contentScale = ContentScale.FillBounds
         )
     } else {
         // won't be used in game, just for show
         SolitaireCard(
             modifier = modifier,
-            card = Card(100, Suits.CLUBS, faceUp = true)
+            card = pile.last()
         )
     }
 }
@@ -75,7 +76,7 @@ fun SolitaireDeck(emptyDeck: Boolean, modifier: Modifier = Modifier) {
 @Composable
 fun SolitaireDeckEmptyPreview() {
     SolitairePreview {
-        SolitaireDeck(emptyDeck = true)
+        SolitaireDeck(pile = emptyList(), emptyIconId = R.drawable.deck_empty)
     }
 }
 
@@ -83,6 +84,9 @@ fun SolitaireDeckEmptyPreview() {
 @Composable
 fun SolitaireDeckPreview() {
     SolitairePreview {
-        SolitaireDeck(emptyDeck = false)
+        SolitaireDeck(
+            pile = listOf(Card(100, Suits.CLUBS, faceUp = true)),
+            emptyIconId = R.drawable.deck_empty
+        )
     }
 }

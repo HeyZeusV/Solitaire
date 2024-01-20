@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -19,13 +21,14 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 
 /**
  *  Composable that will display all [Card] piles, Deck, Waste, Foundation, and Tableau.
  */
 @Composable
-fun SolitaireBoard(foundations: List<Foundation>, card: Card) {
+fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
     // background pattern that repeats
     val pattern = ImageBitmap.imageResource(R.drawable.pattern_noise)
     val brush = remember(pattern) {
@@ -37,6 +40,12 @@ fun SolitaireBoard(foundations: List<Foundation>, card: Card) {
     val sWidth = config.screenWidthDp.dp
     val cardWidth = sWidth / 7 // need to fit 7 piles wide on screen
     val cardHeight = cardWidth.times(1.4f)
+
+    // date to be displayed
+    val deck by boardViewModel.deck.collectAsState()
+    val foundation by boardViewModel.foundation.collectAsState()
+    val tableau by boardViewModel.tableau.collectAsState()
+    val waste by boardViewModel.waste.collectAsState()
 
     Box(
         modifier = Modifier
@@ -50,12 +59,12 @@ fun SolitaireBoard(foundations: List<Foundation>, card: Card) {
                     .fillMaxWidth()
             ) {
                 val rowModifier = Modifier.weight(1f).height(cardHeight)
-                foundations.forEach {
-                    SolitaireFoundation(suit = it.suit, emptyDeck = true, modifier = rowModifier)
+                foundation.forEach {
+                    SolitaireDeck(pile = it.pile, emptyIconId = it.suit.emptyIcon, modifier = rowModifier)
                 }
                 Spacer(modifier = rowModifier)
-                SolitaireDeck(emptyDeck = false, modifier = rowModifier)
-                SolitaireDeck(emptyDeck = true, modifier = rowModifier)
+                SolitaireDeck(pile = waste.pile, R.drawable.waste_empty, modifier = rowModifier)
+                SolitaireDeck(pile = deck.gameDeck, R.drawable.deck_empty, modifier = rowModifier)
             }
             // TODO: Added Tableau piles here
             Row(modifier = Modifier.weight(0.76f)) {
@@ -69,6 +78,6 @@ fun SolitaireBoard(foundations: List<Foundation>, card: Card) {
 @Composable
 fun SolitaireBoardPreview() {
     SolitaireTheme {
-        SolitaireBoard(Suits.entries.map { Foundation(it) }, Card(0, Suits.DIAMONDS, faceUp = true))
+        SolitaireBoard()
     }
 }

@@ -20,5 +20,5 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SolitaireApp() {
-    SolitaireBoard(Suits.entries.map { Foundation(it) }, Card(0, Suits.DIAMONDS, faceUp = true))
+    SolitaireBoard()
 }
