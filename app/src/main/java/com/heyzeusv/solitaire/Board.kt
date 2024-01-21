@@ -66,9 +66,12 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
                 SolitaireDeck(pile = waste.pile, R.drawable.waste_empty, modifier = rowModifier)
                 SolitaireDeck(pile = deck.gameDeck, R.drawable.deck_empty, modifier = rowModifier)
             }
-            // TODO: Added Tableau piles here
             Row(modifier = Modifier.weight(0.76f)) {
-
+                tableau.forEach {
+                    val rowModifier = Modifier
+                        .weight(1f)
+                    SolitaireTableau(pile = it.pile, cardHeight = cardHeight, rowModifier)
+                }
             }
         }
     }

@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -68,11 +69,12 @@ class Tableau(private val _pile: MutableList<Card> = mutableListOf()) {
 @Composable
 fun SolitaireTableau(pile: List<Card>, cardHeight: Dp, modifier: Modifier = Modifier) {
     Column(
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(space = -(cardHeight.times(0.8f)))
     ) {
         if (pile.isEmpty()) {
             Image(
-                modifier = modifier,
+                modifier = Modifier.height(cardHeight),
                 painter = painterResource(R.drawable.tableau_empty),
                 contentDescription = "Pile is empty.",
                 contentScale = ContentScale.FillBounds
@@ -80,7 +82,7 @@ fun SolitaireTableau(pile: List<Card>, cardHeight: Dp, modifier: Modifier = Modi
         } else {
             pile.forEach {
                 SolitaireCard(
-                    modifier = modifier,
+                    modifier = Modifier.height(cardHeight),
                     card = it
                 )
             }
