@@ -12,8 +12,8 @@ import kotlinx.coroutines.flow.StateFlow
  */
 class BoardViewModel : ViewModel() {
 
-    private val _deck = MutableStateFlow(Deck())
-    val deck: StateFlow<Deck> get() = _deck
+    private val _deck = Deck()
+    val deck: Deck get() = _deck
 
     private val _foundation = MutableStateFlow(Suits.entries.map { Foundation(it) })
     val foundation: StateFlow<List<Foundation>> get() = _foundation
@@ -21,42 +21,42 @@ class BoardViewModel : ViewModel() {
     private val _tableau = MutableStateFlow(MutableList(7) { Tableau() })
     val tableau: StateFlow<List<Tableau>> get() = _tableau
 
-    private val _waste = MutableStateFlow(Waste())
-    val waste: StateFlow<Waste> get() = _waste
+    private val _waste = Waste()
+    val waste: Waste get() = _waste
 
     // goes through all card piles in the game and resets them for a new game
     fun reset() {
         // shuffled 52 card deck
-        _deck.value.reset()
+        _deck.reset()
         // empty foundations
         _foundation.value.forEach { it.resetCards() }
         // each pile in the tableau has 1 more card than the previous
         _tableau.value.forEachIndexed { i, _ ->
-            val cards = MutableList(i + 1) { _deck.value.drawCard() }
+            val cards = MutableList(i + 1) { _deck.drawCard() }
             _tableau.value[i] = Tableau(cards)
         }
         // clear the waste pile
-        _waste.value.resetCards()
+        _waste.resetCards()
     }
 
     // runs when user taps on deck
     fun onDeckTap() {
         // add card to waste if deck is not empty and flip it face up
-        if (_deck.value.gameDeck.isNotEmpty()) {
-            _waste.value.addCard(_deck.value.drawCard().apply { faceUp = true })
+        if (_deck.gameDeck.value.isNotEmpty()) {
+            _waste.addCard(_deck.drawCard().apply { faceUp = true })
         } else {
             // add back all cards from waste to deck
-            _deck.value.replace(_waste.value.pile.toMutableList())
-            _waste.value.resetCards()
+            _deck.replace(_waste.pile.value.toMutableList())
+            _waste.resetCards()
         }
     }
 
     // runs when user taps on waste
     fun onWasteTap() {
-        _waste.value.let {
-            if (it.pile.isNotEmpty()) {
+        _waste.let {
+            if (it.pile.value.isNotEmpty()) {
                 // if any move is possible then remove card from waste
-                if (legalMove(listOf(it.pile.last()))) it.removeCard()
+                if (legalMove(listOf(it.pile.value.last()))) it.removeCard()
             }
         }
     }

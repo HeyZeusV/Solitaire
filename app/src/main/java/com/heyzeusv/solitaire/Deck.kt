@@ -2,12 +2,16 @@ package com.heyzeusv.solitaire
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.heyzeusv.solitaire.util.SolitairePreview
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 /**
  *  Class that handles 52 [Card] deck creation.
@@ -15,21 +19,32 @@ import com.heyzeusv.solitaire.util.SolitairePreview
 class Deck {
 
     private val baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
-    private var _gameDeck: MutableList<Card> = mutableListOf()
-    val gameDeck: List<Card> get() = _gameDeck
+    private var _gameDeck = MutableStateFlow(mutableListOf<Card>())
+    val gameDeck: StateFlow<List<Card>> get() = _gameDeck
 
     // removes the first card from gameDeck and returns it
-    fun drawCard(): Card = _gameDeck.removeFirst()
+    fun drawCard(): Card {
+        var card = Card(0, Suits.SPADES)
+        _gameDeck.update {
+            card = it.removeFirst()
+            it
+        }
+        return card
+    }
 
     // replace gameDeck with given list
     fun replace(list: MutableList<Card>) {
-        _gameDeck = list
+        list.forEach { it.faceUp = false }
+        _gameDeck.update { list }
     }
 
     // reset gameDeck and shuffle the cards
     fun reset() {
         replace(baseDeck)
-        _gameDeck.shuffle()
+        _gameDeck.update {
+            it.shuffle()
+            it
+        }
     }
 
     /**
@@ -47,7 +62,7 @@ class Deck {
     }
 
     init {
-        _gameDeck = baseDeck
+        _gameDeck.value = baseDeck
     }
 }
 
@@ -55,17 +70,22 @@ class Deck {
  *  Composable that displays [pile]. If given [pile] is empty, [emptyIconId] is displayed.
  */
 @Composable
-fun SolitaireDeck(pile: List<Card>, @DrawableRes emptyIconId: Int, modifier: Modifier = Modifier) {
+fun SolitaireDeck(
+    pile: List<Card>,
+    @DrawableRes emptyIconId: Int,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
     if (pile.isEmpty()) {
         Image(
-            modifier = modifier,
+            modifier = modifier.clickable { onClick() },
             painter = painterResource(emptyIconId),
             contentDescription = "Pile is empty.",
             contentScale = ContentScale.FillBounds
         )
     } else {
         SolitaireCard(
-            modifier = modifier,
+            modifier = modifier.clickable { onClick() },
             card = pile.last()
         )
     }
@@ -75,7 +95,7 @@ fun SolitaireDeck(pile: List<Card>, @DrawableRes emptyIconId: Int, modifier: Mod
 @Composable
 fun SolitaireDeckEmptyPreview() {
     SolitairePreview {
-        SolitaireDeck(pile = emptyList(), emptyIconId = R.drawable.deck_empty)
+        SolitaireDeck(pile = emptyList(), emptyIconId = R.drawable.deck_empty, { })
     }
 }
 
@@ -85,7 +105,8 @@ fun SolitaireDeckPreview() {
     SolitairePreview {
         SolitaireDeck(
             pile = listOf(Card(100, Suits.CLUBS, faceUp = true)),
-            emptyIconId = R.drawable.deck_empty
+            emptyIconId = R.drawable.deck_empty,
+            { }
         )
     }
 }

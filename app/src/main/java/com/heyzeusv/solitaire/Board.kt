@@ -42,10 +42,10 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
     val cardHeight = cardWidth.times(1.4f)
 
     // date to be displayed
-    val deck by boardViewModel.deck.collectAsState()
+    val deck by boardViewModel.deck.gameDeck.collectAsState()
     val foundation by boardViewModel.foundation.collectAsState()
     val tableau by boardViewModel.tableau.collectAsState()
-    val waste by boardViewModel.waste.collectAsState()
+    val waste by boardViewModel.waste.pile.collectAsState()
 
     Box(
         modifier = Modifier
@@ -59,12 +59,12 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
                     .fillMaxWidth()
             ) {
                 val rowModifier = Modifier.weight(1f).height(cardHeight)
-                foundation.forEach {
-                    SolitaireDeck(pile = it.pile, emptyIconId = it.suit.emptyIcon, modifier = rowModifier)
+                foundation.forEachIndexed { index, foundation ->
+                    SolitaireDeck(pile = foundation.pile, emptyIconId = foundation.suit.emptyIcon, { boardViewModel.onFoundationTap(index) }, modifier = rowModifier)
                 }
                 Spacer(modifier = rowModifier)
-                SolitaireDeck(pile = waste.pile, R.drawable.waste_empty, modifier = rowModifier)
-                SolitaireDeck(pile = deck.gameDeck, R.drawable.deck_empty, modifier = rowModifier)
+                SolitaireDeck(pile = waste, R.drawable.waste_empty, boardViewModel::onWasteTap, modifier = rowModifier)
+                SolitaireDeck(pile = deck, R.drawable.deck_empty, boardViewModel::onDeckTap, modifier = rowModifier)
             }
             Row(modifier = Modifier.weight(0.76f)) {
                 tableau.forEach {
