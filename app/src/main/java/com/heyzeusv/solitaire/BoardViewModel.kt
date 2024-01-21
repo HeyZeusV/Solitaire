@@ -75,7 +75,9 @@ class BoardViewModel : ViewModel() {
         val tableauPile = _tableau.value[tableauIndex]
         val tPile = tableauPile.pile
         if (tPile.isNotEmpty()) {
-            if (legalMove(tPile.subList(cardIndex, tPile.size))) tableauPile.removeCards(cardIndex)
+            if (tPile[cardIndex].faceUp && legalMove(tPile.subList(cardIndex, tPile.size))) {
+                tableauPile.removeCards(cardIndex)
+            }
         }
     }
 

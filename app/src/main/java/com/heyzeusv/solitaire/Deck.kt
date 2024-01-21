@@ -64,7 +64,6 @@ fun SolitaireDeck(pile: List<Card>, @DrawableRes emptyIconId: Int, modifier: Mod
             contentScale = ContentScale.FillBounds
         )
     } else {
-        // won't be used in game, just for show
         SolitaireCard(
             modifier = modifier,
             card = pile.last()
