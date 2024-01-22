@@ -42,11 +42,11 @@ class BoardViewModel : ViewModel() {
     // runs when user taps on deck
     fun onDeckTap() {
         // add card to waste if deck is not empty and flip it face up
-        if (_deck.gameDeck.value.isNotEmpty()) {
+        if (_deck.gameDeck.isNotEmpty()) {
             _waste.addCard(_deck.drawCard().apply { faceUp = true })
         } else {
             // add back all cards from waste to deck
-            _deck.replace(_waste.pile.value.toMutableList())
+            _deck.replace(_waste.pile.toMutableList())
             _waste.resetCards()
         }
     }
@@ -54,9 +54,9 @@ class BoardViewModel : ViewModel() {
     // runs when user taps on waste
     fun onWasteTap() {
         _waste.let {
-            if (it.pile.value.isNotEmpty()) {
+            if (it.pile.isNotEmpty()) {
                 // if any move is possible then remove card from waste
-                if (legalMove(listOf(it.pile.value.last()))) it.removeCard()
+                if (legalMove(listOf(it.pile.last()))) it.removeCard()
             }
         }
     }

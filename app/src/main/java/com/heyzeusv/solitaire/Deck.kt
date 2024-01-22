@@ -1,17 +1,16 @@
 package com.heyzeusv.solitaire
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.heyzeusv.solitaire.util.SolitairePreview
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.update
 
 /**
  *  Class that handles 52 [Card] deck creation.
@@ -19,32 +18,24 @@ import kotlinx.coroutines.flow.update
 class Deck {
 
     private val baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
-    private var _gameDeck = MutableStateFlow(mutableListOf<Card>())
-    val gameDeck: StateFlow<List<Card>> get() = _gameDeck
+    private val _gameDeck = mutableStateListOf<Card>()
+    val gameDeck: List<Card> get() = _gameDeck
 
     // removes the first card from gameDeck and returns it
-    fun drawCard(): Card {
-        var card = Card(0, Suits.SPADES)
-        _gameDeck.update {
-            card = it.removeFirst()
-            it
-        }
-        return card
-    }
+    fun drawCard(): Card = _gameDeck.removeFirst()
+
 
     // replace gameDeck with given list
     fun replace(list: MutableList<Card>) {
         list.forEach { it.faceUp = false }
-        _gameDeck.update { list }
+        _gameDeck.clear()
+        _gameDeck.addAll(list)
     }
 
     // reset gameDeck and shuffle the cards
     fun reset() {
         replace(baseDeck)
-        _gameDeck.update {
-            it.shuffle()
-            it
-        }
+        _gameDeck.shuffle()
     }
 
     /**
@@ -62,7 +53,7 @@ class Deck {
     }
 
     init {
-        _gameDeck.value = baseDeck
+        _gameDeck.addAll(baseDeck)
     }
 }
 
@@ -76,6 +67,7 @@ fun SolitaireDeck(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    Log.d("tag", "pile: $pile")
     if (pile.isEmpty()) {
         Image(
             modifier = modifier.clickable { onClick() },

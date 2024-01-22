@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -42,10 +43,10 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
     val cardHeight = cardWidth.times(1.4f)
 
     // date to be displayed
-    val deck by boardViewModel.deck.gameDeck.collectAsState()
+    val deck by remember { mutableStateOf(boardViewModel.deck.gameDeck) }
     val foundation by boardViewModel.foundation.collectAsState()
     val tableau by boardViewModel.tableau.collectAsState()
-    val waste by boardViewModel.waste.pile.collectAsState()
+    val waste by remember { mutableStateOf(boardViewModel.waste.pile) }
 
     Box(
         modifier = Modifier
