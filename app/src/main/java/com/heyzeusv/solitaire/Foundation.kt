@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Row
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -15,7 +16,7 @@ import com.heyzeusv.solitaire.util.SolitairePreview
  */
 class Foundation(val suit: Suits) {
 
-    private val _pile = mutableListOf<Card>()
+    private val _pile = mutableStateListOf<Card>()
     val pile: List<Card> get() = _pile
 
     /**
@@ -33,16 +34,12 @@ class Foundation(val suit: Suits) {
     /**
      *  Removes the last card of the pile which would refer to the top card.
      */
-    fun removeCard() {
-        _pile.removeLast()
-    }
+    fun removeCard() { _pile.removeLast() }
 
     /**
      *  Removes all cards from the pile.
      */
-    fun resetCards() {
-        _pile.clear()
-    }
+    fun resetCards() = _pile.clear()
 }
 
 // TODO: Check if this is needed at all, currently replaced by SolitaireDeck Composable

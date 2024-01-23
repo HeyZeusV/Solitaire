@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -44,7 +45,11 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
 
     // date to be displayed
     val deck by remember { mutableStateOf(boardViewModel.deck.gameDeck) }
-    val foundation by boardViewModel.foundation.collectAsState()
+    val foundationList = boardViewModel.foundation.map {
+        val foundationPile by remember { mutableStateOf(it.pile) }
+        return@map foundationPile
+    }
+//    val foundation by remember { mutableStateOf(boardViewModel.foundation) }
     val tableau by boardViewModel.tableau.collectAsState()
     val waste by remember { mutableStateOf(boardViewModel.waste.pile) }
 
@@ -60,8 +65,8 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
                     .fillMaxWidth()
             ) {
                 val rowModifier = Modifier.weight(1f).height(cardHeight)
-                foundation.forEachIndexed { index, foundation ->
-                    SolitaireDeck(pile = foundation.pile, emptyIconId = foundation.suit.emptyIcon, { boardViewModel.onFoundationTap(index) }, modifier = rowModifier)
+                boardViewModel.foundation.forEachIndexed { index, foundation ->
+                    SolitaireDeck(pile = foundationList[index], emptyIconId = foundation.suit.emptyIcon, { boardViewModel.onFoundationTap(index) }, modifier = rowModifier)
                 }
                 Spacer(modifier = rowModifier)
                 SolitaireDeck(pile = waste, R.drawable.waste_empty, boardViewModel::onWasteTap, modifier = rowModifier)

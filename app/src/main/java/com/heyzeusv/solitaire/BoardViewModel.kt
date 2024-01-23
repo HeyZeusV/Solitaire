@@ -15,8 +15,8 @@ class BoardViewModel : ViewModel() {
     private val _deck = Deck()
     val deck: Deck get() = _deck
 
-    private val _foundation = MutableStateFlow(Suits.entries.map { Foundation(it) })
-    val foundation: StateFlow<List<Foundation>> get() = _foundation
+    private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
+    val foundation: List<Foundation> get() = _foundation
 
     private val _tableau = MutableStateFlow(MutableList(7) { Tableau() })
     val tableau: StateFlow<List<Tableau>> get() = _tableau
@@ -29,7 +29,7 @@ class BoardViewModel : ViewModel() {
         // shuffled 52 card deck
         _deck.reset()
         // empty foundations
-        _foundation.value.forEach { it.resetCards() }
+        _foundation.forEach { it.resetCards() }
         // each pile in the tableau has 1 more card than the previous
         _tableau.value.forEachIndexed { i, _ ->
             val cards = MutableList(i + 1) { _deck.drawCard() }
@@ -63,7 +63,7 @@ class BoardViewModel : ViewModel() {
 
     // runs when user taps on foundation
     fun onFoundationTap(fIndex: Int) {
-        val foundation = _foundation.value[fIndex]
+        val foundation = _foundation[fIndex]
         if (foundation.pile.isNotEmpty()) {
             // if any move is possible then remove card from foundation
             if (legalMove(listOf(foundation.pile.last()))) foundation.removeCard()
@@ -86,9 +86,7 @@ class BoardViewModel : ViewModel() {
      */
     private fun legalMove(cards: List<Card>): Boolean {
         if (cards.size == 1) {
-            _foundation.value.forEach {
-                if (it.addCard(cards.first())) return true
-            }
+            _foundation.forEach { if (it.addCard(cards.first())) return true }
         }
         _tableau.value.forEach {
             if (it.addCards(cards)) return true
