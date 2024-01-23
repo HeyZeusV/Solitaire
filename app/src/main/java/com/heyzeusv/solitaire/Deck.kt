@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -62,12 +61,11 @@ class Deck {
  */
 @Composable
 fun SolitaireDeck(
+    modifier: Modifier = Modifier,
     pile: List<Card>,
     @DrawableRes emptyIconId: Int,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    onClick: () -> Unit
 ) {
-    Log.d("tag", "pile: $pile")
     if (pile.isEmpty()) {
         Image(
             modifier = modifier.clickable { onClick() },
@@ -87,7 +85,7 @@ fun SolitaireDeck(
 @Composable
 fun SolitaireDeckEmptyPreview() {
     SolitairePreview {
-        SolitaireDeck(pile = emptyList(), emptyIconId = R.drawable.deck_empty, { })
+        SolitaireDeck(pile = emptyList(), emptyIconId = R.drawable.deck_reset) { }
     }
 }
 
@@ -97,8 +95,7 @@ fun SolitaireDeckPreview() {
     SolitairePreview {
         SolitaireDeck(
             pile = listOf(Card(100, Suits.CLUBS, faceUp = true)),
-            emptyIconId = R.drawable.deck_empty,
-            { }
-        )
+            emptyIconId = R.drawable.deck_reset,
+        ) { }
     }
 }

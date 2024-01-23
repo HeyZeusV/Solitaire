@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,32 +56,48 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
     val waste by remember { mutableStateOf(boardViewModel.waste.pile) }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush)
+        modifier = Modifier.fillMaxSize().background(brush)
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(2.dp)
+        ) {
             Row(
-                modifier = Modifier
-                    .weight(0.12f)
-                    .fillMaxWidth()
+                modifier = Modifier.weight(0.12f).fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 val rowModifier = Modifier.weight(1f).height(cardHeight)
                 boardViewModel.foundation.forEachIndexed { index, foundation ->
-                    SolitaireDeck(pile = foundationList[index], emptyIconId = foundation.suit.emptyIcon, { boardViewModel.onFoundationTap(index) }, modifier = rowModifier)
+                    SolitaireDeck(
+                        modifier = rowModifier,
+                        pile = foundationList[index],
+                        emptyIconId = foundation.suit.emptyIcon
+                    ) { boardViewModel.onFoundationTap(index) }
                 }
                 Spacer(modifier = rowModifier)
-                SolitaireDeck(pile = waste, R.drawable.waste_empty, boardViewModel::onWasteTap, modifier = rowModifier)
-                SolitaireDeck(pile = deck, R.drawable.deck_empty, boardViewModel::onDeckTap, modifier = rowModifier)
+                SolitaireDeck(
+                    modifier = rowModifier,
+                    pile = waste,
+                    emptyIconId = R.drawable.waste_empty,
+                    onClick = boardViewModel::onWasteTap
+                )
+                SolitaireDeck(
+                    modifier = rowModifier,
+                    pile = deck,
+                    emptyIconId = if (waste.isEmpty()) R.drawable.deck_empty else R.drawable.deck_reset,
+                    onClick = boardViewModel::onDeckTap
+                )
             }
-            Row(modifier = Modifier.weight(0.76f)) {
+            Row(
+                modifier = Modifier.weight(0.75f),
+                horizontalArrangement = Arrangement.spacedBy(2.dp)
+            ) {
                 boardViewModel.tableau.forEachIndexed { index, _ ->
                     SolitaireTableau(
+                        modifier = Modifier.weight(1f),
                         pile = tableauList[index],
                         tableauIndex = index,
                         cardHeight = cardHeight,
-                        onClick = boardViewModel::onTableauTap,
-                        modifier = Modifier.weight(1f)
+                        onClick = boardViewModel::onTableauTap
                     )
                 }
             }
