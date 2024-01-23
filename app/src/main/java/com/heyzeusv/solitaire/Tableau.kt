@@ -1,11 +1,16 @@
 package com.heyzeusv.solitaire
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
@@ -15,11 +20,11 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.util.SolitairePreview
 
 /**
- *  In Solitaire, Tableau refers to the 7 piles that start with 1 face up card per pile and the rest
- *  face down. Users can move cards between [Tableau] piles or move them to a [Foundation] pile in
- *  order to reveal more cards.
+ *  In Solitaire, Tableau refers to the 7 piles that start with 1 face up card per [_pile] and the
+ *  rest face down. Users can move cards between [Tableau] piles or move them to a [Foundation] pile
+ *  in order to reveal more cards.
  */
-class Tableau(private val _pile: MutableList<Card> = mutableListOf()) {
+class Tableau(private val _pile: SnapshotStateList<Card> = mutableStateListOf()) {
 
     val pile: List<Card> get() = _pile
 
@@ -63,14 +68,21 @@ class Tableau(private val _pile: MutableList<Card> = mutableListOf()) {
 }
 
 /**
- *  Composable that displays one of the Tableau [pile]. [cardHeight] is used to shift each card in
- *  [pile], after the first, upwards. Displays static image if [pile] is empty.
+ *  Composable that displays Tableau [pile] with [tableauIndex]. [cardHeight] is used to shift each
+ *  card in [pile], after the first, upwards so they overlap. [onClick] triggers when any card
+ *  within [pile] is clicked, Displays static image if [pile] is empty.
  */
 @Composable
-fun SolitaireTableau(pile: List<Card>, cardHeight: Dp, modifier: Modifier = Modifier) {
+fun SolitaireTableau(
+    modifier: Modifier = Modifier,
+    cardHeight: Dp,
+    tableauIndex: Int = 0,
+    pile: List<Card> = emptyList(),
+    onClick: (Int, Int) -> Unit = { _, _ -> }
+) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(space = -(cardHeight.times(0.8f)))
+        verticalArrangement = Arrangement.spacedBy(space = -(cardHeight.times(0.75f)))
     ) {
         if (pile.isEmpty()) {
             Image(
@@ -80,10 +92,13 @@ fun SolitaireTableau(pile: List<Card>, cardHeight: Dp, modifier: Modifier = Modi
                 contentScale = ContentScale.FillBounds
             )
         } else {
-            pile.forEach {
+            pile.forEachIndexed { index, card ->
                 SolitaireCard(
-                    modifier = Modifier.height(cardHeight),
-                    card = it
+                    modifier = Modifier
+                        .height(cardHeight)
+                        .clip(RoundedCornerShape(4.dp)) // makes click surface have round edges
+                        .clickable { onClick(tableauIndex, index) },
+                    card = card
                 )
             }
         }
@@ -94,7 +109,13 @@ fun SolitaireTableau(pile: List<Card>, cardHeight: Dp, modifier: Modifier = Modi
 @Composable
 fun SolitaireTableauEmptyPreview() {
     SolitairePreview {
-        SolitaireTableau(pile = emptyList(), cardHeight = 0.dp)
+        // gets device size in order to scale card
+        val config = LocalConfiguration.current
+        val sWidth = config.screenWidthDp.dp
+        val cardWidth = sWidth / 7 // need to fit 7 piles wide on screen
+        val cardHeight = cardWidth.times(1.4f)
+
+        SolitaireTableau(cardHeight = cardHeight)
     }
 }
 
@@ -108,6 +129,11 @@ fun SolitaireTableauPreview() {
         val cardWidth = sWidth / 7 // need to fit 7 piles wide on screen
         val cardHeight = cardWidth.times(1.4f)
 
-        SolitaireTableau(pile = listOf(Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES), Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES)), cardHeight = cardHeight)
+        SolitaireTableau(
+            cardHeight = cardHeight,
+            pile = listOf(
+                Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES),
+                Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES)),
+            )
     }
 }

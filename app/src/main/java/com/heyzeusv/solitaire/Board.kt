@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -10,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,8 +47,10 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
         val foundationPile by remember { mutableStateOf(it.pile) }
         return@map foundationPile
     }
-//    val foundation by remember { mutableStateOf(boardViewModel.foundation) }
-    val tableau by boardViewModel.tableau.collectAsState()
+    val tableauList = boardViewModel.tableau.map {
+        val tableauPile by remember { mutableStateOf(it.pile) }
+        return@map tableauPile
+    }
     val waste by remember { mutableStateOf(boardViewModel.waste.pile) }
 
     Box(
@@ -73,10 +73,14 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
                 SolitaireDeck(pile = deck, R.drawable.deck_empty, boardViewModel::onDeckTap, modifier = rowModifier)
             }
             Row(modifier = Modifier.weight(0.76f)) {
-                tableau.forEach {
-                    val rowModifier = Modifier
-                        .weight(1f)
-                    SolitaireTableau(pile = it.pile, cardHeight = cardHeight, rowModifier)
+                boardViewModel.tableau.forEachIndexed { index, _ ->
+                    SolitaireTableau(
+                        pile = tableauList[index],
+                        tableauIndex = index,
+                        cardHeight = cardHeight,
+                        onClick = boardViewModel::onTableauTap,
+                        modifier = Modifier.weight(1f)
+                    )
                 }
             }
         }

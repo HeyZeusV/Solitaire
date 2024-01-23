@@ -1,8 +1,7 @@
 package com.heyzeusv.solitaire
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 /**
  *  Data manager for Board.
@@ -18,8 +17,8 @@ class BoardViewModel : ViewModel() {
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
-    private val _tableau = MutableStateFlow(MutableList(7) { Tableau() })
-    val tableau: StateFlow<List<Tableau>> get() = _tableau
+    private val _tableau = MutableList(7) { Tableau() }
+    val tableau: List<Tableau> get() = _tableau
 
     private val _waste = Waste()
     val waste: Waste get() = _waste
@@ -31,9 +30,9 @@ class BoardViewModel : ViewModel() {
         // empty foundations
         _foundation.forEach { it.resetCards() }
         // each pile in the tableau has 1 more card than the previous
-        _tableau.value.forEachIndexed { i, _ ->
+        _tableau.forEachIndexed { i, _ ->
             val cards = MutableList(i + 1) { _deck.drawCard() }
-            _tableau.value[i] = Tableau(cards)
+            _tableau[i] = Tableau(mutableStateListOf(elements = cards.toTypedArray()))
         }
         // clear the waste pile
         _waste.resetCards()
@@ -72,7 +71,7 @@ class BoardViewModel : ViewModel() {
 
     // runs when user taps on tableau
     fun onTableauTap(tableauIndex: Int, cardIndex: Int) {
-        val tableauPile = _tableau.value[tableauIndex]
+        val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.pile
         if (tPile.isNotEmpty()) {
             if (tPile[cardIndex].faceUp && legalMove(tPile.subList(cardIndex, tPile.size))) {
@@ -88,7 +87,7 @@ class BoardViewModel : ViewModel() {
         if (cards.size == 1) {
             _foundation.forEach { if (it.addCard(cards.first())) return true }
         }
-        _tableau.value.forEach {
+        _tableau.forEach {
             if (it.addCards(cards)) return true
         }
         return false
