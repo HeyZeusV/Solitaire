@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
-class BoardViewModel : ViewModel() {
+class GameViewModel : ViewModel() {
 
     // increases whenever a card/s moves
     private val _moves = MutableStateFlow(0)
@@ -94,7 +94,6 @@ class BoardViewModel : ViewModel() {
             _waste.resetCards()
             _moves.value++
         }
-        // TODO: Check that moves does not increase when no cards are left in both waste and deck
     }
 
     // runs when user taps on waste
@@ -167,5 +166,9 @@ class BoardViewModel : ViewModel() {
         super.onCleared()
         // cancel coroutine
         timerJob?.cancel()
+    }
+
+    init {
+        reset()
     }
 }

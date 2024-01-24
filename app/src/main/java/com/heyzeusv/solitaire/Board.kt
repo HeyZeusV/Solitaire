@@ -24,7 +24,7 @@ import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
  *  Composable that will display all [Card] piles, Deck, Waste, Foundation, and Tableau.
  */
 @Composable
-fun SolitaireBoard(modifier: Modifier = Modifier, boardVM: BoardViewModel = viewModel()) {
+fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewModel()) {
     // gets device size in order to scale card
     val config = LocalConfiguration.current
     val sWidth = config.screenWidthDp.dp
@@ -32,16 +32,16 @@ fun SolitaireBoard(modifier: Modifier = Modifier, boardVM: BoardViewModel = view
     val cardHeight = cardWidth.times(1.4f)
 
     // piles to be displayed
-    val deck by remember { mutableStateOf(boardVM.deck.gameDeck) }
-    val foundationList = boardVM.foundation.map {
+    val deck by remember { mutableStateOf(gameVM.deck.gameDeck) }
+    val foundationList = gameVM.foundation.map {
         val foundationPile by remember { mutableStateOf(it.pile) }
         return@map foundationPile
     }
-    val tableauList = boardVM.tableau.map {
+    val tableauList = gameVM.tableau.map {
         val tableauPile by remember { mutableStateOf(it.pile) }
         return@map tableauPile
     }
-    val waste by remember { mutableStateOf(boardVM.waste.pile) }
+    val waste by remember { mutableStateOf(gameVM.waste.pile) }
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -58,25 +58,25 @@ fun SolitaireBoard(modifier: Modifier = Modifier, boardVM: BoardViewModel = view
                 val rowModifier = Modifier
                     .weight(1f)
                     .height(cardHeight)
-                boardVM.foundation.forEachIndexed { index, foundation ->
+                gameVM.foundation.forEachIndexed { index, foundation ->
                     SolitaireDeck(
                         modifier = rowModifier,
                         pile = foundationList[index],
                         emptyIconId = foundation.suit.emptyIcon
-                    ) { boardVM.onFoundationTap(index) }
+                    ) { gameVM.onFoundationTap(index) }
                 }
                 Spacer(modifier = rowModifier)
                 SolitaireDeck(
                     modifier = rowModifier,
                     pile = waste,
                     emptyIconId = R.drawable.waste_empty,
-                    onClick = boardVM::onWasteTap
+                    onClick = gameVM::onWasteTap
                 )
                 SolitaireDeck(
                     modifier = rowModifier,
                     pile = deck,
                     emptyIconId = if (waste.isEmpty()) R.drawable.deck_empty else R.drawable.deck_reset,
-                    onClick = boardVM::onDeckTap
+                    onClick = gameVM::onDeckTap
                 )
             }
             Row(
@@ -89,7 +89,7 @@ fun SolitaireBoard(modifier: Modifier = Modifier, boardVM: BoardViewModel = view
                         pile = tableau,
                         tableauIndex = index,
                         cardHeight = cardHeight,
-                        onClick = boardVM::onTableauTap
+                        onClick = gameVM::onTableauTap
                     )
                 }
             }
