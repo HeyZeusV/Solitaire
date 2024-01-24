@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -56,13 +55,10 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
     }
     val waste by remember { mutableStateOf(boardViewModel.waste.pile) }
 
-    val gameWon by boardViewModel.gameWon.collectAsState()
-
-    if (gameWon) {
-        boardViewModel.reset()
-    }
     Box(
-        modifier = Modifier.fillMaxSize().background(brush)
+        modifier = Modifier
+            .fillMaxSize()
+            .background(brush)
     ) {
         Column(
             modifier = Modifier
