@@ -24,8 +24,9 @@ import com.heyzeusv.solitaire.util.SolitairePreview
  *  rest face down. Users can move cards between [Tableau] piles or move them to a [Foundation] pile
  *  in order to reveal more cards.
  */
-class Tableau(private val _pile: SnapshotStateList<Card> = mutableStateListOf()) {
+class Tableau {
 
+    private val _pile: SnapshotStateList<Card> = mutableStateListOf()
     val pile: List<Card> get() = _pile
 
     /**
@@ -61,9 +62,16 @@ class Tableau(private val _pile: SnapshotStateList<Card> = mutableStateListOf())
         if (_pile.isNotEmpty()) _pile.last().faceUp = true
     }
 
-    init {
-        // flip the last card up
-        if (_pile.isNotEmpty()) _pile.last().faceUp = true
+    /**
+     *  Resets [pile] by clearing existing cards, adding given [cards], and flipping last card
+     *  face up.
+     */
+    fun reset(cards: List<Card>) {
+        _pile.apply {
+            clear()
+            addAll(cards)
+            last().faceUp = true
+        }
     }
 }
 

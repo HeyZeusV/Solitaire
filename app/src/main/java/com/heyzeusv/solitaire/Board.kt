@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,7 +44,7 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
     val cardWidth = sWidth / 7 // need to fit 7 piles wide on screen
     val cardHeight = cardWidth.times(1.4f)
 
-    // date to be displayed
+    // piles to be displayed
     val deck by remember { mutableStateOf(boardViewModel.deck.gameDeck) }
     val foundationList = boardViewModel.foundation.map {
         val foundationPile by remember { mutableStateOf(it.pile) }
@@ -55,17 +56,28 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
     }
     val waste by remember { mutableStateOf(boardViewModel.waste.pile) }
 
+    val gameWon by boardViewModel.gameWon.collectAsState()
+
+    if (gameWon) {
+        boardViewModel.reset()
+    }
     Box(
         modifier = Modifier.fillMaxSize().background(brush)
     ) {
         Column(
-            modifier = Modifier.fillMaxSize().padding(2.dp)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(2.dp)
         ) {
             Row(
-                modifier = Modifier.weight(0.12f).fillMaxWidth(),
+                modifier = Modifier
+                    .weight(0.12f)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                val rowModifier = Modifier.weight(1f).height(cardHeight)
+                val rowModifier = Modifier
+                    .weight(1f)
+                    .height(cardHeight)
                 boardViewModel.foundation.forEachIndexed { index, foundation ->
                     SolitaireDeck(
                         modifier = rowModifier,
@@ -91,10 +103,10 @@ fun SolitaireBoard(boardViewModel: BoardViewModel = viewModel()) {
                 modifier = Modifier.weight(0.75f),
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                boardViewModel.tableau.forEachIndexed { index, _ ->
+                tableauList.forEachIndexed { index, tableau ->
                     SolitaireTableau(
                         modifier = Modifier.weight(1f),
-                        pile = tableauList[index],
+                        pile = tableau,
                         tableauIndex = index,
                         cardHeight = cardHeight,
                         onClick = boardViewModel::onTableauTap

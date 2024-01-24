@@ -1,7 +1,8 @@
 package com.heyzeusv.solitaire
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 /**
  *  Data manager for Board.
@@ -23,6 +24,9 @@ class BoardViewModel : ViewModel() {
     private val _waste = Waste()
     val waste: Waste get() = _waste
 
+    private val _gameWon = MutableStateFlow(false)
+    val gameWon: StateFlow<Boolean> get() = _gameWon
+
     // goes through all card piles in the game and resets them for a new game
     fun reset() {
         // shuffled 52 card deck
@@ -30,12 +34,13 @@ class BoardViewModel : ViewModel() {
         // empty foundations
         _foundation.forEach { it.resetCards() }
         // each pile in the tableau has 1 more card than the previous
-        _tableau.forEachIndexed { i, _ ->
+        _tableau.forEachIndexed { i, tableau ->
             val cards = MutableList(i + 1) { _deck.drawCard() }
-            _tableau[i] = Tableau(mutableStateListOf(elements = cards.toTypedArray()))
+            tableau.reset(cards)
         }
         // clear the waste pile
         _waste.resetCards()
+        _gameWon.value = false
     }
 
     // runs when user taps on deck
@@ -56,6 +61,7 @@ class BoardViewModel : ViewModel() {
             if (it.pile.isNotEmpty()) {
                 // if any move is possible then remove card from waste
                 if (legalMove(listOf(it.pile.last()))) it.removeCard()
+                if (gameWon()) _gameWon.value = true
             }
         }
     }
@@ -76,8 +82,18 @@ class BoardViewModel : ViewModel() {
         if (tPile.isNotEmpty()) {
             if (tPile[cardIndex].faceUp && legalMove(tPile.subList(cardIndex, tPile.size))) {
                 tableauPile.removeCards(cardIndex)
+                if (gameWon()) _gameWon.value = true
             }
         }
+    }
+
+    /**
+     *  Should be called after successful [onWasteTap] or [onTableauTap] since game can only end
+     *  after one of those clicks and if each foundation pile has exactly 13 Cards.
+     */
+    private fun gameWon(): Boolean {
+        foundation.forEach { if (it.pile.size != 13) return false }
+        return true
     }
 
     /**
