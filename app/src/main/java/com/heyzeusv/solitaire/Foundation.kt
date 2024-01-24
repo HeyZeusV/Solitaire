@@ -1,14 +1,6 @@
 package com.heyzeusv.solitaire
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Row
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import com.heyzeusv.solitaire.util.SolitairePreview
 
 /**
  *  In Solitaire, Foundation refers to the pile where players have to build up a specific [suit]
