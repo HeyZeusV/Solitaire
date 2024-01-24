@@ -19,20 +19,6 @@ class MainActivity : ComponentActivity() {
         boardVM.reset()
         setContent {
             SolitaireTheme(darkTheme = true) {
-                val gameWon by boardVM.gameWon.collectAsState()
-
-                if (gameWon) {
-                    AlertDialog(
-                        onDismissRequest = { },
-                        confirmButton = {
-                            TextButton(onClick = { boardVM.reset() }) {
-                                Text(text = "New Game")
-                            }
-                        },
-                        title = { Text(text = "You Won!") },
-                        text = { Text(text = "Congratulations! Here are your stats...") } // TODO: Add stats
-                    )
-                }
                 SolitaireApp(boardVM)
             }
 
@@ -41,6 +27,20 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SolitaireApp(boardViewModel: BoardViewModel) {
-    SolitaireBoard(boardViewModel)
+fun SolitaireApp(boardVM: BoardViewModel) {
+    val gameWon by boardVM.gameWon.collectAsState()
+
+    if (gameWon) {
+        AlertDialog(
+            onDismissRequest = { },
+            confirmButton = {
+                TextButton(onClick = { boardVM.reset() }) {
+                    Text(text = "New Game")
+                }
+            },
+            title = { Text(text = "You Won!") },
+            text = { Text(text = "Congratulations! Here are your stats...") } // TODO: Add stats
+        )
+    }
+    SolitaireBoard(boardVM)
 }
