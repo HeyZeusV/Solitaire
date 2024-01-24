@@ -16,13 +16,14 @@ import kotlinx.coroutines.launch
  */
 class BoardViewModel : ViewModel() {
 
-    private val _timer = MutableStateFlow(0L)
-    val timer: StateFlow<Long> get() = _timer
-    private var timerJob: Job? = null
-
     // increases whenever a card/s moves
     private val _moves = MutableStateFlow(0)
     val moves: StateFlow<Int> get() = _moves
+
+    // tracks how long user has played current game for
+    private val _timer = MutableStateFlow(0L)
+    val timer: StateFlow<Long> get() = _timer
+    private var timerJob: Job? = null
 
     // one point per card in Foundation, 52 is max
     private val _score = MutableStateFlow(0)
