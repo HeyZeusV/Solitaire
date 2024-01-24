@@ -10,7 +10,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.formatTime
 
 /**
  *  Composable that will display all [Card] piles, Deck, Waste, Foundation, and Tableau.
@@ -43,6 +46,11 @@ fun SolitaireBoard(boardVM: BoardViewModel = viewModel()) {
     val cardWidth = sWidth / 7 // need to fit 7 piles wide on screen
     val cardHeight = cardWidth.times(1.4f)
 
+    // stats
+    val timer by boardVM.timer.collectAsState()
+    val moves by boardVM.moves.collectAsState()
+    val score by boardVM.score.collectAsState()
+
     // piles to be displayed
     val deck by remember { mutableStateOf(boardVM.deck.gameDeck) }
     val foundationList = boardVM.foundation.map {
@@ -55,6 +63,10 @@ fun SolitaireBoard(boardVM: BoardViewModel = viewModel()) {
     }
     val waste by remember { mutableStateOf(boardVM.waste.pile) }
 
+    // start timer once user makes a move
+    if (moves == 1) boardVM.startTimer()
+    // pause timer once user reaches max score
+    if (score == 52) boardVM.pauseTimer()
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -65,6 +77,15 @@ fun SolitaireBoard(boardVM: BoardViewModel = viewModel()) {
                 .fillMaxSize()
                 .padding(2.dp)
         ) {
+            Row(
+                modifier = Modifier
+                    .weight(0.10f)
+                    .fillMaxWidth()
+            ) {
+                Text(text = "Moves $moves")
+                Text(text = "Time ${timer.formatTime()}")
+                Text(text = "Score $score")
+            }
             Row(
                 modifier = Modifier
                     .weight(0.12f)
@@ -96,7 +117,7 @@ fun SolitaireBoard(boardVM: BoardViewModel = viewModel()) {
                 )
             }
             Row(
-                modifier = Modifier.weight(0.75f),
+                modifier = Modifier.weight(0.65f),
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 tableauList.forEachIndexed { index, tableau ->
