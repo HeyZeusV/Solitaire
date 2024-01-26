@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire
 
+import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Job
@@ -41,6 +42,9 @@ class GameViewModel : ViewModel() {
     private val _tableau = MutableList(7) { Tableau() }
     val tableau: List<Tableau> get() = _tableau
 
+    private val historyList = mutableListOf<History>()
+    private lateinit var currentStep: History
+
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
 
@@ -79,6 +83,8 @@ class GameViewModel : ViewModel() {
         }
         // clear the waste pile
         _waste.resetCards()
+        historyList.clear()
+        recordHistory()
         _gameWon.value = false
     }
 
@@ -88,11 +94,13 @@ class GameViewModel : ViewModel() {
         if (_deck.gameDeck.isNotEmpty()) {
             _waste.addCard(_deck.drawCard().apply { faceUp = true })
             _moves.value++
+            appendHistory()
         } else if (_waste.pile.isNotEmpty()) {
             // add back all cards from waste to deck
             _deck.replace(_waste.pile.toMutableList())
             _waste.resetCards()
             _moves.value++
+            appendHistory()
         }
     }
 
@@ -101,7 +109,10 @@ class GameViewModel : ViewModel() {
         _waste.let {
             if (it.pile.isNotEmpty()) {
                 // if any move is possible then remove card from waste
-                if (legalMove(listOf(it.pile.last()))) it.removeCard()
+                if (legalMove(listOf(it.pile.last()))) {
+                    it.removeCard()
+                    appendHistory()
+                }
             }
         }
     }
@@ -114,6 +125,7 @@ class GameViewModel : ViewModel() {
             if (legalMove(listOf(foundation.pile.last()))) {
                 foundation.removeCard()
                 _score.value--
+                appendHistory()
             }
         }
     }
@@ -126,6 +138,7 @@ class GameViewModel : ViewModel() {
             // if card clicked is face up and move is possible then remove cards from tableau pile
             if (tPile[cardIndex].faceUp && legalMove(tPile.subList(cardIndex, tPile.size))) {
                 tableauPile.removeCards(cardIndex)
+                appendHistory()
             }
         }
     }
@@ -160,6 +173,59 @@ class GameViewModel : ViewModel() {
             }
         }
         return false
+    }
+
+    /**
+     *  Takes a [Snapshot] of current StateObject values and stores them in a [History] object. We
+     *  then immediately dispose of the [Snapshot] to avoid memory leaks.
+     */
+    private fun recordHistory() {
+        val currentSnapshot = Snapshot.takeSnapshot()
+        currentSnapshot.enter {
+            currentStep = History(
+                score = _score.value,
+                deck = _deck.gameDeck.toList(),
+                waste = _waste.pile.toList(),
+                foundation = _foundation.map { it.pile.toList() },
+                tableauFaceUp = _tableau.map { it.faceUpCards },
+                tableau = _tableau.map { it.pile.toList() }
+            )
+        }
+        currentSnapshot.dispose()
+    }
+
+    /**
+     *  Adds [currentStep] to our [historyList] list before overwriting [currentStep] using
+     *  [recordHistory]. This should be call after every legal move.
+     */
+    private fun appendHistory() {
+        // limit number of undo steps to 15
+        if (historyList.size == 15) historyList.removeFirst()
+        historyList.add(currentStep)
+        recordHistory()
+    }
+
+    /**
+     *  We pop the last [History] value in [historyList] and use it to restore the game state to it.
+     */
+    fun undo() {
+        if (historyList.isNotEmpty()) {
+            val step = historyList.removeLast()
+            _score.value = step.score
+            _deck.undo(step.deck)
+            _waste.undo(step.waste)
+            _foundation.forEachIndexed { i, foundation ->
+                foundation.undo(step.foundation[i])
+            }
+            _tableau.forEachIndexed { i, tableau ->
+                tableau.undoFaceUpCards(step.tableauFaceUp[i])
+                tableau.undo(step.tableau[i])
+            }
+            // called to ensure currentStep stays updated.
+            recordHistory()
+            // counts as a move still
+            _moves.value++
+        }
     }
 
     override fun onCleared() {

@@ -38,6 +38,16 @@ class Deck {
     }
 
     /**
+     *  Used to return [_gameDeck] to a previous state of given [cards].
+     */
+    fun undo(cards: List<Card>) {
+        _gameDeck.clear()
+        if (cards.isEmpty()) return
+        // only last card is shown to user, this makes sure it is not visible
+        _gameDeck.addAll(cards.apply { last().faceUp = false })
+    }
+
+    /**
      *  Used during creation of deck to assign suit to each card.
      *  Cards  0-12 -> Clubs
      *  Cards 13-25 -> Diamonds
@@ -54,6 +64,8 @@ class Deck {
     init {
         _gameDeck.addAll(baseDeck)
     }
+
+    override fun toString(): String = gameDeck.toList().toString()
 }
 
 /**

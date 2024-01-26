@@ -32,4 +32,15 @@ class Foundation(val suit: Suits) {
      *  Removes all cards from the pile.
      */
     fun resetCards() = _pile.clear()
+
+    /**
+     *  Used to return [_pile] to a previous state of given [cards].
+     */
+    fun undo(cards: List<Card>) {
+        _pile.clear()
+        if (cards.isEmpty()) return
+        _pile.addAll(cards)
+    }
+
+    override fun toString(): String = "${suit.suit}: ${pile.toList()}"
 }

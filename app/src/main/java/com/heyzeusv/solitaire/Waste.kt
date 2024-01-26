@@ -4,7 +4,7 @@ import androidx.compose.runtime.mutableStateListOf
 
 class Waste {
 
-    private val _pile = mutableStateListOf<Card>()
+    private val _pile: MutableList<Card> = mutableStateListOf()
     val pile: List<Card> get() = _pile
 
     /**
@@ -21,4 +21,16 @@ class Waste {
      *  Removes all card from the pile.
      */
     fun resetCards() = _pile.clear()
+
+    /**
+     *  Used to return [_pile] to a previous state of given [cards].
+     */
+    fun undo(cards: List<Card>) {
+        _pile.clear()
+        if (cards.isEmpty()) return
+        // makes sure all cards are face up
+        _pile.addAll(cards.onEach { it.faceUp = true })
+    }
+
+    override fun toString(): String = pile.toList().toString()
 }

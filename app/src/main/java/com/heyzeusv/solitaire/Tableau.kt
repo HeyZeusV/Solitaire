@@ -30,6 +30,18 @@ class Tableau {
     val pile: List<Card> get() = _pile
 
     /**
+     *  Used to keep track of how many cards are face up in [_pile]. This is needed due to
+     *  how [androidx.compose.runtime.snapshots.SnapshotStateList.toList] works. "The list returned
+     *  is immutable and returned will not change even if the content of the list is changed in the
+     *  same snapshot. It also will be the same instance until the content is changed". If
+     *  [Card.faceUp] was changed, Undo feature would not return it to its previous value, so Cards
+     *  would be incorrectly face up or down. I have to work on making [Card.faceUp] immutable in
+     *  order for updates to occur when it changes.
+     */
+    private var _faceUpCards = 0
+    val faceUpCards: Int get() = _faceUpCards
+
+    /**
      *  Attempts to add given [cards] to [pile] depending on [cards] first card value and suit and
      *  [pile]'s last card value and suit. Returns true if added.
      */
@@ -42,11 +54,13 @@ class Tableau {
             // and if they are different colors
             if (cFirst.value == pLast.value - 1 && cFirst.suit.color != pLast.suit.color) {
                 _pile.addAll(cards)
+                _faceUpCards += cards.size
                 return true
             }
         // add cards if pile is empty and first card of new cards is the highest value
         } else if (cFirst.value == 12) {
             _pile.addAll(cards)
+            _faceUpCards += cards.size
             return true
         }
         return false
@@ -57,9 +71,13 @@ class Tableau {
      *  last card if any.
      */
     fun removeCards(tappedIndex: Int) {
+        faceUpCards.minus(_pile.size - tappedIndex)
         _pile.subList(tappedIndex, _pile.size).clear()
         // flip the last card up
-        if (_pile.isNotEmpty()) _pile.last().faceUp = true
+        if (_pile.isNotEmpty()) {
+            _pile.last().faceUp = true
+            _faceUpCards++
+        }
     }
 
     /**
@@ -72,7 +90,37 @@ class Tableau {
             addAll(cards)
             last().faceUp = true
         }
+        _faceUpCards++
     }
+
+    /**
+     *  Used to return [_pile] to a previous state of given [cards].
+     */
+    fun undo(cards: List<Card>) {
+        _pile.clear()
+        when (cards.size) {
+            0 -> return // no cards to add
+            1 -> {
+                _pile.addAll(cards)
+                _faceUpCards = 1
+            }
+            else -> {
+                for (i in 0..(cards.size - 1 - faceUpCards)) {
+                    cards[i].faceUp = false
+                }
+                _pile.addAll(cards)
+            }
+        }
+    }
+
+    /**
+     *  Used to return [_faceUpCards] to a previous state of given [faceUp].
+     */
+    fun undoFaceUpCards(faceUp: Int) {
+        _faceUpCards = faceUp
+    }
+
+    override fun toString(): String = pile.toList().toString()
 }
 
 /**

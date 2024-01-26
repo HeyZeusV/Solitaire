@@ -7,6 +7,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -84,8 +85,15 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
             score = score
         )
         SolitaireBoard(
-            modifier = Modifier.weight(0.88f),
+            modifier = Modifier.weight(0.78f),
             gameVM = gameVM
         )
+        // TODO flesh out bottom bar
+        Button(
+            onClick = gameVM::undo,
+            modifier = Modifier
+                .weight(0.10f)
+                .fillMaxSize()
+            ) {}
     }
 }
