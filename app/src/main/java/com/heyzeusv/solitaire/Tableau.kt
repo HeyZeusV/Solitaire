@@ -85,6 +85,7 @@ class Tableau {
      *  face up.
      */
     fun reset(cards: List<Card>) {
+        _faceUpCards = 0
         _pile.apply {
             clear()
             addAll(cards)
@@ -105,7 +106,7 @@ class Tableau {
                 _faceUpCards = 1
             }
             else -> {
-                for (i in 0..(cards.size - 1 - faceUpCards)) {
+                for (i in 0..(cards.size - 1 - _faceUpCards)) {
                     cards[i].faceUp = false
                 }
                 _pile.addAll(cards)

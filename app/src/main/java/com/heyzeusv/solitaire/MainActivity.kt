@@ -12,6 +12,7 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -46,6 +47,8 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
     val moves by gameVM.moves.collectAsState()
     val timer by gameVM.timer.collectAsState()
     val score by gameVM.score.collectAsState()
+
+    val historyList by remember { mutableStateOf(gameVM.historyList) }
 
     val gameWon by gameVM.gameWon.collectAsState()
 
@@ -90,6 +93,7 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
         SolitaireTools(
             modifier = Modifier.weight(0.10f),
             resetOnConfirmClick = gameVM::reset,
+            historyListSize = historyList.size,
             undoOnClick = gameVM::undo
         )
     }

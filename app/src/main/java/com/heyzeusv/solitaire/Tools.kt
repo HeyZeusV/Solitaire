@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
@@ -36,6 +37,7 @@ import com.heyzeusv.solitaire.ResetOptions.RESTART
 fun SolitaireTools(
     modifier: Modifier = Modifier,
     resetOnConfirmClick: (ResetOptions) -> Unit,
+    historyListSize: Int,
     undoOnClick: () -> Unit
 ) {
     var resetOnClick by remember { mutableStateOf(false) }
@@ -67,9 +69,11 @@ fun SolitaireTools(
         )
     }
     Row(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        verticalAlignment = Alignment.CenterVertically
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top
     ) {
         val rowModifier = Modifier.weight(1.0f)
         // TODO: Settings or Stats
@@ -80,7 +84,7 @@ fun SolitaireTools(
             iconContentDes = "Open stats screen.",
             buttonText = "Stats"
         )
-        // TODO: Reset Button
+        // Reset Button
         SolitaireToolsButton(
             modifier = rowModifier,
             onClick = { resetOnClick = true },
@@ -91,6 +95,7 @@ fun SolitaireTools(
         // Undo Button
         SolitaireToolsButton(
             modifier = rowModifier,
+            enabled = historyListSize > 0,
             onClick = undoOnClick,
             iconId = R.drawable.button_undo,
             iconContentDes = "Undo last move.",
@@ -108,6 +113,7 @@ fun SolitaireTools(
 @Composable
 fun SolitaireToolsButton(
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
     onClick: () -> Unit,
     @DrawableRes iconId: Int,
     iconContentDes: String,
@@ -116,6 +122,7 @@ fun SolitaireToolsButton(
     OutlinedButton(
         onClick = onClick,
         modifier = modifier,
+        enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
             contentColor = Color.White

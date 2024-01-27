@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire
 
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -42,7 +43,8 @@ class GameViewModel : ViewModel() {
     private val _tableau = MutableList(7) { Tableau() }
     val tableau: List<Tableau> get() = _tableau
 
-    private val historyList = mutableListOf<History>()
+    private val _historyList = mutableStateListOf<History>()
+    val historyList: List<History> get() = _historyList
     private lateinit var currentStep: History
 
     private val _gameWon = MutableStateFlow(false)
@@ -89,7 +91,7 @@ class GameViewModel : ViewModel() {
         }
         // clear the waste pile
         _waste.resetCards()
-        historyList.clear()
+        _historyList.clear()
         recordHistory()
         _gameWon.value = false
     }
@@ -201,22 +203,22 @@ class GameViewModel : ViewModel() {
     }
 
     /**
-     *  Adds [currentStep] to our [historyList] list before overwriting [currentStep] using
+     *  Adds [currentStep] to our [_historyList] list before overwriting [currentStep] using
      *  [recordHistory]. This should be call after every legal move.
      */
     private fun appendHistory() {
         // limit number of undo steps to 15
-        if (historyList.size == 15) historyList.removeFirst()
-        historyList.add(currentStep)
+        if (_historyList.size == 15) _historyList.removeFirst()
+        _historyList.add(currentStep)
         recordHistory()
     }
 
     /**
-     *  We pop the last [History] value in [historyList] and use it to restore the game state to it.
+     *  We pop the last [History] value in [_historyList] and use it to restore the game state to it.
      */
     fun undo() {
-        if (historyList.isNotEmpty()) {
-            val step = historyList.removeLast()
+        if (_historyList.isNotEmpty()) {
+            val step = _historyList.removeLast()
             _score.value = step.score
             _deck.undo(step.deck)
             _waste.undo(step.waste)
