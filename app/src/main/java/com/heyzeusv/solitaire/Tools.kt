@@ -23,9 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.ResetOptions.NEW
 import com.heyzeusv.solitaire.ResetOptions.RESTART
+import com.heyzeusv.solitaire.util.SolitairePreview
 
 /**
  *  Composable that displays several buttons for the user. Pressing on Reset button opens up an
@@ -127,7 +129,10 @@ fun SolitaireToolsButton(
             containerColor = Color.Transparent,
             contentColor = Color.White
         ),
-        border = BorderStroke(2.dp, Color.White)
+        border = BorderStroke(
+            width = 2.dp,
+            color = if (enabled) Color.White else Color(0x12FFFFFF)
+        )
     ) {
         Icon(
             painter = painterResource(iconId),
@@ -136,5 +141,39 @@ fun SolitaireToolsButton(
         )
         Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
         Text(text = buttonText)
+    }
+}
+
+@Preview
+@Composable
+fun SolitaireToolsPreview() {
+    SolitairePreview {
+        SolitaireTools(
+            resetOnConfirmClick = { },
+            historyListSize = 0,
+            undoOnClick = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SolitaireToolsButtonPreview() {
+    SolitairePreview {
+        Row {
+            SolitaireToolsButton(
+                onClick = { },
+                iconId = R.drawable.button_reset,
+                iconContentDes = "",
+                buttonText = "Enabled"
+            )
+            SolitaireToolsButton(
+                enabled = false,
+                onClick = { },
+                iconId = R.drawable.button_reset,
+                iconContentDes = "",
+                buttonText = "Disabled"
+            )
+        }
     }
 }
