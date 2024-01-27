@@ -19,3 +19,11 @@ enum class Suits(
     HEARTS("Hearts", Color.Red, R.drawable.suit_heart, R.drawable.foundation_heart_empty),
     SPADES("Spades", Color.Black, R.drawable.suit_spade, R.drawable.foundation_spade_empty)
 }
+
+/**
+ *  Enum class containing both possibilities the user has when resetting the game.
+ */
+enum class ResetOptions {
+    RESTART,
+    NEW
+}

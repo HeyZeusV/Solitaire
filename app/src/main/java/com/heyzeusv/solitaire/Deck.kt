@@ -33,8 +33,8 @@ class Deck {
 
     // reset gameDeck and shuffle the cards
     fun reset() {
+        baseDeck.shuffle()
         replace(baseDeck)
-        _gameDeck.shuffle()
     }
 
     /**
@@ -46,6 +46,11 @@ class Deck {
         // only last card is shown to user, this makes sure it is not visible
         _gameDeck.addAll(cards.apply { last().faceUp = false })
     }
+
+    /**
+     *  Used to restart the game with the same shuffle.
+     */
+    fun restart() = replace(baseDeck)
 
     /**
      *  Used during creation of deck to assign suit to each card.
@@ -62,7 +67,7 @@ class Deck {
     }
 
     init {
-        _gameDeck.addAll(baseDeck)
+        baseDeck.shuffle()
     }
 
     override fun toString(): String = gameDeck.toList().toString()

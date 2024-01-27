@@ -23,17 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.heyzeusv.solitaire.ResetOptions.NEW
+import com.heyzeusv.solitaire.ResetOptions.RESTART
 
 /**
  *  Composable that displays several buttons for the user. Pressing on Reset button opens up an
- *  AlertDialog in order to confirm if user wants to restart a new game, confirming calls
- *  [resetOnConfirmClick]. Undo button when pressed calls [undoOnClick], which returns the game
- *  back 1 legal move.
+ *  AlertDialog which gives user 3 options, restart current game, reset with
+ *  a brand new shuffle, or continue current game; first two options call [resetOnConfirmClick].
+ *  Undo button when pressed calls [undoOnClick], which returns the game back 1 legal move.
  */
 @Composable
 fun SolitaireTools(
     modifier: Modifier = Modifier,
-    resetOnConfirmClick: () -> Unit,
+    resetOnConfirmClick: (ResetOptions) -> Unit,
     undoOnClick: () -> Unit
 ) {
     var resetOnClick by remember { mutableStateOf(false) }
@@ -42,8 +44,15 @@ fun SolitaireTools(
         AlertDialog(
             onDismissRequest = { resetOnClick = false },
             confirmButton = {
-                TextButton(onClick = { resetOnClick = false ; resetOnConfirmClick() }) {
-                    Text(text = "Yes")
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    TextButton(onClick = { resetOnClick = false ; resetOnConfirmClick(RESTART) }) {
+                        Text(text = "Restart")
+                    }
+                    TextButton(onClick = { resetOnClick = false ; resetOnConfirmClick(NEW) }) {
+                        Text(text = "New")
+                    }
                 }
             },
             dismissButton = {
@@ -53,7 +62,7 @@ fun SolitaireTools(
             },
             title = { Text(text = "Are you sure?") },
             text = {
-                Text(text = "Current game will end and a new game with different shuffle will begin")
+                Text(text = "You can choose to restart the current game, a game with a new shuffle, or continue with this game.")
             }
         )
     }

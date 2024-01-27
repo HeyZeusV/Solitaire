@@ -67,13 +67,19 @@ class GameViewModel : ViewModel() {
     }
 
     // goes through all card piles in the game and resets them for a new game
-    fun reset() {
+    /**
+     *  Goes through all the card piles in the game and resets them for either the same game or a
+     *  new game depending on [renewOption].
+     */
+    fun reset(renewOption: ResetOptions) {
         // reset stats
         resetTimer()
         _moves.value = 0
         _score.value = 0
-        // shuffled 52 card deck
-        _deck.reset()
+        when (renewOption) {
+            ResetOptions.RESTART -> _deck.restart()
+            ResetOptions.NEW -> _deck.reset()
+        }
         // empty foundations
         _foundation.forEach { it.resetCards() }
         // each pile in the tableau has 1 more card than the previous
@@ -235,6 +241,6 @@ class GameViewModel : ViewModel() {
     }
 
     init {
-        reset()
+        reset(ResetOptions.NEW)
     }
 }

@@ -58,7 +58,7 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
         AlertDialog(
             onDismissRequest = { },
             confirmButton = {
-                TextButton(onClick = { gameVM.reset() }) {
+                TextButton(onClick = { gameVM.reset(ResetOptions.NEW) }) {
                     Text(text = "New Game")
                 }
             },
