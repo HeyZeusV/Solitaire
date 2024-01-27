@@ -89,6 +89,7 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
         )
         SolitaireTools(
             modifier = Modifier.weight(0.10f),
+            resetOnConfirmClick = gameVM::reset,
             undoOnClick = gameVM::undo
         )
     }

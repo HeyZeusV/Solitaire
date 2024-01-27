@@ -7,11 +7,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -19,14 +25,38 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 
 /**
- *  Composable that displays several buttons for the user. Undo button when pressed calls
- *  [undoOnClick], which returns the game back 1 legal move.
+ *  Composable that displays several buttons for the user. Pressing on Reset button opens up an
+ *  AlertDialog in order to confirm if user wants to restart a new game, confirming calls
+ *  [resetOnConfirmClick]. Undo button when pressed calls [undoOnClick], which returns the game
+ *  back 1 legal move.
  */
 @Composable
 fun SolitaireTools(
     modifier: Modifier = Modifier,
+    resetOnConfirmClick: () -> Unit,
     undoOnClick: () -> Unit
 ) {
+    var resetOnClick by remember { mutableStateOf(false) }
+
+    if (resetOnClick) {
+        AlertDialog(
+            onDismissRequest = { resetOnClick = false },
+            confirmButton = {
+                TextButton(onClick = { resetOnClick = false ; resetOnConfirmClick() }) {
+                    Text(text = "Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { resetOnClick = false }) {
+                    Text(text = "No")
+                }
+            },
+            title = { Text(text = "Are you sure?") },
+            text = {
+                Text(text = "Current game will end and a new game with different shuffle will begin")
+            }
+        )
+    }
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.SpaceEvenly,
@@ -37,15 +67,15 @@ fun SolitaireTools(
         SolitaireToolsButton(
             modifier = rowModifier,
             onClick = { },
-            iconId = R.drawable.undo,
+            iconId = R.drawable.button_undo,
             iconContentDes = "Open stats screen.",
             buttonText = "Stats"
         )
         // TODO: Reset Button
         SolitaireToolsButton(
             modifier = rowModifier,
-            onClick = { },
-            iconId = R.drawable.undo,
+            onClick = { resetOnClick = true },
+            iconId = R.drawable.button_reset,
             iconContentDes = "Reset game.",
             buttonText = "Reset"
         )
@@ -53,7 +83,7 @@ fun SolitaireTools(
         SolitaireToolsButton(
             modifier = rowModifier,
             onClick = undoOnClick,
-            iconId = R.drawable.undo,
+            iconId = R.drawable.button_undo,
             iconContentDes = "Undo last move.",
             buttonText = "Undo"
         )
