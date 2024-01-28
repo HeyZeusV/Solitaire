@@ -71,7 +71,7 @@ class Tableau {
      *  last card if any.
      */
     fun removeCards(tappedIndex: Int) {
-        faceUpCards.minus(_pile.size - tappedIndex)
+        _faceUpCards -= _pile.size - tappedIndex
         _pile.subList(tappedIndex, _pile.size).clear()
         // flip the last card up
         if (_pile.isNotEmpty()) {
