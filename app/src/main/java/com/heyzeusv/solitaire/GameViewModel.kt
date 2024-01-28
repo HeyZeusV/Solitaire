@@ -18,6 +18,9 @@ import kotlinx.coroutines.launch
  */
 class GameViewModel : ViewModel() {
 
+    // holds all 52 playing Cards
+    private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
+
     // increases whenever a card/s moves
     private val _moves = MutableStateFlow(0)
     val moves: StateFlow<Int> get() = _moves
@@ -31,8 +34,8 @@ class GameViewModel : ViewModel() {
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> get() = _score
 
-    private val _deck = Deck()
-    val deck: Deck get() = _deck
+    private val _stock = Stock()
+    val stock: Stock get() = _stock
 
     private val _waste = Waste()
     val waste: Waste get() = _waste
@@ -67,25 +70,30 @@ class GameViewModel : ViewModel() {
         _timer.value = 0
     }
 
+    fun jobIsCancelled(): Boolean = timerJob?.isCancelled ?: true
+
     // goes through all card piles in the game and resets them for a new game
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
-     *  new game depending on [renewOption].
+     *  new game depending on [resetOption].
      */
-    fun reset(renewOption: ResetOptions) {
+    fun reset(resetOption: ResetOptions) {
         // reset stats
         resetTimer()
         _moves.value = 0
         _score.value = 0
-        when (renewOption) {
-            ResetOptions.RESTART -> _deck.restart()
-            ResetOptions.NEW -> _deck.reset()
+        when (resetOption) {
+            ResetOptions.RESTART -> _stock.reset(baseDeck)
+            ResetOptions.NEW -> {
+                baseDeck.shuffle()
+                _stock.reset(baseDeck)
+            }
         }
         // empty foundations
         _foundation.forEach { it.resetCards() }
         // each pile in the tableau has 1 more card than the previous
         _tableau.forEachIndexed { i, tableau ->
-            val cards = MutableList(i + 1) { _deck.drawCard() }
+            val cards = MutableList(i + 1) { _stock.remove() }
             tableau.reset(cards)
         }
         // clear the waste pile
@@ -95,16 +103,16 @@ class GameViewModel : ViewModel() {
         _gameWon.value = false
     }
 
-    // runs when user taps on deck
-    fun onDeckClick() {
-        // add card to waste if deck is not empty and flip it face up
-        if (_deck.gameDeck.isNotEmpty()) {
-            _waste.addCard(_deck.drawCard().apply { faceUp = true })
+    // runs when user taps on stock
+    fun onStockClick() {
+        // add card to waste if stock is not empty and flip it face up
+        if (_stock.pile.isNotEmpty()) {
+            _waste.addCard(_stock.remove().apply { faceUp = true })
             _moves.value++
             appendHistory()
         } else if (_waste.pile.isNotEmpty()) {
-            // add back all cards from waste to deck
-            _deck.replace(_waste.pile.toMutableList())
+            // add back all cards from waste to stock
+            _stock.add(_waste.pile.toList())
             _waste.resetCards()
             _moves.value++
             appendHistory()
@@ -191,7 +199,7 @@ class GameViewModel : ViewModel() {
         currentSnapshot.enter {
             currentStep = History(
                 score = _score.value,
-                deck = _deck.gameDeck.toList(),
+                stock = _stock.pile.toList(),
                 waste = _waste.pile.toList(),
                 foundation = _foundation.map { it.pile.toList() },
                 tableauFaceUp = _tableau.map { it.faceUpCards },
@@ -219,7 +227,7 @@ class GameViewModel : ViewModel() {
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
             _score.value = step.score
-            _deck.undo(step.deck)
+            _stock.undo(step.stock)
             _waste.undo(step.waste)
             _foundation.forEachIndexed { i, foundation ->
                 foundation.undo(step.foundation[i])
@@ -235,6 +243,20 @@ class GameViewModel : ViewModel() {
         }
     }
 
+    /**
+     *  Used during creation of deck to assign suit to each card.
+     *  Cards  0-12 -> Clubs
+     *  Cards 13-25 -> Diamonds
+     *  Cards 26-38 -> Hearts
+     *  Cards 39-51 -> Spades
+     */
+    private fun getSuit(i: Int) = when (i / 13) {
+        0 -> Suits.CLUBS
+        1 -> Suits.DIAMONDS
+        2 -> Suits.HEARTS
+        else -> Suits.SPADES
+    }
+
     override fun onCleared() {
         super.onCleared()
         // cancel coroutine
@@ -242,6 +264,7 @@ class GameViewModel : ViewModel() {
     }
 
     init {
+        baseDeck.shuffle()
         reset(ResetOptions.NEW)
     }
 }

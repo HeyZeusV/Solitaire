@@ -21,7 +21,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 
 /**
- *  Composable that will display all [Card] piles, Deck, Waste, Foundation, and Tableau.
+ *  Composable that will display all [Card] piles, Stock, Waste, Foundation, and Tableau.
  */
 @Composable
 fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewModel()) {
@@ -32,7 +32,7 @@ fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewMo
     val cardHeight = cardWidth.times(1.4f)
 
     // piles to be displayed
-    val deck by remember { mutableStateOf(gameVM.deck.gameDeck) }
+    val stock by remember { mutableStateOf(gameVM.stock.pile) }
     val foundationList = gameVM.foundation.map {
         val foundationPile by remember { mutableStateOf(it.pile) }
         return@map foundationPile
@@ -59,24 +59,24 @@ fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewMo
                     .weight(1f)
                     .height(cardHeight)
                 gameVM.foundation.forEachIndexed { index, foundation ->
-                    SolitaireDeck(
+                    SolitairePile(
                         modifier = rowModifier,
                         pile = foundationList[index],
                         emptyIconId = foundation.suit.emptyIcon
                     ) { gameVM.onFoundationClick(index) }
                 }
                 Spacer(modifier = rowModifier)
-                SolitaireDeck(
+                SolitairePile(
                     modifier = rowModifier,
                     pile = waste,
                     emptyIconId = R.drawable.waste_empty,
                     onClick = gameVM::onWasteClick
                 )
-                SolitaireDeck(
+                SolitairePile(
                     modifier = rowModifier,
-                    pile = deck,
-                    emptyIconId = if (waste.isEmpty()) R.drawable.deck_empty else R.drawable.deck_reset,
-                    onClick = gameVM::onDeckClick
+                    pile = stock,
+                    emptyIconId = if (waste.isEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
+                    onClick = gameVM::onStockClick
                 )
             }
             Row(

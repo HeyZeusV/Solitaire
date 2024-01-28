@@ -40,7 +40,7 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
 
-        gameVM.startTimer()
+        if (gameVM.moves.value != 0) gameVM.startTimer()
     }
 
     override fun onPause() {
@@ -68,7 +68,9 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
     val gameWon by gameVM.gameWon.collectAsState()
 
     // start timer once user makes a move
-    if (moves == 1) gameVM.startTimer()
+    if (moves == 1 && gameVM.jobIsCancelled()) {
+        gameVM.startTimer()
+    }
 
     if (gameWon) {
         // pause timer once user reaches max score
