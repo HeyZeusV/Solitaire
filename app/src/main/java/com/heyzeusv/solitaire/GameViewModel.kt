@@ -50,7 +50,6 @@ class GameViewModel : ViewModel() {
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
 
-    // TODO: Check if timer needs start/pause in onResume()/onPause()
     fun startTimer() {
         timerJob?.cancel()
         timerJob = viewModelScope.launch {
