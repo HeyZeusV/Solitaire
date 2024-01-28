@@ -63,20 +63,20 @@ fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewMo
                         modifier = rowModifier,
                         pile = foundationList[index],
                         emptyIconId = foundation.suit.emptyIcon
-                    ) { gameVM.onFoundationTap(index) }
+                    ) { gameVM.onFoundationClick(index) }
                 }
                 Spacer(modifier = rowModifier)
                 SolitaireDeck(
                     modifier = rowModifier,
                     pile = waste,
                     emptyIconId = R.drawable.waste_empty,
-                    onClick = gameVM::onWasteTap
+                    onClick = gameVM::onWasteClick
                 )
                 SolitaireDeck(
                     modifier = rowModifier,
                     pile = deck,
                     emptyIconId = if (waste.isEmpty()) R.drawable.deck_empty else R.drawable.deck_reset,
-                    onClick = gameVM::onDeckTap
+                    onClick = gameVM::onDeckClick
                 )
             }
             Row(
@@ -89,7 +89,7 @@ fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewMo
                         pile = tableau,
                         tableauIndex = index,
                         cardHeight = cardHeight,
-                        onClick = gameVM::onTableauTap
+                        onClick = gameVM::onTableauClick
                     )
                 }
             }

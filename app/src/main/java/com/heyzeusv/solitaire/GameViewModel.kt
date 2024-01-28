@@ -96,7 +96,7 @@ class GameViewModel : ViewModel() {
     }
 
     // runs when user taps on deck
-    fun onDeckTap() {
+    fun onDeckClick() {
         // add card to waste if deck is not empty and flip it face up
         if (_deck.gameDeck.isNotEmpty()) {
             _waste.addCard(_deck.drawCard().apply { faceUp = true })
@@ -112,7 +112,7 @@ class GameViewModel : ViewModel() {
     }
 
     // runs when user taps on waste
-    fun onWasteTap() {
+    fun onWasteClick() {
         _waste.let {
             if (it.pile.isNotEmpty()) {
                 // if any move is possible then remove card from waste
@@ -125,7 +125,7 @@ class GameViewModel : ViewModel() {
     }
 
     // runs when user taps on foundation
-    fun onFoundationTap(fIndex: Int) {
+    fun onFoundationClick(fIndex: Int) {
         val foundation = _foundation[fIndex]
         if (foundation.pile.isNotEmpty()) {
             // if any move is possible then remove card from foundation
@@ -138,7 +138,7 @@ class GameViewModel : ViewModel() {
     }
 
     // runs when user taps on tableau
-    fun onTableauTap(tableauIndex: Int, cardIndex: Int) {
+    fun onTableauClick(tableauIndex: Int, cardIndex: Int) {
         val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.pile
         if (tPile.isNotEmpty()) {
@@ -151,7 +151,7 @@ class GameViewModel : ViewModel() {
     }
 
     /**
-     *  Should be called after successful [onWasteTap] or [onTableauTap] since game can only end
+     *  Should be called after successful [onWasteClick] or [onTableauClick] since game can only end
      *  after one of those clicks and if each foundation pile has exactly 13 Cards.
      */
     private fun gameWon(): Boolean {
