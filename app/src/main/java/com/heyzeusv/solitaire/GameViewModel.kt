@@ -90,7 +90,7 @@ class GameViewModel : ViewModel() {
             }
         }
         // empty foundations
-        _foundation.forEach { it.resetCards() }
+        _foundation.forEach { it.reset() }
         // each pile in the tableau has 1 more card than the previous
         _tableau.forEachIndexed { i, tableau ->
             val cards = MutableList(i + 1) { _stock.remove() }
@@ -138,7 +138,7 @@ class GameViewModel : ViewModel() {
         if (foundation.pile.isNotEmpty()) {
             // if any move is possible then remove card from foundation
             if (legalMove(listOf(foundation.pile.last()))) {
-                foundation.removeCard()
+                foundation.remove()
                 _score.value--
                 appendHistory()
             }
@@ -173,7 +173,7 @@ class GameViewModel : ViewModel() {
     private fun legalMove(cards: List<Card>): Boolean {
         if (cards.size == 1) {
             _foundation.forEach {
-                if (it.addCard(cards.first())) {
+                if (it.add(cards)) {
                     _moves.value++
                     _score.value++
                     if (gameWon()) _gameWon.value = true
