@@ -9,6 +9,5 @@ data class History(
     val stock: List<Card>,
     val waste: List<Card>,
     val foundation: List<List<Card>>,
-    val tableauFaceUp: List<Int>,
     val tableau: List<List<Card>>
 )

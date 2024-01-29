@@ -202,7 +202,6 @@ class GameViewModel : ViewModel() {
                 stock = _stock.pile.toList(),
                 waste = _waste.pile.toList(),
                 foundation = _foundation.map { it.pile.toList() },
-                tableauFaceUp = _tableau.map { it.faceUpCards },
                 tableau = _tableau.map { it.pile.toList() }
             )
         }
@@ -233,7 +232,6 @@ class GameViewModel : ViewModel() {
                 foundation.undo(step.foundation[i])
             }
             _tableau.forEachIndexed { i, tableau ->
-                tableau.undoFaceUpCards(step.tableauFaceUp[i])
                 tableau.undo(step.tableau[i])
             }
             // called to ensure currentStep stays updated.
