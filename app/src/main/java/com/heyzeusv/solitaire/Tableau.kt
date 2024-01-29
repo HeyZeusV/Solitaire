@@ -24,10 +24,10 @@ import com.heyzeusv.solitaire.util.SolitairePreview
  *  rest face down. Users can move cards between [Tableau] piles or move them to a [Foundation] pile
  *  in order to reveal more cards.
  */
-class Tableau {
+class Tableau : Pile {
 
     private val _pile: SnapshotStateList<Card> = mutableStateListOf()
-    val pile: List<Card> get() = _pile
+    override val pile: List<Card> get() = _pile
 
     /**
      *  Used to keep track of how many cards are face up in [_pile]. This is needed due to
@@ -42,11 +42,12 @@ class Tableau {
     val faceUpCards: Int get() = _faceUpCards
 
     /**
-     *  Attempts to add given [cards] to [pile] depending on [cards] first card value and suit and
-     *  [pile]'s last card value and suit. Returns true if added.
+     *  Attempts to add given [cards] to [_pile] depending on [cards] first card value and suit and
+     *  [_pile]'s last card value and suit. Returns true if added.
      */
-    fun addCards(cards: List<Card>): Boolean {
+    override fun add(cards: List<Card>): Boolean {
         if (cards.isEmpty()) return false
+
         val cFirst = cards.first()
         if (pile.isNotEmpty()) {
             val pLast = pile.last()
@@ -67,10 +68,10 @@ class Tableau {
     }
 
     /**
-     *  Removes all cards from [pile] started from [tappedIndex] to the end of [pile] and flips the
-     *  last card if any.
+     *  Removes all cards from [_pile] started from [tappedIndex] to the end of [_pile] and flips
+     *  the last card if any.
      */
-    fun removeCards(tappedIndex: Int) {
+    override fun remove(tappedIndex: Int): Card {
         _faceUpCards -= _pile.size - tappedIndex
         _pile.subList(tappedIndex, _pile.size).clear()
         // flip the last card up
@@ -78,13 +79,15 @@ class Tableau {
             _pile.last().faceUp = true
             _faceUpCards++
         }
+        // return value isn't used
+        return Card(0, Suits.SPADES, false)
     }
 
     /**
-     *  Resets [pile] by clearing existing cards, adding given [cards], and flipping last card
+     *  Resets [_pile] by clearing existing cards, adding given [cards], and flipping last card
      *  face up.
      */
-    fun reset(cards: List<Card>) {
+    override fun reset(cards: List<Card>) {
         _faceUpCards = 0
         _pile.apply {
             clear()
@@ -97,7 +100,7 @@ class Tableau {
     /**
      *  Used to return [_pile] to a previous state of given [cards].
      */
-    fun undo(cards: List<Card>) {
+    override fun undo(cards: List<Card>) {
         _pile.clear()
         when (cards.size) {
             0 -> return // no cards to add

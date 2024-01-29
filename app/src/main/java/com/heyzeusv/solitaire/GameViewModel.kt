@@ -152,7 +152,7 @@ class GameViewModel : ViewModel() {
         if (tPile.isNotEmpty()) {
             // if card clicked is face up and move is possible then remove cards from tableau pile
             if (tPile[cardIndex].faceUp && legalMove(tPile.subList(cardIndex, tPile.size))) {
-                tableauPile.removeCards(cardIndex)
+                tableauPile.remove(cardIndex)
                 appendHistory()
             }
         }
@@ -182,7 +182,7 @@ class GameViewModel : ViewModel() {
             }
         }
         _tableau.forEach {
-            if (it.addCards(cards)) {
+            if (it.add(cards)) {
                 _moves.value++
                 return true
             }
