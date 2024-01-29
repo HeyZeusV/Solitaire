@@ -97,7 +97,7 @@ class GameViewModel : ViewModel() {
             tableau.reset(cards)
         }
         // clear the waste pile
-        _waste.resetCards()
+        _waste.reset()
         _historyList.clear()
         recordHistory()
         _gameWon.value = false
@@ -107,13 +107,13 @@ class GameViewModel : ViewModel() {
     fun onStockClick() {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
-            _waste.addCard(_stock.remove().apply { faceUp = true })
+            _waste.add(listOf(_stock.remove()))
             _moves.value++
             appendHistory()
         } else if (_waste.pile.isNotEmpty()) {
             // add back all cards from waste to stock
             _stock.add(_waste.pile.toList())
-            _waste.resetCards()
+            _waste.reset()
             _moves.value++
             appendHistory()
         }
@@ -125,7 +125,7 @@ class GameViewModel : ViewModel() {
             if (it.pile.isNotEmpty()) {
                 // if any move is possible then remove card from waste
                 if (legalMove(listOf(it.pile.last()))) {
-                    it.removeCard()
+                    it.remove()
                     appendHistory()
                 }
             }

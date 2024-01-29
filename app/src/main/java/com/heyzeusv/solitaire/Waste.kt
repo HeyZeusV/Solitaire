@@ -2,30 +2,33 @@ package com.heyzeusv.solitaire
 
 import androidx.compose.runtime.mutableStateListOf
 
-class Waste {
+class Waste : Pile {
 
     private val _pile: MutableList<Card> = mutableStateListOf()
-    val pile: List<Card> get() = _pile
+    override val pile: List<Card> get() = _pile
 
     /**
-     *  Adds given [card] to [Waste] pile.
+     *  Adds given [cards] to [_pile].
      */
-    fun addCard(card: Card) { _pile.add(card) }
+    override fun add(cards: List<Card>): Boolean {
+        cards.forEach { it.faceUp = true }
+        return _pile.addAll(cards)
+    }
 
     /**
-     *  Removes the last card of the pile which would refer to the top showing card.
+     *  Removes the last [Card] in [_pile] which would refer to the top showing card and return it.
      */
-    fun removeCard(): Card = _pile.removeLast()
+    override fun remove(tappedIndex: Int): Card = _pile.removeLast()
 
     /**
-     *  Removes all card from the pile.
+     *  Reset [_pile] using given [cards].
      */
-    fun resetCards() = _pile.clear()
+    override fun reset(cards: List<Card>) = _pile.clear()
 
     /**
      *  Used to return [_pile] to a previous state of given [cards].
      */
-    fun undo(cards: List<Card>) {
+    override fun undo(cards: List<Card>) {
         _pile.clear()
         if (cards.isEmpty()) return
         // makes sure all cards are face up

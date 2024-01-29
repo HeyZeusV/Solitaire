@@ -9,9 +9,18 @@ class WasteTest {
     private val tc = TestCards
 
     @Test
+    fun wasteAdd() {
+        val expectedPile = listOf(tc.card0C.copy(faceUp = true), tc.card0H.copy(faceUp = true), tc.card11C.copy(faceUp = true))
+
+        waste.add(listOf(tc.card0C, tc.card0H, tc.card11C))
+
+        assertEquals(expectedPile, waste.pile)
+    }
+
+    @Test
     fun wasteUndo() {
         val expectedPile = listOf(tc.card0C.copy(faceUp = true), tc.card0H.copy(faceUp = true), tc.card11C.copy(faceUp = true))
-        waste.addCard(tc.card0C)
+        waste.add(listOf(tc.card0C))
 
         waste.undo(listOf(tc.card0C, tc.card0H, tc.card11C))
 
@@ -20,7 +29,7 @@ class WasteTest {
     @Test
     fun wasteUndoEmptyCards() {
         val expectedPile = emptyList<Card>()
-        waste.addCard(tc.card0C)
+        waste.add(listOf(tc.card0C))
 
         waste.undo(emptyList())
 
