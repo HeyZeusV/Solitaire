@@ -32,7 +32,7 @@ val cardsMap = mapOf(0 to "A", 1 to "2", 2 to "3" , 3 to "4", 4 to "5", 5 to "6"
  *  corresponds to the values 1 to 10, A, J, Q, K. [suit] is one of 4 possible values from the
  *  [Suits] enum class. [faceUp] determines if the user can see the card.
  */
-data class Card(val value: Int, val suit: Suits, var faceUp: Boolean = false) {
+data class Card(val value: Int, val suit: Suits, val faceUp: Boolean = false) {
 
     override fun toString(): String = if (faceUp) "${cardsMap[value]} of ${suit.suit}" else "???"
 }

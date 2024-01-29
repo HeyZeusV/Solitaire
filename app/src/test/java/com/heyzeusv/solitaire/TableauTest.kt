@@ -11,7 +11,7 @@ class TableauTest {
     fun tableauAddCards() {
         val expectedKingPile = listOf(tc.card12D, tc.card11C, tc.card10H, tc.card9S)
         val expectedEmptyPile = emptyList<Card>()
-        val expectedMixedPile = listOf(tc.card0H, tc.card11C, tc.card5D, tc.card4C, tc.card3H)
+        val expectedMixedPile = listOf(tc.card0H, tc.card11C, tc.card5D.copy(faceUp = true), tc.card4C, tc.card3H)
 
         // add solo King card then 3 that should follow
         val emptyKingTableau = Tableau()
@@ -29,19 +29,19 @@ class TableauTest {
         // reset is used to fill Tableau with existing cards
         mixedTableau.reset(listOf(tc.card0H, tc.card11C, tc.card5D))
         mixedTableau.add(listOf(tc.card4C, tc.card3H))
-        assertEquals(expectedMixedPile, mixedTableau.pile)
+        assertEquals(expectedMixedPile, mixedTableau.pile.toList())
     }
 
     @Test
     fun tableauRemoveCards() {
         val tableau = Tableau()
-        val expectedPile = listOf(tc.card0H, tc.card11C, tc.card5D)
+        val expectedPile = listOf(tc.card0H, tc.card11C, tc.card5D.copy(faceUp = true))
         val expectedFaceUpCards = 0
         tableau.reset(listOf(tc.card0H, tc.card11C, tc.card5D, tc.card4C, tc.card3H))
 
         tableau.remove(3)
 
-        assertEquals(expectedPile, tableau.pile)
+        assertEquals(expectedPile, tableau.pile.toList())
         assertEquals(expectedFaceUpCards, tableau.faceUpCards)
     }
 

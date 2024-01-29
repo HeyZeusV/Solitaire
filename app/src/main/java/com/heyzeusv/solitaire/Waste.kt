@@ -11,8 +11,7 @@ class Waste : Pile {
      *  Adds given [cards] to [_pile].
      */
     override fun add(cards: List<Card>): Boolean {
-        cards.forEach { it.faceUp = true }
-        return _pile.addAll(cards)
+        return _pile.addAll(cards.map { it.copy(faceUp = true) })
     }
 
     /**
@@ -32,7 +31,7 @@ class Waste : Pile {
         _pile.clear()
         if (cards.isEmpty()) return
         // makes sure all cards are face up
-        _pile.addAll(cards.onEach { it.faceUp = true })
+        _pile.addAll(cards.map { it.copy(faceUp = true) })
     }
 
     override fun toString(): String = pile.toList().toString()

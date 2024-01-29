@@ -20,7 +20,7 @@ class GameViewModelTest {
         gameVM.foundation.forEach { actualDeck.addAll(it.pile) }
         gameVM.tableau.forEach { actualDeck.addAll(it.pile) }
         // make sure that are face down
-        actualDeck = actualDeck.onEach { it.faceUp = false }
+        actualDeck = actualDeck.map { it.copy(faceUp = false) }.toMutableList()
         // sort
         actualDeck = actualDeck.sortedWith(compareBy({ it.suit }, { it.value })).toMutableList()
 

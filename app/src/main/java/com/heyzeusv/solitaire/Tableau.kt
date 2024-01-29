@@ -76,7 +76,7 @@ class Tableau : Pile {
         _pile.subList(tappedIndex, _pile.size).clear()
         // flip the last card up
         if (_pile.isNotEmpty()) {
-            _pile.last().faceUp = true
+            _pile[_pile.size - 1] = _pile.last().copy(faceUp = true)
             _faceUpCards++
         }
         // return value isn't used
@@ -92,7 +92,7 @@ class Tableau : Pile {
         _pile.apply {
             clear()
             addAll(cards)
-            last().faceUp = true
+            this[this.size - 1] = this.last().copy(faceUp = true)
         }
         _faceUpCards++
     }
@@ -109,8 +109,9 @@ class Tableau : Pile {
                 _faceUpCards = 1
             }
             else -> {
+                val mutableList = cards.toMutableList()
                 for (i in 0..(cards.size - 1 - _faceUpCards)) {
-                    cards[i].faceUp = false
+                    mutableList[i] = mutableList[i].copy(faceUp = false)
                 }
                 _pile.addAll(cards)
             }

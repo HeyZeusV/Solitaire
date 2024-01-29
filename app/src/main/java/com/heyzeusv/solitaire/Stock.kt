@@ -23,8 +23,7 @@ class Stock : Pile {
      *  Add given [cards] to [_pile].
      */
     override fun add(cards: List<Card>): Boolean {
-        cards.forEach { it.faceUp = false }
-        return _pile.addAll(cards)
+        return _pile.addAll(cards.map { it.copy(faceUp = false) })
     }
 
     /**
@@ -47,7 +46,9 @@ class Stock : Pile {
         _pile.clear()
         if (cards.isEmpty()) return
         // only last card is shown to user, this makes sure it is not visible
-        _pile.addAll(cards.apply { last().faceUp = false })
+        val mutableCards = cards.toMutableList()
+        mutableCards[mutableCards.size - 1] = mutableCards.last().copy(faceUp = false)
+        _pile.addAll(mutableCards)
     }
 
     override fun toString(): String = pile.toList().toString()
