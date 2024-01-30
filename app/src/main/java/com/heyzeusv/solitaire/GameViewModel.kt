@@ -195,14 +195,14 @@ class GameViewModel : ViewModel() {
      *  then immediately dispose of the [Snapshot] to avoid memory leaks.
      */
     private fun recordHistory() {
-        val currentSnapshot = Snapshot.takeSnapshot()
+        val currentSnapshot = Snapshot.takeMutableSnapshot()
         currentSnapshot.enter {
             currentStep = History(
                 score = _score.value,
-                stock = _stock.pile.toList(),
-                waste = _waste.pile.toList(),
-                foundation = _foundation.map { it.pile.toList() },
-                tableau = _tableau.map { it.pile.toList() }
+                stock = Stock(_stock.pile),
+                waste = Waste(_waste.pile),
+                foundation = _foundation.map { Foundation(it.suit, it.pile) },
+                tableau = _tableau.map { Tableau(it.pile) }
             )
         }
         currentSnapshot.dispose()
@@ -226,14 +226,10 @@ class GameViewModel : ViewModel() {
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
             _score.value = step.score
-            _stock.undo(step.stock)
-            _waste.undo(step.waste)
-            _foundation.forEachIndexed { i, foundation ->
-                foundation.undo(step.foundation[i])
-            }
-            _tableau.forEachIndexed { i, tableau ->
-                tableau.undo(step.tableau[i])
-            }
+            _stock.undo(step.stock.pile)
+            _waste.undo(step.waste.pile)
+            _foundation.forEachIndexed { i, foundation -> foundation.undo(step.foundation[i].pile) }
+            _tableau.forEachIndexed { i, tableau -> tableau.undo(step.tableau[i].pile) }
             // called to ensure currentStep stays updated.
             recordHistory()
             // counts as a move still

@@ -1,11 +1,18 @@
 package com.heyzeusv.solitaire
 
-interface Pile {
+import androidx.compose.runtime.mutableStateListOf
 
-    val pile: List<Card>
+abstract class Pile(initialPile: List<Card> = emptyList()) {
 
-    fun add(cards: List<Card>): Boolean
-    fun remove(tappedIndex: Int = 1): Card
-    fun reset(cards: List<Card> = emptyList())
-    fun undo(cards: List<Card>)
+    protected val mPile: MutableList<Card> = mutableStateListOf()
+    val pile: List<Card> get() = mPile
+
+    abstract fun add(cards: List<Card>): Boolean
+    abstract fun remove(tappedIndex: Int = 1): Card
+    abstract fun reset(cards: List<Card> = emptyList())
+    abstract fun undo(cards: List<Card>)
+
+    init {
+        mPile.addAll(initialPile)
+    }
 }

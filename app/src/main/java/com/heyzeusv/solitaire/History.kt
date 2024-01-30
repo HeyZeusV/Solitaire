@@ -6,8 +6,8 @@ package com.heyzeusv.solitaire
  */
 data class History(
     val score: Int,
-    val stock: List<Card>,
-    val waste: List<Card>,
-    val foundation: List<List<Card>>,
-    val tableau: List<List<Card>>
+    val stock: Stock,
+    val waste: Waste,
+    val foundation: List<Foundation>,
+    val tableau: List<Tableau>
 )

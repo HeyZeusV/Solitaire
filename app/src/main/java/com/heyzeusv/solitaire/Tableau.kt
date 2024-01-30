@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.snapshots.SnapshotStateList
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -20,18 +18,15 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.util.SolitairePreview
 
 /**
- *  In Solitaire, Tableau refers to the 7 piles that start with 1 face up card per [_pile] and the
+ *  In Solitaire, Tableau refers to the 7 piles that start with 1 face up card per [mPile] and the
  *  rest face down. Users can move cards between [Tableau] piles or move them to a [Foundation] pile
  *  in order to reveal more cards.
  */
-class Tableau : Pile {
-
-    private val _pile: SnapshotStateList<Card> = mutableStateListOf()
-    override val pile: List<Card> get() = _pile
+class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
     /**
-     *  Attempts to add given [cards] to [_pile] depending on [cards] first card value and suit and
-     *  [_pile]'s last card value and suit. Returns true if added.
+     *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
+     *  [mPile]'s last card value and suit. Returns true if added.
      */
     override fun add(cards: List<Card>): Boolean {
         if (cards.isEmpty()) return false
@@ -42,37 +37,37 @@ class Tableau : Pile {
             // add cards if last card of pile is 1 more than first card of new cards
             // and if they are different colors
             if (cFirst.value == pLast.value - 1 && cFirst.suit.color != pLast.suit.color) {
-                _pile.addAll(cards)
+                mPile.addAll(cards)
                 return true
             }
         // add cards if pile is empty and first card of new cards is the highest value
         } else if (cFirst.value == 12) {
-            _pile.addAll(cards)
+            mPile.addAll(cards)
             return true
         }
         return false
     }
 
     /**
-     *  Removes all cards from [_pile] started from [tappedIndex] to the end of [_pile] and flips
+     *  Removes all cards from [mPile] started from [tappedIndex] to the end of [mPile] and flips
      *  the last card if any.
      */
     override fun remove(tappedIndex: Int): Card {
-        _pile.subList(tappedIndex, _pile.size).clear()
+        mPile.subList(tappedIndex, mPile.size).clear()
         // flip the last card up
-        if (_pile.isNotEmpty()) {
-            _pile[_pile.size - 1] = _pile.last().copy(faceUp = true)
+        if (mPile.isNotEmpty()) {
+            mPile[mPile.size - 1] = mPile.last().copy(faceUp = true)
         }
         // return value isn't used
         return Card(0, Suits.SPADES, false)
     }
 
     /**
-     *  Resets [_pile] by clearing existing cards, adding given [cards], and flipping last card
+     *  Resets [mPile] by clearing existing cards, adding given [cards], and flipping last card
      *  face up.
      */
     override fun reset(cards: List<Card>) {
-        _pile.apply {
+        mPile.apply {
             clear()
             addAll(cards)
             this[this.size - 1] = this.last().copy(faceUp = true)
@@ -80,12 +75,12 @@ class Tableau : Pile {
     }
 
     /**
-     *  Used to return [_pile] to a previous state of given [cards].
+     *  Used to return [mPile] to a previous state of given [cards].
      */
     override fun undo(cards: List<Card>) {
-        _pile.clear()
+        mPile.clear()
         if (cards.isEmpty()) return
-        _pile.addAll(cards)
+        mPile.addAll(cards)
     }
 
     override fun toString(): String = pile.toList().toString()

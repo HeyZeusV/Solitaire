@@ -1,15 +1,10 @@
 package com.heyzeusv.solitaire
 
-import androidx.compose.runtime.mutableStateListOf
-
 /**
  *  In Solitaire, Foundation refers to the pile where players have to build up a specific [suit]
  *  from Ace to King.
  */
-class Foundation(val suit: Suits) : Pile {
-
-    private val _pile = mutableStateListOf<Card>()
-    override val pile: List<Card> get() = _pile
+class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
     /**
      *  Adds first card of given [cards] if it matches this [Foundation]'s [suit] and its value
@@ -19,29 +14,29 @@ class Foundation(val suit: Suits) : Pile {
         if (cards.isEmpty()) return false
         val card = cards[0]
         if (card.suit == suit && card.value == pile.size) {
-            _pile.add(card)
+            mPile.add(card)
             return true
         }
         return false
     }
 
     /**
-     *  Removes the last [Card] in [_pile] which would refer to the top showing card and return it.
+     *  Removes the last [Card] in [mPile] which would refer to the top showing card and return it.
      */
-    override fun remove(tappedIndex: Int): Card = _pile.removeLast()
+    override fun remove(tappedIndex: Int): Card = mPile.removeLast()
 
     /**
-     *  Reset [_pile] using given [cards].
+     *  Reset [mPile] using given [cards].
      */
-    override fun reset(cards: List<Card>) = _pile.clear()
+    override fun reset(cards: List<Card>) = mPile.clear()
 
     /**
-     *  Used to return [_pile] to a previous state of given [cards].
+     *  Used to return [mPile] to a previous state of given [cards].
      */
     override fun undo(cards: List<Card>) {
-        _pile.clear()
+        mPile.clear()
         if (cards.isEmpty()) return
-        _pile.addAll(cards)
+        mPile.addAll(cards)
     }
 
     override fun toString(): String = "${suit.suit}: ${pile.toList()}"
