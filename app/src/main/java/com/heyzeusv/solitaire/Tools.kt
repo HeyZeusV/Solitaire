@@ -30,14 +30,16 @@ import com.heyzeusv.solitaire.ResetOptions.RESTART
 import com.heyzeusv.solitaire.util.SolitairePreview
 
 /**
- *  Composable that displays several buttons for the user. Pressing on Reset button opens up an
- *  AlertDialog which gives user 3 options, restart current game, reset with
- *  a brand new shuffle, or continue current game; first two options call [resetOnConfirmClick].
- *  Undo button when pressed calls [undoOnClick], which returns the game back 1 legal move.
+ *  Composable that displays several buttons for the user. Pressing on Menu button, [menuOnClick],
+ *  displays a Composable where user can view games and stats. Pressing on Reset button opens up an
+ *  AlertDialog which gives user 3 options, restart current game, reset with a brand new shuffle, or
+ *  continue current game; first two options call [resetOnConfirmClick]. Undo button when pressed
+ *  calls [undoOnClick], which returns the game back 1 legal move.
  */
 @Composable
 fun SolitaireTools(
     modifier: Modifier = Modifier,
+    menuOnClick: () -> Unit,
     resetOnConfirmClick: (ResetOptions) -> Unit,
     historyListSize: Int,
     undoOnClick: () -> Unit
@@ -78,13 +80,13 @@ fun SolitaireTools(
         verticalAlignment = Alignment.Top
     ) {
         val rowModifier = Modifier.weight(1.0f)
-        // TODO: Settings or Stats
+        // Menu Button
         SolitaireToolsButton(
             modifier = rowModifier,
-            onClick = { },
-            iconId = R.drawable.button_undo,
-            iconContentDes = "Open stats screen.",
-            buttonText = "Stats"
+            onClick = menuOnClick,
+            iconId = R.drawable.button_menu,
+            iconContentDes = "Open Menu.",
+            buttonText = "Menu"
         )
         // Reset Button
         SolitaireToolsButton(
@@ -149,6 +151,7 @@ fun SolitaireToolsButton(
 fun SolitaireToolsPreview() {
     SolitairePreview {
         SolitaireTools(
+            menuOnClick = { },
             resetOnConfirmClick = { },
             historyListSize = 0,
             undoOnClick = { }

@@ -11,3 +11,4 @@ val PurpleGrey40 = Color(0xFF625b71)
 val Pink40 = Color(0xFF7D5260)
 
 val PreviewBG = Color(0x77000000)
+val BackgroundOverlay = Color(0x99000000) // Background Overlay
