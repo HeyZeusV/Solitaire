@@ -45,7 +45,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyzeusv.solitaire.ui.theme.BackgroundOverlay
 import com.heyzeusv.solitaire.ui.theme.Purple40
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
-import com.heyzeusv.solitaire.util.formatTime
+import com.heyzeusv.solitaire.util.formatTimeDisplay
+import com.heyzeusv.solitaire.util.formatTimeStats
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -97,6 +98,7 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
 
     val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
+    val stats by menuVM.stats.collectAsState()
 
     // start timer once user makes a move
     if (moves == 1 && gameVM.jobIsCancelled()) {
@@ -106,6 +108,8 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
     if (gameWon) {
         // pause timer once user reaches max score
         gameVM.pauseTimer()
+        val lgs = LastGameStats(true, moves, timer, score)
+        menuVM.updateStats(lgs)
         AlertDialog(
             onDismissRequest = { },
             confirmButton = {
@@ -115,12 +119,12 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
             },
             title = { Text(text = "You Won!") },
             text = {
-                val totalScore = timer + score
-                val stats = """Moves: $moves
-                    |Time: ${timer.formatTime()}
+                val completedStats = """Moves: $moves
+                    |Time: ${timer.formatTimeDisplay()}
                     |Score: $score
-                    |Total Score (Time + Score): $totalScore""".trimMargin()
-                Text(text = "Congratulations! Here are your stats...\n$stats") }
+                    |Total Score: ${lgs.totalScore}
+                    |┗ Moves + Time + Score (Lower is better)""".trimMargin()
+                Text(text = "Congratulations! Here are your stats...\n$completedStats") }
         )
     }
     Column(
@@ -197,16 +201,16 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
                     textDecoration = TextDecoration.Underline,
                     style = MaterialTheme.typography.headlineMedium
                 )
-                Text(text = "Games Played: ")
-                Text(text = "Games Won: ")
-                Text(text = "Lowest Moves in Win: ")
-                Text(text = "Average Moves: ")
-                Text(text = "Total Moves: ")
-                Text(text = "Fastest Win: ")
-                Text(text = "Average Time: ")
-                Text(text = "Total Time Played: ")
-                Text(text = "Average Score: ")
-                Text(text = "Best Total Score: ")
+                Text(text = "Games Played: ${stats.gamesPlayed}")
+                Text(text = "Games Won: ${stats.gamesWon}")
+                Text(text = "Lowest Moves in Win: ${stats.lowestMoves}")
+                Text(text = "Average Moves: ${stats.averageMoves}")
+                Text(text = "Total Moves: ${stats.totalMoves}")
+                Text(text = "Fastest Win: ${stats.fastestWin.formatTimeStats()}")
+                Text(text = "Average Time: ${stats.averageTime.formatTimeStats()}")
+                Text(text = "Total Time Played: ${stats.totalTime.formatTimeStats()}")
+                Text(text = "Average Score: ${stats.averageScore}")
+                Text(text = "Best Total Score: ${stats.bestTotalScore}")
                 Text(
                     text = "\u2517 Moves + Time + Score (Lower is better)",
                     style = MaterialTheme.typography.bodySmall

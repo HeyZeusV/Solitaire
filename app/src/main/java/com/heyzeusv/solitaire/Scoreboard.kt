@@ -13,7 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.autosizetext.AutoSizeText
-import com.heyzeusv.solitaire.util.formatTime
+import com.heyzeusv.solitaire.util.formatTimeDisplay
 
 /**
  *  Composable that displays current game stats to the user. Displays the number of [moves] the user
@@ -41,7 +41,7 @@ fun SolitaireScoreboard(
             alignment = Alignment.Center
         )
         AutoSizeText(
-            text = "Time\n${timer.formatTime()}",
+            text = "Time\n${timer.formatTimeDisplay()}",
             modifier = Modifier.weight(1f),
             color = Color.White,
             alignment = Alignment.Center

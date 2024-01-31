@@ -6,14 +6,14 @@ package com.heyzeusv.solitaire
 data class Stats(
     val gamesPlayed: Int = 0,
     val gamesWon: Int = 0,
-    val lowestMoves: Int = 0,
+    val lowestMoves: Int = 999999,
     val averageMoves: Int = 0,
     val totalMoves: Int = 0,
-    val fastestWin: Long = 0L,
+    val fastestWin: Long = 359999L,
     val averageTime: Long = 0L,
     val totalTime: Long = 0L,
     val averageScore: Int = 0,
-    val bestTotalScore: Long = 0L
+    val bestTotalScore: Long = 999999L
 )
 
 /**

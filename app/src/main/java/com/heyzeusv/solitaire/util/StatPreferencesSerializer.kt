@@ -9,7 +9,11 @@ import java.io.OutputStream
 import javax.inject.Inject
 
 class StatPreferencesSerializer @Inject constructor() : Serializer<StatPreferences> {
-    override val defaultValue: StatPreferences = StatPreferences.getDefaultInstance()
+    override val defaultValue: StatPreferences = StatPreferences.getDefaultInstance().toBuilder()
+        .setKtoLowestMoves(9999)
+        .setKtoFastestWin(359999L)
+        .setKtoBestTotalScore(99999L)
+        .build()
 
     override suspend fun readFrom(input: InputStream): StatPreferences {
         try {
