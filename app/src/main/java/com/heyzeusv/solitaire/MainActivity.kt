@@ -45,7 +45,9 @@ import com.heyzeusv.solitaire.ui.theme.BackgroundOverlay
 import com.heyzeusv.solitaire.ui.theme.Purple40
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.formatTime
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
     private val gameVM: GameViewModel by viewModels()
