@@ -14,5 +14,5 @@ message StatPreferences {
   int64 kto_average_time = 7;
   int64 kto_total_time = 8;
   int32 kto_average_score = 9;
-  int32 kto_best_total_score = 10;
+  int64 kto_best_total_score = 10;
 }

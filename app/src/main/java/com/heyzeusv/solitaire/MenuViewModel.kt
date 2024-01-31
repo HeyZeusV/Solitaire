@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
@@ -23,14 +24,52 @@ class MenuViewModel @Inject constructor(
     val selectedGame: StateFlow<Games> get() = _selectedGame
     fun updateSelectedGame(newValue: Games) { _selectedGame.value = newValue }
 
-    // TODO: Create class to hold all stats together
-    val stats: StateFlow<Long> = statManager.statData
+    val stats: StateFlow<Stats> = statManager.statData
         .map {
-            it.ktoFastestWin
+            Stats(
+                gamesPlayed = it.ktoGamesPlayed,
+                gamesWon = it.ktoGamesWon,
+                lowestMoves = it.ktoLowestMoves,
+                averageMoves = it.ktoAverageMoves,
+                totalMoves = it.ktoTotalMoves,
+                fastestWin = it.ktoFastestWin,
+                averageTime = it.ktoAverageTime,
+                totalTime = it.ktoTotalTime,
+                averageScore = it.ktoAverageScore,
+                bestTotalScore = it.ktoBestTotalScore
+            )
         }.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
-            initialValue = 0L
+            initialValue = Stats()
         )
-    suspend fun updateStats() { statManager.updateStats() }
+
+    fun updateStats(lgs: LastGameStats) {
+        viewModelScope.launch {
+            var updatedStats: Stats
+            stats.value.run {
+                updatedStats = copy(
+                    gamesPlayed = gamesPlayed.plus(1),
+                    gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
+                    lowestMoves = lowestMoves.coerceAtMost(lgs.moves),
+                    averageMoves = averageInt(lgs.moves, totalMoves, gamesPlayed),
+                    totalMoves = totalMoves.plus(lgs.moves),
+                    fastestWin = fastestWin.coerceAtMost(lgs.time),
+                    averageTime = averageLong(lgs.time, totalTime, gamesPlayed),
+                    totalTime = totalTime.plus(lgs.time),
+                    averageScore = averageInt(lgs.score, (averageScore * gamesPlayed), gamesPlayed),
+                    bestTotalScore = bestTotalScore.coerceAtMost(lgs.totalScore)
+                )
+            }
+            statManager.updateStats(updatedStats)
+        }
+    }
+
+    private fun averageLong(newStat: Long, previousTotal: Long, previousGamesPlayed: Int): Long {
+        return (newStat + previousTotal) / (previousGamesPlayed + 1)
+    }
+
+    private fun averageInt(newStat: Int, previousTotal: Int, previousGamesPlayed: Int): Int {
+        return (newStat + previousTotal) / (previousGamesPlayed + 1)
+    }
 }

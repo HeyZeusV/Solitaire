@@ -28,10 +28,19 @@ class StatManager @Inject constructor(
     /**
      *  Stats can all be updated together when a game is ended by any means.
      */
-    suspend fun updateStats() {
+    suspend fun updateStats(stats: Stats) {
         statPreferences.updateData {
             it.toBuilder().apply {
-                // TODO: update values
+                ktoGamesPlayed = stats.gamesPlayed
+                ktoGamesWon = stats.gamesWon
+                ktoLowestMoves = stats.lowestMoves
+                ktoAverageMoves = stats.averageMoves
+                ktoTotalMoves = stats.totalMoves
+                ktoFastestWin = stats.fastestWin
+                ktoAverageTime = stats.averageTime
+                ktoTotalTime = stats.totalTime
+                ktoAverageScore = stats.averageScore
+                ktoBestTotalScore = stats.bestTotalScore
             }.build()
         }
     }
