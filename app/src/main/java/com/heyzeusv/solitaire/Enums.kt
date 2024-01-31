@@ -27,3 +27,7 @@ enum class ResetOptions {
     RESTART,
     NEW
 }
+
+enum class Games(val gameName: String) {
+    KLONDIKETURNONE("Klondike (Turn One)")
+}

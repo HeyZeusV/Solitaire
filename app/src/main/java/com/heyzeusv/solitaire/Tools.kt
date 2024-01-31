@@ -39,7 +39,7 @@ import com.heyzeusv.solitaire.util.SolitairePreview
 @Composable
 fun SolitaireTools(
     modifier: Modifier = Modifier,
-    menuOnClick: () -> Unit,
+    menuOnClick: (Boolean) -> Unit,
     resetOnConfirmClick: (ResetOptions) -> Unit,
     historyListSize: Int,
     undoOnClick: () -> Unit
@@ -83,7 +83,7 @@ fun SolitaireTools(
         // Menu Button
         SolitaireToolsButton(
             modifier = rowModifier,
-            onClick = menuOnClick,
+            onClick = { menuOnClick(true) },
             iconId = R.drawable.button_menu,
             iconContentDes = "Open Menu.",
             buttonText = "Menu"

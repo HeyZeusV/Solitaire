@@ -6,13 +6,24 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilterChip
+import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,9 +38,11 @@ import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyzeusv.solitaire.ui.theme.BackgroundOverlay
+import com.heyzeusv.solitaire.ui.theme.Purple40
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.formatTime
 
@@ -58,6 +71,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun SolitaireApp(
     gameVM: GameViewModel = viewModel(),
@@ -79,6 +93,7 @@ fun SolitaireApp(
     val gameWon by gameVM.gameWon.collectAsState()
 
     val displayMenu by menuVM.displayMenu.collectAsState()
+    val selectedGame by menuVM.selectedGame.collectAsState()
 
     // start timer once user makes a move
     if (moves == 1 && gameVM.jobIsCancelled()) {
@@ -122,7 +137,7 @@ fun SolitaireApp(
         )
         SolitaireTools(
             modifier = Modifier.weight(0.10f),
-            menuOnClick = menuVM::menuOnClick,
+            menuOnClick = menuVM::updateDisplayMenu,
             resetOnConfirmClick = gameVM::reset,
             historyListSize = historyList.size,
             undoOnClick = gameVM::undo
@@ -132,22 +147,67 @@ fun SolitaireApp(
         Surface(
             modifier = Modifier
                 .fillMaxSize()
-                .clickable { menuVM.closeMenu() },
+                .clickable { menuVM.updateDisplayMenu(false) },
             color = BackgroundOverlay
         ) {}
         Card(
             modifier = Modifier
+                .wrapContentHeight()
                 .fillMaxWidth()
-                .fillMaxHeight(0.90f)
                 .padding(all = 32.dp),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(all = 24.dp)
+                modifier = Modifier.padding(all = 24.dp),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
-                Text(text = "Game")
-                // TODO: FlowRow, Enum class of games (one turn/three turn)
+                Text(
+                    text = "Games",
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Games.entries.forEach {
+                        FilterChip(
+                            selected = it == selectedGame,
+                            onClick = { menuVM.updateSelectedGame(it) },
+                            label = { Text(text = it.gameName) },
+                            leadingIcon = {
+                                if (it == selectedGame) {
+                                    Icon(
+                                        imageVector = Icons.Default.Done,
+                                        contentDescription = "${it.gameName} is selected",
+                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                    )
+                                }
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Purple40
+                            )
+                        )
+                    }
+                }
+                Text(
+                    text = "Stats",
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(text = "Games Played: ")
+                Text(text = "Games Won: ")
+                Text(text = "Lowest Moves in Win: ")
+                Text(text = "Average Moves: ")
+                Text(text = "Total Moves: ")
+                Text(text = "Fastest Win: ")
+                Text(text = "Average Time: ")
+                Text(text = "Total Time Played: ")
+                Text(text = "Average Score: ")
+                Text(text = "Best Total Score: ")
+                Text(
+                    text = "\u2517 Moves + Time + Score (Lower is better)",
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
         }
     }
