@@ -40,6 +40,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyzeusv.solitaire.ui.theme.BackgroundOverlay
 import com.heyzeusv.solitaire.ui.theme.Purple40
@@ -75,10 +76,8 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun SolitaireApp(
-    gameVM: GameViewModel = viewModel(),
-    menuVM: MenuViewModel = viewModel()
-) {
+fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
+
     // background pattern that repeats
     val pattern = ImageBitmap.imageResource(R.drawable.pattern_noise)
     val brush = remember(pattern) {
@@ -93,6 +92,8 @@ fun SolitaireApp(
     val historyList by remember { mutableStateOf(gameVM.historyList) }
 
     val gameWon by gameVM.gameWon.collectAsState()
+
+    val menuVM = hiltViewModel<MenuViewModel>()
 
     val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()

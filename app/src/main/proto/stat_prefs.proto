@@ -4,5 +4,15 @@ option java_package = "com.heyzeusv.solitaire";
 option java_multiple_files = true;
 
 message StatPreferences {
-  bool games_played = 1;
+  // Klondike (Turn One)
+  int32 kto_games_played = 1;
+  int32 kto_games_won = 2;
+  int32 kto_lowest_moves = 3;
+  int32 kto_average_moves = 4;
+  int32 kto_total_moves = 5;
+  int64 kto_fastest_win = 6;
+  int64 kto_average_time = 7;
+  int64 kto_total_time = 8;
+  int32 kto_average_score = 9;
+  int32 kto_best_total_score = 10;
 }
