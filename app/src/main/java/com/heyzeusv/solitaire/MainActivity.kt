@@ -146,6 +146,7 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
             modifier = Modifier.weight(0.10f),
             menuOnClick = menuVM::updateDisplayMenu,
             resetOnConfirmClick = gameVM::reset,
+            updateStats = { menuVM.updateStats(LastGameStats(false, moves, timer, score)) },
             historyListSize = historyList.size,
             undoOnClick = gameVM::undo
         )

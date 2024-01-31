@@ -51,14 +51,14 @@ class MenuViewModel @Inject constructor(
                 updatedStats = copy(
                     gamesPlayed = gamesPlayed.plus(1),
                     gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
-                    lowestMoves = lowestMoves.coerceAtMost(lgs.moves),
+                    lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
                     averageMoves = averageInt(lgs.moves, totalMoves, gamesPlayed),
                     totalMoves = totalMoves.plus(lgs.moves),
-                    fastestWin = fastestWin.coerceAtMost(lgs.time),
+                    fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
                     averageTime = averageLong(lgs.time, totalTime, gamesPlayed),
                     totalTime = totalTime.plus(lgs.time),
                     averageScore = averageInt(lgs.score, (averageScore * gamesPlayed), gamesPlayed),
-                    bestTotalScore = bestTotalScore.coerceAtMost(lgs.totalScore)
+                    bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
                 )
             }
             statManager.updateStats(updatedStats)

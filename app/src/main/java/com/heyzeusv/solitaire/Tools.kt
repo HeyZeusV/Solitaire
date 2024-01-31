@@ -41,6 +41,7 @@ fun SolitaireTools(
     modifier: Modifier = Modifier,
     menuOnClick: (Boolean) -> Unit,
     resetOnConfirmClick: (ResetOptions) -> Unit,
+    updateStats: () -> Unit,
     historyListSize: Int,
     undoOnClick: () -> Unit
 ) {
@@ -53,10 +54,18 @@ fun SolitaireTools(
                 Row(
                     horizontalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    TextButton(onClick = { resetOnClick = false ; resetOnConfirmClick(RESTART) }) {
+                    TextButton(onClick = {
+                        resetOnClick = false
+                        updateStats()
+                        resetOnConfirmClick(RESTART)
+                    }) {
                         Text(text = "Restart")
                     }
-                    TextButton(onClick = { resetOnClick = false ; resetOnConfirmClick(NEW) }) {
+                    TextButton(onClick = {
+                        resetOnClick = false
+                        updateStats()
+                        resetOnConfirmClick(NEW)
+                    }) {
                         Text(text = "New")
                     }
                 }
@@ -68,7 +77,7 @@ fun SolitaireTools(
             },
             title = { Text(text = "Are you sure?") },
             text = {
-                Text(text = "You can choose to restart the current game, a game with a new shuffle, or continue with this game.")
+                Text(text = "You can choose to restart the current game, a game with a new shuffle, or continue with this game.\n\nThis game will count on your stats!!")
             }
         )
     }
@@ -153,6 +162,7 @@ fun SolitaireToolsPreview() {
         SolitaireTools(
             menuOnClick = { },
             resetOnConfirmClick = { },
+            updateStats = { },
             historyListSize = 0,
             undoOnClick = { }
         )
