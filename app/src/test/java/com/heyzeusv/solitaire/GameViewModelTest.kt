@@ -65,16 +65,17 @@ class GameViewModelTest {
 
     @Test
     fun gameVMOnStockClickStockNotEmpty() {
-        val gameVM = GameViewModel()
-        val expectedStock = gameVM.stock.pile.toMutableList().apply { removeFirst() }
-        val expectedWaste = listOf(gameVM.stock.pile[0].copy(faceUp = true))
-        val expectedMoves = 1
-        val expectedHistoryListSize = 1
+        val gameVM = GameViewModel(10L)
+        val expectedStock = gameVM.stock.pile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
+        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU, tc.card1DFU)
+        val expectedMoves = 3
+        val expectedHistoryListSize = 3
 
-        gameVM.onStockClick()
+        // draw 3 Cards
+        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
 
-        assertEquals(expectedStock, gameVM.stock.pile)
-        assertEquals(expectedWaste, gameVM.waste.pile)
+        assertEquals(expectedStock, gameVM.stock.pile.toList())
+        assertEquals(expectedWastePile, gameVM.waste.pile.toList())
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
     }
@@ -98,10 +99,70 @@ class GameViewModelTest {
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
     }
 
-    /**
-     * TODO: Implement way to manually insert certain shuffle in order to test other onClicks since
-     * TODO: they rely on shuffle to work and testing will be unreliable due to randomness.
-     */
+    @Test
+    fun gameVMOnWasteClick() {
+        val gameVM = GameViewModel(10L)
+        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU)
+        val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
+
+        // fill Waste with 3 Cards
+        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
+        // this should remove top card from Waste and move it to Tableau pile #4
+        gameVM.onWasteClick()
+
+        assertEquals(expectedWastePile, gameVM.waste.pile.toList())
+        assertEquals(expectedTableauPile, gameVM.tableau[3].pile.toList())
+    }
+
+    @Test
+    fun gameVMOnFoundationClick() {
+        val gameVM = GameViewModel(10L)
+        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU)
+        val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU, tc.card0CFU)
+        val expectedFoundationPile = listOf(tc.card0CFU)
+        val expectedScoreFirst = 1
+        val expectedScoreSecond = 0
+
+        // fill Waste with 3 Cards
+        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
+        // this should remove top card from Waste and move it to Tableau pile #4
+        gameVM.onWasteClick()
+        // draw another Card and move it to Foundation Clubs pile
+        gameVM.onStockClick() ; gameVM.onWasteClick()
+
+        assertEquals(expectedFoundationPile, gameVM.foundation[0].pile.toList())
+        assertEquals(expectedScoreFirst, gameVM.score.value)
+
+        // move card from Foundation Clubs pile to Tableau pile $4
+        gameVM.onFoundationClick(0)
+
+        assertEquals(expectedWastePile, gameVM.waste.pile.toList())
+        assertEquals(expectedTableauPile, gameVM.tableau[3].pile.toList())
+        assertEquals(expectedScoreSecond, gameVM.score.value)
+    }
+
+    @Test
+    fun gameVMOnTableauClick() {
+        val gameVM = GameViewModel(10L)
+        val expectedTableauPile2Before = listOf(tc.card10D, tc.card3DFU)
+        val expectedTableauPile2After = listOf(tc.card10D, tc.card3DFU, tc.card2CFU, tc.card1DFU)
+        val expectedTableauPile4Before = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
+        val expectedTableauPile4After = listOf(tc.card0H, tc.card9C, tc.card6SFU)
+
+        // fill Waste with 3 Cards
+        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
+        // this should remove top card from Waste and move it to Tableau pile #4
+        gameVM.onWasteClick()
+
+        assertEquals(expectedTableauPile2Before, gameVM.tableau[1].pile.toList())
+        assertEquals(expectedTableauPile4Before, gameVM.tableau[3].pile.toList())
+
+        // move 2 Cards from Tableau pile 4 to Tableau pile 2
+        gameVM.onTableauClick(3, 3)
+
+        assertEquals(expectedTableauPile2After, gameVM.tableau[1].pile.toList())
+        assertEquals(expectedTableauPile4After, gameVM.tableau[3].pile.toList())
+    }
 
     @Test
     fun gameVMUndo() {

@@ -17,17 +17,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import java.util.Random
 
 /**
  *  Data manager for game.
  *
+ *  [randomSeed] is used in testing in order to get the same shuffle.
+ *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
-class GameViewModel : ViewModel() {
+class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
 
     // holds all 52 playing Cards
     private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
+    private var shuffledDeck = emptyList<Card>()
 
     // increases whenever a card/s moves
     private val _moves = MutableStateFlow(0)
@@ -80,7 +84,6 @@ class GameViewModel : ViewModel() {
 
     fun jobIsCancelled(): Boolean = timerJob?.isCancelled ?: true
 
-    // goes through all card piles in the game and resets them for a new game
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
      *  new game depending on [resetOption].
@@ -91,10 +94,16 @@ class GameViewModel : ViewModel() {
         _moves.value = 0
         _score.value = 0
         when (resetOption) {
-            ResetOptions.RESTART -> _stock.reset(baseDeck)
+            ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
-                baseDeck.shuffle()
-                _stock.reset(baseDeck)
+                shuffledDeck = baseDeck.shuffled(
+                    if (randomSeed == null) {
+                        Random()
+                    } else {
+                        Random(randomSeed)
+                    }
+                )
+                _stock.reset(shuffledDeck)
             }
         }
         // empty foundations
@@ -266,7 +275,6 @@ class GameViewModel : ViewModel() {
     }
 
     init {
-        baseDeck.shuffle()
         reset(ResetOptions.NEW)
     }
 }
