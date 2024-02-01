@@ -36,10 +36,8 @@ class StatManager @Inject constructor(
                 ktoGamesPlayed = stats.gamesPlayed
                 ktoGamesWon = stats.gamesWon
                 ktoLowestMoves = stats.lowestMoves
-                ktoAverageMoves = stats.averageMoves
                 ktoTotalMoves = stats.totalMoves
                 ktoFastestWin = stats.fastestWin
-                ktoAverageTime = stats.averageTime
                 ktoTotalTime = stats.totalTime
                 ktoTotalScore = stats.totalScore
                 ktoBestTotalScore = stats.bestTotalScore

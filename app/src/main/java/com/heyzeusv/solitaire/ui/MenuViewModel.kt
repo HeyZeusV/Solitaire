@@ -39,10 +39,8 @@ class MenuViewModel @Inject constructor(
             gamesPlayed = it.ktoGamesPlayed,
             gamesWon = it.ktoGamesWon,
             lowestMoves = it.ktoLowestMoves,
-            averageMoves = it.ktoAverageMoves,
             totalMoves = it.ktoTotalMoves,
             fastestWin = it.ktoFastestWin,
-            averageTime = it.ktoAverageTime,
             totalTime = it.ktoTotalTime,
             totalScore = it.ktoTotalScore,
             bestTotalScore = it.ktoBestTotalScore
@@ -60,10 +58,8 @@ class MenuViewModel @Inject constructor(
                     gamesPlayed = gamesPlayed.plus(1),
                     gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
                     lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
-                    averageMoves = (lgs.moves + totalMoves) / (gamesPlayed + 1),
                     totalMoves = totalMoves.plus(lgs.moves),
                     fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
-                    averageTime = (lgs.time + totalMoves) / (gamesPlayed + 1),
                     totalTime = totalTime.plus(lgs.time),
                     totalScore = totalScore.plus(lgs.score),
                     bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
