@@ -1,6 +1,8 @@
 package com.heyzeusv.solitaire.ui
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.Orientation
+import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.Card
@@ -70,6 +73,8 @@ fun SolitaireMenu(
     updateSelectedGame: (Games) -> Unit,
     stats: Stats
 ) {
+    val scrollableState = rememberScrollState()
+
     if (displayMenu) {
         Surface(
             modifier = Modifier
@@ -84,7 +89,9 @@ fun SolitaireMenu(
                 .padding(all = 32.dp),
         ) {
             Column(
-                modifier = Modifier.padding(all = 24.dp),
+                modifier = Modifier
+                    .padding(all = 24.dp)
+                    .scrollable(state = scrollableState, orientation = Orientation.Vertical),
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
@@ -136,6 +143,12 @@ fun SolitaireMenu(
                     text = "\u2517 Moves + Time + Score (Lower is better)",
                     style = MaterialTheme.typography.bodySmall
                 )
+                Text(
+                    text = "Credits",
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(text = "Card Suits by Amethyst Studio from https://thenounproject.com/icon/card-suits-5874222/ (CC BY 3.0)" )
             }
         }
     }
