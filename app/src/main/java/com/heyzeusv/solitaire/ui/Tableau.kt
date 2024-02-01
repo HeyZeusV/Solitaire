@@ -1,7 +1,6 @@
 package com.heyzeusv.solitaire.ui
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -19,6 +18,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.clickableSingle
 
 /**
  *  Composable that displays Tableau [pile] with [tableauIndex]. [cardHeight] is used to shift each
@@ -50,7 +50,7 @@ fun SolitaireTableau(
                     modifier = Modifier
                         .height(cardHeight)
                         .clip(RoundedCornerShape(4.dp)) // makes click surface have round edges
-                        .clickable { onClick(tableauIndex, index) },
+                        .clickableSingle { onClick(tableauIndex, index) },
                     card = card
                 )
             }
