@@ -41,7 +41,7 @@ class StatManager @Inject constructor(
                 ktoFastestWin = stats.fastestWin
                 ktoAverageTime = stats.averageTime
                 ktoTotalTime = stats.totalTime
-                ktoAverageScore = stats.averageScore
+                ktoTotalScore = stats.totalScore
                 ktoBestTotalScore = stats.bestTotalScore
             }.build()
         }

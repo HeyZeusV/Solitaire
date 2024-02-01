@@ -79,7 +79,7 @@ fun SolitaireTools(
             },
             title = { Text(text = "Are you sure?") },
             text = {
-                Text(text = "You can choose to restart the current game, a game with a new shuffle, or continue with this game.\n\nThis game will count on your stats!!")
+                Text(text = "You can choose to restart the current game, a game with a new shuffle, or continue with this game.\n\nThis game will count on your stats if more than 1 move has been made!!")
             }
         )
     }

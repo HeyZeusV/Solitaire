@@ -122,14 +122,14 @@ fun SolitaireMenu(
                     style = MaterialTheme.typography.headlineMedium
                 )
                 val statsString = """Games Played: ${stats.gamesPlayed}
-                        |Games Won: ${stats.gamesWon}
+                        |Games Won: ${stats.gamesWon} (${stats.getGamePercent()}%)
                         |Lowest Moves in Win: ${stats.lowestMoves}
                         |Average Moves: ${stats.averageMoves}
                         |Total Moves: ${stats.totalMoves}
                         |Fastest Win: ${stats.fastestWin.formatTimeStats()}
                         |Average Time: ${stats.averageTime.formatTimeStats()}
                         |Total Time Played: ${stats.totalTime.formatTimeStats()}
-                        |Average Score: ${stats.averageScore}
+                        |Average Score: ${stats.averageScore} of 52 (${stats.getScorePercent()}%)
                         |Best Total Score: ${stats.bestTotalScore}""".trimMargin()
                 Text(text = statsString)
                 Text(

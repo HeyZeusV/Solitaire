@@ -44,7 +44,7 @@ class MenuViewModel @Inject constructor(
             fastestWin = it.ktoFastestWin,
             averageTime = it.ktoAverageTime,
             totalTime = it.ktoTotalTime,
-            averageScore = it.ktoAverageScore,
+            totalScore = it.ktoTotalScore,
             bestTotalScore = it.ktoBestTotalScore
         )
     }.stateIn(
@@ -60,24 +60,16 @@ class MenuViewModel @Inject constructor(
                     gamesPlayed = gamesPlayed.plus(1),
                     gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
                     lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
-                    averageMoves = averageInt(lgs.moves, totalMoves, gamesPlayed),
+                    averageMoves = (lgs.moves + totalMoves) / (gamesPlayed + 1),
                     totalMoves = totalMoves.plus(lgs.moves),
                     fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
-                    averageTime = averageLong(lgs.time, totalTime, gamesPlayed),
+                    averageTime = (lgs.time + totalMoves) / (gamesPlayed + 1),
                     totalTime = totalTime.plus(lgs.time),
-                    averageScore = averageInt(lgs.score, (averageScore * gamesPlayed), gamesPlayed),
+                    totalScore = totalScore.plus(lgs.score),
                     bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
                 )
             }
             statManager.updateStats(updatedStats)
         }
-    }
-
-    private fun averageLong(newStat: Long, previousTotal: Long, previousGamesPlayed: Int): Long {
-        return (newStat + previousTotal) / (previousGamesPlayed + 1)
-    }
-
-    private fun averageInt(newStat: Int, previousTotal: Int, previousGamesPlayed: Int): Int {
-        return (newStat + previousTotal) / (previousGamesPlayed + 1)
     }
 }
