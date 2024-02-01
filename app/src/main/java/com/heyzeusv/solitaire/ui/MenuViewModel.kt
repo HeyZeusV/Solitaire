@@ -1,7 +1,11 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.data.Stats
+import com.heyzeusv.solitaire.util.StatManager
+import com.heyzeusv.solitaire.util.Games
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -11,6 +15,12 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
+/**
+ *  Data manager for menu.
+ *
+ *  Stores and manages UI-related data in a lifecycle conscious way.
+ *  Data can survive configuration changes.
+ */
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val statManager: StatManager
@@ -24,26 +34,24 @@ class MenuViewModel @Inject constructor(
     val selectedGame: StateFlow<Games> get() = _selectedGame
     fun updateSelectedGame(newValue: Games) { _selectedGame.value = newValue }
 
-    val stats: StateFlow<Stats> = statManager.statData
-        .map {
-            Stats(
-                gamesPlayed = it.ktoGamesPlayed,
-                gamesWon = it.ktoGamesWon,
-                lowestMoves = it.ktoLowestMoves,
-                averageMoves = it.ktoAverageMoves,
-                totalMoves = it.ktoTotalMoves,
-                fastestWin = it.ktoFastestWin,
-                averageTime = it.ktoAverageTime,
-                totalTime = it.ktoTotalTime,
-                averageScore = it.ktoAverageScore,
-                bestTotalScore = it.ktoBestTotalScore
-            )
-        }.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = Stats()
+    val stats: StateFlow<Stats> = statManager.statData.map {
+        Stats(
+            gamesPlayed = it.ktoGamesPlayed,
+            gamesWon = it.ktoGamesWon,
+            lowestMoves = it.ktoLowestMoves,
+            averageMoves = it.ktoAverageMoves,
+            totalMoves = it.ktoTotalMoves,
+            fastestWin = it.ktoFastestWin,
+            averageTime = it.ktoAverageTime,
+            totalTime = it.ktoTotalTime,
+            averageScore = it.ktoAverageScore,
+            bestTotalScore = it.ktoBestTotalScore
         )
-
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = Stats()
+    )
     fun updateStats(lgs: LastGameStats) {
         viewModelScope.launch {
             var updatedStats: Stats

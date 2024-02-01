@@ -1,4 +1,6 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.data
+
+import com.heyzeusv.solitaire.util.Suits
 
 /**
  *  In Solitaire, Foundation refers to the pile where players have to build up a specific [suit]

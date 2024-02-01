@@ -8,6 +8,9 @@ import java.io.InputStream
 import java.io.OutputStream
 import javax.inject.Inject
 
+/**
+ *  Used to convert from Proto to Kotlin and vice versa when working with DataStore.
+ */
 class StatPreferencesSerializer @Inject constructor() : Serializer<StatPreferences> {
     override val defaultValue: StatPreferences = StatPreferences.getDefaultInstance().toBuilder()
         .setKtoLowestMoves(9999)

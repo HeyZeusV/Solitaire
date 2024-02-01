@@ -1,7 +1,7 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.data
 
 /**
- *  Holds all Stats that are being stored in Proto DataStore [StatPreferences]
+ *  Holds all Stats that are being stored in Proto DataStore StatPreferences.
  */
 data class Stats(
     val gamesPlayed: Int = 0,

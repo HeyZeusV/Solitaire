@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row

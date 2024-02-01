@@ -1,5 +1,7 @@
 package com.heyzeusv.solitaire
 
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.Tableau
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

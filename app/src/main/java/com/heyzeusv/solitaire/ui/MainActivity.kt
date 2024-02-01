@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -23,7 +23,10 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.imageResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.formatTimeDisplay
 import dagger.hilt.android.AndroidEntryPoint
 

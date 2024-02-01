@@ -1,9 +1,17 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.Foundation
+import com.heyzeusv.solitaire.data.History
+import com.heyzeusv.solitaire.data.Stock
+import com.heyzeusv.solitaire.data.Tableau
+import com.heyzeusv.solitaire.data.Waste
+import com.heyzeusv.solitaire.util.ResetOptions
+import com.heyzeusv.solitaire.util.Suits
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -11,7 +19,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
 /**
- *  Data manager for Board.
+ *  Data manager for game.
  *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.

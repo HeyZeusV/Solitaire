@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -17,10 +17,17 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.Foundation
+import com.heyzeusv.solitaire.data.Stock
+import com.heyzeusv.solitaire.data.Tableau
+import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.SolitairePreview
+import com.heyzeusv.solitaire.util.Suits
 
 /**
- *  Composable that displays all [Card] [Pile]s, Stock, Waste, Foundation, and Tableau.
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau.
  */
 @Composable
 fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
@@ -39,7 +46,7 @@ fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
 }
 
 /**
- *  Composable that displays all [Card] [Pile]s, Stock, Waste, Foundation, and Tableau. All the data
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. All the data
  *  has been hoisted into above [SolitaireBoard] thus allowing for easier testing.
  */
 @Composable
@@ -138,9 +145,17 @@ fun SolitaireBoardPreview() {
             onStockClick = { },
             waste = Waste(listOf(bCard, rCard, bCard)),
             onWasteClick = { },
-            foundationList = listOf(Foundation(Suits.CLUBS, listOf(bCard)), Foundation(Suits.DIAMONDS, listOf(rCard)), Foundation(Suits.HEARTS, listOf(rCard, bCard)), Foundation(Suits.SPADES, emptyList())),
+            foundationList = listOf(
+                Foundation(Suits.CLUBS, listOf(bCard)),
+                Foundation(Suits.DIAMONDS, listOf(rCard)),
+                Foundation(Suits.HEARTS, listOf(rCard, bCard)),
+                Foundation(Suits.SPADES, emptyList())
+            ),
             onFoundationClick = { _ -> },
-            tableauList = listOf(Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard))),
+            tableauList = listOf(
+                Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard)),
+                Tableau(listOf(rCard)), Tableau(listOf(bCard)), Tableau(listOf(rCard)),
+                Tableau(listOf(bCard))),
             onTableauClick = { _, _ -> }
         )
     }

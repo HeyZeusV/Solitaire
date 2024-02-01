@@ -1,7 +1,11 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.data
 
 import androidx.compose.runtime.mutableStateListOf
 
+/**
+ *  Originally an interface, but abstract class gave more functionality, specifically a constructor
+ *  and initialized properties.
+ */
 abstract class Pile(initialPile: List<Card> = emptyList()) {
 
     protected val mPile: MutableList<Card> = mutableStateListOf()

@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire
 
+import com.heyzeusv.solitaire.data.Stock
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.data
 
 /**
  *  Data class to hold [score] and list of [Card]s for each available pile. This will be used to

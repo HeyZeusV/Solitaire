@@ -1,12 +1,13 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.util
 
 import androidx.annotation.DrawableRes
 import androidx.compose.ui.graphics.Color
+import com.heyzeusv.solitaire.R
 
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
  *  Includes [suit] in String form, [color] of Suit, drawable id of its [icon], and drawable id
- *  of [emptyIcon] which is shown when its [Foundation] pile is empty.
+ *  of [emptyIcon] which is shown when its Foundation pile is empty.
  */
 enum class Suits(
     val suit: String,

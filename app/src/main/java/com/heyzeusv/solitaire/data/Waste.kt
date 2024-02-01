@@ -1,5 +1,9 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.data
 
+/**
+ *  In Solitaire, Waste refers to the face up pile where cards drawn from [Stock] are placed. Only
+ *  the top [Card] is playable.
+ */
 class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
     /**

@@ -1,7 +1,9 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.util
 
 import android.util.Log
 import androidx.datastore.core.DataStore
+import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.data.Stats
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.io.IOException

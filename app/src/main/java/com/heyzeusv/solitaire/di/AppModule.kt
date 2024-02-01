@@ -1,10 +1,11 @@
-package com.heyzeusv.solitaire.util
+package com.heyzeusv.solitaire.di
 
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

@@ -1,5 +1,8 @@
 package com.heyzeusv.solitaire
 
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.util.Suits
+
 object TestCards {
 
     val card0C = Card(0, Suits.CLUBS)
