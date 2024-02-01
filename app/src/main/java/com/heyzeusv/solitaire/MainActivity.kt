@@ -113,8 +113,8 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
             score = score
         )
         SolitaireBoard(
-            modifier = Modifier.weight(0.78f),
-            gameVM = gameVM
+            gameVM = gameVM,
+            modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(
             modifier = Modifier.weight(0.10f),

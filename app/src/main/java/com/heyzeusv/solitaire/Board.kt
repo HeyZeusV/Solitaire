@@ -17,14 +17,43 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.SolitairePreview
 
 /**
- *  Composable that will display all [Card] piles, Stock, Waste, Foundation, and Tableau.
+ *  Composable that displays all [Card] [Pile]s, Stock, Waste, Foundation, and Tableau.
  */
 @Composable
-fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewModel()) {
+fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
+
+    SolitaireBoard(
+        stock = gameVM.stock,
+        onStockClick = gameVM::onStockClick,
+        waste = gameVM.waste,
+        onWasteClick = gameVM::onWasteClick,
+        foundationList = gameVM.foundation,
+        onFoundationClick = gameVM::onFoundationClick,
+        tableauList = gameVM.tableau,
+        onTableauClick = gameVM::onTableauClick,
+        modifier = modifier
+    )
+}
+
+/**
+ *  Composable that displays all [Card] [Pile]s, Stock, Waste, Foundation, and Tableau. All the data
+ *  has been hoisted into above [SolitaireBoard] thus allowing for easier testing.
+ */
+@Composable
+fun SolitaireBoard(
+    stock: Stock,
+    onStockClick: () -> Unit,
+    waste: Waste,
+    onWasteClick: () -> Unit,
+    foundationList: List<Foundation>,
+    onFoundationClick: (Int) -> Unit,
+    tableauList: List<Tableau>,
+    onTableauClick: (Int, Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
     // gets device size in order to scale card
     val config = LocalConfiguration.current
     val sWidth = config.screenWidthDp.dp
@@ -32,16 +61,16 @@ fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewMo
     val cardHeight = cardWidth.times(1.4f)
 
     // piles to be displayed
-    val stock by remember { mutableStateOf(gameVM.stock.pile) }
-    val foundationList = gameVM.foundation.map {
+    val stockPile by remember { mutableStateOf(stock.pile) }
+    val wastePile by remember { mutableStateOf(waste.pile) }
+    val foundationPileList = foundationList.map {
         val foundationPile by remember { mutableStateOf(it.pile) }
         return@map foundationPile
     }
-    val tableauList = gameVM.tableau.map {
+    val tableauPileList = tableauList.map {
         val tableauPile by remember { mutableStateOf(it.pile) }
         return@map tableauPile
     }
-    val waste by remember { mutableStateOf(gameVM.waste.pile) }
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -58,38 +87,39 @@ fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewMo
                 val rowModifier = Modifier
                     .weight(1f)
                     .height(cardHeight)
-                gameVM.foundation.forEachIndexed { index, foundation ->
+                Suits.entries.forEachIndexed { index, suit ->
                     SolitairePile(
                         modifier = rowModifier,
-                        pile = foundationList[index],
-                        emptyIconId = foundation.suit.emptyIcon
-                    ) { gameVM.onFoundationClick(index) }
+                        pile = foundationPileList[index],
+                        emptyIconId = suit.emptyIcon,
+                        onClick = { onFoundationClick(index) }
+                    )
                 }
                 Spacer(modifier = rowModifier)
                 SolitairePile(
                     modifier = rowModifier,
-                    pile = waste,
+                    pile = wastePile,
                     emptyIconId = R.drawable.waste_empty,
-                    onClick = gameVM::onWasteClick
+                    onClick = onWasteClick
                 )
                 SolitairePile(
                     modifier = rowModifier,
-                    pile = stock,
-                    emptyIconId = if (waste.isEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
-                    onClick = gameVM::onStockClick
+                    pile = stockPile,
+                    emptyIconId = if (wastePile.isEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
+                    onClick = onStockClick
                 )
             }
             Row(
                 modifier = Modifier.weight(0.85f),
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                tableauList.forEachIndexed { index, tableau ->
+                tableauPileList.forEachIndexed { index, tableau ->
                     SolitaireTableau(
                         modifier = Modifier.weight(1f),
                         pile = tableau,
                         tableauIndex = index,
                         cardHeight = cardHeight,
-                        onClick = gameVM::onTableauClick
+                        onClick = onTableauClick
                     )
                 }
             }
@@ -100,7 +130,18 @@ fun SolitaireBoard(modifier: Modifier = Modifier, gameVM: GameViewModel = viewMo
 @Preview
 @Composable
 fun SolitaireBoardPreview() {
-    SolitaireTheme {
-        SolitaireBoard()
+    SolitairePreview {
+        val bCard = Card(10, Suits.SPADES, true)
+        val rCard = Card(4, Suits.DIAMONDS, true)
+        SolitaireBoard(
+            stock = Stock(listOf(bCard, rCard, bCard)),
+            onStockClick = { },
+            waste = Waste(listOf(bCard, rCard, bCard)),
+            onWasteClick = { },
+            foundationList = listOf(Foundation(Suits.CLUBS, listOf(bCard)), Foundation(Suits.DIAMONDS, listOf(rCard)), Foundation(Suits.HEARTS, listOf(rCard, bCard)), Foundation(Suits.SPADES, emptyList())),
+            onFoundationClick = { _ -> },
+            tableauList = listOf(Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard))),
+            onTableauClick = { _, _ -> }
+        )
     }
 }
