@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.ui
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.foundation.background
@@ -15,6 +16,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
@@ -38,7 +40,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SolitaireTheme(darkTheme = true) {
-                SolitaireApp()
+                SolitaireApp(finishApp = { finishAndRemoveTask() })
             }
         }
     }
@@ -57,7 +59,11 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
+fun SolitaireApp(
+    finishApp: () -> Unit,
+    gameVM: GameViewModel = viewModel()
+) {
+    var closeGame by remember { mutableStateOf(false) }
 
     // background pattern that repeats
     val pattern = ImageBitmap.imageResource(R.drawable.pattern_noise)
@@ -76,10 +82,10 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
 
     val menuVM = hiltViewModel<MenuViewModel>()
 
+    BackHandler { closeGame = true }
+
     // start timer once user makes a move
-    if (moves == 1 && gameVM.jobIsCancelled()) {
-        gameVM.startTimer()
-    }
+    if (moves == 1 && gameVM.jobIsCancelled()) gameVM.startTimer()
 
     if (gameWon) {
         // pause timer once user reaches max score
@@ -102,6 +108,28 @@ fun SolitaireApp(gameVM: GameViewModel = viewModel()) {
                     |┗ Moves + Time + Score (Lower is better)""".trimMargin()
                 Text(text = "Congratulations! Here are your stats...\n$completedStats")
             }
+        )
+    }
+    if (closeGame) {
+        AlertDialog(
+            onDismissRequest = { closeGame = false },
+            confirmButton = {
+                TextButton(onClick = {
+                    if (moves > 1) {
+                        menuVM.updateStats(LastGameStats(false, moves, timer, score))
+                    }
+                    finishApp()
+                }) {
+                    Text(text = "Yes")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { closeGame = false }) {
+                    Text(text = "No")
+                }
+            },
+            title = { Text(text = "Quit Game?") },
+            text = { Text(text = "This game will count on your stats if more than 1 move has been made!!") }
         )
     }
     Column(
