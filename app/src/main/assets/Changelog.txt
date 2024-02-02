@@ -1,2 +1,5 @@
+v1.0.1
+-New: Dialog appears when user presses back button to confirm app closure.
+
 v1.0.0
 -Initial release!!
