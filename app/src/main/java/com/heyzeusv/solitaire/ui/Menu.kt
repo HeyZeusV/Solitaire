@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -74,6 +75,10 @@ fun SolitaireMenu(
     stats: Stats
 ) {
     val scrollableState = rememberScrollState()
+
+    BackHandler(displayMenu) {
+        updateDisplayMenu(false)
+    }
 
     if (displayMenu) {
         Surface(
