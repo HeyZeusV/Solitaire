@@ -33,7 +33,7 @@ import com.heyzeusv.solitaire.util.Suits
 fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
 
     SolitaireBoard(
-        drawAmount = 1,
+        drawAmount = 3, // TODO: remove hard code
         stock = gameVM.stock,
         onStockClick = gameVM::onStockClick,
         waste = gameVM.waste,
@@ -102,7 +102,8 @@ fun SolitaireBoard(
                         modifier = rowModifier,
                         pile = foundationPileList[index],
                         emptyIconId = suit.emptyIcon,
-                        onClick = { onFoundationClick(index) }
+                        onClick = { onFoundationClick(index) },
+                        cardWidth = cardWidth
                     )
                 }
                 if (drawAmount == 1) Spacer(modifier = rowModifier)
@@ -112,13 +113,16 @@ fun SolitaireBoard(
                         .height(cardHeight),
                     pile = wastePile,
                     emptyIconId = R.drawable.waste_empty,
-                    onClick = onWasteClick
+                    onClick = onWasteClick,
+                    drawAmount = drawAmount,
+                    cardWidth = cardWidth
                 )
                 SolitairePile(
                     modifier = rowModifier,
                     pile = stockPile,
                     emptyIconId = if (wastePile.isEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
-                    onClick = onStockClick
+                    onClick = onStockClick,
+                    cardWidth = cardWidth
                 )
             }
             Row(
