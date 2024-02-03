@@ -12,5 +12,5 @@ val cardsMap = mapOf(0 to "A", 1 to "2", 2 to "3" , 3 to "4", 4 to "5", 5 to "6"
  */
 data class Card(val value: Int, val suit: Suits, val faceUp: Boolean = false) {
 
-    override fun toString(): String = if (faceUp) "${cardsMap[value]} of ${suit.suit}" else "???"
+    override fun toString(): String = if (faceUp) "${cardsMap[value]} of ${suit.name}" else "???"
 }

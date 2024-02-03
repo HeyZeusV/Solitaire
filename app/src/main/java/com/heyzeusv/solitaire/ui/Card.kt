@@ -20,6 +20,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
@@ -72,7 +73,11 @@ fun SolitaireCard(
                     )
                     Image(
                         painter = painterResource(card.suit.icon),
-                        contentDescription = "${cardsMap[card.value]} of ${card.suit.suit}",
+                        contentDescription = stringResource(
+                            R.string.card_cdesc_icon,
+                            cardsMap[card.value] ?: "A",
+                            stringResource(card.suit.suit)
+                        ),
                         modifier = Modifier
                             .weight(1f)
                             .fillMaxSize()
@@ -80,7 +85,11 @@ fun SolitaireCard(
                 }
                 Image(
                     painter = painterResource(card.suit.icon),
-                    contentDescription = "${cardsMap[card.value]} of ${card.suit.suit}",
+                    contentDescription = stringResource(
+                        R.string.card_cdesc_icon,
+                        cardsMap[card.value] ?: "A",
+                        stringResource(card.suit.suit)
+                    ),
                     modifier = Modifier
                         .weight(0.8f)
                         .fillMaxSize()
@@ -89,7 +98,7 @@ fun SolitaireCard(
         } else {
             Image(
                 painter = painterResource(R.drawable.card_back),
-                contentDescription = "Back of a card",
+                contentDescription = stringResource(R.string.card_cdesc_back),
                 contentScale = ContentScale.FillBounds
             )
         }

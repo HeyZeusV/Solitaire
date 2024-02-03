@@ -28,13 +28,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Stats
 import com.heyzeusv.solitaire.ui.theme.BackgroundOverlay
+import com.heyzeusv.solitaire.ui.theme.Pink80
 import com.heyzeusv.solitaire.ui.theme.Purple40
 import com.heyzeusv.solitaire.util.Games
+import com.heyzeusv.solitaire.util.LinkifyText
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeStats
 
@@ -100,7 +104,7 @@ fun SolitaireMenu(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
             ) {
                 Text(
-                    text = "Games",
+                    text = stringResource(R.string.menu_header_games),
                     textDecoration = TextDecoration.Underline,
                     style = MaterialTheme.typography.headlineMedium
                 )
@@ -112,12 +116,15 @@ fun SolitaireMenu(
                         FilterChip(
                             selected = it == selectedGame,
                             onClick = { updateSelectedGame(it) },
-                            label = { Text(text = it.gameName) },
+                            label = { Text(text = stringResource(it.gameName)) },
                             leadingIcon = {
                                 if (it == selectedGame) {
                                     Icon(
                                         imageVector = Icons.Default.Done,
-                                        contentDescription = "${it.gameName} is selected",
+                                        contentDescription = stringResource(
+                                            R.string.menu_cdesc_chip,
+                                            stringResource(it.gameName)
+                                        ),
                                         modifier = Modifier.size(FilterChipDefaults.IconSize)
                                     )
                                 }
@@ -129,31 +136,40 @@ fun SolitaireMenu(
                     }
                 }
                 Text(
-                    text = "Stats",
+                    text = stringResource(R.string.menu_header_stats),
                     textDecoration = TextDecoration.Underline,
                     style = MaterialTheme.typography.headlineMedium
                 )
-                val statsString = """Games Played: ${stats.gamesPlayed}
-                        |Games Won: ${stats.gamesWon} (${stats.getGamePercent()}%)
-                        |Lowest Moves in Win: ${stats.lowestMoves}
-                        |Average Moves: ${stats.averageMoves}
-                        |Total Moves: ${stats.totalMoves}
-                        |Fastest Win: ${stats.fastestWin.formatTimeStats()}
-                        |Average Time: ${stats.averageTime.formatTimeStats()}
-                        |Total Time Played: ${stats.totalTime.formatTimeStats()}
-                        |Average Score: ${stats.averageScore} of 52 (${stats.getScorePercent()}%)
-                        |Best Total Score: ${stats.bestTotalScore}""".trimMargin()
-                Text(text = statsString)
                 Text(
-                    text = "\u2517 Moves + Time + Score (Lower is better)",
+                    text = stringResource(
+                        R.string.menu_content_stats,
+                        stats.gamesPlayed,
+                        stats.gamesWon,
+                        stats.getGamePercent(),
+                        stats.lowestMoves,
+                        stats.averageMoves,
+                        stats.totalMoves,
+                        stats.fastestWin.formatTimeStats(),
+                        stats.averageTime.formatTimeStats(),
+                        stats.totalTime.formatTimeStats(),
+                        stats.averageScore,
+                        stats.getScorePercent(),
+                        stats.bestTotalScore
+                    )
+                )
+                Text(
+                    text = stringResource(R.string.menu_tip_totalscore),
                     style = MaterialTheme.typography.bodySmall
                 )
                 Text(
-                    text = "Credits",
+                    text = stringResource(R.string.menu_header_credits) ,
                     textDecoration = TextDecoration.Underline,
                     style = MaterialTheme.typography.headlineMedium
                 )
-                Text(text = "Card Suits by Amethyst Studio from https://thenounproject.com/icon/card-suits-5874222/ (CC BY 3.0)" )
+                LinkifyText(
+                    text = stringResource(R.string.menu_content_credits),
+                    linkColor = Pink80
+                )
             }
         }
     }

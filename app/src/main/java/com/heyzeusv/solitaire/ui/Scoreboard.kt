@@ -9,8 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.autosizetext.AutoSizeText
 import com.heyzeusv.solitaire.util.formatTimeDisplay
@@ -35,19 +37,19 @@ fun SolitaireScoreboard(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AutoSizeText(
-            text = "Moves\n$moves",
+            text = stringResource(R.string.scoreboard_stat_moves, moves),
             modifier = Modifier.weight(1f),
             color = Color.White,
             alignment = Alignment.Center
         )
         AutoSizeText(
-            text = "Time\n${timer.formatTimeDisplay()}",
+            text = stringResource(R.string.scoreboard_stat_time, timer.formatTimeDisplay()),
             modifier = Modifier.weight(1f),
             color = Color.White,
             alignment = Alignment.Center
         )
         AutoSizeText(
-            text = "Score\n$score",
+            text = stringResource(R.string.scoreboard_stat_score, score),
             modifier = Modifier.weight(1f),
             color = Color.White,
             alignment = Alignment.Center
