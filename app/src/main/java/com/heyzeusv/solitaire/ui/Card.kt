@@ -107,6 +107,17 @@ fun SolitaireCard(
 
 @Preview
 @Composable
+fun SolitaireCardPreview() {
+    SolitaireTheme {
+        SolitaireCard(
+            Card(0, Suits.CLUBS, faceUp = true),
+            modifier = Modifier.fillMaxSize()
+        )
+    }
+}
+
+@Preview
+@Composable
 fun SolitaireCardFaceUpPreview() {
     SolitaireTheme {
         Row(

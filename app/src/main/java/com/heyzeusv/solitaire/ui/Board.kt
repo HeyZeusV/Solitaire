@@ -33,6 +33,7 @@ import com.heyzeusv.solitaire.util.Suits
 fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
 
     SolitaireBoard(
+        drawAmount = 1,
         stock = gameVM.stock,
         onStockClick = gameVM::onStockClick,
         waste = gameVM.waste,
@@ -46,11 +47,13 @@ fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
 }
 
 /**
- *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. All the data
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [drawAmount]
+ *  determines how many cards are added to the Waste pile on single [onStockClick]. All the data
  *  has been hoisted into above [SolitaireBoard] thus allowing for easier testing.
  */
 @Composable
 fun SolitaireBoard(
+    drawAmount: Int,
     stock: Stock,
     onStockClick: () -> Unit,
     waste: Waste,
@@ -102,9 +105,11 @@ fun SolitaireBoard(
                         onClick = { onFoundationClick(index) }
                     )
                 }
-                Spacer(modifier = rowModifier)
+                if (drawAmount == 1) Spacer(modifier = rowModifier)
                 SolitairePile(
-                    modifier = rowModifier,
+                    modifier = Modifier
+                        .weight(if (drawAmount == 1) 1f else 2.04f)
+                        .height(cardHeight),
                     pile = wastePile,
                     emptyIconId = R.drawable.waste_empty,
                     onClick = onWasteClick
@@ -117,7 +122,9 @@ fun SolitaireBoard(
                 )
             }
             Row(
-                modifier = Modifier.weight(0.85f),
+                modifier = Modifier
+                    .weight(0.85f)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 tableauPileList.forEachIndexed { index, tableau ->
@@ -141,6 +148,7 @@ fun SolitaireBoardPreview() {
         val bCard = Card(10, Suits.SPADES, true)
         val rCard = Card(4, Suits.DIAMONDS, true)
         SolitaireBoard(
+            drawAmount = 1,
             stock = Stock(listOf(bCard, rCard, bCard)),
             onStockClick = { },
             waste = Waste(listOf(bCard, rCard, bCard)),
@@ -155,7 +163,8 @@ fun SolitaireBoardPreview() {
             tableauList = listOf(
                 Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard)),
                 Tableau(listOf(rCard)), Tableau(listOf(bCard)), Tableau(listOf(rCard)),
-                Tableau(listOf(bCard))),
+                Tableau(listOf(bCard))
+            ),
             onTableauClick = { _, _ -> }
         )
     }
