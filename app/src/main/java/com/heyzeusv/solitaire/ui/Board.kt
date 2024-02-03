@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,8 +33,10 @@ import com.heyzeusv.solitaire.util.Suits
 @Composable
 fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
 
+    val drawAmount by gameVM.drawAmount.collectAsState()
+
     SolitaireBoard(
-        drawAmount = 3, // TODO: remove hard code
+        drawAmount = drawAmount,
         stock = gameVM.stock,
         onStockClick = gameVM::onStockClick,
         waste = gameVM.waste,

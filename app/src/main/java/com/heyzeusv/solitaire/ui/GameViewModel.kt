@@ -46,6 +46,9 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
     private val _score = MutableStateFlow(0)
     val score: StateFlow<Int> get() = _score
 
+    private val _drawAmount = MutableStateFlow(3)
+    val drawAmount: StateFlow<Int> get() = _drawAmount
+
     private val _stock = Stock()
     val stock: Stock get() = _stock
 
@@ -120,11 +123,15 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
         _gameWon.value = false
     }
 
-    // runs when user taps on stock
-    fun onStockClick() {
+    /**
+     *  Runs when user taps on Stock pile. Either draws Card(s) from Stock if any or resets Stock by
+     *  adding Cards back from Waste. [drawAmount] will be used for testing and has default parameter
+     *  that will be updated depending on game selected.
+     */
+    fun onStockClick(drawAmount: Int = _drawAmount.value) {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
-            _waste.add(listOf(_stock.remove()))
+            _waste.add(_stock.removeMany(drawAmount))
             _moves.value++
             appendHistory()
         } else if (_waste.pile.isNotEmpty()) {
