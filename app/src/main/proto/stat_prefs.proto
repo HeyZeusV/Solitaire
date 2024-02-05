@@ -4,22 +4,22 @@ option java_package = "com.heyzeusv.solitaire";
 option java_multiple_files = true;
 
 message StatPreferences {
-  // Klondike (Turn One)
-  int32 kto_games_played = 1;
-  int32 kto_games_won = 2;
-  int32 kto_lowest_moves = 3;
-  int32 kto_total_moves = 4;
-  int64 kto_fastest_win = 5;
-  int64 kto_total_time = 6;
-  int32 kto_total_score = 7;
-  int64 kto_best_total_score = 8;
-  // Klondike (Turn Three)
-  int32 ktt_games_played = 9;
-  int32 ktt_games_won = 10;
-  int32 ktt_lowest_moves = 11;
-  int32 ktt_total_moves = 12;
-  int64 ktt_fastest_win = 13;
-  int64 ktt_total_time = 14;
-  int32 ktt_total_score = 15;
-  int64 ktt_best_total_score = 16;
+  repeated GameStats stats = 1;
+}
+
+message GameStats {
+  Game game = 1;
+  int32 games_played = 2;
+  int32 games_won = 3;
+  int32 lowest_moves = 4;
+  int32 total_moves = 5;
+  int64 fastest_win = 6;
+  int64 total_time = 7;
+  int32 total_score = 8;
+  int64 best_total_score = 9;
+}
+
+enum Game {
+  GAME_KLONDIKETURNONE = 0;
+  GAME_KLONDIKETURNTHREE = 1;
 }

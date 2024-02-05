@@ -2,15 +2,15 @@ package com.heyzeusv.solitaire.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.data.Stats
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.Games
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -34,78 +34,48 @@ class MenuViewModel @Inject constructor(
     val selectedGame: StateFlow<Games> get() = _selectedGame
     fun updateSelectedGame(newValue: Games) { _selectedGame.value = newValue }
 
-    val ktoStats: StateFlow<Stats> = statManager.statData.map {
-        Stats(
-            gameSelected = Games.KLONDIKETURNONE,
-            gamesPlayed = it.ktoGamesPlayed,
-            gamesWon = it.ktoGamesWon,
-            lowestMoves = it.ktoLowestMoves,
-            totalMoves = it.ktoTotalMoves,
-            fastestWin = it.ktoFastestWin,
-            totalTime = it.ktoTotalTime,
-            totalScore = it.ktoTotalScore,
-            bestTotalScore = it.ktoBestTotalScore
-        )
-    }.stateIn(
+    val stats: StateFlow<StatPreferences> = statManager.statData.stateIn(
         scope = viewModelScope,
         started = SharingStarted.WhileSubscribed(5000),
-        initialValue = Stats()
+        initialValue = StatPreferences.getDefaultInstance()
     )
 
-    val kttStats: StateFlow<Stats> = statManager.statData.map {
-        Stats(
-            gameSelected = Games.KLONDIKETURNTHREE,
-            gamesPlayed = it.kttGamesPlayed,
-            gamesWon = it.kttGamesWon,
-            lowestMoves = it.kttLowestMoves,
-            totalMoves = it.kttTotalMoves,
-            fastestWin = it.kttFastestWin,
-            totalTime = it.kttTotalTime,
-            totalScore = it.kttTotalScore,
-            bestTotalScore = it.kttBestTotalScore
-        )
-    }.stateIn(
-        scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
-        initialValue = Stats(gameSelected = Games.KLONDIKETURNTHREE)
-    )
 
     fun updateStats(lgs: LastGameStats) {
-        viewModelScope.launch {
-            var updatedStats: Stats
-            when (_selectedGame.value) {
-                Games.KLONDIKETURNONE -> {
-                    ktoStats.value.run {
-                        updatedStats = copy(
-                            gameSelected = Games.KLONDIKETURNONE,
-                            gamesPlayed = gamesPlayed.plus(1),
-                            gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
-                            lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
-                            totalMoves = totalMoves.plus(lgs.moves),
-                            fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
-                            totalTime = totalTime.plus(lgs.time),
-                            totalScore = totalScore.plus(lgs.score),
-                            bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
-                        )
-                    }
-                }
-                Games.KLONDIKETURNTHREE -> {
-                    kttStats.value.run {
-                        updatedStats = copy(
-                            gameSelected = Games.KLONDIKETURNTHREE,
-                            gamesPlayed = gamesPlayed.plus(1),
-                            gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
-                            lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
-                            totalMoves = totalMoves.plus(lgs.moves),
-                            fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
-                            totalTime = totalTime.plus(lgs.time),
-                            totalScore = totalScore.plus(lgs.score),
-                            bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
-                        )
-                    }
-                }
-            }
-            statManager.updateStats(updatedStats)
+        val prevGS =
+            stats.value.statsList.find { it.game == _selectedGame.value.dataStoreEnum }
+                ?: getStatsDefaultInstance()
+
+        var newGS: GameStats
+        prevGS.let { old ->
+            newGS = GameStats.newBuilder().also { new ->
+                new.game = _selectedGame.value.dataStoreEnum
+                new.gamesPlayed = old.gamesPlayed.plus(1)
+                new.gamesWon = old.gamesWon.plus(if (lgs.gameWon) 1 else 0)
+                new.lowestMoves =
+                    if (lgs.gameWon) old.lowestMoves.coerceAtMost(lgs.moves) else old.lowestMoves
+                new.totalMoves = old.totalMoves.plus(lgs.moves)
+                new.fastestWin =
+                    if (lgs.gameWon) old.fastestWin.coerceAtMost(lgs.time) else old.fastestWin
+                new.totalTime = old.totalTime.plus(lgs.time)
+                new.totalScore = old.totalScore.plus(lgs.score)
+                new.bestTotalScore =
+                    if (lgs.gameWon) old.bestTotalScore.coerceAtMost(lgs.totalScore) else old.bestTotalScore
+            }.build()
         }
+        viewModelScope.launch {
+            statManager.updateStats(newGS)
+        }
+    }
+
+    /**
+     *  Returns [GameStats] with stats either at 0 or maxed out.
+     */
+    fun getStatsDefaultInstance(): GameStats {
+        return GameStats.getDefaultInstance().toBuilder()
+            .setLowestMoves(9999)
+            .setFastestWin(359999L)
+            .setBestTotalScore(99999L)
+            .build()
     }
 }

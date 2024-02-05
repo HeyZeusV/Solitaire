@@ -83,6 +83,7 @@ fun SolitaireApp(
 
     val menuVM = hiltViewModel<MenuViewModel>()
 
+    val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
 
     BackHandler { closeGame = true }
@@ -167,9 +168,11 @@ fun SolitaireApp(
             undoOnClick = gameVM::undo
         )
     }
-    SolitaireMenu(
-        menuVM = menuVM,
-        lgs = LastGameStats(false, moves, timer, score),
-        reset = { gameVM.reset(ResetOptions.NEW) }
-    )
+    if (displayMenu) {
+        SolitaireMenu(
+            menuVM = menuVM,
+            lgs = LastGameStats(false, moves, timer, score),
+            reset = { gameVM.reset(ResetOptions.NEW) }
+        )
+    }
 }
