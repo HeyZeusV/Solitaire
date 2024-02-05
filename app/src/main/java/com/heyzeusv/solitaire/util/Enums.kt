@@ -31,8 +31,13 @@ enum class ResetOptions {
 }
 
 /**
- *  Enum class containing the [gameName]'s string resource id of all available games.
+ *  Enum class containing the [gameName]'s string resource id of all available games and [drawAmount]
+ *  which is the amount of Cards drawn at a time.
  */
-enum class Games(@StringRes val gameName: Int) {
-    KLONDIKETURNONE(R.string.games_klondike_turn_one)
+enum class Games(
+    @StringRes val gameName: Int,
+    val drawAmount: Int
+) {
+    KLONDIKETURNONE(R.string.games_klondike_turn_one, 1),
+    KLONDIKETURNTHREE(R.string.games_klondike_turn_three, 3)
 }

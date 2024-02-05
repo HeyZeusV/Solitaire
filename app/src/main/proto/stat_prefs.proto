@@ -13,4 +13,13 @@ message StatPreferences {
   int64 kto_total_time = 6;
   int32 kto_total_score = 7;
   int64 kto_best_total_score = 8;
+  // Klondike (Turn Three)
+  int32 ktt_games_played = 9;
+  int32 ktt_games_won = 10;
+  int32 ktt_lowest_moves = 11;
+  int32 ktt_total_moves = 12;
+  int64 ktt_fastest_win = 13;
+  int64 ktt_total_time = 14;
+  int32 ktt_total_score = 15;
+  int64 ktt_best_total_score = 16;
 }

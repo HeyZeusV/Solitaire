@@ -30,6 +30,16 @@ class StockTest {
     }
 
     @Test
+    fun stockRemoveMany() {
+        stock.reset(tc.deck)
+        val expectedCards = stock.pile.subList(0, 3).toList()
+
+        val actualCards = stock.removeMany(3)
+
+        assertEquals(expectedCards, actualCards)
+    }
+
+    @Test
     fun stockReset() {
         val expectedStock = tc.deck
         stock.reset(listOf(tc.card0C, tc.card11C, tc.card4S))

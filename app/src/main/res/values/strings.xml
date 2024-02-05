@@ -32,8 +32,13 @@
     <string name="tools_cdesc_undo">Undo last move.</string>
     <string name="tools_button_undo">Undo</string>
     <string name="games_klondike_turn_one">Klondike (Turn One)</string>
+    <string name="games_klondike_turn_three">Klondike (Turn Three)</string>
     <string name="suits_clubs">Clubs</string>
     <string name="suits_diamonds">Diamonds</string>
     <string name="suits_hearts">Hearts</string>
     <string name="suits_spades">Spades</string>
+    <string name="games_ad_confirm">Yes</string>
+    <string name="games_ad_dismiss">No</string>
+    <string name="games_ad_title">Switch games?</string>
+    <string name="games_ad_msg">A game has already been started, are you sure you want to switch games?\n\nThis game will count on your stats if more than 1 move has been made!!</string>
 </resources>

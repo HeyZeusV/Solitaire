@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -57,7 +59,8 @@ fun SolitaireCard(
                 Row(
                     modifier = Modifier
                         .weight(0.2f)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 6.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -67,7 +70,7 @@ fun SolitaireCard(
                             .weight(1f)
                             .fillMaxSize(),
                         color = card.suit.color,
-                        alignment = Alignment.Center,
+                        alignment = Alignment.CenterStart,
                         maxLines = 1,
                         style = MaterialTheme.typography.bodyMedium
                     )
@@ -80,7 +83,8 @@ fun SolitaireCard(
                         ),
                         modifier = Modifier
                             .weight(1f)
-                            .fillMaxSize()
+                            .fillMaxSize(),
+                        alignment = Alignment.CenterEnd
                     )
                 }
                 Image(
@@ -102,6 +106,17 @@ fun SolitaireCard(
                 contentScale = ContentScale.FillBounds
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun SolitaireCardPreview() {
+    SolitaireTheme {
+        SolitaireCard(
+            Card(0, Suits.CLUBS, faceUp = true),
+            modifier = Modifier.width(120.dp).height(160.dp)
+        )
     }
 }
 
