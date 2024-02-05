@@ -59,7 +59,10 @@ fun SolitaireMenu(
 ) {
     val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
-    val stats by menuVM.stats.collectAsState()
+    val stats by when (selectedGame) {
+        Games.KLONDIKETURNONE -> menuVM.ktoStats.collectAsState()
+        Games.KLONDIKETURNTHREE -> menuVM.kttStats.collectAsState()
+    }
 
     SolitaireMenu(
         displayMenu = displayMenu,

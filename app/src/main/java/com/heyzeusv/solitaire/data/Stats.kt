@@ -1,11 +1,13 @@
 package com.heyzeusv.solitaire.data
 
+import com.heyzeusv.solitaire.util.Games
 import java.text.DecimalFormat
 
 /**
  *  Holds all Stats that are being stored in Proto DataStore StatPreferences.
  */
 data class Stats(
+    val gameSelected: Games = Games.KLONDIKETURNONE,
     val gamesPlayed: Int = 0,
     val gamesWon: Int = 0,
     val lowestMoves: Int = 999999,
