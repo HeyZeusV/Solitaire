@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire.util
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 
 /**
@@ -36,8 +37,9 @@ enum class ResetOptions {
  */
 enum class Games(
     @StringRes val gameName: Int,
-    val drawAmount: Int
+    val drawAmount: Int,
+    val dataStoreEnum: Game
 ) {
-    KLONDIKETURNONE(R.string.games_klondike_turn_one, 1),
-    KLONDIKETURNTHREE(R.string.games_klondike_turn_three, 3)
+    KLONDIKETURNONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
+    KLONDIKETURNTHREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE)
 }

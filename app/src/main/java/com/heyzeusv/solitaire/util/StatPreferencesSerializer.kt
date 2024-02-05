@@ -12,11 +12,7 @@ import javax.inject.Inject
  *  Used to convert from Proto to Kotlin and vice versa when working with DataStore.
  */
 class StatPreferencesSerializer @Inject constructor() : Serializer<StatPreferences> {
-    override val defaultValue: StatPreferences = StatPreferences.getDefaultInstance().toBuilder()
-        .setKtoLowestMoves(9999)
-        .setKtoFastestWin(359999L)
-        .setKtoBestTotalScore(99999L)
-        .build()
+    override val defaultValue: StatPreferences = StatPreferences.getDefaultInstance()
 
     override suspend fun readFrom(input: InputStream): StatPreferences {
         try {
