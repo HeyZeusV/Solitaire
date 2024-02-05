@@ -44,7 +44,7 @@ class MenuViewModel @Inject constructor(
     fun updateStats(lgs: LastGameStats) {
         val prevGS =
             stats.value.statsList.find { it.game == _selectedGame.value.dataStoreEnum }
-                ?: GameStats.getDefaultInstance()
+                ?: getStatsDefaultInstance()
 
         var newGS: GameStats
         prevGS.let { old ->
