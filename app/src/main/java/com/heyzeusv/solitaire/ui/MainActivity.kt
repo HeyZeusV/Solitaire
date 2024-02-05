@@ -83,6 +83,8 @@ fun SolitaireApp(
 
     val menuVM = hiltViewModel<MenuViewModel>()
 
+    val selectedGame by menuVM.selectedGame.collectAsState()
+
     BackHandler { closeGame = true }
 
     // start timer once user makes a move
@@ -149,6 +151,7 @@ fun SolitaireApp(
         )
         SolitaireBoard(
             gameVM = gameVM,
+            selectedGame = selectedGame,
             modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(

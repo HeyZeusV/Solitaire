@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,6 +23,7 @@ import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
 import com.heyzeusv.solitaire.data.Waste
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 
@@ -31,14 +31,16 @@ import com.heyzeusv.solitaire.util.Suits
  *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau.
  */
 @Composable
-fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
-
-    val drawAmount by gameVM.drawAmount.collectAsState()
+fun SolitaireBoard(
+    gameVM: GameViewModel,
+    selectedGame: Games,
+    modifier: Modifier = Modifier
+) {
 
     SolitaireBoard(
-        drawAmount = drawAmount,
+        drawAmount = selectedGame.drawAmount,
         stock = gameVM.stock,
-        onStockClick = gameVM::onStockClick,
+        onStockClick = { gameVM.onStockClick(selectedGame.drawAmount) },
         waste = gameVM.waste,
         onWasteClick = gameVM::onWasteClick,
         foundationList = gameVM.foundation,
