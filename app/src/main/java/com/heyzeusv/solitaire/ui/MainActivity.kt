@@ -167,5 +167,9 @@ fun SolitaireApp(
             undoOnClick = gameVM::undo
         )
     }
-    SolitaireMenu(menuVM = menuVM)
+    SolitaireMenu(
+        menuVM = menuVM,
+        lgs = LastGameStats(false, moves, timer, score),
+        reset = { gameVM.reset(ResetOptions.NEW) }
+    )
 }

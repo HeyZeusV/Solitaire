@@ -79,9 +79,7 @@ fun SolitaireTools(
                 }
             },
             title = { Text(text = stringResource(R.string.reset_ad_title)) },
-            text = {
-                Text(text = stringResource(R.string.reset_ad_msg))
-            }
+            text = { Text(text = stringResource(R.string.reset_ad_msg)) }
         )
     }
     Row(
