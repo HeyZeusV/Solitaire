@@ -47,6 +47,11 @@ import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.LinkifyText
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeStats
+import com.heyzeusv.solitaire.util.getAverageMoves
+import com.heyzeusv.solitaire.util.getAverageScore
+import com.heyzeusv.solitaire.util.getAverageTime
+import com.heyzeusv.solitaire.util.getScorePercentage
+import com.heyzeusv.solitaire.util.getWinPercentage
 
 /**
  *  Composable that displays Menu which allows user to switch games and view stats for selected game.
@@ -192,15 +197,15 @@ fun SolitaireMenu(
                     R.string.menu_content_stats,
                     stats.gamesPlayed,
                     stats.gamesWon,
-                    "stats.getGamePercent()",
+                    stats.getWinPercentage(),
                     stats.lowestMoves,
-                    "stats.averageMoves",
+                    stats.getAverageMoves(),
                     stats.totalMoves,
                     stats.fastestWin.formatTimeStats(),
-                    "stats.averageTime.formatTimeStats()",
+                    stats.getAverageTime().formatTimeStats(),
                     stats.totalTime.formatTimeStats(),
-                    "stats.averageScore",
-                    "stats.getScorePercent()",
+                    stats.getAverageScore(),
+                    stats.getScorePercentage(),
                     stats.bestTotalScore
                 )
             )
