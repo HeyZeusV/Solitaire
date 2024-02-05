@@ -41,5 +41,5 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
         mPile.addAll(cards)
     }
 
-    override fun toString(): String = "${suit.suit}: ${pile.toList()}"
+    override fun toString(): String = "${suit.name}: ${pile.toList()}"
 }

@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.imageResource
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.heyzeusv.solitaire.R
@@ -82,6 +83,8 @@ fun SolitaireApp(
 
     val menuVM = hiltViewModel<MenuViewModel>()
 
+    val selectedGame by menuVM.selectedGame.collectAsState()
+
     BackHandler { closeGame = true }
 
     // start timer once user makes a move
@@ -96,17 +99,20 @@ fun SolitaireApp(
             onDismissRequest = { },
             confirmButton = {
                 TextButton(onClick = { gameVM.reset(ResetOptions.NEW) }) {
-                    Text(text = "New Game")
+                    Text(text = stringResource(R.string.win_ad_confirm))
                 }
             },
-            title = { Text(text = "You Won!") },
+            title = { Text(text = stringResource(R.string.win_ad_title)) },
             text = {
-                val completedStats = """Moves: $moves
-                    |Time: ${timer.formatTimeDisplay()}
-                    |Score: $score
-                    |Total Score: ${lgs.totalScore}
-                    |┗ Moves + Time + Score (Lower is better)""".trimMargin()
-                Text(text = "Congratulations! Here are your stats...\n$completedStats")
+                Text(
+                    text = stringResource(
+                        R.string.win_ad_msg,
+                        moves,
+                        timer.formatTimeDisplay(),
+                        score,
+                        lgs.totalScore
+                    )
+                )
             }
         )
     }
@@ -120,16 +126,16 @@ fun SolitaireApp(
                     }
                     finishApp()
                 }) {
-                    Text(text = "Yes")
+                    Text(text = stringResource(R.string.close_ad_confirm))
                 }
             },
             dismissButton = {
                 TextButton(onClick = { closeGame = false }) {
-                    Text(text = "No")
+                    Text(text = stringResource(R.string.close_ad_dismiss))
                 }
             },
-            title = { Text(text = "Quit Game?") },
-            text = { Text(text = "This game will count on your stats if more than 1 move has been made!!") }
+            title = { Text(text = stringResource(R.string.close_ad_title)) },
+            text = { Text(text = stringResource(R.string.close_ad_msg)) }
         )
     }
     Column(
@@ -145,6 +151,7 @@ fun SolitaireApp(
         )
         SolitaireBoard(
             gameVM = gameVM,
+            selectedGame = selectedGame,
             modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(
@@ -160,5 +167,9 @@ fun SolitaireApp(
             undoOnClick = gameVM::undo
         )
     }
-    SolitaireMenu(menuVM = menuVM)
+    SolitaireMenu(
+        menuVM = menuVM,
+        lgs = LastGameStats(false, moves, timer, score),
+        reset = { gameVM.reset(ResetOptions.NEW) }
+    )
 }

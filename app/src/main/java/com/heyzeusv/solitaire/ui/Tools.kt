@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
@@ -61,26 +62,24 @@ fun SolitaireTools(
                         updateStats()
                         resetOnConfirmClick(RESTART)
                     }) {
-                        Text(text = "Restart")
+                        Text(text = stringResource(R.string.reset_ad_confirm_restart))
                     }
                     TextButton(onClick = {
                         resetOnClick = false
                         updateStats()
                         resetOnConfirmClick(NEW)
                     }) {
-                        Text(text = "New")
+                        Text(text = stringResource(R.string.reset_ad_confirm_reset))
                     }
                 }
             },
             dismissButton = {
                 TextButton(onClick = { resetOnClick = false }) {
-                    Text(text = "No")
+                    Text(text = stringResource(R.string.reset_ad_dismiss))
                 }
             },
-            title = { Text(text = "Are you sure?") },
-            text = {
-                Text(text = "You can choose to restart the current game, a game with a new shuffle, or continue with this game.\n\nThis game will count on your stats if more than 1 move has been made!!")
-            }
+            title = { Text(text = stringResource(R.string.reset_ad_title)) },
+            text = { Text(text = stringResource(R.string.reset_ad_msg)) }
         )
     }
     Row(
@@ -96,16 +95,16 @@ fun SolitaireTools(
             modifier = rowModifier,
             onClick = { menuOnClick(true) },
             iconId = R.drawable.button_menu,
-            iconContentDes = "Open Menu.",
-            buttonText = "Menu"
+            iconContentDes = stringResource(R.string.tools_cdesc_menu),
+            buttonText = stringResource(R.string.tools_button_menu)
         )
         // Reset Button
         SolitaireToolsButton(
             modifier = rowModifier,
             onClick = { resetOnClick = true },
             iconId = R.drawable.button_reset,
-            iconContentDes = "Reset game.",
-            buttonText = "Reset"
+            iconContentDes = stringResource(R.string.tools_cdesc_reset),
+            buttonText = stringResource(R.string.tools_button_reset)
         )
         // Undo Button
         SolitaireToolsButton(
@@ -113,8 +112,8 @@ fun SolitaireTools(
             enabled = historyListSize > 0,
             onClick = undoOnClick,
             iconId = R.drawable.button_undo,
-            iconContentDes = "Undo last move.",
-            buttonText = "Undo"
+            iconContentDes = stringResource(R.string.tools_cdesc_undo),
+            buttonText = stringResource(R.string.tools_button_undo)
         )
     }
 }

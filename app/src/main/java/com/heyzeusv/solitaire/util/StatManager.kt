@@ -32,16 +32,36 @@ class StatManager @Inject constructor(
      */
     suspend fun updateStats(stats: Stats) {
         statPreferences.updateData {
-            it.toBuilder().apply {
-                ktoGamesPlayed = stats.gamesPlayed
-                ktoGamesWon = stats.gamesWon
-                ktoLowestMoves = stats.lowestMoves
-                ktoTotalMoves = stats.totalMoves
-                ktoFastestWin = stats.fastestWin
-                ktoTotalTime = stats.totalTime
-                ktoTotalScore = stats.totalScore
-                ktoBestTotalScore = stats.bestTotalScore
-            }.build()
+            when (stats.gameSelected) {
+                Games.KLONDIKETURNONE -> updateKTOStats(it, stats)
+                Games.KLONDIKETURNTHREE -> updateKTTStats(it, stats)
+            }
         }
+    }
+
+    private fun updateKTOStats(sp: StatPreferences, stats: Stats): StatPreferences {
+        return sp.toBuilder().apply {
+            ktoGamesPlayed = stats.gamesPlayed
+            ktoGamesWon = stats.gamesWon
+            ktoLowestMoves = stats.lowestMoves
+            ktoTotalMoves = stats.totalMoves
+            ktoFastestWin = stats.fastestWin
+            ktoTotalTime = stats.totalTime
+            ktoTotalScore = stats.totalScore
+            ktoBestTotalScore = stats.bestTotalScore
+        }.build()
+    }
+
+    private fun updateKTTStats(sp: StatPreferences, stats: Stats): StatPreferences {
+        return sp.toBuilder().apply {
+            kttGamesPlayed = stats.gamesPlayed
+            kttGamesWon = stats.gamesWon
+            kttLowestMoves = stats.lowestMoves
+            kttTotalMoves = stats.totalMoves
+            kttFastestWin = stats.fastestWin
+            kttTotalTime = stats.totalTime
+            kttTotalScore = stats.totalScore
+            kttBestTotalScore = stats.bestTotalScore
+        }.build()
     }
 }

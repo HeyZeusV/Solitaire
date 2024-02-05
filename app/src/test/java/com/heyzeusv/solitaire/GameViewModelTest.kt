@@ -72,7 +72,7 @@ class GameViewModelTest {
         val expectedHistoryListSize = 3
 
         // draw 3 Cards
-        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
+        gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
 
         assertEquals(expectedStock, gameVM.stock.pile.toList())
         assertEquals(expectedWastePile, gameVM.waste.pile.toList())
@@ -89,9 +89,9 @@ class GameViewModelTest {
         val expectedHistoryListSize = 15
 
         // will make stock empty
-        for (i in 1..24) gameVM.onStockClick()
+        for (i in 1..24) gameVM.onStockClick(1)
 
-        gameVM.onStockClick()
+        gameVM.onStockClick(1)
 
         assertEquals(expectedStock, gameVM.stock.pile)
         assertEquals(expectedWaste, gameVM.waste.pile)
@@ -106,7 +106,7 @@ class GameViewModelTest {
         val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
 
         // fill Waste with 3 Cards
-        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
+        gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
         // this should remove top card from Waste and move it to Tableau pile #4
         gameVM.onWasteClick()
 
@@ -124,11 +124,11 @@ class GameViewModelTest {
         val expectedScoreSecond = 0
 
         // fill Waste with 3 Cards
-        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
+        gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
         // this should remove top card from Waste and move it to Tableau pile #4
         gameVM.onWasteClick()
         // draw another Card and move it to Foundation Clubs pile
-        gameVM.onStockClick() ; gameVM.onWasteClick()
+        gameVM.onStockClick(1) ; gameVM.onWasteClick()
 
         assertEquals(expectedFoundationPile, gameVM.foundation[0].pile.toList())
         assertEquals(expectedScoreFirst, gameVM.score.value)
@@ -150,7 +150,7 @@ class GameViewModelTest {
         val expectedTableauPile4After = listOf(tc.card0H, tc.card9C, tc.card6SFU)
 
         // fill Waste with 3 Cards
-        gameVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
+        gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
         // this should remove top card from Waste and move it to Tableau pile #4
         gameVM.onWasteClick()
 
@@ -172,8 +172,8 @@ class GameViewModelTest {
         val expectedMoves = 3
         val expectedHistoryListSize = 1
 
-        gameVM.onStockClick()
-        gameVM.onStockClick()
+        gameVM.onStockClick(1)
+        gameVM.onStockClick(1)
         gameVM.undo()
 
         assertEquals(expectedStock, gameVM.stock.pile)

@@ -34,8 +34,9 @@ class MenuViewModel @Inject constructor(
     val selectedGame: StateFlow<Games> get() = _selectedGame
     fun updateSelectedGame(newValue: Games) { _selectedGame.value = newValue }
 
-    val stats: StateFlow<Stats> = statManager.statData.map {
+    val ktoStats: StateFlow<Stats> = statManager.statData.map {
         Stats(
+            gameSelected = Games.KLONDIKETURNONE,
             gamesPlayed = it.ktoGamesPlayed,
             gamesWon = it.ktoGamesWon,
             lowestMoves = it.ktoLowestMoves,
@@ -50,20 +51,59 @@ class MenuViewModel @Inject constructor(
         started = SharingStarted.WhileSubscribed(5000),
         initialValue = Stats()
     )
+
+    val kttStats: StateFlow<Stats> = statManager.statData.map {
+        Stats(
+            gameSelected = Games.KLONDIKETURNTHREE,
+            gamesPlayed = it.kttGamesPlayed,
+            gamesWon = it.kttGamesWon,
+            lowestMoves = it.kttLowestMoves,
+            totalMoves = it.kttTotalMoves,
+            fastestWin = it.kttFastestWin,
+            totalTime = it.kttTotalTime,
+            totalScore = it.kttTotalScore,
+            bestTotalScore = it.kttBestTotalScore
+        )
+    }.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.WhileSubscribed(5000),
+        initialValue = Stats(gameSelected = Games.KLONDIKETURNTHREE)
+    )
+
     fun updateStats(lgs: LastGameStats) {
         viewModelScope.launch {
             var updatedStats: Stats
-            stats.value.run {
-                updatedStats = copy(
-                    gamesPlayed = gamesPlayed.plus(1),
-                    gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
-                    lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
-                    totalMoves = totalMoves.plus(lgs.moves),
-                    fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
-                    totalTime = totalTime.plus(lgs.time),
-                    totalScore = totalScore.plus(lgs.score),
-                    bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
-                )
+            when (_selectedGame.value) {
+                Games.KLONDIKETURNONE -> {
+                    ktoStats.value.run {
+                        updatedStats = copy(
+                            gameSelected = Games.KLONDIKETURNONE,
+                            gamesPlayed = gamesPlayed.plus(1),
+                            gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
+                            lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
+                            totalMoves = totalMoves.plus(lgs.moves),
+                            fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
+                            totalTime = totalTime.plus(lgs.time),
+                            totalScore = totalScore.plus(lgs.score),
+                            bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
+                        )
+                    }
+                }
+                Games.KLONDIKETURNTHREE -> {
+                    kttStats.value.run {
+                        updatedStats = copy(
+                            gameSelected = Games.KLONDIKETURNTHREE,
+                            gamesPlayed = gamesPlayed.plus(1),
+                            gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0),
+                            lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves,
+                            totalMoves = totalMoves.plus(lgs.moves),
+                            fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin,
+                            totalTime = totalTime.plus(lgs.time),
+                            totalScore = totalScore.plus(lgs.score),
+                            bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
+                        )
+                    }
+                }
             }
             statManager.updateStats(updatedStats)
         }

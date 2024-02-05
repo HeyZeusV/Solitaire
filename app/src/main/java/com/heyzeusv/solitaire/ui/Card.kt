@@ -8,7 +8,9 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -20,6 +22,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
@@ -56,7 +59,8 @@ fun SolitaireCard(
                 Row(
                     modifier = Modifier
                         .weight(0.2f)
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(horizontal = 6.dp),
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -66,21 +70,30 @@ fun SolitaireCard(
                             .weight(1f)
                             .fillMaxSize(),
                         color = card.suit.color,
-                        alignment = Alignment.Center,
+                        alignment = Alignment.CenterStart,
                         maxLines = 1,
                         style = MaterialTheme.typography.bodyMedium
                     )
                     Image(
                         painter = painterResource(card.suit.icon),
-                        contentDescription = "${cardsMap[card.value]} of ${card.suit.suit}",
+                        contentDescription = stringResource(
+                            R.string.card_cdesc_icon,
+                            cardsMap[card.value] ?: "A",
+                            stringResource(card.suit.suit)
+                        ),
                         modifier = Modifier
                             .weight(1f)
-                            .fillMaxSize()
+                            .fillMaxSize(),
+                        alignment = Alignment.CenterEnd
                     )
                 }
                 Image(
                     painter = painterResource(card.suit.icon),
-                    contentDescription = "${cardsMap[card.value]} of ${card.suit.suit}",
+                    contentDescription = stringResource(
+                        R.string.card_cdesc_icon,
+                        cardsMap[card.value] ?: "A",
+                        stringResource(card.suit.suit)
+                    ),
                     modifier = Modifier
                         .weight(0.8f)
                         .fillMaxSize()
@@ -89,10 +102,21 @@ fun SolitaireCard(
         } else {
             Image(
                 painter = painterResource(R.drawable.card_back),
-                contentDescription = "Back of a card",
+                contentDescription = stringResource(R.string.card_cdesc_back),
                 contentScale = ContentScale.FillBounds
             )
         }
+    }
+}
+
+@Preview
+@Composable
+fun SolitaireCardPreview() {
+    SolitaireTheme {
+        SolitaireCard(
+            Card(0, Suits.CLUBS, faceUp = true),
+            modifier = Modifier.width(120.dp).height(160.dp)
+        )
     }
 }
 

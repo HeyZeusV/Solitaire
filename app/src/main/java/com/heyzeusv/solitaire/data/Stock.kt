@@ -7,6 +7,21 @@ package com.heyzeusv.solitaire.data
 class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
     /**
+     *  Removes [amount] given and returns them as a list.
+     */
+    fun removeMany(amount: Int): List<Card> {
+        val list = mutableListOf<Card>()
+        for (i in 1..amount) {
+            try {
+                list.add(remove())
+            } catch (e: NoSuchElementException) {
+                return list
+            }
+        }
+        return list
+    }
+
+    /**
      *  Add given [cards] to [mPile].
      */
     override fun add(cards: List<Card>): Boolean {

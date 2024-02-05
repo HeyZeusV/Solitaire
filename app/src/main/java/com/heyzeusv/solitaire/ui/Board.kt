@@ -23,6 +23,7 @@ import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
 import com.heyzeusv.solitaire.data.Waste
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 
@@ -30,11 +31,16 @@ import com.heyzeusv.solitaire.util.Suits
  *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau.
  */
 @Composable
-fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
+fun SolitaireBoard(
+    gameVM: GameViewModel,
+    selectedGame: Games,
+    modifier: Modifier = Modifier
+) {
 
     SolitaireBoard(
+        drawAmount = selectedGame.drawAmount,
         stock = gameVM.stock,
-        onStockClick = gameVM::onStockClick,
+        onStockClick = { gameVM.onStockClick(selectedGame.drawAmount) },
         waste = gameVM.waste,
         onWasteClick = gameVM::onWasteClick,
         foundationList = gameVM.foundation,
@@ -46,11 +52,13 @@ fun SolitaireBoard(gameVM: GameViewModel, modifier: Modifier = Modifier) {
 }
 
 /**
- *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. All the data
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [drawAmount]
+ *  determines how many cards are added to the Waste pile on single [onStockClick]. All the data
  *  has been hoisted into above [SolitaireBoard] thus allowing for easier testing.
  */
 @Composable
 fun SolitaireBoard(
+    drawAmount: Int,
     stock: Stock,
     onStockClick: () -> Unit,
     waste: Waste,
@@ -99,25 +107,33 @@ fun SolitaireBoard(
                         modifier = rowModifier,
                         pile = foundationPileList[index],
                         emptyIconId = suit.emptyIcon,
-                        onClick = { onFoundationClick(index) }
+                        onClick = { onFoundationClick(index) },
+                        cardWidth = cardWidth
                     )
                 }
-                Spacer(modifier = rowModifier)
+                if (drawAmount == 1) Spacer(modifier = rowModifier)
                 SolitairePile(
-                    modifier = rowModifier,
+                    modifier = Modifier
+                        .weight(if (drawAmount == 1) 1f else 2.04f)
+                        .height(cardHeight),
                     pile = wastePile,
                     emptyIconId = R.drawable.waste_empty,
-                    onClick = onWasteClick
+                    onClick = onWasteClick,
+                    drawAmount = drawAmount,
+                    cardWidth = cardWidth
                 )
                 SolitairePile(
                     modifier = rowModifier,
                     pile = stockPile,
                     emptyIconId = if (wastePile.isEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
-                    onClick = onStockClick
+                    onClick = onStockClick,
+                    cardWidth = cardWidth
                 )
             }
             Row(
-                modifier = Modifier.weight(0.85f),
+                modifier = Modifier
+                    .weight(0.85f)
+                    .fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 tableauPileList.forEachIndexed { index, tableau ->
@@ -141,6 +157,7 @@ fun SolitaireBoardPreview() {
         val bCard = Card(10, Suits.SPADES, true)
         val rCard = Card(4, Suits.DIAMONDS, true)
         SolitaireBoard(
+            drawAmount = 1,
             stock = Stock(listOf(bCard, rCard, bCard)),
             onStockClick = { },
             waste = Waste(listOf(bCard, rCard, bCard)),
@@ -155,7 +172,8 @@ fun SolitaireBoardPreview() {
             tableauList = listOf(
                 Tableau(listOf(bCard)), Tableau(listOf(rCard)), Tableau(listOf(bCard)),
                 Tableau(listOf(rCard)), Tableau(listOf(bCard)), Tableau(listOf(rCard)),
-                Tableau(listOf(bCard))),
+                Tableau(listOf(bCard))
+            ),
             onTableauClick = { _, _ -> }
         )
     }
