@@ -19,7 +19,7 @@ android {
         versionCode = 4
         versionName = "1.2.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunner = "com.heyzeusv.solitaire.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }
@@ -84,6 +84,10 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4:1.6.0")
     debugImplementation("androidx.compose.ui:ui-tooling:1.6.0")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.6.0")
+    // Hilt Testing
+    androidTestImplementation("com.google.dagger:hilt-android-testing:$hiltVersion")
+    kaptAndroidTest("com.google.dagger:hilt-android-compiler:$hiltVersion")
+    kaptAndroidTest("androidx.hilt:hilt-compiler:1.1.0")
 }
 
 kapt {
