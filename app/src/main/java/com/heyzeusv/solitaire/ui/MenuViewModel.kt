@@ -42,33 +42,29 @@ class MenuViewModel @Inject constructor(
 
 
     fun updateStats(lgs: LastGameStats) {
-        val gameStatUpdated = stats.value.statsList.find { it.game == _selectedGame.value.dataStoreEnum } ?: GameStats.getDefaultInstance()
+        val prevGS =
+            stats.value.statsList.find { it.game == _selectedGame.value.dataStoreEnum }
+                ?: GameStats.getDefaultInstance()
 
-        // TODO retrieve initial stat then update it
-        gameStatUpdated.newBuilderForType().apply {
-            game = _selectedGame.value.dataStoreEnum
-            gamesPlayed = gamesPlayed.plus(1)
-            gamesWon = gamesWon.plus(if (lgs.gameWon) 1 else 0)
-            lowestMoves = if (lgs.gameWon) lowestMoves.coerceAtMost(lgs.moves) else lowestMoves
-            totalMoves = totalMoves.plus(lgs.moves)
-            fastestWin = if (lgs.gameWon) fastestWin.coerceAtMost(lgs.time) else fastestWin
-            totalTime = totalTime.plus(lgs.time)
-            totalScore = totalScore.plus(lgs.score)
-            bestTotalScore = if (lgs.gameWon) bestTotalScore.coerceAtMost(lgs.totalScore) else bestTotalScore
-        }.build()
-        val newGameStats = GameStats.newBuilder()
-            .setGame(_selectedGame.value.dataStoreEnum)
-            .setGamesPlayed(1)
-            .setGamesWon(0)
-            .setLowestMoves(0)
-            .setTotalMoves(lgs.moves)
-            .setFastestWin(100)
-            .setTotalTime(lgs.time)
-            .setTotalScore(lgs.score)
-            .setBestTotalScore(1000L)
-            .build()
+        var newGS: GameStats
+        prevGS.let { old ->
+            newGS = GameStats.newBuilder().also { new ->
+                new.game = _selectedGame.value.dataStoreEnum
+                new.gamesPlayed = old.gamesPlayed.plus(1)
+                new.gamesWon = old.gamesWon.plus(if (lgs.gameWon) 1 else 0)
+                new.lowestMoves =
+                    if (lgs.gameWon) old.lowestMoves.coerceAtMost(lgs.moves) else old.lowestMoves
+                new.totalMoves = old.totalMoves.plus(lgs.moves)
+                new.fastestWin =
+                    if (lgs.gameWon) old.fastestWin.coerceAtMost(lgs.time) else old.fastestWin
+                new.totalTime = old.totalTime.plus(lgs.time)
+                new.totalScore = old.totalScore.plus(lgs.score)
+                new.bestTotalScore =
+                    if (lgs.gameWon) old.bestTotalScore.coerceAtMost(lgs.totalScore) else old.bestTotalScore
+            }.build()
+        }
         viewModelScope.launch {
-            statManager.updateStats(newGameStats)
+            statManager.updateStats(newGS)
         }
     }
 
