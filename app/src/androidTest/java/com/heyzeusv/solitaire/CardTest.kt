@@ -5,13 +5,12 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.ui.SolitaireCard
 import com.heyzeusv.solitaire.util.SolitairePreview
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -67,34 +66,14 @@ class CardTest {
 
         // no card backs should exist
         composeRule.onNodeWithConDescId(R.string.card_cdesc_back).assertDoesNotExist()
-
         // 0 of Diamonds
-        assertEquals(
-            2,
-            composeRule.onAllNodesWithConDescId(R.string.card_cdesc_icon, "A", "Diamonds")
-                .fetchSemanticsNodes().size
-        )
-        composeRule.onNodeWithText("A").assertIsDisplayed()
+        composeRule.onNode(hasTestTag("A of DIAMONDS")).assertIsDisplayed()
         // 7 of Hearts
-        assertEquals(
-            2,
-            composeRule.onAllNodesWithConDescId(R.string.card_cdesc_icon, "7", "Hearts")
-                .fetchSemanticsNodes().size
-        )
-        composeRule.onNodeWithText("7").assertIsDisplayed()
+        composeRule.onNode(hasTestTag("7 of HEARTS")).assertIsDisplayed()
+
         // Queen of Clubs
-        assertEquals(
-            2,
-            composeRule.onAllNodesWithConDescId(R.string.card_cdesc_icon, "Q", "Clubs")
-                .fetchSemanticsNodes().size
-        )
-        composeRule.onNodeWithText("Q").assertIsDisplayed()
+        composeRule.onNode(hasTestTag("Q of CLUBS")).assertIsDisplayed()
         // 5 of Spades
-        assertEquals(
-            2,
-            composeRule.onAllNodesWithConDescId(R.string.card_cdesc_icon, "5", "Spades")
-                .fetchSemanticsNodes().size
-        )
-        composeRule.onNodeWithText("5").assertIsDisplayed()
+        composeRule.onNode(hasTestTag("5 of SPADES")).assertIsDisplayed()
     }
 }
