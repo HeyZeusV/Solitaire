@@ -7,6 +7,7 @@ import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.Games
+import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -66,16 +67,5 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             statManager.updateStats(newGS)
         }
-    }
-
-    /**
-     *  Returns [GameStats] with stats either at 0 or maxed out.
-     */
-    fun getStatsDefaultInstance(): GameStats {
-        return GameStats.getDefaultInstance().toBuilder()
-            .setLowestMoves(9999)
-            .setFastestWin(359999L)
-            .setBestTotalScore(99999L)
-            .build()
     }
 }

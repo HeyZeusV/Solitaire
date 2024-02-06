@@ -41,3 +41,14 @@ class StatManager @Inject constructor(
         }
     }
 }
+
+/**
+ *  Returns [GameStats] with stats either at 0 or maxed out.
+ */
+fun getStatsDefaultInstance(): GameStats {
+    return GameStats.getDefaultInstance().toBuilder()
+        .setLowestMoves(9999)
+        .setFastestWin(359999L)
+        .setBestTotalScore(99999L)
+        .build()
+}

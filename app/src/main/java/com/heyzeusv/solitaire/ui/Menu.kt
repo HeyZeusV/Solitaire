@@ -51,6 +51,7 @@ import com.heyzeusv.solitaire.util.getAverageMoves
 import com.heyzeusv.solitaire.util.getAverageScore
 import com.heyzeusv.solitaire.util.getAverageTime
 import com.heyzeusv.solitaire.util.getScorePercentage
+import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.getWinPercentage
 
 /**
@@ -64,7 +65,8 @@ fun SolitaireMenu(
 ) {
     val selectedGame by menuVM.selectedGame.collectAsState()
     val stats by menuVM.stats.collectAsState()
-    val currentGameStats = stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: menuVM.getStatsDefaultInstance()
+    val currentGameStats =
+        stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
     SolitaireMenu(
         updateDisplayMenu = menuVM::updateDisplayMenu,
