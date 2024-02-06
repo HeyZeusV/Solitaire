@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -28,9 +29,9 @@ class ScoreboardTest {
             }
         }
 
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_moves, 0).assertExists()
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_time, "00:00").assertExists()
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertExists()
+        composeRule.onNodeWithTextId(R.string.scoreboard_stat_moves, 0).assertIsDisplayed()
+        composeRule.onNodeWithTextId(R.string.scoreboard_stat_time, "00:00").assertIsDisplayed()
+        composeRule.onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
     }
 
     @Test
@@ -43,7 +44,6 @@ class ScoreboardTest {
                 )
             }
         }
-
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_time, "1439:59")
+        composeRule.onNodeWithTextId(R.string.scoreboard_stat_time, "5999:59").assertIsDisplayed()
     }
 }
