@@ -112,9 +112,9 @@ fun SolitaireMenu(
             onDismissRequest = { showGameSwitch = false },
             confirmButton = {
                 TextButton(onClick = {
+                    if (lgs.moves > 1) updateStats(lgs)
                     updateSelectedGame(newlySelectedGame)
                     showGameSwitch = false
-                    if (lgs.moves > 1) updateStats(lgs)
                     reset()
                 }) {
                     Text(text = stringResource(R.string.games_ad_confirm))
