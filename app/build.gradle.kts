@@ -19,7 +19,7 @@ android {
         versionCode = 4
         versionName = "1.2.0"
 
-        testInstrumentationRunner = "com.heyzeusv.solitaire.CustomTestRunner"
+        testInstrumentationRunner = "com.heyzeusv.solitaire.util.CustomTestRunner"
         vectorDrawables {
             useSupportLibrary = true
         }

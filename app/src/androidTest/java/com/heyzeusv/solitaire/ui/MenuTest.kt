@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import androidx.activity.ComponentActivity
 import androidx.compose.runtime.getValue
@@ -11,11 +11,12 @@ import androidx.compose.ui.test.assertIsSelected
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.ui.SolitaireMenu
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
+import com.heyzeusv.solitaire.util.onNodeWithTextId
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith

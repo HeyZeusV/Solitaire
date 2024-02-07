@@ -1,6 +1,7 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.Stock
+import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Test
 

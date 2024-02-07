@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.util
 
 import android.app.Application
 import android.content.Context

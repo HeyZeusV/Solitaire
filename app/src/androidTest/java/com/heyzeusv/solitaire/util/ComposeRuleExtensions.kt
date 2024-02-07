@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.util
 
 import androidx.activity.ComponentActivity
 import androidx.annotation.StringRes

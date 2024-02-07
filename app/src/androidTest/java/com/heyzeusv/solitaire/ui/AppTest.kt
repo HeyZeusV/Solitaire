@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import androidx.activity.compose.setContent
 import androidx.compose.ui.geometry.Offset
@@ -9,10 +9,10 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
-import com.heyzeusv.solitaire.ui.GameViewModel
-import com.heyzeusv.solitaire.ui.MainActivity
-import com.heyzeusv.solitaire.ui.SolitaireApp
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.onNodeWithTextId
+import com.heyzeusv.solitaire.util.performClickAt
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert

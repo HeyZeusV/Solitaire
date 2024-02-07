@@ -1,9 +1,9 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.History
-import com.heyzeusv.solitaire.ui.GameViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
+import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test

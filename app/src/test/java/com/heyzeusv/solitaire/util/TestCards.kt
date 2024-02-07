@@ -1,7 +1,6 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.util
 
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.util.Suits
 
 object TestCards {
 

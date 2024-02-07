@@ -1,6 +1,10 @@
-package com.heyzeusv.solitaire
+package com.heyzeusv.solitaire.data
 
 import androidx.datastore.core.DataStore
+import com.heyzeusv.solitaire.Game
+import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.di.AppTestScope
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import dagger.hilt.android.testing.HiltAndroidRule
