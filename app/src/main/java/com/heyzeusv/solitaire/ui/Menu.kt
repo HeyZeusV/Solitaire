@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -51,6 +52,7 @@ import com.heyzeusv.solitaire.util.getAverageMoves
 import com.heyzeusv.solitaire.util.getAverageScore
 import com.heyzeusv.solitaire.util.getAverageTime
 import com.heyzeusv.solitaire.util.getScorePercentage
+import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.getWinPercentage
 
 /**
@@ -64,7 +66,8 @@ fun SolitaireMenu(
 ) {
     val selectedGame by menuVM.selectedGame.collectAsState()
     val stats by menuVM.stats.collectAsState()
-    val currentGameStats = stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: menuVM.getStatsDefaultInstance()
+    val currentGameStats =
+        stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
     SolitaireMenu(
         updateDisplayMenu = menuVM::updateDisplayMenu,
@@ -110,9 +113,9 @@ fun SolitaireMenu(
             onDismissRequest = { showGameSwitch = false },
             confirmButton = {
                 TextButton(onClick = {
+                    if (lgs.moves > 1) updateStats(lgs)
                     updateSelectedGame(newlySelectedGame)
                     showGameSwitch = false
-                    if (lgs.moves > 1) updateStats(lgs)
                     reset()
                 }) {
                     Text(text = stringResource(R.string.games_ad_confirm))
@@ -130,14 +133,16 @@ fun SolitaireMenu(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { updateDisplayMenu(false) },
+            .clickable { updateDisplayMenu(false) }
+            .testTag("Close Menu"),
         color = BackgroundOverlay
     ) {}
     Card(
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(all = 32.dp),
+            .padding(all = 32.dp)
+            .testTag("Menu")
     ) {
         Column(
             modifier = Modifier

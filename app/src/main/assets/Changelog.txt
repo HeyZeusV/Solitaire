@@ -1,5 +1,8 @@
+v1.2.1
+-Fix: Accepting game change midway through another will now correctly update stats before switching.
+
 v1.2.0
--Update: Change to the way Stats are stored to make it much easier to add new games in the future
+-Update: Change to the way Stats are stored to make it much easier to add new games in the future.
 
 v1.1.1
 -Fix: Several icon colors.

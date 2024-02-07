@@ -15,6 +15,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
@@ -104,7 +105,7 @@ fun SolitaireBoard(
                     .height(cardHeight)
                 Suits.entries.forEachIndexed { index, suit ->
                     SolitairePile(
-                        modifier = rowModifier,
+                        modifier = rowModifier.testTag("Foundation #$index"),
                         pile = foundationPileList[index],
                         emptyIconId = suit.emptyIcon,
                         onClick = { onFoundationClick(index) },
@@ -115,7 +116,8 @@ fun SolitaireBoard(
                 SolitairePile(
                     modifier = Modifier
                         .weight(if (drawAmount == 1) 1f else 2.04f)
-                        .height(cardHeight),
+                        .height(cardHeight)
+                        .testTag("Waste"),
                     pile = wastePile,
                     emptyIconId = R.drawable.waste_empty,
                     onClick = onWasteClick,
@@ -123,7 +125,7 @@ fun SolitaireBoard(
                     cardWidth = cardWidth
                 )
                 SolitairePile(
-                    modifier = rowModifier,
+                    modifier = rowModifier.testTag("Stock"),
                     pile = stockPile,
                     emptyIconId = if (wastePile.isEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
                     onClick = onStockClick,
