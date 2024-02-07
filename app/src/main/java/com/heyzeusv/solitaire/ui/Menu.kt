@@ -33,6 +33,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -132,14 +133,16 @@ fun SolitaireMenu(
     Surface(
         modifier = Modifier
             .fillMaxSize()
-            .clickable { updateDisplayMenu(false) },
+            .clickable { updateDisplayMenu(false) }
+            .testTag("Close Menu"),
         color = BackgroundOverlay
     ) {}
     Card(
         modifier = Modifier
             .wrapContentHeight()
             .fillMaxWidth()
-            .padding(all = 32.dp),
+            .padding(all = 32.dp)
+            .testTag("Menu")
     ) {
         Column(
             modifier = Modifier
