@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.History
+import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
@@ -180,5 +181,23 @@ class GameViewModelTest {
         assertEquals(expectedWaste, gameVM.waste.pile)
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
+    }
+
+    @Test
+    fun gameVMRetrieveLastGameStats() {
+        val gameVM = GameViewModel(10L)
+        val expectedLGS1 = LastGameStats(false, 0, 0, 0)
+        val expectedLGS2 = LastGameStats(false, 5, 0, 1)
+        val expectedLGS3 = LastGameStats(true, 5, 0, 1)
+
+        assertEquals(expectedLGS1, gameVM.retrieveLastGameStats(false))
+
+        // this should place A of Clubs at top of Waste pile
+        gameVM.apply { for (i in 0..3) onStockClick(1) }
+        // this should place A of Clubs to foundation pile and reward point
+        gameVM.onWasteClick()
+
+        assertEquals(expectedLGS2, gameVM.retrieveLastGameStats(false))
+        assertEquals(expectedLGS3, gameVM.retrieveLastGameStats(true))
     }
 }

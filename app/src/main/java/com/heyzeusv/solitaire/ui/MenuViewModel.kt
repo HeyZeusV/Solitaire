@@ -68,4 +68,13 @@ class MenuViewModel @Inject constructor(
             statManager.updateStats(newGS)
         }
     }
+
+    /**
+     *  Checks the number of moves in given [lgs] to confirm if call to [updateStats] is needed.
+     */
+    fun checkMovesUpdateStats(lgs: LastGameStats) {
+        if (lgs.moves > 1) {
+            updateStats(lgs)
+        }
+    }
 }

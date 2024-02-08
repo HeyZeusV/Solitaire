@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.History
+import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
 import com.heyzeusv.solitaire.data.Waste
@@ -256,6 +257,13 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
             // counts as a move still
             _moves.value++
         }
+    }
+
+    /**
+     *  Returns [LastGameStats] with [gameWon] given and most updated stat values.
+     */
+    fun retrieveLastGameStats(gameWon: Boolean): LastGameStats {
+        return LastGameStats(gameWon, _moves.value, _timer.value, _score.value)
     }
 
     /**
