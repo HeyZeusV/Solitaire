@@ -71,8 +71,6 @@ fun SolitaireApp(
         ShaderBrush(ImageShader(pattern, TileMode.Repeated, TileMode.Repeated))
     }
 
-    val historyList by remember { mutableStateOf(gameVM.historyList) }
-
     val gameWon by gameVM.gameWon.collectAsState()
 
     val menuVM = hiltViewModel<MenuViewModel>()
@@ -143,14 +141,9 @@ fun SolitaireApp(
             modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(
-            modifier = Modifier.weight(0.10f),
-            menuOnClick = menuVM::updateDisplayMenu,
-            resetOnConfirmClick = gameVM::reset,
-            updateStats = {
-                menuVM.checkMovesUpdateStats(gameVM.retrieveLastGameStats(false))
-            },
-            historyListSize = historyList.size,
-            undoOnClick = gameVM::undo
+            gameVM = gameVM,
+            menuVM = menuVM,
+            modifier = Modifier.weight(0.10f)
         )
     }
     if (displayMenu) {

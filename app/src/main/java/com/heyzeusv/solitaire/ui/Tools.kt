@@ -28,10 +28,34 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.History
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.ResetOptions.NEW
 import com.heyzeusv.solitaire.util.ResetOptions.RESTART
 import com.heyzeusv.solitaire.util.SolitairePreview
+
+/**
+ *  Compose that displays several tool buttons for the user.
+ */
+@Composable
+fun SolitaireTools(
+    gameVM: GameViewModel,
+    menuVM: MenuViewModel,
+    modifier: Modifier = Modifier
+) {
+    val historyList by remember { mutableStateOf(gameVM.historyList) }
+
+    SolitaireTools(
+        menuOnClick = menuVM::updateDisplayMenu,
+        resetOnConfirmClick = gameVM::reset,
+        updateStats = {
+            menuVM.checkMovesUpdateStats(gameVM.retrieveLastGameStats(false))
+        },
+        historyList = historyList,
+        undoOnClick = gameVM::undo,
+        modifier = modifier
+    )
+}
 
 /**
  *  Composable that displays several buttons for the user. Pressing on Menu button, [menuOnClick],
@@ -42,12 +66,12 @@ import com.heyzeusv.solitaire.util.SolitairePreview
  */
 @Composable
 fun SolitaireTools(
-    modifier: Modifier = Modifier,
     menuOnClick: (Boolean) -> Unit,
     resetOnConfirmClick: (ResetOptions) -> Unit,
     updateStats: () -> Unit,
-    historyListSize: Int,
-    undoOnClick: () -> Unit
+    historyList: List<History>,
+    undoOnClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     var resetOnClick by remember { mutableStateOf(false) }
 
@@ -111,7 +135,7 @@ fun SolitaireTools(
         // Undo Button
         SolitaireToolsButton(
             modifier = rowModifier,
-            enabled = historyListSize > 0,
+            enabled = historyList.isNotEmpty(),
             onClick = undoOnClick,
             iconId = R.drawable.button_undo,
             iconContentDes = stringResource(R.string.tools_cdesc_undo),
@@ -166,7 +190,7 @@ fun SolitaireToolsPreview() {
             menuOnClick = { },
             resetOnConfirmClick = { },
             updateStats = { },
-            historyListSize = 0,
+            historyList = emptyList(),
             undoOnClick = { }
         )
     }
