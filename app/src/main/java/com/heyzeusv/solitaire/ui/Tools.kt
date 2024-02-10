@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -28,7 +29,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.data.History
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.ResetOptions.NEW
 import com.heyzeusv.solitaire.util.ResetOptions.RESTART
@@ -43,7 +43,7 @@ fun SolitaireTools(
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
 ) {
-    val historyList by remember { mutableStateOf(gameVM.historyList) }
+    val undoEnabled by gameVM.undoEnabled.collectAsState()
 
     SolitaireTools(
         menuOnClick = menuVM::updateDisplayMenu,
@@ -51,7 +51,7 @@ fun SolitaireTools(
         updateStats = {
             menuVM.checkMovesUpdateStats(gameVM.retrieveLastGameStats(false))
         },
-        historyList = historyList,
+        undoEnabled = undoEnabled,
         undoOnClick = gameVM::undo,
         modifier = modifier
     )
@@ -61,15 +61,16 @@ fun SolitaireTools(
  *  Composable that displays several buttons for the user. Pressing on Menu button, [menuOnClick],
  *  displays a Composable where user can view games and stats. Pressing on Reset button opens up an
  *  AlertDialog which gives user 3 options, restart current game, reset with a brand new shuffle, or
- *  continue current game; first two options call [resetOnConfirmClick]. Undo button when pressed
- *  calls [undoOnClick], which returns the game back 1 legal move.
+ *  continue current game; first two options call [resetOnConfirmClick] and [updateStats].
+ *  Undo button state is determined by [undoEnabled] and when pressed calls [undoOnClick], which
+ *  returns the game back 1 legal move.
  */
 @Composable
 fun SolitaireTools(
     menuOnClick: (Boolean) -> Unit,
     resetOnConfirmClick: (ResetOptions) -> Unit,
     updateStats: () -> Unit,
-    historyList: List<History>,
+    undoEnabled: Boolean,
     undoOnClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -118,28 +119,28 @@ fun SolitaireTools(
         val rowModifier = Modifier.weight(1.0f)
         // Menu Button
         SolitaireToolsButton(
-            modifier = rowModifier,
             onClick = { menuOnClick(true) },
             iconId = R.drawable.button_menu,
             iconContentDes = stringResource(R.string.tools_cdesc_menu),
-            buttonText = stringResource(R.string.tools_button_menu)
+            buttonText = stringResource(R.string.tools_button_menu),
+            modifier = rowModifier
         )
         // Reset Button
         SolitaireToolsButton(
-            modifier = rowModifier,
             onClick = { resetOnClick = true },
             iconId = R.drawable.button_reset,
             iconContentDes = stringResource(R.string.tools_cdesc_reset),
-            buttonText = stringResource(R.string.tools_button_reset)
+            buttonText = stringResource(R.string.tools_button_reset),
+            modifier = rowModifier
         )
         // Undo Button
         SolitaireToolsButton(
-            modifier = rowModifier,
-            enabled = historyList.isNotEmpty(),
             onClick = undoOnClick,
             iconId = R.drawable.button_undo,
             iconContentDes = stringResource(R.string.tools_cdesc_undo),
-            buttonText = stringResource(R.string.tools_button_undo)
+            buttonText = stringResource(R.string.tools_button_undo),
+            modifier = rowModifier,
+            enabled = undoEnabled
         )
     }
 }
@@ -152,12 +153,12 @@ fun SolitaireTools(
  */
 @Composable
 fun SolitaireToolsButton(
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
     onClick: () -> Unit,
     @DrawableRes iconId: Int,
     iconContentDes: String,
-    buttonText: String
+    buttonText: String,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true
 ) {
     OutlinedButton(
         onClick = onClick,
@@ -190,7 +191,7 @@ fun SolitaireToolsPreview() {
             menuOnClick = { },
             resetOnConfirmClick = { },
             updateStats = { },
-            historyList = emptyList(),
+            undoEnabled = true,
             undoOnClick = { }
         )
     }
@@ -208,11 +209,11 @@ fun SolitaireToolsButtonPreview() {
                 buttonText = "Enabled"
             )
             SolitaireToolsButton(
-                enabled = false,
                 onClick = { },
                 iconId = R.drawable.button_reset,
                 iconContentDes = "",
-                buttonText = "Disabled"
+                buttonText = "Disabled",
+                enabled = false
             )
         }
     }

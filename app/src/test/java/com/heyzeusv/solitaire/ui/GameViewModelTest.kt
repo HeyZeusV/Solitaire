@@ -42,6 +42,7 @@ class GameViewModelTest {
         val expectedFoundation = emptyList<Card>()
         val expectedWaste = emptyList<Card>()
         val expectedHistoryList = emptyList<History>()
+        val expectedUndoEnabled = false
 
         gameVM.reset(ResetOptions.RESTART)
 
@@ -58,6 +59,7 @@ class GameViewModelTest {
         }
         assertEquals(expectedWaste, gameVM.waste.pile)
         assertEquals(expectedHistoryList, gameVM.historyList)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
 
         // reset/restart options do nothing to rest of values, only to game deck order
         gameVM.reset(ResetOptions.NEW)
@@ -71,6 +73,7 @@ class GameViewModelTest {
         val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU, tc.card1DFU)
         val expectedMoves = 3
         val expectedHistoryListSize = 3
+        val expectedUndoEnabled = true
 
         // draw 3 Cards
         gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
@@ -79,6 +82,7 @@ class GameViewModelTest {
         assertEquals(expectedWastePile, gameVM.waste.pile.toList())
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
     }
 
     @Test
@@ -88,6 +92,7 @@ class GameViewModelTest {
         val expectedWaste = emptyList<Card>()
         val expectedMoves = 25
         val expectedHistoryListSize = 15
+        val expectedUndoEnabled = true
 
         // will make stock empty
         for (i in 1..24) gameVM.onStockClick(1)
@@ -98,6 +103,7 @@ class GameViewModelTest {
         assertEquals(expectedWaste, gameVM.waste.pile)
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
     }
 
     @Test
@@ -172,6 +178,7 @@ class GameViewModelTest {
         val expectedWaste = listOf(gameVM.stock.pile[0].copy(faceUp = true))
         val expectedMoves = 3
         val expectedHistoryListSize = 1
+        val expectedUndoEnabled = true
 
         gameVM.onStockClick(1)
         gameVM.onStockClick(1)
@@ -181,6 +188,7 @@ class GameViewModelTest {
         assertEquals(expectedWaste, gameVM.waste.pile)
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
     }
 
     @Test

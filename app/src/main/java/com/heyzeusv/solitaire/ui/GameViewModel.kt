@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.ui
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -59,9 +58,12 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
     private val _tableau = MutableList(7) { Tableau() }
     val tableau: List<Tableau> get() = _tableau
 
-    private val _historyList = mutableStateListOf<History>()
+    private val _historyList = mutableListOf<History>()
     val historyList: List<History> get() = _historyList
     private lateinit var currentStep: History
+
+    private val _undoEnabled = MutableStateFlow(false)
+    val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
 
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
@@ -117,6 +119,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
         // clear the waste pile
         _waste.reset()
         _historyList.clear()
+        _undoEnabled.value = false
         recordHistory()
         _gameWon.value = false
     }
@@ -238,6 +241,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
         // limit number of undo steps to 15
         if (_historyList.size == 15) _historyList.removeFirst()
         _historyList.add(currentStep)
+        _undoEnabled.value = true
         recordHistory()
     }
 
@@ -247,6 +251,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
     fun undo() {
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
+            if (_historyList.isEmpty()) _undoEnabled.value = false
             _score.value = step.score
             _stock.undo(step.stock.pile)
             _waste.undo(step.waste.pile)
