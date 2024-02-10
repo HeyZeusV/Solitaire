@@ -111,6 +111,7 @@ class GameViewModelTest {
         val gameVM = GameViewModel(10L)
         val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU)
         val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
+        val expectedWasteEmpty = false
 
         // fill Waste with 3 Cards
         gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
@@ -119,6 +120,7 @@ class GameViewModelTest {
 
         assertEquals(expectedWastePile, gameVM.waste.pile.toList())
         assertEquals(expectedTableauPile, gameVM.tableau[3].pile.toList())
+        assertEquals(expectedWasteEmpty, gameVM.wasteEmpty.value)
     }
 
     @Test

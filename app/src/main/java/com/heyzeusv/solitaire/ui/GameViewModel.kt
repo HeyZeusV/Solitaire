@@ -52,6 +52,9 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
     private val _waste = Waste()
     val waste: Waste get() = _waste
 
+    private val _wasteEmpty = MutableStateFlow(true)
+    val wasteEmpty: StateFlow<Boolean> get() = _wasteEmpty
+
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
@@ -152,6 +155,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
                 if (legalMove(listOf(it.pile.last()))) {
                     it.remove()
                     appendHistory()
+                    _wasteEmpty.value = it.pile.isEmpty()
                 }
             }
         }

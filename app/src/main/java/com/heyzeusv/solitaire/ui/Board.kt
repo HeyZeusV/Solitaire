@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
@@ -34,12 +36,14 @@ fun SolitaireBoard(
     selectedGame: Games,
     modifier: Modifier = Modifier
 ) {
+    val wasteEmpty by gameVM.wasteEmpty.collectAsState()
 
     SolitaireBoard(
         drawAmount = selectedGame.drawAmount,
         stock = gameVM.stock,
         onStockClick = { gameVM.onStockClick(selectedGame.drawAmount) },
         waste = gameVM.waste,
+        wasteEmpty = wasteEmpty,
         onWasteClick = gameVM::onWasteClick,
         foundationList = gameVM.foundation,
         onFoundationClick = gameVM::onFoundationClick,
@@ -60,6 +64,7 @@ fun SolitaireBoard(
     stock: Stock,
     onStockClick: () -> Unit,
     waste: Waste,
+    wasteEmpty: Boolean,
     onWasteClick: () -> Unit,
     foundationList: List<Foundation>,
     onFoundationClick: (Int) -> Unit,
@@ -112,7 +117,7 @@ fun SolitaireBoard(
                 SolitairePile(
                     modifier = rowModifier.testTag("Stock"),
                     pile = stock.pile,
-                    emptyIconId = R.drawable.stock_reset,
+                    emptyIconId = if (wasteEmpty) R.drawable.stock_empty else R.drawable.stock_reset,
                     onClick = onStockClick,
                     cardWidth = cardWidth
                 )
@@ -148,6 +153,7 @@ fun SolitaireBoardPreview() {
             stock = Stock(listOf(bCard, rCard, bCard)),
             onStockClick = { },
             waste = Waste(listOf(bCard, rCard, bCard)),
+            wasteEmpty = true,
             onWasteClick = { },
             foundationList = listOf(
                 Foundation(Suits.CLUBS, listOf(bCard)),
