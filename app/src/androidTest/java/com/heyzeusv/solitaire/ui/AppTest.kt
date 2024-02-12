@@ -1,22 +1,20 @@
 package com.heyzeusv.solitaire.ui
 
-import androidx.activity.compose.setContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 import com.heyzeusv.solitaire.util.performClickAt
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -28,18 +26,6 @@ class AppTest {
 
     @get:Rule(order = 2)
     val composeRule = createAndroidComposeRule<MainActivity>()
-
-    @Before
-    fun init() {
-        composeRule.activity.setContent {
-            SolitaireTheme(darkTheme = true) {
-                SolitaireApp(
-                    finishApp = { composeRule.activity.finishAndRemoveTask() },
-                    gameVM = GameViewModel(10L)
-                )
-            }
-        }
-    }
 
     @Test
     fun app_startUp() {
@@ -57,6 +43,13 @@ class AppTest {
         // check that tools is displayed and that Undo is disabled
         composeRule.onNode(hasTestTag("Tools")).assertIsDisplayed()
         composeRule.onNodeWithTextId(R.string.tools_button_undo).assertIsNotEnabled()
+    }
+
+    @Test
+    fun app_onStockClick() {
+        composeRule.onNode(hasTestTag("Stock")).performClick()
+
+        composeRule.onNode(hasTestTag("Waste") and hasAnyChild(hasTestTag("2 of SPADES"))).assertIsDisplayed()
     }
 
     @Test

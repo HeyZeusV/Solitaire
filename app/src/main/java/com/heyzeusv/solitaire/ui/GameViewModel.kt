@@ -7,27 +7,30 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.History
 import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.Random
+import javax.inject.Inject
 
 /**
  *  Data manager for game.
  *
- *  [randomSeed] is used in testing in order to get the same shuffle.
- *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
-class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
+@HiltViewModel
+class GameViewModel @Inject constructor(
+    private val ss: ShuffleSeed
+) : ViewModel() {
 
     // holds all 52 playing Cards
     private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
@@ -102,13 +105,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
-                shuffledDeck = baseDeck.shuffled(
-                    if (randomSeed == null) {
-                        Random()
-                    } else {
-                        Random(randomSeed)
-                    }
-                )
+                shuffledDeck = baseDeck.shuffled(ss.shuffleSeed)
                 _stock.reset(shuffledDeck)
             }
         }

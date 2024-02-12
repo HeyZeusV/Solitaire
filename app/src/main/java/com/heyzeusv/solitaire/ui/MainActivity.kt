@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,7 +24,7 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.ResetOptions
@@ -35,7 +34,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val gameVM: GameViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -44,25 +42,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-
-        if (gameVM.moves.value != 0) gameVM.startTimer()
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        gameVM.pauseTimer()
-    }
 }
 
 @Composable
-fun SolitaireApp(
-    finishApp: () -> Unit,
-    gameVM: GameViewModel = viewModel()
-) {
+fun SolitaireApp(finishApp: () -> Unit) {
+    val gameVM = hiltViewModel<GameViewModel>()
+    val menuVM = hiltViewModel<MenuViewModel>()
+
     var closeGame by remember { mutableStateOf(false) }
 
     // background pattern that repeats
@@ -73,12 +59,15 @@ fun SolitaireApp(
 
     val gameWon by gameVM.gameWon.collectAsState()
 
-    val menuVM = hiltViewModel<MenuViewModel>()
-
     val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
 
     BackHandler { closeGame = true }
+
+    LifecycleResumeEffect {
+        if (gameVM.moves.value != 0) gameVM.startTimer()
+        onPauseOrDispose { gameVM.pauseTimer() }
+    }
 
     if (gameWon) {
         // pause timer once user reaches max score

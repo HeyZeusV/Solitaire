@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
 import dagger.Provides
@@ -15,6 +16,7 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.test.StandardTestDispatcher
 import kotlinx.coroutines.test.TestDispatcher
 import kotlinx.coroutines.test.TestScope
+import java.util.Random
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
@@ -27,6 +29,13 @@ import javax.inject.Singleton
     replaces = [AppModule::class]
 )
 class TestAppModule {
+
+    /**
+     *  Provides [ShuffleSeed] obj containing [Random] with seed parameter ensuring that every
+     *  shuffle is the same.
+     */
+    @Provides
+    fun provideShuffleSeed(): ShuffleSeed = ShuffleSeed(Random(10L))
 
     @Provides
     @Singleton

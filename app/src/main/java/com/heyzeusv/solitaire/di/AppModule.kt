@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
 import dagger.Provides
@@ -15,12 +16,20 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
+import java.util.Random
 import javax.inject.Qualifier
 import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
+    /**
+     *  Provides [ShuffleSeed] obj containing [Random] without seed parameter ensuring that every
+     *  shuffle is random.
+     */
+    @Provides
+    fun provideShuffleSeed(): ShuffleSeed = ShuffleSeed(Random())
 
     /**
      *  DataStore setup was done with help from here
