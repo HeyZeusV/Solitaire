@@ -31,7 +31,7 @@ class CardTest {
         composeRule.setContent {
             SolitairePreview {
                 SolitaireCard(
-                    card = tc.card0C,
+                    card = tc.card1C,
                     modifier = modifier
                 )
             }
@@ -47,19 +47,19 @@ class CardTest {
             SolitairePreview {
                 Row {
                     SolitaireCard(
-                        card = tc.card0DFU,
+                        card = tc.card1DFU,
                         modifier = modifier.weight(1f)
                     )
                     SolitaireCard(
-                        card = tc.card6HFU,
+                        card = tc.card7HFU,
                         modifier = modifier.weight(1f)
                     )
                     SolitaireCard(
-                        card = tc.card11CFU,
+                        card = tc.card12CFU,
                         modifier = modifier.weight(1f)
                     )
                     SolitaireCard(
-                        card = tc.card4SFU,
+                        card = tc.card5SFU,
                         modifier = modifier.weight(1f)
                     )
                 }

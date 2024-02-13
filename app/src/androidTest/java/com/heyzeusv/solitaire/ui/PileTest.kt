@@ -47,7 +47,7 @@ class PileTest {
         composeRule.setContent {
             SolitaireTheme {
                 SolitairePile(
-                    pile = listOf(tc.card3DFU, tc.card6SFU),
+                    pile = listOf(tc.card4DFU, tc.card7SFU),
                     emptyIconId = R.drawable.tableau_empty,
                     cardWidth = 70.dp
                 )
@@ -65,7 +65,7 @@ class PileTest {
         composeRule.setContent {
             SolitaireTheme {
                 SolitairePile(
-                    pile = listOf(tc.card0CFU, tc.card3DFU, tc.card6SFU),
+                    pile = listOf(tc.card1CFU, tc.card4DFU, tc.card7SFU),
                     emptyIconId = R.drawable.tableau_empty,
                     drawAmount = 3,
                     cardWidth = 70.dp
@@ -90,7 +90,7 @@ class PileTest {
         composeRule.setContent {
             SolitaireTheme {
                 SolitairePile(
-                    pile = listOf(tc.card3DFU, tc.card6SFU),
+                    pile = listOf(tc.card4DFU, tc.card7SFU),
                     emptyIconId = R.drawable.tableau_empty,
                     drawAmount = 3,
                     cardWidth = 70.dp

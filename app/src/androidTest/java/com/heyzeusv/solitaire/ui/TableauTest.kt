@@ -44,8 +44,8 @@ class TableauTest {
                 SolitaireTableau(
                     cardHeight = 100.dp,
                     pile = listOf(
-                        tc.card6SFU, tc.card3DFU, tc.card2DFU, tc.card12DFU,
-                        tc.card10HFU, tc.card8CFU, tc.card4SFU
+                        tc.card5SFU, tc.card4DFU, tc.card3DFU, tc.card13DFU,
+                        tc.card11HFU, tc.card9CFU, tc.card7SFU
                     )
                 )
             }

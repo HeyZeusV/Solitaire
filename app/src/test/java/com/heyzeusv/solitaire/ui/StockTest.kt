@@ -12,7 +12,7 @@ class StockTest {
 
     @Test
     fun stockAdd() {
-        val expectedStock = mutableListOf(tc.card0C, tc.card11C, tc.card4S)
+        val expectedStock = mutableListOf(tc.card1C, tc.card12C, tc.card5S)
 
         stock.add(expectedStock)
 
@@ -43,7 +43,7 @@ class StockTest {
     @Test
     fun stockReset() {
         val expectedStock = tc.deck
-        stock.reset(listOf(tc.card0C, tc.card11C, tc.card4S))
+        stock.reset(listOf(tc.card1C, tc.card12C, tc.card5S))
 
         stock.reset(tc.deck)
 
@@ -53,7 +53,7 @@ class StockTest {
     @Test
     fun stockUndo() {
         stock.reset(tc.deck)
-        val expectedStock = mutableListOf(tc.card0C, tc.card11C, tc.card4S)
+        val expectedStock = mutableListOf(tc.card1C, tc.card12C, tc.card5S)
 
         stock.undo(expectedStock)
 

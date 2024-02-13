@@ -14,32 +14,32 @@ class FoundationTest {
 
     @Test
     fun foundationAdd() {
-        val expectedFoundation = listOf(tc.card0D, tc.card1D, tc.card2D, tc.card3D)
+        val expectedFoundation = listOf(tc.card1D, tc.card2D, tc.card3D, tc.card4D)
 
-        foundation.add(listOf(tc.card0D))
-        // card of wrong suit
-        foundation.add(listOf(tc.card1H))
         foundation.add(listOf(tc.card1D))
-        // card of wrong value
-        foundation.add(listOf(tc.card3D))
-        foundation.add(listOf(tc.card2D))
-        foundation.add(listOf(tc.card3D))
         // card of wrong suit
-        foundation.add(listOf(tc.card4S))
-        // card of wrong suit and value
         foundation.add(listOf(tc.card1H))
+        foundation.add(listOf(tc.card2D))
+        // card of wrong value
+        foundation.add(listOf(tc.card4D))
+        foundation.add(listOf(tc.card3D))
+        foundation.add(listOf(tc.card4D))
+        // card of wrong suit
+        foundation.add(listOf(tc.card5S))
+        // card of wrong suit and value
+        foundation.add(listOf(tc.card2H))
 
         assertEquals(expectedFoundation, foundation.pile)
     }
 
     @Test
     fun foundationRemove() {
-        val expectedFoundation = listOf(tc.card0D, tc.card1D, tc.card2D)
+        val expectedFoundation = listOf(tc.card1D, tc.card2D, tc.card3D)
 
-        foundation.add(listOf(tc.card0D))
         foundation.add(listOf(tc.card1D))
         foundation.add(listOf(tc.card2D))
         foundation.add(listOf(tc.card3D))
+        foundation.add(listOf(tc.card4D))
 
         foundation.remove()
 
@@ -50,10 +50,10 @@ class FoundationTest {
     fun foundationReset() {
         val expectedFoundation = emptyList<Card>()
 
-        foundation.add(listOf(tc.card0D))
         foundation.add(listOf(tc.card1D))
         foundation.add(listOf(tc.card2D))
         foundation.add(listOf(tc.card3D))
+        foundation.add(listOf(tc.card4D))
 
         foundation.reset()
 
@@ -62,9 +62,9 @@ class FoundationTest {
 
     @Test
     fun foundationUndo() {
-        val expectedFoundation = listOf(tc.card0D, tc.card1D, tc.card2D)
+        val expectedFoundation = listOf(tc.card1D, tc.card2D, tc.card3D)
 
-        foundation.undo(listOf(tc.card0D, tc.card1D, tc.card2D))
+        foundation.undo(listOf(tc.card1D, tc.card2D, tc.card3D))
 
         assertEquals(expectedFoundation, foundation.pile)
     }
@@ -73,7 +73,7 @@ class FoundationTest {
     fun foundationUndoEmptyCards() {
         val expectedFoundation = emptyList<Card>()
 
-        foundation.add(listOf(tc.card0D))
+        foundation.add(listOf(tc.card1D))
 
         foundation.undo(emptyList())
 

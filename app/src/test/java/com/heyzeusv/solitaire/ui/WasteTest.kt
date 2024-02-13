@@ -13,26 +13,26 @@ class WasteTest {
 
     @Test
     fun wasteAdd() {
-        val expectedPile = listOf(tc.card0C.copy(faceUp = true), tc.card0H.copy(faceUp = true), tc.card11C.copy(faceUp = true))
+        val expectedPile = listOf(tc.card1CFU, tc.card1HFU, tc.card12CFU)
 
-        waste.add(listOf(tc.card0C, tc.card0H, tc.card11C))
+        waste.add(listOf(tc.card1C, tc.card1H, tc.card12C))
 
         assertEquals(expectedPile, waste.pile)
     }
 
     @Test
     fun wasteUndo() {
-        val expectedPile = listOf(tc.card0C.copy(faceUp = true), tc.card0H.copy(faceUp = true), tc.card11C.copy(faceUp = true))
-        waste.add(listOf(tc.card0C))
+        val expectedPile = listOf(tc.card1CFU, tc.card1HFU, tc.card12CFU)
+        waste.add(listOf(tc.card1C))
 
-        waste.undo(listOf(tc.card0C, tc.card0H, tc.card11C))
+        waste.undo(listOf(tc.card1C, tc.card1H, tc.card12C))
 
         assertEquals(expectedPile, waste.pile)
     }
     @Test
     fun wasteUndoEmptyCards() {
         val expectedPile = emptyList<Card>()
-        waste.add(listOf(tc.card0C))
+        waste.add(listOf(tc.card1C))
 
         waste.undo(emptyList())
 

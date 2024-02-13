@@ -10,8 +10,10 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 import com.heyzeusv.solitaire.util.performClickAt
+import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert
@@ -26,6 +28,8 @@ class AppTest {
 
     @get:Rule(order = 2)
     val composeRule = createAndroidComposeRule<MainActivity>()
+
+    private val tc = TestCards
 
     @Test
     fun app_startUp() {
@@ -49,7 +53,30 @@ class AppTest {
     fun app_onStockClick() {
         composeRule.onNode(hasTestTag("Stock")).performClick()
 
-        composeRule.onNode(hasTestTag("Waste") and hasAnyChild(hasTestTag("2 of SPADES"))).assertIsDisplayed()
+        composeRule.onNode(hasTestTag("Waste") and hasAnyChild(hasTestTag("2 of SPADES")))
+            .assertIsDisplayed()
+    }
+
+    @Test
+    fun app_onWasteClick() {
+        composeRule.apply {
+            Thread.sleep(1000)
+            onNode(hasTestTag("Stock")).performClick()
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+
+            Thread.sleep(1000)
+            onNode(hasTestTag("Stock")).performClick()
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+
+            Thread.sleep(1000)
+            onNode(hasTestTag("Stock")).performClick()
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+
+            Thread.sleep(1000)
+            onNode(hasTestTag("Waste")).performClick()
+            waitUntilPileCardExists("Tableau #3", tc.card2DFU)
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+        }
     }
 
     @Test

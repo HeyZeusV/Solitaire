@@ -72,7 +72,7 @@ class GameViewModelTest {
     fun gameVMOnStockClickStockNotEmpty() {
         val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
         val expectedStock = gameVM.stock.pile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
-        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU, tc.card1DFU)
+        val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU, tc.card2DFU)
         val expectedMoves = 3
         val expectedHistoryListSize = 3
         val expectedUndoEnabled = true
@@ -111,8 +111,8 @@ class GameViewModelTest {
     @Test
     fun gameVMOnWasteClick() {
         val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
-        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU)
-        val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
+        val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU)
+        val expectedTableauPile = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU)
         val expectedWasteEmpty = false
 
         // fill Waste with 3 Cards
@@ -128,9 +128,9 @@ class GameViewModelTest {
     @Test
     fun gameVMOnFoundationClick() {
         val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
-        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU)
-        val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU, tc.card0CFU)
-        val expectedFoundationPile = listOf(tc.card0CFU)
+        val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU)
+        val expectedTableauPile = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU, tc.card1CFU)
+        val expectedFoundationPile = listOf(tc.card1CFU)
         val expectedScoreFirst = 1
         val expectedScoreSecond = 0
 
@@ -155,10 +155,10 @@ class GameViewModelTest {
     @Test
     fun gameVMOnTableauClick() {
         val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
-        val expectedTableauPile2Before = listOf(tc.card10D, tc.card3DFU)
-        val expectedTableauPile2After = listOf(tc.card10D, tc.card3DFU, tc.card2CFU, tc.card1DFU)
-        val expectedTableauPile4Before = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
-        val expectedTableauPile4After = listOf(tc.card0H, tc.card9C, tc.card6SFU)
+        val expectedTableauPile2Before = listOf(tc.card11D, tc.card4DFU)
+        val expectedTableauPile2After = listOf(tc.card11D, tc.card4DFU, tc.card3CFU, tc.card2DFU)
+        val expectedTableauPile4Before = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU)
+        val expectedTableauPile4After = listOf(tc.card1H, tc.card10C, tc.card7SFU)
 
         // fill Waste with 3 Cards
         gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
