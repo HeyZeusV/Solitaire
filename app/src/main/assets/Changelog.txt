@@ -1,3 +1,6 @@
+v1.3.0
+-Enhancement: Internal changes to the way game is drawn on screen. Game should be smoother and less demanding on device.
+
 v1.2.1
 -Fix: Accepting game change midway through another will now correctly update stats before switching.
 
