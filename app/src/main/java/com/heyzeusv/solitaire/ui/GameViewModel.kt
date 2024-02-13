@@ -13,6 +13,7 @@ import com.heyzeusv.solitaire.data.Tableau
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.isNotEqual
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -254,10 +255,18 @@ class GameViewModel @Inject constructor(
             val step = _historyList.removeLast()
             if (_historyList.isEmpty()) _undoEnabled.value = false
             _score.value = step.score
-            _stock.undo(step.stock.pile)
-            _waste.undo(step.waste.pile)
-            _foundation.forEachIndexed { i, foundation -> foundation.undo(step.foundation[i].pile) }
-            _tableau.forEachIndexed { i, tableau -> tableau.undo(step.tableau[i].pile) }
+            if (_stock.pile.isNotEqual(step.stock.pile)) _stock.undo(step.stock.pile)
+            if (_waste.pile.isNotEqual(step.waste.pile)) _waste.undo(step.waste.pile)
+            _foundation.forEachIndexed { i, foundation ->
+                if (foundation.pile.isNotEqual(step.foundation[i].pile)) {
+                    foundation.undo(step.foundation[i].pile)
+                }
+            }
+            _tableau.forEachIndexed { i, tableau ->
+                if (tableau.pile.isNotEqual(step.tableau[i].pile)) {
+                    tableau.undo(step.tableau[i].pile)
+                }
+            }
             // called to ensure currentStep stays updated.
             recordHistory()
             // counts as a move still

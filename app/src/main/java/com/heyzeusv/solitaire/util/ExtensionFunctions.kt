@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.util
 
 import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.data.Card
 import java.text.DecimalFormat
 
 fun Long.formatTimeDisplay(): String {
@@ -41,3 +42,9 @@ fun GameStats.getScorePercentage(): String {
     val scorePercent: Double = (getAverageScore().toDouble() / 52) * 100
     return df.format(scorePercent)
 }
+
+/**
+ *  Used to compare Pile lists which are SnapshotStateList internally but displayed as Lists,
+ *  so need to cast to List when comparing.
+ */
+fun List<Card>.isNotEqual(list: List<Card>): Boolean = this.toList() != list.toList()
