@@ -11,6 +11,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.TestCards
+import com.heyzeusv.solitaire.util.clickOnPileTT
+import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 import com.heyzeusv.solitaire.util.performClickAt
 import com.heyzeusv.solitaire.util.waitUntilPileCardExists
@@ -64,22 +66,76 @@ class AppTest {
     @Test
     fun app_onWasteClick() {
         composeRule.apply {
-            Thread.sleep(1000)
-            onNode(hasTestTag("Stock")).performClick()
+            // draw 3 times from stock
+            clickOnPileTT("Stock")
             waitUntilPileCardExists("Waste", tc.card2SFU)
-
-            Thread.sleep(1000)
-            onNode(hasTestTag("Stock")).performClick()
+            clickOnPileTT("Stock")
             waitUntilPileCardExists("Waste", tc.card3DFU)
-
-            Thread.sleep(1000)
-            onNode(hasTestTag("Stock")).performClick()
+            clickOnPileTT("Stock")
             waitUntilPileCardExists("Waste", tc.card2DFU)
 
-            Thread.sleep(1000)
-            onNode(hasTestTag("Waste")).performClick()
+            // click on waste and check that Card ends in correct pile
+            clickOnPileTT("Waste")
             waitUntilPileCardExists("Tableau #3", tc.card2DFU)
             waitUntilPileCardExists("Waste", tc.card3DFU)
+        }
+    }
+
+    @Test
+    fun app_onFoundationClick() {
+        composeRule.apply {
+            // draw from stock 4 times
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card1CFU)
+
+            // card should move to foundation
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Foundation #0", tc.card1CFU)
+            // card should move to tableau
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Tableau #3", tc.card2DFU)
+
+            // click on foundation and check that card ends in correct pile
+            clickOnPileTT("Foundation #0")
+            waitUntilPileCardExists("Tableau #3", tc.card1CFU)
+        }
+    }
+
+    @Test
+    fun app_onTableauClick_moveOneCard() {
+        composeRule.apply {
+            // click on tableau and check that card ends in correct pile
+            clickOnTableauCard("Tableau #3", tc.card3CFU)
+            waitUntilPileCardExists("Tableau #1", tc.card3CFU)
+        }
+    }
+
+    @Test
+    fun app_onTableauClick_moveMultipleCards() {
+        composeRule.apply {
+            // draw from stock 3 times
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+
+            // click on waste and check that Card ends in correct pile
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Tableau #3", tc.card2DFU)
+
+            // click on tableau and check that both Cards end in the correct pile
+            clickOnTableauCard("Tableau #3", tc.card3CFU)
+            waitUntilPileCardExists("Tableau #1", tc.card4DFU)
+            waitUntilPileCardExists("Tableau #1", tc.card3CFU)
+            waitUntilPileCardExists("Tableau #1", tc.card2DFU)
         }
     }
 
