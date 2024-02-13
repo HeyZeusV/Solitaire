@@ -4,7 +4,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -25,9 +24,8 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.imageResource
 import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.formatTimeDisplay
@@ -36,7 +34,6 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
-    private val gameVM: GameViewModel by viewModels()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -45,25 +42,13 @@ class MainActivity : ComponentActivity() {
             }
         }
     }
-
-    override fun onResume() {
-        super.onResume()
-
-        if (gameVM.moves.value != 0) gameVM.startTimer()
-    }
-
-    override fun onPause() {
-        super.onPause()
-
-        gameVM.pauseTimer()
-    }
 }
 
 @Composable
-fun SolitaireApp(
-    finishApp: () -> Unit,
-    gameVM: GameViewModel = viewModel()
-) {
+fun SolitaireApp(finishApp: () -> Unit) {
+    val gameVM = hiltViewModel<GameViewModel>()
+    val menuVM = hiltViewModel<MenuViewModel>()
+
     var closeGame by remember { mutableStateOf(false) }
 
     // background pattern that repeats
@@ -72,29 +57,22 @@ fun SolitaireApp(
         ShaderBrush(ImageShader(pattern, TileMode.Repeated, TileMode.Repeated))
     }
 
-    // stats
-    val moves by gameVM.moves.collectAsState()
-    val timer by gameVM.timer.collectAsState()
-    val score by gameVM.score.collectAsState()
-
-    val historyList by remember { mutableStateOf(gameVM.historyList) }
-
     val gameWon by gameVM.gameWon.collectAsState()
-
-    val menuVM = hiltViewModel<MenuViewModel>()
 
     val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
 
     BackHandler { closeGame = true }
 
-    // start timer once user makes a move
-    if (moves == 1 && gameVM.jobIsCancelled()) gameVM.startTimer()
+    LifecycleResumeEffect {
+        if (gameVM.moves.value != 0) gameVM.startTimer()
+        onPauseOrDispose { gameVM.pauseTimer() }
+    }
 
     if (gameWon) {
         // pause timer once user reaches max score
         gameVM.pauseTimer()
-        val lgs = LastGameStats(true, moves, timer, score)
+        val lgs = gameVM.retrieveLastGameStats(true)
         menuVM.updateStats(lgs)
         AlertDialog(
             onDismissRequest = { },
@@ -108,9 +86,9 @@ fun SolitaireApp(
                 Text(
                     text = stringResource(
                         R.string.win_ad_msg,
-                        moves,
-                        timer.formatTimeDisplay(),
-                        score,
+                        lgs.moves,
+                        lgs.time.formatTimeDisplay(),
+                        lgs.score,
                         lgs.totalScore
                     )
                 )
@@ -122,9 +100,7 @@ fun SolitaireApp(
             onDismissRequest = { closeGame = false },
             confirmButton = {
                 TextButton(onClick = {
-                    if (moves > 1) {
-                        menuVM.updateStats(LastGameStats(false, moves, timer, score))
-                    }
+                    menuVM.checkMovesUpdateStats(gameVM.retrieveLastGameStats(false))
                     finishApp()
                 }) {
                     Text(text = stringResource(R.string.close_ad_confirm))
@@ -145,10 +121,8 @@ fun SolitaireApp(
             .background(brush)
     ) {
         SolitaireScoreboard(
-            modifier = Modifier.weight(0.12f),
-            moves = moves,
-            timer = timer,
-            score = score
+            gameVM = gameVM,
+            modifier = Modifier.weight(0.12f)
         )
         SolitaireBoard(
             gameVM = gameVM,
@@ -156,22 +130,15 @@ fun SolitaireApp(
             modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(
-            modifier = Modifier.weight(0.10f),
-            menuOnClick = menuVM::updateDisplayMenu,
-            resetOnConfirmClick = gameVM::reset,
-            updateStats = {
-                if (moves > 1) {
-                    menuVM.updateStats(LastGameStats(false, moves, timer, score))
-                }
-            },
-            historyListSize = historyList.size,
-            undoOnClick = gameVM::undo
+            gameVM = gameVM,
+            menuVM = menuVM,
+            modifier = Modifier.weight(0.10f)
         )
     }
     if (displayMenu) {
         SolitaireMenu(
             menuVM = menuVM,
-            lgs = LastGameStats(false, moves, timer, score),
+            lgs = gameVM.retrieveLastGameStats(false),
             reset = { gameVM.reset(ResetOptions.NEW) }
         )
     }

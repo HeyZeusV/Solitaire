@@ -4,13 +4,13 @@ import androidx.activity.ComponentActivity
 import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.TestCards
+import com.heyzeusv.solitaire.util.onCard
 import com.heyzeusv.solitaire.util.onNodeWithConDescId
 import org.junit.Rule
 import org.junit.Test
@@ -39,38 +39,40 @@ class TableauTest {
 
     @Test
     fun tableau_sevenCards() {
-        composeRule.setContent {
-            SolitaireTheme {
-                SolitaireTableau(
-                    cardHeight = 100.dp,
-                    pile = listOf(
-                        tc.card6SFU, tc.card3DFU, tc.card2DFU, tc.card12DFU,
-                        tc.card10HFU, tc.card8CFU, tc.card4SFU
+        composeRule.apply {
+            setContent {
+                SolitaireTheme {
+                    SolitaireTableau(
+                        cardHeight = 100.dp,
+                        pile = listOf(
+                            tc.card5SFU, tc.card4DFU, tc.card3DFU, tc.card13DFU,
+                            tc.card11HFU, tc.card9CFU, tc.card7SFU
+                        )
                     )
-                )
+                }
             }
-        }
 
-        composeRule.onNode(hasTestTag("5 of SPADES"))
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        composeRule.onNode(hasTestTag("9 of CLUBS"))
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        composeRule.onNode(hasTestTag("J of HEARTS"))
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        composeRule.onNode(hasTestTag("K of DIAMONDS"))
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        composeRule.onNode(hasTestTag("3 of DIAMONDS"))
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        composeRule.onNode(hasTestTag("4 of DIAMONDS"))
-            .assertIsDisplayed()
-            .assertHasClickAction()
-        composeRule.onNode(hasTestTag("7 of SPADES"))
-            .assertIsDisplayed()
-            .assertHasClickAction()
+            onCard(tc.card5SFU)
+                .assertIsDisplayed()
+                .assertHasClickAction()
+            onCard(tc.card4DFU)
+                .assertIsDisplayed()
+                .assertHasClickAction()
+            onCard(tc.card3DFU)
+                .assertIsDisplayed()
+                .assertHasClickAction()
+            onCard(tc.card13DFU)
+                .assertIsDisplayed()
+                .assertHasClickAction()
+            onCard(tc.card11HFU)
+                .assertIsDisplayed()
+                .assertHasClickAction()
+            onCard(tc.card9CFU)
+                .assertIsDisplayed()
+                .assertHasClickAction()
+            onCard(tc.card7SFU)
+                .assertIsDisplayed()
+                .assertHasClickAction()
+        }
     }
 }

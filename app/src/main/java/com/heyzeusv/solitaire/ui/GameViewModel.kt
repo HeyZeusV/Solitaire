@@ -1,33 +1,37 @@
 package com.heyzeusv.solitaire.ui
 
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.History
+import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.isNotEqual
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.util.Random
+import javax.inject.Inject
 
 /**
  *  Data manager for game.
  *
- *  [randomSeed] is used in testing in order to get the same shuffle.
- *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
-class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
+@HiltViewModel
+class GameViewModel @Inject constructor(
+    private val ss: ShuffleSeed
+) : ViewModel() {
 
     // holds all 52 playing Cards
     private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
@@ -52,15 +56,21 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
     private val _waste = Waste()
     val waste: Waste get() = _waste
 
+    private val _wasteEmpty = MutableStateFlow(true)
+    val wasteEmpty: StateFlow<Boolean> get() = _wasteEmpty
+
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
     private val _tableau = MutableList(7) { Tableau() }
     val tableau: List<Tableau> get() = _tableau
 
-    private val _historyList = mutableStateListOf<History>()
+    private val _historyList = mutableListOf<History>()
     val historyList: List<History> get() = _historyList
     private lateinit var currentStep: History
+
+    private val _undoEnabled = MutableStateFlow(false)
+    val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
 
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
@@ -96,13 +106,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
-                shuffledDeck = baseDeck.shuffled(
-                    if (randomSeed == null) {
-                        Random()
-                    } else {
-                        Random(randomSeed)
-                    }
-                )
+                shuffledDeck = baseDeck.shuffled(ss.shuffleSeed)
                 _stock.reset(shuffledDeck)
             }
         }
@@ -116,6 +120,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
         // clear the waste pile
         _waste.reset()
         _historyList.clear()
+        _undoEnabled.value = false
         recordHistory()
         _gameWon.value = false
     }
@@ -148,6 +153,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
                 if (legalMove(listOf(it.pile.last()))) {
                     it.remove()
                     appendHistory()
+                    _wasteEmpty.value = it.pile.isEmpty()
                 }
             }
         }
@@ -237,6 +243,7 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
         // limit number of undo steps to 15
         if (_historyList.size == 15) _historyList.removeFirst()
         _historyList.add(currentStep)
+        _undoEnabled.value = true
         recordHistory()
     }
 
@@ -246,16 +253,32 @@ class GameViewModel(private val randomSeed: Long? = null) : ViewModel() {
     fun undo() {
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
+            if (_historyList.isEmpty()) _undoEnabled.value = false
             _score.value = step.score
-            _stock.undo(step.stock.pile)
-            _waste.undo(step.waste.pile)
-            _foundation.forEachIndexed { i, foundation -> foundation.undo(step.foundation[i].pile) }
-            _tableau.forEachIndexed { i, tableau -> tableau.undo(step.tableau[i].pile) }
+            if (_stock.pile.isNotEqual(step.stock.pile)) _stock.undo(step.stock.pile)
+            if (_waste.pile.isNotEqual(step.waste.pile)) _waste.undo(step.waste.pile)
+            _foundation.forEachIndexed { i, foundation ->
+                if (foundation.pile.isNotEqual(step.foundation[i].pile)) {
+                    foundation.undo(step.foundation[i].pile)
+                }
+            }
+            _tableau.forEachIndexed { i, tableau ->
+                if (tableau.pile.isNotEqual(step.tableau[i].pile)) {
+                    tableau.undo(step.tableau[i].pile)
+                }
+            }
             // called to ensure currentStep stays updated.
             recordHistory()
             // counts as a move still
             _moves.value++
         }
+    }
+
+    /**
+     *  Returns [LastGameStats] with [gameWon] given and most updated stat values.
+     */
+    fun retrieveLastGameStats(gameWon: Boolean): LastGameStats {
+        return LastGameStats(gameWon, _moves.value, _timer.value, _score.value)
     }
 
     /**

@@ -12,34 +12,34 @@ class TableauTest {
 
     @Test
     fun tableauAddCards() {
-        val expectedKingPile = listOf(tc.card12D, tc.card11C, tc.card10H, tc.card9S)
+        val expectedKingPile = listOf(tc.card13D, tc.card12C, tc.card11H, tc.card10S)
         val expectedEmptyPile = emptyList<Card>()
-        val expectedMixedPile = listOf(tc.card0H, tc.card11C, tc.card5D.copy(faceUp = true), tc.card4C, tc.card3H)
+        val expectedMixedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU, tc.card5C, tc.card4H)
 
         // add solo King card then 3 that should follow
         val emptyKingTableau = Tableau()
-        emptyKingTableau.add(listOf(tc.card12D))
-        emptyKingTableau.add(listOf(tc.card11C, tc.card10H, tc.card9S))
+        emptyKingTableau.add(listOf(tc.card13D))
+        emptyKingTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
         assertEquals(expectedKingPile, emptyKingTableau.pile)
 
         // add cards without king
         val emptyTableau = Tableau()
-        emptyTableau.add(listOf(tc.card11C, tc.card10H, tc.card9S))
+        emptyTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
         assertEquals(expectedEmptyPile, emptyTableau.pile)
 
         // add cards to Tableau with existing cards
         val mixedTableau = Tableau()
         // reset is used to fill Tableau with existing cards
-        mixedTableau.reset(listOf(tc.card0H, tc.card11C, tc.card5D))
-        mixedTableau.add(listOf(tc.card4C, tc.card3H))
+        mixedTableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D))
+        mixedTableau.add(listOf(tc.card5C, tc.card4H))
         assertEquals(expectedMixedPile, mixedTableau.pile.toList())
     }
 
     @Test
     fun tableauRemoveCards() {
         val tableau = Tableau()
-        val expectedPile = listOf(tc.card0H, tc.card11C, tc.card5D.copy(faceUp = true))
-        tableau.reset(listOf(tc.card0H, tc.card11C, tc.card5D, tc.card4C, tc.card3H))
+        val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU)
+        tableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H))
 
         tableau.remove(3)
 
@@ -49,9 +49,9 @@ class TableauTest {
     @Test
     fun tableauReset() {
         val tableau = Tableau()
-        val expectedPile = listOf(tc.card0H, tc.card11C, tc.card5D, tc.card4C, tc.card3H.copy(faceUp = true))
+        val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU)
 
-        tableau.reset(listOf(tc.card0H, tc.card11C, tc.card5D, tc.card4C, tc.card3H))
+        tableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H))
 
         assertEquals(expectedPile, tableau.pile)
     }
@@ -69,9 +69,9 @@ class TableauTest {
     @Test
     fun tableauUndo1Cards() {
         val tableau = Tableau()
-        val expectedPile = listOf(tc.card0H)
+        val expectedPile = listOf(tc.card1H)
 
-        tableau.undo(listOf(tc.card0H))
+        tableau.undo(listOf(tc.card1H))
 
         assertEquals(expectedPile, tableau.pile)
     }
@@ -79,9 +79,9 @@ class TableauTest {
     @Test
     fun tableauUndoMoreCards() {
         val tableau = Tableau()
-        val expectedPile = listOf(tc.card0H, tc.card11C, tc.card5D, tc.card4C, tc.card3H)
+        val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H)
 
-        tableau.undo(listOf(tc.card0H, tc.card11C, tc.card5D, tc.card4C, tc.card3H))
+        tableau.undo(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H))
 
         assertEquals(expectedPile, tableau.pile.toList())
     }

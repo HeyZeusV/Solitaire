@@ -16,8 +16,8 @@ android {
         applicationId = "com.heyzeusv.solitaire"
         minSdk = 24
         targetSdk = 34
-        versionCode = 5
-        versionName = "1.2.1"
+        versionCode = 6
+        versionName = "1.3.0"
 
         testInstrumentationRunner = "com.heyzeusv.solitaire.util.CustomTestRunner"
         vectorDrawables {
@@ -32,6 +32,9 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        debug {
+            applicationIdSuffix = ".dev"
         }
     }
     compileOptions {
@@ -62,6 +65,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:2024.01.00"))
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
     // Hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")

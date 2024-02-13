@@ -1,22 +1,25 @@
 package com.heyzeusv.solitaire.ui
 
-import androidx.activity.compose.setContent
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
+import androidx.compose.ui.test.hasAnyChild
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.TestCards
+import com.heyzeusv.solitaire.util.clickOnPileTT
+import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 import com.heyzeusv.solitaire.util.performClickAt
+import com.heyzeusv.solitaire.util.waitUntilPileCardDoesNotExists
+import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 
@@ -29,78 +32,289 @@ class AppTest {
     @get:Rule(order = 2)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
-    @Before
-    fun init() {
-        composeRule.activity.setContent {
-            SolitaireTheme(darkTheme = true) {
-                SolitaireApp(
-                    finishApp = { composeRule.activity.finishAndRemoveTask() },
-                    gameVM = GameViewModel(10L)
-                )
-            }
+    private val tc = TestCards
+
+    @Test
+    fun app_startUp() {
+        resetState()
+    }
+
+    @Test
+    fun app_onStockClick() {
+        composeRule.apply {
+            onNode(hasTestTag("Stock")).performClick()
+
+            onNode(hasTestTag("Waste") and hasAnyChild(hasTestTag("2 of SPADES")))
+                .assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 1)
         }
     }
 
     @Test
-    fun app_startUp() {
-        // checking all piles are displayed
-        composeRule.onNode(hasTestTag("Stock")).assertIsDisplayed()
-        composeRule.onNode(hasTestTag("Waste")).assertIsDisplayed()
-        for (i in 0..3) {
-            composeRule.onNode(hasTestTag("Foundation #$i")).assertIsDisplayed()
+    fun app_onWasteClick() {
+        composeRule.apply {
+            // draw 3 times from stock
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+
+            // click on waste and check that Card ends in correct pile
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Tableau #3", tc.card2DFU)
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 4)
         }
-        for (j in 0..6) {
-            composeRule.onNode(hasTestTag("Tableau #$j")).assertIsDisplayed()
+    }
+
+    @Test
+    fun app_onFoundationClick() {
+        composeRule.apply {
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
+
+            // draw from stock 4 times
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card1CFU)
+
+            // card should move to foundation
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Foundation #0", tc.card1CFU)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 1)
+            // card should move to tableau
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Tableau #3", tc.card2DFU)
+
+            // click on foundation and check that card ends in correct pile
+            clickOnPileTT("Foundation #0")
+            waitUntilPileCardExists("Tableau #3", tc.card1CFU)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 7)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
         }
-        // check that scoreboard is displayed
-        composeRule.onNode(hasTestTag("Scoreboard")).assertIsDisplayed()
-        // check that tools is displayed and that Undo is disabled
-        composeRule.onNode(hasTestTag("Tools")).assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.tools_button_undo).assertIsNotEnabled()
+    }
+
+    @Test
+    fun app_onTableauClick_moveOneCard() {
+        composeRule.apply {
+            // click on tableau and check that card ends in correct pile
+            clickOnTableauCard("Tableau #3", tc.card3CFU)
+            waitUntilPileCardExists("Tableau #1", tc.card3CFU)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 1)
+        }
+    }
+
+    @Test
+    fun app_onTableauClick_moveMultipleCards() {
+        composeRule.apply {
+            // draw from stock 3 times
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+
+            // click on waste and check that Card ends in correct pile
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Tableau #3", tc.card2DFU)
+
+            // click on tableau and check that both Cards end in the correct pile
+            clickOnTableauCard("Tableau #3", tc.card3CFU)
+            waitUntilPileCardExists("Tableau #1", tc.card4DFU)
+            waitUntilPileCardExists("Tableau #1", tc.card3CFU)
+            waitUntilPileCardExists("Tableau #1", tc.card2DFU)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 5)
+        }
+    }
+
+    @Test
+    fun app_undo() {
+        composeRule.apply {
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
+
+            // draw from stock 4 times
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card3DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card1CFU)
+
+            // card should move to foundation
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Foundation #0", tc.card1CFU)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 1)
+            // card should move to tableau
+            clickOnPileTT("Waste")
+            waitUntilPileCardExists("Tableau #3", tc.card2DFU)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 6)
+
+            // undo move to Tableau, should be back at Waste
+            onNodeWithTextId(R.string.tools_button_undo).performClick()
+            waitUntilPileCardDoesNotExists("Tableau #3", tc.card2DFU)
+            waitUntilPileCardExists("Waste", tc.card2DFU)
+
+            // undo move to Foundation, should be back at Waste
+            onNodeWithTextId(R.string.tools_button_undo).performClick()
+            waitUntilPileCardDoesNotExists("Foundation #0", tc.card1CFU)
+            waitUntilPileCardExists("Waste", tc.card1CFU)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 8)
+        }
     }
 
     @Test
     fun app_openMenu() {
-        composeRule.onNodeWithTextId(R.string.tools_button_menu).performClick()
+        composeRule.apply {
+            onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-        composeRule.onNode(hasTestTag("Menu")).assertIsDisplayed()
+            onNode(hasTestTag("Menu")).assertIsDisplayed()
+        }
     }
 
     @Test
     fun app_closeMenu() {
-        composeRule.onNodeWithTextId(R.string.tools_button_menu).performClick()
+        composeRule.apply {
+            onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-        // close by clicking outside Card bounds
-        composeRule.onNode(hasTestTag("Close Menu")).performClickAt(Offset.Zero)
-        composeRule.onNode(hasTestTag("Menu")).assertIsNotDisplayed()
+            // close by clicking outside Card bounds
+            onNode(hasTestTag("Close Menu")).performClickAt(Offset.Zero)
+            onNode(hasTestTag("Menu")).assertIsNotDisplayed()
 
-        composeRule.onNodeWithTextId(R.string.tools_button_menu).performClick()
+            onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-        // close by pressing back button
-        Espresso.pressBack()
-        composeRule.onNode(hasTestTag("Menu")).assertIsNotDisplayed()
+            // close by pressing back button
+            Espresso.pressBack()
+            onNode(hasTestTag("Menu")).assertIsNotDisplayed()
+        }
     }
 
     @Test
     fun app_closeApp_confirm() {
-        Espresso.pressBack()
+        composeRule.apply {
+            Espresso.pressBack()
 
-        // check alert dialog appears and confirm closure
-        composeRule.onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.close_ad_confirm).performClick()
+            // check alert dialog appears and confirm closure
+            onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.close_ad_confirm).performClick()
 
-        Assert.assertTrue(composeRule.activity.isFinishing)
+            Assert.assertTrue(activity.isFinishing)
+        }
     }
 
     @Test
     fun app_closeApp_dismiss() {
-        Espresso.pressBack()
+        composeRule.apply {
+            Espresso.pressBack()
 
-        // check alert dialog appears and dismiss closure
-        composeRule.onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.close_ad_dismiss).performClick()
+            // check alert dialog appears and dismiss closure
+            onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.close_ad_dismiss).performClick()
 
-        composeRule.onNodeWithTextId(R.string.close_ad_title).assertIsNotDisplayed()
-        Assert.assertTrue(!composeRule.activity.isFinishing)
+            onNodeWithTextId(R.string.close_ad_title).assertIsNotDisplayed()
+            Assert.assertTrue(!activity.isFinishing)
+        }
+    }
+
+    @Test
+    fun app_reset_restart() {
+        composeRule.apply {
+            onNodeWithTextId(R.string.tools_button_reset).performClick()
+
+            // check alert dialog appears and select new
+            onNodeWithTextId(R.string.reset_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.reset_ad_confirm_restart).performClick()
+
+            resetState()
+
+            // checking that cards are the same as first shuffle of Random(10L)
+            waitUntilPileCardExists("Tableau #0", tc.card5HFU)
+            waitUntilPileCardExists("Tableau #1", tc.card4DFU)
+            waitUntilPileCardExists("Tableau #2", tc.card7DFU)
+            waitUntilPileCardExists("Tableau #3", tc.card3CFU)
+            waitUntilPileCardExists("Tableau #4", tc.card13DFU)
+            waitUntilPileCardExists("Tableau #5", tc.card10SFU)
+            waitUntilPileCardExists("Tableau #6", tc.card12CFU)
+        }
+    }
+
+    @Test
+    fun app_reset_new() {
+        composeRule.apply {
+            onNodeWithTextId(R.string.tools_button_reset).performClick()
+
+            // check alert dialog appears and select new
+            onNodeWithTextId(R.string.reset_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.reset_ad_confirm_new).performClick()
+
+            resetState()
+
+            // checking that cards are not the same as first shuffle of Random(10L)
+            waitUntilPileCardDoesNotExists("Tableau #0", tc.card5HFU)
+            waitUntilPileCardDoesNotExists("Tableau #1", tc.card4DFU)
+            waitUntilPileCardDoesNotExists("Tableau #2", tc.card7DFU)
+            waitUntilPileCardDoesNotExists("Tableau #3", tc.card3CFU)
+            waitUntilPileCardDoesNotExists("Tableau #4", tc.card13DFU)
+            waitUntilPileCardDoesNotExists("Tableau #5", tc.card10SFU)
+            waitUntilPileCardDoesNotExists("Tableau #6", tc.card12CFU)
+        }
+    }
+
+    @Test
+    fun app_reset_dismiss() {
+        composeRule.apply {
+            clickOnPileTT("Stock")
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+
+            onNodeWithTextId(R.string.tools_button_reset).performClick()
+
+            // check alert dialog appears and select new
+            onNodeWithTextId(R.string.reset_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.reset_ad_dismiss).performClick()
+
+            onNodeWithTextId(R.string.reset_ad_title).assertDoesNotExist()
+
+            // check that nothing has changed
+            waitUntilPileCardExists("Waste", tc.card2SFU)
+        }
+    }
+
+    /**
+     *  Checks that all piles are displayed and have the correct number of children on reset. Also
+     *  checks that Scoreboard values are at zero and Undo button is disabled.
+     */
+    private fun resetState() {
+        composeRule.apply {
+            // checking all piles are displayed
+            onNode(hasTestTag("Stock")).assertIsDisplayed()
+            assert(onNode(hasTestTag("Stock")).fetchSemanticsNode().children.size == 1)
+            onNode(hasTestTag("Waste")).assertIsDisplayed()
+            assert(onNode(hasTestTag("Waste")).fetchSemanticsNode().children.isEmpty())
+            for (i in 0..3) {
+                onNode(hasTestTag("Foundation #$i")).assertIsDisplayed()
+                assert(onNode(hasTestTag("Foundation #$i")).fetchSemanticsNode().children.isEmpty())
+            }
+            for (j in 0..6) {
+                onNode(hasTestTag("Tableau #$j")).assertIsDisplayed()
+                assert(onNode(hasTestTag("Tableau #$j")).fetchSemanticsNode().children.size == j + 1)
+            }
+            // check that scoreboard is displayed
+            onNode(hasTestTag("Scoreboard")).assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 0).assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_time, "00:00").assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
+            // check that tools is displayed and that Undo is disabled
+            onNode(hasTestTag("Tools")).assertIsDisplayed()
+            onNodeWithTextId(R.string.tools_button_undo).assertIsNotEnabled()
+        }
     }
 }

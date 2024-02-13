@@ -2,11 +2,14 @@ package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.History
+import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Test
+import java.util.Random
 
 class GameViewModelTest {
 
@@ -14,7 +17,7 @@ class GameViewModelTest {
 
     @Test
     fun gameVMStockCreation() {
-        val gameVM = GameViewModel()
+        val gameVM = GameViewModel(ShuffleSeed(Random()))
         val expectedDeck = tc.deck
         var actualDeck = mutableListOf<Card>()
 
@@ -33,7 +36,7 @@ class GameViewModelTest {
 
     @Test
     fun gameVMReset() {
-        val gameVM = GameViewModel()
+        val gameVM = GameViewModel(ShuffleSeed(Random()))
         val expectedTimer = 0L
         val expectedMoves = 0
         val expectedScore = 0
@@ -41,6 +44,7 @@ class GameViewModelTest {
         val expectedFoundation = emptyList<Card>()
         val expectedWaste = emptyList<Card>()
         val expectedHistoryList = emptyList<History>()
+        val expectedUndoEnabled = false
 
         gameVM.reset(ResetOptions.RESTART)
 
@@ -57,6 +61,7 @@ class GameViewModelTest {
         }
         assertEquals(expectedWaste, gameVM.waste.pile)
         assertEquals(expectedHistoryList, gameVM.historyList)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
 
         // reset/restart options do nothing to rest of values, only to game deck order
         gameVM.reset(ResetOptions.NEW)
@@ -65,11 +70,12 @@ class GameViewModelTest {
 
     @Test
     fun gameVMOnStockClickStockNotEmpty() {
-        val gameVM = GameViewModel(10L)
+        val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
         val expectedStock = gameVM.stock.pile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
-        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU, tc.card1DFU)
+        val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU, tc.card2DFU)
         val expectedMoves = 3
         val expectedHistoryListSize = 3
+        val expectedUndoEnabled = true
 
         // draw 3 Cards
         gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
@@ -78,15 +84,17 @@ class GameViewModelTest {
         assertEquals(expectedWastePile, gameVM.waste.pile.toList())
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
     }
 
     @Test
     fun gameVMOnStockClickWasteNotEmpty() {
-        val gameVM = GameViewModel()
+        val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
         val expectedStock = gameVM.stock.pile
         val expectedWaste = emptyList<Card>()
         val expectedMoves = 25
         val expectedHistoryListSize = 15
+        val expectedUndoEnabled = true
 
         // will make stock empty
         for (i in 1..24) gameVM.onStockClick(1)
@@ -97,13 +105,15 @@ class GameViewModelTest {
         assertEquals(expectedWaste, gameVM.waste.pile)
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
     }
 
     @Test
     fun gameVMOnWasteClick() {
-        val gameVM = GameViewModel(10L)
-        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU)
-        val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
+        val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
+        val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU)
+        val expectedTableauPile = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU)
+        val expectedWasteEmpty = false
 
         // fill Waste with 3 Cards
         gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
@@ -112,14 +122,15 @@ class GameViewModelTest {
 
         assertEquals(expectedWastePile, gameVM.waste.pile.toList())
         assertEquals(expectedTableauPile, gameVM.tableau[3].pile.toList())
+        assertEquals(expectedWasteEmpty, gameVM.wasteEmpty.value)
     }
 
     @Test
     fun gameVMOnFoundationClick() {
-        val gameVM = GameViewModel(10L)
-        val expectedWastePile = listOf(tc.card1SFU, tc.card2DFU)
-        val expectedTableauPile = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU, tc.card0CFU)
-        val expectedFoundationPile = listOf(tc.card0CFU)
+        val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
+        val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU)
+        val expectedTableauPile = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU, tc.card1CFU)
+        val expectedFoundationPile = listOf(tc.card1CFU)
         val expectedScoreFirst = 1
         val expectedScoreSecond = 0
 
@@ -143,11 +154,11 @@ class GameViewModelTest {
 
     @Test
     fun gameVMOnTableauClick() {
-        val gameVM = GameViewModel(10L)
-        val expectedTableauPile2Before = listOf(tc.card10D, tc.card3DFU)
-        val expectedTableauPile2After = listOf(tc.card10D, tc.card3DFU, tc.card2CFU, tc.card1DFU)
-        val expectedTableauPile4Before = listOf(tc.card0H, tc.card9C, tc.card6S, tc.card2CFU, tc.card1DFU)
-        val expectedTableauPile4After = listOf(tc.card0H, tc.card9C, tc.card6SFU)
+        val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
+        val expectedTableauPile2Before = listOf(tc.card11D, tc.card4DFU)
+        val expectedTableauPile2After = listOf(tc.card11D, tc.card4DFU, tc.card3CFU, tc.card2DFU)
+        val expectedTableauPile4Before = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU)
+        val expectedTableauPile4After = listOf(tc.card1H, tc.card10C, tc.card7SFU)
 
         // fill Waste with 3 Cards
         gameVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
@@ -166,11 +177,12 @@ class GameViewModelTest {
 
     @Test
     fun gameVMUndo() {
-        val gameVM = GameViewModel()
+        val gameVM = GameViewModel(ShuffleSeed(Random()))
         val expectedStock = gameVM.stock.pile.toMutableList().apply { removeFirst() }
         val expectedWaste = listOf(gameVM.stock.pile[0].copy(faceUp = true))
         val expectedMoves = 3
         val expectedHistoryListSize = 1
+        val expectedUndoEnabled = true
 
         gameVM.onStockClick(1)
         gameVM.onStockClick(1)
@@ -180,5 +192,24 @@ class GameViewModelTest {
         assertEquals(expectedWaste, gameVM.waste.pile)
         assertEquals(expectedMoves, gameVM.moves.value)
         assertEquals(expectedHistoryListSize, gameVM.historyList.size)
+        assertEquals(expectedUndoEnabled, gameVM.undoEnabled.value)
+    }
+
+    @Test
+    fun gameVMRetrieveLastGameStats() {
+        val gameVM = GameViewModel(ShuffleSeed(Random(10L)))
+        val expectedLGS1 = LastGameStats(false, 0, 0, 0)
+        val expectedLGS2 = LastGameStats(false, 5, 0, 1)
+        val expectedLGS3 = LastGameStats(true, 5, 0, 1)
+
+        assertEquals(expectedLGS1, gameVM.retrieveLastGameStats(false))
+
+        // this should place A of Clubs at top of Waste pile
+        gameVM.apply { for (i in 0..3) onStockClick(1) }
+        // this should place A of Clubs to foundation pile and reward point
+        gameVM.onWasteClick()
+
+        assertEquals(expectedLGS2, gameVM.retrieveLastGameStats(false))
+        assertEquals(expectedLGS3, gameVM.retrieveLastGameStats(true))
     }
 }

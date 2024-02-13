@@ -6,6 +6,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -17,6 +19,30 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.autosizetext.AutoSizeText
 import com.heyzeusv.solitaire.util.formatTimeDisplay
+
+/**
+ *  Composable that displays current game stats to the user
+ */
+@Composable
+fun SolitaireScoreboard(
+    gameVM: GameViewModel,
+    modifier: Modifier = Modifier
+) {
+    // stats
+    val moves by gameVM.moves.collectAsState()
+    val timer by gameVM.timer.collectAsState()
+    val score by gameVM.score.collectAsState()
+
+    // start timer once user makes a move
+    if (moves == 1 && gameVM.jobIsCancelled()) gameVM.startTimer()
+
+    SolitaireScoreboard(
+        modifier = modifier,
+        moves = moves,
+        timer = timer,
+        score = score
+    )
+}
 
 /**
  *  Composable that displays current game stats to the user. Displays the number of [moves] the user
