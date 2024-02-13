@@ -43,7 +43,7 @@ fun SolitaireBoard(
         stock = gameVM.stock,
         onStockClick = { gameVM.onStockClick(selectedGame.drawAmount) },
         waste = gameVM.waste,
-        wasteEmpty = wasteEmpty,
+        wasteEmpty = {  wasteEmpty },
         onWasteClick = gameVM::onWasteClick,
         foundationList = gameVM.foundation,
         onFoundationClick = gameVM::onFoundationClick,
@@ -64,7 +64,7 @@ fun SolitaireBoard(
     stock: Stock,
     onStockClick: () -> Unit,
     waste: Waste,
-    wasteEmpty: Boolean,
+    wasteEmpty: () -> Boolean,
     onWasteClick: () -> Unit,
     foundationList: List<Foundation>,
     onFoundationClick: (Int) -> Unit,
@@ -114,10 +114,10 @@ fun SolitaireBoard(
                     drawAmount = drawAmount,
                     cardWidth = cardWidth
                 )
-                SolitairePile(
+                SolitaireStock(
                     modifier = rowModifier.testTag("Stock"),
                     pile = stock.pile,
-                    emptyIconId = if (wasteEmpty) R.drawable.stock_empty else R.drawable.stock_reset,
+                    wasteEmpty = wasteEmpty,
                     onClick = onStockClick,
                     cardWidth = cardWidth
                 )
@@ -153,7 +153,7 @@ fun SolitaireBoardPreview() {
             stock = Stock(listOf(bCard, rCard, bCard)),
             onStockClick = { },
             waste = Waste(listOf(bCard, rCard, bCard)),
-            wasteEmpty = true,
+            wasteEmpty = { true },
             onWasteClick = { },
             foundationList = listOf(
                 Foundation(Suits.CLUBS, listOf(bCard)),
