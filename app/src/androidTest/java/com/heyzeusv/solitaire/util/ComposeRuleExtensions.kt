@@ -75,6 +75,16 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.w
 ) = waitUntilExactlyOneExists(hasTestTag(parentTT) and hasAnyChild(hasTestTag(card.toString())))
 
 /**
+ *  Waits until given [card] disappears under pile with given [parentTT] test tag. Uses default
+ *  timeout of 1 second before failing.
+ */
+@OptIn(ExperimentalTestApi::class)
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.waitUntilPileCardDoesNotExists(
+    parentTT: String,
+    card: Card
+) = waitUntilDoesNotExist(hasTestTag(parentTT) and hasAnyChild(hasTestTag(card.toString())))
+
+/**
  *  Performs click action at given [position].
  */
 fun SemanticsNodeInteraction.performClickAt(position: Offset): SemanticsNodeInteraction {

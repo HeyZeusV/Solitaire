@@ -21,7 +21,7 @@
     <string name="scoreboard_stat_time">Time\n%1$s</string>
     <string name="scoreboard_stat_score">Score\n%1$s</string>
     <string name="reset_ad_confirm_restart">Restart</string>
-    <string name="reset_ad_confirm_reset">New</string>
+    <string name="reset_ad_confirm_new">New</string>
     <string name="reset_ad_dismiss">No</string>
     <string name="reset_ad_title">Are you sure?</string>
     <string name="reset_ad_msg">You can choose to restart the current game, a game with a new shuffle, or continue with this game.\n\nThis game will count on your stats if more than 1 move has been made!!</string>

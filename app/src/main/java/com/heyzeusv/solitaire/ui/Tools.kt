@@ -95,7 +95,7 @@ fun SolitaireTools(
                         updateStats()
                         resetOnConfirmClick(NEW)
                     }) {
-                        Text(text = stringResource(R.string.reset_ad_confirm_reset))
+                        Text(text = stringResource(R.string.reset_ad_confirm_new))
                     }
                 }
             },
