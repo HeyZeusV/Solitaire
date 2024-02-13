@@ -16,7 +16,7 @@ import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.heyzeusv.solitaire.data.Card
 
 /**
- *  Checks that node has text with given String resource [id] with [args] (if any).
+ *  Looks for node with text that matches given String resource [id] with [args] (if any).
  */
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithTextId(
     @StringRes id: Int,
@@ -24,12 +24,20 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.o
 ): SemanticsNodeInteraction = onNodeWithText((activity.getString(id, *args)))
 
 /**
- *  Checks that node has content description with given String resource [id] with [args] (if any).
+ *  Looks for node with content description that matches given String resource [id] with [args]
+ *  (if any).
  */
 fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onNodeWithConDescId(
     @StringRes id: Int,
     vararg args: Any?
 ): SemanticsNodeInteraction = onNodeWithContentDescription((activity.getString(id, *args)))
+
+/**
+ *  Looks for node with test tag that matches given [card] toString().
+ */
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.onCard(
+    card: Card
+): SemanticsNodeInteraction = onNode(hasTestTag(card.toString()))
 
 /**
  *  Waits until given [card] appears under pile with given [parentTT] test tag. Uses default timeout

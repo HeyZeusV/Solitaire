@@ -24,27 +24,32 @@ class ScoreboardTest {
 
     @Test
     fun scoreboard_initial() {
-        composeRule.setContent {
-            SolitairePreview {
-                SolitaireScoreboard(modifier = modifier)
+        composeRule.apply {
+            setContent {
+                SolitairePreview {
+                    SolitaireScoreboard(modifier = modifier)
+                }
             }
-        }
 
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_moves, 0).assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_time, "00:00").assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 0).assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_time, "00:00").assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
+        }
     }
 
     @Test
     fun scoreboard_timeFormatted() {
-        composeRule.setContent {
-            SolitairePreview {
-                SolitaireScoreboard(
-                    modifier = modifier,
-                    timer = 359999L
-                )
+        composeRule.apply {
+            setContent {
+                SolitairePreview {
+                    SolitaireScoreboard(
+                        modifier = modifier,
+                        timer = 359999L
+                    )
+                }
             }
+
+            onNodeWithTextId(R.string.scoreboard_stat_time, "5999:59").assertIsDisplayed()
         }
-        composeRule.onNodeWithTextId(R.string.scoreboard_stat_time, "5999:59").assertIsDisplayed()
     }
 }

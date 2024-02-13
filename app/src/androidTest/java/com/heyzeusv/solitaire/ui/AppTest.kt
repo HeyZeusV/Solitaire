@@ -33,28 +33,32 @@ class AppTest {
 
     @Test
     fun app_startUp() {
-        // checking all piles are displayed
-        composeRule.onNode(hasTestTag("Stock")).assertIsDisplayed()
-        composeRule.onNode(hasTestTag("Waste")).assertIsDisplayed()
-        for (i in 0..3) {
-            composeRule.onNode(hasTestTag("Foundation #$i")).assertIsDisplayed()
+        composeRule.apply {
+            // checking all piles are displayed
+            onNode(hasTestTag("Stock")).assertIsDisplayed()
+            onNode(hasTestTag("Waste")).assertIsDisplayed()
+            for (i in 0..3) {
+                onNode(hasTestTag("Foundation #$i")).assertIsDisplayed()
+            }
+            for (j in 0..6) {
+                onNode(hasTestTag("Tableau #$j")).assertIsDisplayed()
+            }
+            // check that scoreboard is displayed
+            onNode(hasTestTag("Scoreboard")).assertIsDisplayed()
+            // check that tools is displayed and that Undo is disabled
+            onNode(hasTestTag("Tools")).assertIsDisplayed()
+            onNodeWithTextId(R.string.tools_button_undo).assertIsNotEnabled()
         }
-        for (j in 0..6) {
-            composeRule.onNode(hasTestTag("Tableau #$j")).assertIsDisplayed()
-        }
-        // check that scoreboard is displayed
-        composeRule.onNode(hasTestTag("Scoreboard")).assertIsDisplayed()
-        // check that tools is displayed and that Undo is disabled
-        composeRule.onNode(hasTestTag("Tools")).assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.tools_button_undo).assertIsNotEnabled()
     }
 
     @Test
     fun app_onStockClick() {
-        composeRule.onNode(hasTestTag("Stock")).performClick()
+        composeRule.apply {
+            onNode(hasTestTag("Stock")).performClick()
 
-        composeRule.onNode(hasTestTag("Waste") and hasAnyChild(hasTestTag("2 of SPADES")))
-            .assertIsDisplayed()
+            onNode(hasTestTag("Waste") and hasAnyChild(hasTestTag("2 of SPADES")))
+                .assertIsDisplayed()
+        }
     }
 
     @Test
@@ -81,46 +85,54 @@ class AppTest {
 
     @Test
     fun app_openMenu() {
-        composeRule.onNodeWithTextId(R.string.tools_button_menu).performClick()
+        composeRule.apply {
+            onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-        composeRule.onNode(hasTestTag("Menu")).assertIsDisplayed()
+            onNode(hasTestTag("Menu")).assertIsDisplayed()
+        }
     }
 
     @Test
     fun app_closeMenu() {
-        composeRule.onNodeWithTextId(R.string.tools_button_menu).performClick()
+        composeRule.apply {
+            onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-        // close by clicking outside Card bounds
-        composeRule.onNode(hasTestTag("Close Menu")).performClickAt(Offset.Zero)
-        composeRule.onNode(hasTestTag("Menu")).assertIsNotDisplayed()
+            // close by clicking outside Card bounds
+            onNode(hasTestTag("Close Menu")).performClickAt(Offset.Zero)
+            onNode(hasTestTag("Menu")).assertIsNotDisplayed()
 
-        composeRule.onNodeWithTextId(R.string.tools_button_menu).performClick()
+            onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-        // close by pressing back button
-        Espresso.pressBack()
-        composeRule.onNode(hasTestTag("Menu")).assertIsNotDisplayed()
+            // close by pressing back button
+            Espresso.pressBack()
+            onNode(hasTestTag("Menu")).assertIsNotDisplayed()
+        }
     }
 
     @Test
     fun app_closeApp_confirm() {
-        Espresso.pressBack()
+        composeRule.apply {
+            Espresso.pressBack()
 
-        // check alert dialog appears and confirm closure
-        composeRule.onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.close_ad_confirm).performClick()
+            // check alert dialog appears and confirm closure
+            onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.close_ad_confirm).performClick()
 
-        Assert.assertTrue(composeRule.activity.isFinishing)
+            Assert.assertTrue(activity.isFinishing)
+        }
     }
 
     @Test
     fun app_closeApp_dismiss() {
-        Espresso.pressBack()
+        composeRule.apply {
+            Espresso.pressBack()
 
-        // check alert dialog appears and dismiss closure
-        composeRule.onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
-        composeRule.onNodeWithTextId(R.string.close_ad_dismiss).performClick()
+            // check alert dialog appears and dismiss closure
+            onNodeWithTextId(R.string.close_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.close_ad_dismiss).performClick()
 
-        composeRule.onNodeWithTextId(R.string.close_ad_title).assertIsNotDisplayed()
-        Assert.assertTrue(!composeRule.activity.isFinishing)
+            onNodeWithTextId(R.string.close_ad_title).assertIsNotDisplayed()
+            Assert.assertTrue(!activity.isFinishing)
+        }
     }
 }

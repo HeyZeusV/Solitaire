@@ -5,13 +5,13 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.TestCards
+import com.heyzeusv.solitaire.util.onCard
 import com.heyzeusv.solitaire.util.onNodeWithConDescId
 import org.junit.Rule
 import org.junit.Test
@@ -28,54 +28,57 @@ class CardTest {
 
     @Test
     fun card_faceDown() {
-        composeRule.setContent {
-            SolitairePreview {
-                SolitaireCard(
-                    card = tc.card1C,
-                    modifier = modifier
-                )
+        composeRule.apply {
+            setContent {
+                SolitairePreview {
+                    SolitaireCard(
+                        card = tc.card1C,
+                        modifier = modifier
+                    )
+                }
             }
-        }
 
-        composeRule.onNodeWithConDescId(R.string.card_cdesc_back).assertIsDisplayed()
-        composeRule.onNodeWithConDescId(R.string.card_cdesc_icon, "A", "Clubs").assertDoesNotExist()
+            onNodeWithConDescId(R.string.card_cdesc_back).assertIsDisplayed()
+            onNodeWithConDescId(R.string.card_cdesc_icon, "A", "Clubs").assertDoesNotExist()
+        }
     }
 
     @Test
     fun card_faceUp() {
-        composeRule.setContent {
-            SolitairePreview {
-                Row {
-                    SolitaireCard(
-                        card = tc.card1DFU,
-                        modifier = modifier.weight(1f)
-                    )
-                    SolitaireCard(
-                        card = tc.card7HFU,
-                        modifier = modifier.weight(1f)
-                    )
-                    SolitaireCard(
-                        card = tc.card12CFU,
-                        modifier = modifier.weight(1f)
-                    )
-                    SolitaireCard(
-                        card = tc.card5SFU,
-                        modifier = modifier.weight(1f)
-                    )
+        composeRule.apply {
+            setContent {
+                SolitairePreview {
+                    Row {
+                        SolitaireCard(
+                            card = tc.card1DFU,
+                            modifier = modifier.weight(1f)
+                        )
+                        SolitaireCard(
+                            card = tc.card7HFU,
+                            modifier = modifier.weight(1f)
+                        )
+                        SolitaireCard(
+                            card = tc.card12CFU,
+                            modifier = modifier.weight(1f)
+                        )
+                        SolitaireCard(
+                            card = tc.card5SFU,
+                            modifier = modifier.weight(1f)
+                        )
+                    }
                 }
             }
+
+            // no card backs should exist
+            onNodeWithConDescId(R.string.card_cdesc_back).assertDoesNotExist()
+            // 0 of Diamonds
+            onCard(tc.card1DFU).assertIsDisplayed()
+            // 7 of Hearts
+            onCard(tc.card7HFU).assertIsDisplayed()
+            // Queen of Clubs
+            onCard(tc.card12CFU).assertIsDisplayed()
+            // 5 of Spades
+            onCard(tc.card5SFU).assertIsDisplayed()
         }
-
-        // no card backs should exist
-        composeRule.onNodeWithConDescId(R.string.card_cdesc_back).assertDoesNotExist()
-        // 0 of Diamonds
-        composeRule.onNode(hasTestTag("A of DIAMONDS")).assertIsDisplayed()
-        // 7 of Hearts
-        composeRule.onNode(hasTestTag("7 of HEARTS")).assertIsDisplayed()
-
-        // Queen of Clubs
-        composeRule.onNode(hasTestTag("Q of CLUBS")).assertIsDisplayed()
-        // 5 of Spades
-        composeRule.onNode(hasTestTag("5 of SPADES")).assertIsDisplayed()
     }
 }

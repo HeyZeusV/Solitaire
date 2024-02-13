@@ -42,144 +42,188 @@ class MenuTest {
 
     @Test
     fun menu_display() {
-        composeRule.setContent {
-            SolitaireTheme(darkTheme = true) {
-                SolitaireMenu(
-                    updateDisplayMenu = { },
-                    lgs = LastGameStats(false, 0, 0L, 0),
-                    selectedGame = Games.KLONDIKETURNONE,
-                    updateSelectedGame = { },
-                    updateStats = { },
-                    reset = { },
-                    stats = gameOneStats
-                )
+        composeRule.apply {
+            setContent {
+                SolitaireTheme(darkTheme = true) {
+                    SolitaireMenu(
+                        updateDisplayMenu = { },
+                        lgs = LastGameStats(false, 0, 0L, 0),
+                        selectedGame = Games.KLONDIKETURNONE,
+                        updateSelectedGame = { },
+                        updateStats = { },
+                        reset = { },
+                        stats = gameOneStats
+                    )
+                }
             }
-        }
 
-        // selectable games/filter chips
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_one).assertIsSelected()
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_three).assertIsNotSelected()
-        // stats
-        composeRule.onNodeWithTextId(
-            R.string.menu_content_stats,
-            10, 5, 50, 30, 10, 100,
-            "11 minutes, 40 seconds", "16 minutes, 40 seconds", "2 hours, 46 minutes, 40 seconds",
-            20, 38.46, 329
-        ).assertIsDisplayed()
+            // selectable games/filter chips
+            onNodeWithTextId(R.string.games_klondike_turn_one).assertIsSelected()
+            onNodeWithTextId(R.string.games_klondike_turn_three).assertIsNotSelected()
+            // stats
+            onNodeWithTextId(
+                R.string.menu_content_stats,
+                10, // games played
+                5, // games won
+                50, // win percentage
+                30, // lowest moves
+                10, // average moves
+                100, // total moves
+                "11 minutes, 40 seconds", // fastest win
+                "16 minutes, 40 seconds", // average time
+                "2 hours, 46 minutes, 40 seconds", // total time
+                20, // average score
+                38.46, // score percentage
+                329 // best total score
+            ).assertIsDisplayed()
+        }
     }
 
     @Test
     fun menu_switchGames() {
-        composeRule.setContent {
-            SolitaireTheme(darkTheme = true) {
-                var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
-                var stats by remember { mutableStateOf(gameOneStats) }
-                SolitaireMenu(
-                    updateDisplayMenu = { },
-                    lgs = LastGameStats(false, 0, 0L, 0),
-                    selectedGame = selectedGame,
-                    updateSelectedGame = {
-                        selectedGame = it
-                        stats = gameTwoStats
-                    },
-                    updateStats = { },
-                    reset = { },
-                    stats = stats
-                )
+        composeRule.apply {
+            setContent {
+                SolitaireTheme(darkTheme = true) {
+                    var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+                    var stats by remember { mutableStateOf(gameOneStats) }
+                    SolitaireMenu(
+                        updateDisplayMenu = { },
+                        lgs = LastGameStats(false, 0, 0L, 0),
+                        selectedGame = selectedGame,
+                        updateSelectedGame = {
+                            selectedGame = it
+                            stats = gameTwoStats
+                        },
+                        updateStats = { },
+                        reset = { },
+                        stats = stats
+                    )
+                }
             }
+
+            // switch games
+            onNodeWithTextId(R.string.games_klondike_turn_three).performClick()
+            onNodeWithTextId(R.string.games_klondike_turn_three).assertIsSelected()
+            onNodeWithTextId(R.string.games_klondike_turn_one).assertIsNotSelected()
+
+            // check that stats switched
+            onNodeWithTextId(
+                R.string.menu_content_stats,
+                0, // games played
+                0, // games won
+                0, // win percentage
+                9999, // lowest moves
+                0, // average moves
+                0, // total moves
+                "99 hours, 59 minutes, 59 seconds", // fastest win
+                "0 minutes, 0 seconds", // average time
+                "0 minutes, 0 seconds", // total time
+                0, // average score
+                0, // score percentage
+                99999 // best total score
+            ).assertIsDisplayed()
         }
-
-        // switch games
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_three).performClick()
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_three).assertIsSelected()
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_one).assertIsNotSelected()
-
-        // check that stats switched
-        composeRule.onNodeWithTextId(
-            R.string.menu_content_stats,
-            0, 0, 0, 9999, 0, 0,
-            "99 hours, 59 minutes, 59 seconds", "0 minutes, 0 seconds", "0 minutes, 0 seconds",
-            0, 0, 99999
-        ).assertIsDisplayed()
     }
 
     @Test
     fun menu_switchGames_midGame_confirm() {
-        composeRule.setContent {
-            SolitaireTheme(darkTheme = true) {
-                var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
-                var stats by remember { mutableStateOf(gameOneStats) }
-                SolitaireMenu(
-                    updateDisplayMenu = { },
-                    lgs = LastGameStats(false, 10, 100L, 2),
-                    selectedGame = selectedGame,
-                    updateSelectedGame = {
-                        selectedGame = it
-                        stats = gameTwoStats
-                    },
-                    updateStats = { },
-                    reset = { },
-                    stats = stats
-                )
+        composeRule.apply {
+            setContent {
+                SolitaireTheme(darkTheme = true) {
+                    var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+                    var stats by remember { mutableStateOf(gameOneStats) }
+                    SolitaireMenu(
+                        updateDisplayMenu = { },
+                        lgs = LastGameStats(false, 10, 100L, 2),
+                        selectedGame = selectedGame,
+                        updateSelectedGame = {
+                            selectedGame = it
+                            stats = gameTwoStats
+                        },
+                        updateStats = { },
+                        reset = { },
+                        stats = stats
+                    )
+                }
             }
+
+            // try to switch games
+            onNodeWithTextId(R.string.games_klondike_turn_three).performClick()
+
+            // check that AlertDialog appears
+            onNodeWithTextId(R.string.games_ad_title).assertIsDisplayed()
+            // confirm game switch
+            onNodeWithTextId(R.string.games_ad_confirm).performClick()
+
+            // check that game did switch
+            onNodeWithTextId(R.string.games_klondike_turn_three).assertIsSelected()
+            onNodeWithTextId(R.string.games_klondike_turn_one).assertIsNotSelected()
+            onNodeWithTextId(
+                R.string.menu_content_stats,
+                0, // games played
+                0, // games won
+                0, // win percentage
+                9999, // lowest moves
+                0, // average moves
+                0, // total moves
+                "99 hours, 59 minutes, 59 seconds", // fastest win
+                "0 minutes, 0 seconds", // average time
+                "0 minutes, 0 seconds", // total time
+                0, // average score
+                0, // score percentage
+                99999 // best total score
+            ).assertIsDisplayed()
         }
-
-        // try to switch games
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_three).performClick()
-
-        // check that AlertDialog appears
-        composeRule.onNodeWithTextId(R.string.games_ad_title).assertIsDisplayed()
-        // confirm game switch
-        composeRule.onNodeWithTextId(R.string.games_ad_confirm).performClick()
-
-        // check that game did switch
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_three).assertIsSelected()
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_one).assertIsNotSelected()
-        composeRule.onNodeWithTextId(
-            R.string.menu_content_stats,
-            0, 0, 0, 9999, 0, 0,
-            "99 hours, 59 minutes, 59 seconds", "0 minutes, 0 seconds", "0 minutes, 0 seconds",
-            0, 0, 99999
-        ).assertIsDisplayed()
     }
 
     @Test
     fun menu_switchGames_midGame_dismiss() {
-        composeRule.setContent {
-            SolitaireTheme(darkTheme = true) {
-                var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
-                var stats by remember { mutableStateOf(gameOneStats) }
-                SolitaireMenu(
-                    updateDisplayMenu = { },
-                    lgs = LastGameStats(false, 10, 100L, 2),
-                    selectedGame = selectedGame,
-                    updateSelectedGame = {
-                        selectedGame = it
-                        stats = gameTwoStats
-                    },
-                    updateStats = { },
-                    reset = { },
-                    stats = stats
-                )
+        composeRule.apply {
+            setContent {
+                SolitaireTheme(darkTheme = true) {
+                    var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+                    var stats by remember { mutableStateOf(gameOneStats) }
+                    SolitaireMenu(
+                        updateDisplayMenu = { },
+                        lgs = LastGameStats(false, 10, 100L, 2),
+                        selectedGame = selectedGame,
+                        updateSelectedGame = {
+                            selectedGame = it
+                            stats = gameTwoStats
+                        },
+                        updateStats = { },
+                        reset = { },
+                        stats = stats
+                    )
+                }
             }
+
+            // try to switch games
+            onNodeWithTextId(R.string.games_klondike_turn_three).performClick()
+
+            // check that AlertDialog appears
+            onNodeWithTextId(R.string.games_ad_title).assertIsDisplayed()
+            // dismiss game switch
+            onNodeWithTextId(R.string.games_ad_dismiss).performClick()
+
+            // check that game did not switch
+            onNodeWithTextId(R.string.games_klondike_turn_one).assertIsSelected()
+            onNodeWithTextId(R.string.games_klondike_turn_three).assertIsNotSelected()
+            onNodeWithTextId(
+                R.string.menu_content_stats,
+                10, // games played
+                5, // games won
+                50, // win percentage
+                30, // lowest moves
+                10, // average moves
+                100, // total moves
+                "11 minutes, 40 seconds", // fastest win
+                "16 minutes, 40 seconds", // average time
+                "2 hours, 46 minutes, 40 seconds", // total time
+                20, // average score
+                38.46, // score percentage
+                329 // best total score
+            ).assertIsDisplayed()
         }
-
-        // try to switch games
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_three).performClick()
-
-        // check that AlertDialog appears
-        composeRule.onNodeWithTextId(R.string.games_ad_title).assertIsDisplayed()
-        // dismiss game switch
-        composeRule.onNodeWithTextId(R.string.games_ad_dismiss).performClick()
-
-        // check that game did not switch
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_one).assertIsSelected()
-        composeRule.onNodeWithTextId(R.string.games_klondike_turn_three).assertIsNotSelected()
-        composeRule.onNodeWithTextId(
-            R.string.menu_content_stats,
-            10, 5, 50, 30, 10, 100,
-            "11 minutes, 40 seconds", "16 minutes, 40 seconds", "2 hours, 46 minutes, 40 seconds",
-            20, 38.46, 329
-        ).assertIsDisplayed()
     }
 }
