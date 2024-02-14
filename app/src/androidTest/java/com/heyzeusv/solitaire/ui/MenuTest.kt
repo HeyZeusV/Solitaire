@@ -46,6 +46,7 @@ class MenuTest {
             setContent {
                 SolitaireTheme(darkTheme = true) {
                     SolitaireMenu(
+                        displayMenu = true,
                         updateDisplayMenu = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
                         selectedGame = Games.KLONDIKETURNONE,
@@ -87,6 +88,7 @@ class MenuTest {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
+                        displayMenu = true,
                         updateDisplayMenu = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
                         selectedGame = selectedGame,
@@ -133,6 +135,7 @@ class MenuTest {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
+                        displayMenu = true,
                         updateDisplayMenu = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
                         selectedGame = selectedGame,
@@ -184,6 +187,7 @@ class MenuTest {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
+                        displayMenu = true,
                         updateDisplayMenu = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
                         selectedGame = selectedGame,

@@ -46,6 +46,7 @@ import com.heyzeusv.solitaire.ui.theme.Pink80
 import com.heyzeusv.solitaire.ui.theme.Purple40
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.LinkifyText
+import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.getAverageMoves
@@ -60,22 +61,23 @@ import com.heyzeusv.solitaire.util.getWinPercentage
  */
 @Composable
 fun SolitaireMenu(
+    gameVM: GameViewModel,
     menuVM: MenuViewModel,
-    lgs: LastGameStats,
-    reset: () -> Unit
 ) {
+    val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
     val stats by menuVM.stats.collectAsState()
     val currentGameStats =
         stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
     SolitaireMenu(
+        displayMenu = displayMenu,
         updateDisplayMenu = menuVM::updateDisplayMenu,
-        lgs = lgs,
+        lgs = gameVM.retrieveLastGameStats(false),
         selectedGame = selectedGame,
         updateSelectedGame = menuVM::updateSelectedGame,
         updateStats = menuVM::updateStats,
-        reset = reset,
+        reset = { gameVM.reset(ResetOptions.NEW) },
         stats = currentGameStats
     )
 }
@@ -83,7 +85,7 @@ fun SolitaireMenu(
 /**
  *  Composable that displays Menu which allows user to switch games and view stats for selected game.
  *  All the data has been hoisted into above [SolitaireMenu] thus allowing for easier testing.
- *  Menu can be opened and closed by updating displayMenu value using [updateDisplayMenu]. [lgs] is
+ *  Menu can be opened and closed by updating [displayMenu] value using [updateDisplayMenu]. [lgs] is
  *  used to check if a game has been started and the user is trying to switch game types causing an
  *  AlertDialog to appear to confirm game change, as well as to [updateStats] if user confirms game
  *  switch with more than 1 move taken. [reset] is called when game change is confirmed causing
@@ -93,6 +95,7 @@ fun SolitaireMenu(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SolitaireMenu(
+    displayMenu: Boolean,
     updateDisplayMenu: (Boolean) -> Unit,
     lgs: LastGameStats,
     selectedGame: Games,
@@ -101,134 +104,136 @@ fun SolitaireMenu(
     reset: () -> Unit,
     stats: GameStats
 ) {
-    val scrollableState = rememberScrollState()
 
-    var showGameSwitch by remember { mutableStateOf(false) }
-    var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+    if (displayMenu) {
+        val scrollableState = rememberScrollState()
 
-    BackHandler { updateDisplayMenu(false) }
+        var showGameSwitch by remember { mutableStateOf(false) }
+        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
 
-    if (showGameSwitch) {
-        AlertDialog(
-            onDismissRequest = { showGameSwitch = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    if (lgs.moves > 1) updateStats(lgs)
-                    updateSelectedGame(newlySelectedGame)
-                    showGameSwitch = false
-                    reset()
-                }) {
-                    Text(text = stringResource(R.string.games_ad_confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { showGameSwitch = false }) {
-                    Text(text = stringResource(R.string.games_ad_dismiss))
-                }
-            },
-            title = { Text(text = stringResource(R.string.games_ad_title)) },
-            text = { Text(text = stringResource(R.string.games_ad_msg)) }
-        )
-    }
-    Surface(
-        modifier = Modifier
-            .fillMaxSize()
-            .clickable { updateDisplayMenu(false) }
-            .testTag("Close Menu"),
-        color = BackgroundOverlay
-    ) {}
-    Card(
-        modifier = Modifier
-            .wrapContentHeight()
-            .fillMaxWidth()
-            .padding(all = 32.dp)
-            .testTag("Menu")
-    ) {
-        Column(
-            modifier = Modifier
-                .padding(all = 24.dp)
-                .scrollable(state = scrollableState, orientation = Orientation.Vertical),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            Text(
-                text = stringResource(R.string.menu_header_games),
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.headlineMedium
-            )
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                Games.entries.forEach {
-                    FilterChip(
-                        selected = it == selectedGame,
-                        onClick = {
-                            if (it != selectedGame) {
-                                if (lgs.moves > 0) {
-                                    newlySelectedGame = it
-                                    showGameSwitch = true
-                                } else {
-                                    updateSelectedGame(it)
-                                    reset()
-                                }
-                            }
-                        },
-                        label = { Text(text = stringResource(it.gameName)) },
-                        leadingIcon = {
-                            if (it == selectedGame) {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = stringResource(
-                                        R.string.menu_cdesc_chip,
-                                        stringResource(it.gameName)
-                                    ),
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Purple40
-                        )
-                    )
-                }
-            }
-            Text(
-                text = stringResource(R.string.menu_header_stats),
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.headlineMedium
-            )
-            Text(
-                text = stringResource(
-                    R.string.menu_content_stats,
-                    stats.gamesPlayed,
-                    stats.gamesWon,
-                    stats.getWinPercentage(),
-                    stats.lowestMoves,
-                    stats.getAverageMoves(),
-                    stats.totalMoves,
-                    stats.fastestWin.formatTimeStats(),
-                    stats.getAverageTime().formatTimeStats(),
-                    stats.totalTime.formatTimeStats(),
-                    stats.getAverageScore(),
-                    stats.getScorePercentage(),
-                    stats.bestTotalScore
-                )
-            )
-            Text(
-                text = stringResource(R.string.menu_tip_totalscore),
-                style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = stringResource(R.string.menu_header_credits),
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.headlineMedium
-            )
-            LinkifyText(
-                text = stringResource(R.string.menu_content_credits),
-                linkColor = Pink80
+        BackHandler { updateDisplayMenu(false) }
+
+        if (showGameSwitch) {
+            AlertDialog(
+                onDismissRequest = { showGameSwitch = false },
+                confirmButton = {
+                    TextButton(onClick = {
+                        if (lgs.moves > 1) updateStats(lgs)
+                        updateSelectedGame(newlySelectedGame)
+                        showGameSwitch = false
+                        reset()
+                    }) {
+                        Text(text = stringResource(R.string.games_ad_confirm))
+                    }
+                },
+                dismissButton = {
+                    TextButton(onClick = { showGameSwitch = false }) {
+                        Text(text = stringResource(R.string.games_ad_dismiss))
+                    }
+                },
+                title = { Text(text = stringResource(R.string.games_ad_title)) },
+                text = { Text(text = stringResource(R.string.games_ad_msg)) }
             )
         }
-
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .clickable { updateDisplayMenu(false) }
+                .testTag("Close Menu"),
+            color = BackgroundOverlay
+        ) {}
+        Card(
+            modifier = Modifier
+                .wrapContentHeight()
+                .fillMaxWidth()
+                .padding(all = 32.dp)
+                .testTag("Menu")
+        ) {
+            Column(
+                modifier = Modifier
+                    .padding(all = 24.dp)
+                    .scrollable(state = scrollableState, orientation = Orientation.Vertical),
+                verticalArrangement = Arrangement.spacedBy(4.dp)
+            ) {
+                Text(
+                    text = stringResource(R.string.menu_header_games),
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    Games.entries.forEach {
+                        FilterChip(
+                            selected = it == selectedGame,
+                            onClick = {
+                                if (it != selectedGame) {
+                                    if (lgs.moves > 0) {
+                                        newlySelectedGame = it
+                                        showGameSwitch = true
+                                    } else {
+                                        updateSelectedGame(it)
+                                        reset()
+                                    }
+                                }
+                            },
+                            label = { Text(text = stringResource(it.gameName)) },
+                            leadingIcon = {
+                                if (it == selectedGame) {
+                                    Icon(
+                                        imageVector = Icons.Default.Done,
+                                        contentDescription = stringResource(
+                                            R.string.menu_cdesc_chip,
+                                            stringResource(it.gameName)
+                                        ),
+                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                    )
+                                }
+                            },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = Purple40
+                            )
+                        )
+                    }
+                }
+                Text(
+                    text = stringResource(R.string.menu_header_stats),
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                Text(
+                    text = stringResource(
+                        R.string.menu_content_stats,
+                        stats.gamesPlayed,
+                        stats.gamesWon,
+                        stats.getWinPercentage(),
+                        stats.lowestMoves,
+                        stats.getAverageMoves(),
+                        stats.totalMoves,
+                        stats.fastestWin.formatTimeStats(),
+                        stats.getAverageTime().formatTimeStats(),
+                        stats.totalTime.formatTimeStats(),
+                        stats.getAverageScore(),
+                        stats.getScorePercentage(),
+                        stats.bestTotalScore
+                    )
+                )
+                Text(
+                    text = stringResource(R.string.menu_tip_totalscore),
+                    style = MaterialTheme.typography.bodySmall
+                )
+                Text(
+                    text = stringResource(R.string.menu_header_credits),
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+                LinkifyText(
+                    text = stringResource(R.string.menu_content_credits),
+                    linkColor = Pink80
+                )
+            }
+        }
     }
 }
 
@@ -237,6 +242,7 @@ fun SolitaireMenu(
 fun SolitaireMenuPreview() {
     SolitairePreview {
         SolitaireMenu(
+            displayMenu = true,
             updateDisplayMenu = { },
             lgs = LastGameStats(false, 0, 0, 0),
             selectedGame = Games.KLONDIKETURNONE,

@@ -59,7 +59,6 @@ fun SolitaireApp(finishApp: () -> Unit) {
 
     val gameWon by gameVM.gameWon.collectAsState()
 
-    val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
 
     BackHandler { closeGame = true }
@@ -135,11 +134,8 @@ fun SolitaireApp(finishApp: () -> Unit) {
             modifier = Modifier.weight(0.10f)
         )
     }
-    if (displayMenu) {
-        SolitaireMenu(
-            menuVM = menuVM,
-            lgs = gameVM.retrieveLastGameStats(false),
-            reset = { gameVM.reset(ResetOptions.NEW) }
-        )
-    }
+    SolitaireMenu(
+        gameVM = gameVM,
+        menuVM = menuVM
+    )
 }
