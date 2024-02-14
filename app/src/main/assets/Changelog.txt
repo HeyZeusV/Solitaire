@@ -1,3 +1,6 @@
+v1.4.1
+-Fix: Stats now update correctly after reset rather than only after opening menu.
+
 v1.4.0
 -New: Autocomplete now available!! Stock and Waste must both be empty and no face down cards can exist in Tableau in order to activate.
 

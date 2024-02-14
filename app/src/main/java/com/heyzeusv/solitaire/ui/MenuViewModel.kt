@@ -37,10 +37,9 @@ class MenuViewModel @Inject constructor(
 
     val stats: StateFlow<StatPreferences> = statManager.statData.stateIn(
         scope = viewModelScope,
-        started = SharingStarted.WhileSubscribed(5000),
+        started = SharingStarted.Eagerly,
         initialValue = StatPreferences.getDefaultInstance()
     )
-
 
     fun updateStats(lgs: LastGameStats) {
         val prevGS =
