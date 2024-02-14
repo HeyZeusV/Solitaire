@@ -56,7 +56,7 @@ class GameViewModel @Inject constructor(
     private val _waste = Waste()
     val waste: Waste get() = _waste
 
-    private val _stockWasteEmpty = MutableStateFlow(true)
+    private val _stockWasteEmpty = MutableStateFlow(false)
     val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
@@ -129,6 +129,7 @@ class GameViewModel @Inject constructor(
         _gameWon.value = false
         _autoCompleteActive.value = false
         autoCompleteMoveCorrection = 0
+        _stockWasteEmpty.value = false
     }
 
     /**
