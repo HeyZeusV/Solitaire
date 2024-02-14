@@ -78,22 +78,22 @@ fun SolitairePile(
 }
 
 /**
- *  Composable that displays Stock [pile]. [wasteEmpty] determines which emptyIconId drawable should
- *  be passed to [SolitairePile]. Clicking launches [onClick]. [cardWidth] determines how wide to
- *  make [SolitaireCard] Composables.
+ *  Composable that displays Stock [pile]. [stockWasteEmpty] determines which emptyIconId drawable
+ *  should be passed to [SolitairePile]. Clicking launches [onClick]. [cardWidth] determines how
+ *  wide to make [SolitaireCard] Composables.
  */
 @Composable
 fun SolitaireStock(
     modifier: Modifier = Modifier,
     pile: List<Card>,
-    wasteEmpty: () -> Boolean,
+    stockWasteEmpty: () -> Boolean,
     onClick: () -> Unit = { },
     cardWidth: Dp
 ) {
     SolitairePile(
         modifier = modifier,
         pile = pile,
-        emptyIconId = if (wasteEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
+        emptyIconId = if (stockWasteEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
         onClick = onClick,
         cardWidth = cardWidth
     )

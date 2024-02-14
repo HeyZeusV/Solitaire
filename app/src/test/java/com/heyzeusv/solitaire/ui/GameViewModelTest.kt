@@ -122,7 +122,7 @@ class GameViewModelTest {
 
         assertEquals(expectedWastePile, gameVM.waste.pile.toList())
         assertEquals(expectedTableauPile, gameVM.tableau[3].pile.toList())
-        assertEquals(expectedWasteEmpty, gameVM.wasteEmpty.value)
+        assertEquals(expectedWasteEmpty, gameVM.stockWasteEmpty.value)
     }
 
     @Test

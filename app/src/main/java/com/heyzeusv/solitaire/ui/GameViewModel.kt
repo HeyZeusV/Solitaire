@@ -56,8 +56,8 @@ class GameViewModel @Inject constructor(
     private val _waste = Waste()
     val waste: Waste get() = _waste
 
-    private val _wasteEmpty = MutableStateFlow(true)
-    val wasteEmpty: StateFlow<Boolean> get() = _wasteEmpty
+    private val _stockWasteEmpty = MutableStateFlow(true)
+    val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
@@ -71,6 +71,9 @@ class GameViewModel @Inject constructor(
 
     private val _undoEnabled = MutableStateFlow(false)
     val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
+
+    private var autoCompleteActive: Boolean = false
+    private var autoCompleteMoveCorrection: Int = 0
 
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
@@ -123,6 +126,8 @@ class GameViewModel @Inject constructor(
         _undoEnabled.value = false
         recordHistory()
         _gameWon.value = false
+        autoCompleteActive = false
+        autoCompleteMoveCorrection = 0
     }
 
     /**
@@ -136,7 +141,8 @@ class GameViewModel @Inject constructor(
             _waste.add(_stock.removeMany(drawAmount))
             _moves.value++
             appendHistory()
-        } else if (_waste.pile.isNotEmpty()) {
+            _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
+        } else if (_waste.pile.size > 1) {
             // add back all cards from waste to stock
             _stock.add(_waste.pile.toList())
             _waste.reset()
@@ -153,7 +159,8 @@ class GameViewModel @Inject constructor(
                 if (legalMove(listOf(it.pile.last()))) {
                     it.remove()
                     appendHistory()
-                    _wasteEmpty.value = it.pile.isEmpty()
+                    autoComplete()
+                    _stockWasteEmpty.value = it.pile.size <= 1 && _stock.pile.isEmpty()
                 }
             }
         }
@@ -181,6 +188,30 @@ class GameViewModel @Inject constructor(
             if (tPile[cardIndex].faceUp && legalMove(tPile.subList(cardIndex, tPile.size))) {
                 tableauPile.remove(cardIndex)
                 appendHistory()
+                autoComplete()
+            }
+        }
+    }
+
+    /**
+     *  Checks if Stock and Waste are empty and that all Cards in Tableau are face up. If so, then
+     *  go through each Tableau and call onTableauClick on the last card. This is repeated until
+     *  the game is completed.
+     */
+    private fun autoComplete() {
+        if (autoCompleteActive) return
+        if (_stock.pile.isEmpty() && _waste.pile.isEmpty()) {
+            _tableau.forEach { if (!it.allFaceUp()) return }
+            viewModelScope.launch {
+                autoCompleteActive = true
+                autoCompleteMoveCorrection = 0
+                while (!gameWon()) {
+                    _tableau.forEachIndexed { i, tableau ->
+                        if (tableau.pile.isEmpty()) return@forEachIndexed
+                        onTableauClick(i, tableau.pile.size - 1)
+                        delay(100)
+                    }
+                }
             }
         }
     }
@@ -191,6 +222,9 @@ class GameViewModel @Inject constructor(
      */
     private fun gameWon(): Boolean {
         foundation.forEach { if (it.pile.size != 13) return false }
+        _moves.value = _moves.value - autoCompleteMoveCorrection
+        autoCompleteActive = false
+        _gameWon.value = true
         return true
     }
 
@@ -203,7 +237,6 @@ class GameViewModel @Inject constructor(
                 if (it.add(cards)) {
                     _moves.value++
                     _score.value++
-                    if (gameWon()) _gameWon.value = true
                     return true
                 }
             }
@@ -211,6 +244,7 @@ class GameViewModel @Inject constructor(
         _tableau.forEach {
             if (it.add(cards)) {
                 _moves.value++
+                autoCompleteMoveCorrection++
                 return true
             }
         }
@@ -255,8 +289,14 @@ class GameViewModel @Inject constructor(
             val step = _historyList.removeLast()
             if (_historyList.isEmpty()) _undoEnabled.value = false
             _score.value = step.score
-            if (_stock.pile.isNotEqual(step.stock.pile)) _stock.undo(step.stock.pile)
-            if (_waste.pile.isNotEqual(step.waste.pile)) _waste.undo(step.waste.pile)
+            if (_stock.pile.isNotEqual(step.stock.pile)) {
+                _stock.undo(step.stock.pile)
+                _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
+            }
+            if (_waste.pile.isNotEqual(step.waste.pile)) {
+                _waste.undo(step.waste.pile)
+                _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
+            }
             _foundation.forEachIndexed { i, foundation ->
                 if (foundation.pile.isNotEqual(step.foundation[i].pile)) {
                     foundation.undo(step.foundation[i].pile)
