@@ -69,9 +69,9 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
      */
     override fun undo(cards: List<Card>) {
         mPile.clear()
+        faceDownCards = cards.filter { !it.faceUp }.size
         if (cards.isEmpty()) return
         mPile.addAll(cards)
-        faceDownCards = cards.filter { !it.faceUp }.size
     }
 
     /**
