@@ -72,7 +72,8 @@ class GameViewModel @Inject constructor(
     private val _undoEnabled = MutableStateFlow(false)
     val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
 
-    private var autoCompleteActive: Boolean = false
+    private val _autoCompleteActive = MutableStateFlow(false)
+    val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
     private var autoCompleteMoveCorrection: Int = 0
 
     private val _gameWon = MutableStateFlow(false)
@@ -126,7 +127,7 @@ class GameViewModel @Inject constructor(
         _undoEnabled.value = false
         recordHistory()
         _gameWon.value = false
-        autoCompleteActive = false
+        _autoCompleteActive.value = false
         autoCompleteMoveCorrection = 0
     }
 
@@ -199,11 +200,11 @@ class GameViewModel @Inject constructor(
      *  the game is completed.
      */
     private fun autoComplete() {
-        if (autoCompleteActive) return
+        if (_autoCompleteActive.value) return
         if (_stock.pile.isEmpty() && _waste.pile.isEmpty()) {
             _tableau.forEach { if (!it.allFaceUp()) return }
             viewModelScope.launch {
-                autoCompleteActive = true
+                _autoCompleteActive.value = true
                 autoCompleteMoveCorrection = 0
                 while (!gameWon()) {
                     _tableau.forEachIndexed { i, tableau ->
@@ -223,7 +224,7 @@ class GameViewModel @Inject constructor(
     private fun gameWon(): Boolean {
         foundation.forEach { if (it.pile.size != 13) return false }
         _moves.value = _moves.value - autoCompleteMoveCorrection
-        autoCompleteActive = false
+        _autoCompleteActive.value = false
         _gameWon.value = true
         return true
     }
