@@ -44,6 +44,7 @@ fun SolitaireTools(
     modifier: Modifier = Modifier
 ) {
     val undoEnabled by gameVM.undoEnabled.collectAsState()
+    val autoCompleteActive by gameVM.autoCompleteActive.collectAsState()
 
     SolitaireTools(
         menuOnClick = menuVM::updateDisplayMenu,
@@ -53,6 +54,7 @@ fun SolitaireTools(
         },
         undoEnabled = undoEnabled,
         undoOnClick = gameVM::undo,
+        autoCompleteActive = autoCompleteActive,
         modifier = modifier
     )
 }
@@ -72,6 +74,7 @@ fun SolitaireTools(
     updateStats: () -> Unit,
     undoEnabled: Boolean,
     undoOnClick: () -> Unit,
+    autoCompleteActive: Boolean,
     modifier: Modifier = Modifier
 ) {
     var resetOnClick by remember { mutableStateOf(false) }
@@ -123,7 +126,8 @@ fun SolitaireTools(
             iconId = R.drawable.button_menu,
             iconContentDes = stringResource(R.string.tools_cdesc_menu),
             buttonText = stringResource(R.string.tools_button_menu),
-            modifier = rowModifier
+            modifier = rowModifier,
+            enabled = !autoCompleteActive
         )
         // Reset Button
         SolitaireToolsButton(
@@ -131,7 +135,8 @@ fun SolitaireTools(
             iconId = R.drawable.button_reset,
             iconContentDes = stringResource(R.string.tools_cdesc_reset),
             buttonText = stringResource(R.string.tools_button_reset),
-            modifier = rowModifier
+            modifier = rowModifier,
+            enabled = !autoCompleteActive
         )
         // Undo Button
         SolitaireToolsButton(
@@ -140,7 +145,7 @@ fun SolitaireTools(
             iconContentDes = stringResource(R.string.tools_cdesc_undo),
             buttonText = stringResource(R.string.tools_button_undo),
             modifier = rowModifier,
-            enabled = undoEnabled
+            enabled = undoEnabled && !autoCompleteActive
         )
     }
 }
@@ -192,7 +197,8 @@ fun SolitaireToolsPreview() {
             resetOnConfirmClick = { },
             updateStats = { },
             undoEnabled = true,
-            undoOnClick = { }
+            undoOnClick = { },
+            autoCompleteActive = false
         )
     }
 }

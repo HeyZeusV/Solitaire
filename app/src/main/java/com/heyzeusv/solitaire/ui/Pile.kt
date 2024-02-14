@@ -22,7 +22,9 @@ import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.clickableSingle
 
 /**
- *  Composable that displays [pile]. If given [pile] is empty, [emptyIconId] is displayed.
+ *  Composable that displays [pile]. If given [pile] is empty, [emptyIconId] is displayed. Clicking
+ *  launches [onClick]. [drawAmount] determines the max number of [Card]s that will be displayed at
+ *  once. [cardWidth] determines how wide to make [SolitaireCard] Composables.
  */
 @Composable
 fun SolitairePile(
@@ -73,6 +75,28 @@ fun SolitairePile(
             )
         }
     }
+}
+
+/**
+ *  Composable that displays Stock [pile]. [stockWasteEmpty] determines which emptyIconId drawable
+ *  should be passed to [SolitairePile]. Clicking launches [onClick]. [cardWidth] determines how
+ *  wide to make [SolitaireCard] Composables.
+ */
+@Composable
+fun SolitaireStock(
+    modifier: Modifier = Modifier,
+    pile: List<Card>,
+    stockWasteEmpty: () -> Boolean,
+    onClick: () -> Unit = { },
+    cardWidth: Dp
+) {
+    SolitairePile(
+        modifier = modifier,
+        pile = pile,
+        emptyIconId = if (stockWasteEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
+        onClick = onClick,
+        cardWidth = cardWidth
+    )
 }
 
 @Preview

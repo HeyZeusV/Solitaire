@@ -9,6 +9,9 @@ import com.heyzeusv.solitaire.util.Suits
  */
 class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
+    // keeps track of number of face down cards in mPile
+    private var faceDownCards: Int = 0
+
     /**
      *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
      *  [mPile]'s last card value and suit. Returns true if added.
@@ -40,8 +43,9 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     override fun remove(tappedIndex: Int): Card {
         mPile.subList(tappedIndex, mPile.size).clear()
         // flip the last card up
-        if (mPile.isNotEmpty()) {
+        if (mPile.isNotEmpty() && !mPile.last().faceUp) {
             mPile[mPile.size - 1] = mPile.last().copy(faceUp = true)
+            faceDownCards--
         }
         // return value isn't used
         return Card(0, Suits.SPADES, false)
@@ -56,6 +60,7 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
             clear()
             addAll(cards)
             this[this.size - 1] = this.last().copy(faceUp = true)
+            faceDownCards = cards.size - 1
         }
     }
 
@@ -64,9 +69,15 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
      */
     override fun undo(cards: List<Card>) {
         mPile.clear()
+        faceDownCards = cards.filter { !it.faceUp }.size
         if (cards.isEmpty()) return
         mPile.addAll(cards)
     }
+
+    /**
+     *  Used to determine if game could be auto completed by having all face up cards
+     */
+    fun allFaceUp(): Boolean = faceDownCards == 0
 
     override fun toString(): String = pile.toList().toString()
 }
