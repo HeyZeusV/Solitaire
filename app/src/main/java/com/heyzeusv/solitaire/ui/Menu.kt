@@ -79,7 +79,7 @@ fun SolitaireMenu(
         updateSelectedGame = menuVM::updateSelectedGame,
         updateStats = menuVM::updateStats,
         reset = {
-            gameVM.reset(ResetOptions.NEW)
+            gameVM.resetAll(ResetOptions.NEW)
             sbVM.reset()
         },
         stats = currentGameStats

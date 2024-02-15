@@ -49,7 +49,7 @@ fun SolitaireTools(
 
     SolitaireTools(
         menuOnClick = menuVM::updateDisplayMenu,
-        resetOnConfirmClick = gameVM::reset,
+        resetOnConfirmClick = gameVM::resetAll,
         resetScoreboard = sbVM::reset,
         updateStats = {
             menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))

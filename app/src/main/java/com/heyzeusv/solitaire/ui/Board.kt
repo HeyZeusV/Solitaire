@@ -22,6 +22,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
+import com.heyzeusv.solitaire.data.TableauPile
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
@@ -72,7 +73,7 @@ fun SolitaireBoard(
     onWasteClick: () -> MoveResult,
     foundationList: List<Foundation>,
     onFoundationClick: (Int) -> MoveResult,
-    tableauList: List<Tableau>,
+    tableauList: List<TableauPile>,
     onTableauClick: (Int, Int) -> MoveResult,
     modifier: Modifier = Modifier
 ) {

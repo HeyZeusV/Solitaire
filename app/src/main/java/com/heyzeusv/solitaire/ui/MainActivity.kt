@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun SolitaireApp(finishApp: () -> Unit) {
     val sbVM = hiltViewModel<ScoreboardViewModel>()
-    val gameVM = hiltViewModel<GameViewModel>()
+    val kdVM = hiltViewModel<KlondikeViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
 
     var closeGame by remember { mutableStateOf(false) }
@@ -58,7 +58,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
         ShaderBrush(ImageShader(pattern, TileMode.Repeated, TileMode.Repeated))
     }
 
-    val gameWon by gameVM.gameWon.collectAsState()
+    val gameWon by kdVM.gameWon.collectAsState()
 
     val selectedGame by menuVM.selectedGame.collectAsState()
 
@@ -72,13 +72,13 @@ fun SolitaireApp(finishApp: () -> Unit) {
     if (gameWon) {
         // pause timer once user reaches max score
         sbVM.pauseTimer()
-        val lgs = sbVM.retrieveLastGameStats(true, gameVM.autoCompleteCorrection)
+        val lgs = sbVM.retrieveLastGameStats(true, kdVM.autoCompleteCorrection)
         menuVM.updateStats(lgs)
         AlertDialog(
             onDismissRequest = { },
             confirmButton = {
                 TextButton(onClick = {
-                    gameVM.reset(ResetOptions.NEW)
+                    kdVM.resetAll(ResetOptions.NEW)
                     sbVM.reset()
                 }) {
                     Text(text = stringResource(R.string.win_ad_confirm))
@@ -129,20 +129,20 @@ fun SolitaireApp(finishApp: () -> Unit) {
         )
         SolitaireBoard(
             sbVM = sbVM,
-            gameVM = gameVM,
+            gameVM = kdVM,
             selectedGame = selectedGame,
             modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(
             sbVM = sbVM,
-            gameVM = gameVM,
+            gameVM = kdVM,
             menuVM = menuVM,
             modifier = Modifier.weight(0.10f)
         )
     }
     SolitaireMenu(
         sbVM = sbVM,
-        gameVM = gameVM,
+        gameVM = kdVM,
         menuVM = menuVM
     )
 }

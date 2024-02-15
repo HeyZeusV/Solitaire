@@ -20,3 +20,18 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
         mPile.addAll(initialPile)
     }
 }
+
+/**
+ *  Tableau piles are usually going to have slightly different rules in terms of how Cards can be
+ *  stacked.
+ */
+abstract class TableauPile(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
+
+    // keeps track of number of face down cards in mPile
+    protected var faceDownCards: Int = 0
+
+    /**
+     *  Used to determine if game could be auto completed by having all face up cards
+     */
+    fun allFaceUp(): Boolean = faceDownCards == 0
+}

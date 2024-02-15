@@ -9,6 +9,7 @@ import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
+import com.heyzeusv.solitaire.data.TableauPile
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.MOVE
@@ -18,12 +19,11 @@ import com.heyzeusv.solitaire.util.MoveResult.MOVE_MINUS_SCORE
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.isNotEqual
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import java.util.Random
 
 /**
  *  Data manager for game.
@@ -31,16 +31,15 @@ import javax.inject.Inject
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
-@HiltViewModel
-class GameViewModel @Inject constructor(
-    private val ss: ShuffleSeed
-) : ViewModel() {
+abstract class GameViewModel : ViewModel() {
+
+    protected var mSS: ShuffleSeed = ShuffleSeed(Random())
 
     // holds all 52 playing Cards
     private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
     private var shuffledDeck = emptyList<Card>()
 
-    private val _stock = Stock()
+    protected val _stock = Stock()
     val stock: Stock get() = _stock
 
     private val _waste = Waste()
@@ -52,8 +51,8 @@ class GameViewModel @Inject constructor(
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
-    private val _tableau = MutableList(7) { Tableau() }
-    val tableau: List<Tableau> get() = _tableau
+    protected abstract val _tableau: MutableList<TableauPile> //= MutableList(7) { Tableau() }
+    val tableau: List<TableauPile> get() = _tableau
 
     private val _historyList = mutableListOf<PileHistory>()
     val historyList: List<PileHistory> get() = _historyList
@@ -75,21 +74,16 @@ class GameViewModel @Inject constructor(
      *  Goes through all the card piles in the game and resets them for either the same game or a
      *  new game depending on [resetOption].
      */
-    fun reset(resetOption: ResetOptions) {
+    protected fun reset(resetOption: ResetOptions) {
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
-                shuffledDeck = baseDeck.shuffled(ss.shuffleSeed)
+                shuffledDeck = baseDeck.shuffled(mSS.shuffleSeed)
                 _stock.reset(shuffledDeck)
             }
         }
         // empty foundations
         _foundation.forEach { it.reset() }
-        // each pile in the tableau has 1 more card than the previous
-        _tableau.forEachIndexed { i, tableau ->
-            val cards = MutableList(i + 1) { _stock.remove() }
-            tableau.reset(cards)
-        }
         // clear the waste pile
         _waste.reset()
         _historyList.clear()
@@ -99,6 +93,19 @@ class GameViewModel @Inject constructor(
         _autoCompleteActive.value = false
         _autoCompleteCorrection = 0
         _stockWasteEmpty.value = false
+    }
+
+    /**
+     *  Initial Tableau state might be different from game to game.
+     */
+    protected abstract fun resetTableau()
+
+    /**
+     *  Helper function to call both reset functions at the same time.
+     */
+    fun resetAll(resetOption: ResetOptions) {
+        reset(resetOption)
+        resetTableau()
     }
 
     /**
@@ -307,9 +314,5 @@ class GameViewModel @Inject constructor(
         1 -> Suits.DIAMONDS
         2 -> Suits.HEARTS
         else -> Suits.SPADES
-    }
-
-    init {
-        reset(ResetOptions.NEW)
     }
 }

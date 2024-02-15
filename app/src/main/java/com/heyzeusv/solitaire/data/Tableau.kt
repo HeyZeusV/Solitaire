@@ -7,10 +7,7 @@ import com.heyzeusv.solitaire.util.Suits
  *  rest face down. Users can move cards between [Tableau] piles or move them to a [Foundation] pile
  *  in order to reveal more cards.
  */
-class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
-
-    // keeps track of number of face down cards in mPile
-    private var faceDownCards: Int = 0
+class Tableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
     /**
      *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
@@ -73,11 +70,6 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         if (cards.isEmpty()) return
         mPile.addAll(cards)
     }
-
-    /**
-     *  Used to determine if game could be auto completed by having all face up cards
-     */
-    fun allFaceUp(): Boolean = faceDownCards == 0
 
     override fun toString(): String = pile.toList().toString()
 }
