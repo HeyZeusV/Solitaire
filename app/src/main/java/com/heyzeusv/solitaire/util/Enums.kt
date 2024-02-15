@@ -43,3 +43,16 @@ enum class Games(
     KLONDIKETURNONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
     KLONDIKETURNTHREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE)
 }
+
+/**
+ *  Enum class that will be used to determine Scoreboard action after user makes a move. [MOVE] will
+ *  only increase moves value, [MOVE_SCORE] will increase both moves and score values,
+ *  [MOVE_MINUS_SCORE] increases moves but decreases score, and nothing
+ *  will change when [ILLEGAL].
+ */
+enum class MoveResult {
+    MOVE,
+    MOVE_SCORE,
+    MOVE_MINUS_SCORE,
+    ILLEGAL
+}

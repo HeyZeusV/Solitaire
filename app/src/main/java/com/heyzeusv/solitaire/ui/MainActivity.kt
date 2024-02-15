@@ -46,6 +46,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SolitaireApp(finishApp: () -> Unit) {
+    val sbVM = hiltViewModel<ScoreboardViewModel>()
     val gameVM = hiltViewModel<GameViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
 
@@ -64,19 +65,22 @@ fun SolitaireApp(finishApp: () -> Unit) {
     BackHandler { closeGame = true }
 
     LifecycleResumeEffect {
-        if (gameVM.moves.value != 0) gameVM.startTimer()
-        onPauseOrDispose { gameVM.pauseTimer() }
+        if (sbVM.moves.value != 0) sbVM.startTimer()
+        onPauseOrDispose { sbVM.pauseTimer() }
     }
 
     if (gameWon) {
         // pause timer once user reaches max score
-        gameVM.pauseTimer()
-        val lgs = gameVM.retrieveLastGameStats(true)
+        sbVM.pauseTimer()
+        val lgs = sbVM.retrieveLastGameStats(true, gameVM.autoCompleteCorrection)
         menuVM.updateStats(lgs)
         AlertDialog(
             onDismissRequest = { },
             confirmButton = {
-                TextButton(onClick = { gameVM.reset(ResetOptions.NEW) }) {
+                TextButton(onClick = {
+                    gameVM.reset(ResetOptions.NEW)
+                    sbVM.reset()
+                }) {
                     Text(text = stringResource(R.string.win_ad_confirm))
                 }
             },
@@ -99,7 +103,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
             onDismissRequest = { closeGame = false },
             confirmButton = {
                 TextButton(onClick = {
-                    menuVM.checkMovesUpdateStats(gameVM.retrieveLastGameStats(false))
+                    menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
                     finishApp()
                 }) {
                     Text(text = stringResource(R.string.close_ad_confirm))
@@ -120,21 +124,24 @@ fun SolitaireApp(finishApp: () -> Unit) {
             .background(brush)
     ) {
         SolitaireScoreboard(
-            gameVM = gameVM,
+            sbVM = sbVM,
             modifier = Modifier.weight(0.12f)
         )
         SolitaireBoard(
+            sbVM = sbVM,
             gameVM = gameVM,
             selectedGame = selectedGame,
             modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(
+            sbVM = sbVM,
             gameVM = gameVM,
             menuVM = menuVM,
             modifier = Modifier.weight(0.10f)
         )
     }
     SolitaireMenu(
+        sbVM = sbVM,
         gameVM = gameVM,
         menuVM = menuVM
     )

@@ -61,6 +61,7 @@ import com.heyzeusv.solitaire.util.getWinPercentage
  */
 @Composable
 fun SolitaireMenu(
+    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
 ) {
@@ -73,11 +74,14 @@ fun SolitaireMenu(
     SolitaireMenu(
         displayMenu = displayMenu,
         updateDisplayMenu = menuVM::updateDisplayMenu,
-        lgs = gameVM.retrieveLastGameStats(false),
+        lgs = sbVM.retrieveLastGameStats(false),
         selectedGame = selectedGame,
         updateSelectedGame = menuVM::updateSelectedGame,
         updateStats = menuVM::updateStats,
-        reset = { gameVM.reset(ResetOptions.NEW) },
+        reset = {
+            gameVM.reset(ResetOptions.NEW)
+            sbVM.reset()
+        },
         stats = currentGameStats
     )
 }

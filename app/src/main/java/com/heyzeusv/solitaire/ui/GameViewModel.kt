@@ -5,17 +5,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.Foundation
-import com.heyzeusv.solitaire.data.History
-import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.Tableau
 import com.heyzeusv.solitaire.data.Waste
+import com.heyzeusv.solitaire.util.MoveResult
+import com.heyzeusv.solitaire.util.MoveResult.MOVE
+import com.heyzeusv.solitaire.util.MoveResult.MOVE_SCORE
+import com.heyzeusv.solitaire.util.MoveResult.ILLEGAL
+import com.heyzeusv.solitaire.util.MoveResult.MOVE_MINUS_SCORE
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.isNotEqual
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -37,19 +40,6 @@ class GameViewModel @Inject constructor(
     private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
     private var shuffledDeck = emptyList<Card>()
 
-    // increases whenever a card/s moves
-    private val _moves = MutableStateFlow(0)
-    val moves: StateFlow<Int> get() = _moves
-
-    // tracks how long user has played current game for
-    private val _timer = MutableStateFlow(0L)
-    val timer: StateFlow<Long> get() = _timer
-    private var timerJob: Job? = null
-
-    // one point per card in Foundation, 52 is max
-    private val _score = MutableStateFlow(0)
-    val score: StateFlow<Int> get() = _score
-
     private val _stock = Stock()
     val stock: Stock get() = _stock
 
@@ -65,48 +55,27 @@ class GameViewModel @Inject constructor(
     private val _tableau = MutableList(7) { Tableau() }
     val tableau: List<Tableau> get() = _tableau
 
-    private val _historyList = mutableListOf<History>()
-    val historyList: List<History> get() = _historyList
-    private lateinit var currentStep: History
+    private val _historyList = mutableListOf<PileHistory>()
+    val historyList: List<PileHistory> get() = _historyList
+    private lateinit var currentStep: PileHistory
 
     private val _undoEnabled = MutableStateFlow(false)
     val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
 
     private val _autoCompleteActive = MutableStateFlow(false)
     val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
-    private var autoCompleteMoveCorrection: Int = 0
+
+    private var _autoCompleteCorrection: Int = 0
+    val autoCompleteCorrection: Int get() = _autoCompleteCorrection
 
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
-
-    fun startTimer() {
-        timerJob?.cancel()
-        timerJob = viewModelScope.launch {
-            while (true) {
-                delay(1000)
-                _timer.value++
-            }
-        }
-    }
-
-    fun pauseTimer() = timerJob?.cancel()
-
-    private fun resetTimer() {
-        timerJob?.cancel()
-        _timer.value = 0
-    }
-
-    fun jobIsCancelled(): Boolean = timerJob?.isCancelled ?: true
 
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
      *  new game depending on [resetOption].
      */
     fun reset(resetOption: ResetOptions) {
-        // reset stats
-        resetTimer()
-        _moves.value = 0
-        _score.value = 0
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
@@ -128,7 +97,7 @@ class GameViewModel @Inject constructor(
         recordHistory()
         _gameWon.value = false
         _autoCompleteActive.value = false
-        autoCompleteMoveCorrection = 0
+        _autoCompleteCorrection = 0
         _stockWasteEmpty.value = false
     }
 
@@ -137,62 +106,82 @@ class GameViewModel @Inject constructor(
      *  adding Cards back from Waste. [drawAmount] will be used for testing and has default parameter
      *  that will be updated depending on game selected.
      */
-    fun onStockClick(drawAmount: Int) {
+    fun onStockClick(drawAmount: Int): MoveResult {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
             _waste.add(_stock.removeMany(drawAmount))
-            _moves.value++
             appendHistory()
             _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
+            return MOVE
         } else if (_waste.pile.size > 1) {
             // add back all cards from waste to stock
             _stock.add(_waste.pile.toList())
             _waste.reset()
-            _moves.value++
             appendHistory()
+            return MOVE
         }
+        return ILLEGAL
     }
 
-    // runs when user taps on waste
-    fun onWasteClick() {
+    /**
+     *  Runs when user taps on Waste pile. Checks to see if top [Card] can be moved to any other
+     *  pile except [Stock]. If so, it is removed from [Waste].
+     */
+     fun onWasteClick(): MoveResult {
         _waste.let {
             if (it.pile.isNotEmpty()) {
+                val result = legalMove(listOf(it.pile.last()))
                 // if any move is possible then remove card from waste
-                if (legalMove(listOf(it.pile.last()))) {
+                if (result != ILLEGAL) {
                     it.remove()
                     appendHistory()
                     autoComplete()
                     _stockWasteEmpty.value = it.pile.size <= 1 && _stock.pile.isEmpty()
+                    return result
                 }
             }
         }
+        return ILLEGAL
     }
 
-    // runs when user taps on foundation
-    fun onFoundationClick(fIndex: Int) {
+    /**
+     *  Runs when user taps on Foundation with given [fIndex]. Checks to see if top [Card] can be
+     *  moved to any [Tableau] pile. If so, it is removed from [_foundation] with given [fIndex].
+     */
+    fun onFoundationClick(fIndex: Int): MoveResult {
         val foundation = _foundation[fIndex]
         if (foundation.pile.isNotEmpty()) {
+            val result = legalMove(listOf(foundation.pile.last()))
             // if any move is possible then remove card from foundation
-            if (legalMove(listOf(foundation.pile.last()))) {
+            if (result != ILLEGAL) {
                 foundation.remove()
-                _score.value--
                 appendHistory()
+                // legalMove() doesn't detect removal from Foundation which always results in losing
+                // score.
+                return MOVE_MINUS_SCORE
             }
         }
+        return ILLEGAL
     }
 
-    // runs when user taps on tableau
-    fun onTableauClick(tableauIndex: Int, cardIndex: Int) {
+    /**
+     *  Runs when user taps on Tableau pile with given [tableauIndex] and given [cardIndex]. Checks
+     *  to see if tapped sublist of [Card]s can be moved to another [Tableau] pile or a [Foundation].
+     */
+    fun onTableauClick(tableauIndex: Int, cardIndex: Int): MoveResult {
         val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.pile
-        if (tPile.isNotEmpty()) {
+        if (tPile.isNotEmpty() && tPile[cardIndex].faceUp) {
+            val result = legalMove(tPile.subList(cardIndex, tPile.size))
             // if card clicked is face up and move is possible then remove cards from tableau pile
-            if (tPile[cardIndex].faceUp && legalMove(tPile.subList(cardIndex, tPile.size))) {
+            if (result != ILLEGAL) {
                 tableauPile.remove(cardIndex)
                 appendHistory()
                 autoComplete()
+                return result
             }
         }
+        return ILLEGAL
     }
 
     /**
@@ -206,7 +195,7 @@ class GameViewModel @Inject constructor(
             _tableau.forEach { if (!it.allFaceUp()) return }
             viewModelScope.launch {
                 _autoCompleteActive.value = true
-                autoCompleteMoveCorrection = 0
+                _autoCompleteCorrection = 0
                 while (!gameWon()) {
                     _tableau.forEachIndexed { i, tableau ->
                         if (tableau.pile.isEmpty()) return@forEachIndexed
@@ -224,7 +213,7 @@ class GameViewModel @Inject constructor(
      */
     private fun gameWon(): Boolean {
         foundation.forEach { if (it.pile.size != 13) return false }
-        _moves.value = _moves.value - autoCompleteMoveCorrection
+//        _moves.value = _moves.value - autoCompleteMoveCorrection
         _autoCompleteActive.value = false
         _gameWon.value = true
         return true
@@ -233,35 +222,27 @@ class GameViewModel @Inject constructor(
     /**
      *  Checks if move is possible by attempting to add [cards] to piles. Returns true if added.
      */
-    private fun legalMove(cards: List<Card>): Boolean {
+    private fun legalMove(cards: List<Card>): MoveResult {
         if (cards.size == 1) {
             _foundation.forEach {
                 if (it.add(cards)) {
-                    _moves.value++
-                    _score.value++
-                    return true
+                    _autoCompleteCorrection++
+                    return MOVE_SCORE
                 }
             }
         }
-        _tableau.forEach {
-            if (it.add(cards)) {
-                _moves.value++
-                autoCompleteMoveCorrection++
-                return true
-            }
-        }
-        return false
+        _tableau.forEach { if (it.add(cards)) return MOVE }
+        return ILLEGAL
     }
 
     /**
-     *  Takes a [Snapshot] of current StateObject values and stores them in a [History] object. We
+     *  Takes a [Snapshot] of current StateObject values and stores them in a [PileHistory] object. We
      *  then immediately dispose of the [Snapshot] to avoid memory leaks.
      */
     private fun recordHistory() {
         val currentSnapshot = Snapshot.takeMutableSnapshot()
         currentSnapshot.enter {
-            currentStep = History(
-                score = _score.value,
+            currentStep = PileHistory(
                 stock = Stock(_stock.pile),
                 waste = Waste(_waste.pile),
                 foundation = _foundation.map { Foundation(it.suit, it.pile) },
@@ -284,13 +265,13 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  We pop the last [History] value in [_historyList] and use it to restore the game state to it.
+     *  We pop the last [PileHistory] value in [_historyList] and use it to restore the game
+     *  state to it.
      */
     fun undo() {
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
             if (_historyList.isEmpty()) _undoEnabled.value = false
-            _score.value = step.score
             if (_stock.pile.isNotEqual(step.stock.pile)) {
                 _stock.undo(step.stock.pile)
                 _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
@@ -311,16 +292,7 @@ class GameViewModel @Inject constructor(
             }
             // called to ensure currentStep stays updated.
             recordHistory()
-            // counts as a move still
-            _moves.value++
         }
-    }
-
-    /**
-     *  Returns [LastGameStats] with [gameWon] given and most updated stat values.
-     */
-    fun retrieveLastGameStats(gameWon: Boolean): LastGameStats {
-        return LastGameStats(gameWon, _moves.value, _timer.value, _score.value)
     }
 
     /**
@@ -335,12 +307,6 @@ class GameViewModel @Inject constructor(
         1 -> Suits.DIAMONDS
         2 -> Suits.HEARTS
         else -> Suits.SPADES
-    }
-
-    override fun onCleared() {
-        super.onCleared()
-        // cancel coroutine
-        timerJob?.cancel()
     }
 
     init {
