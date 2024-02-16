@@ -17,6 +17,8 @@ class AustralianPatienceTableau(initialPile: List<Card> = emptyList()) : Tableau
         if (cards.isEmpty()) return false
 
         val cFirst = cards.first()
+        // can't add a card to its own pile
+        if (mPile.contains(cFirst)) return false
         if (pile.isNotEmpty()) {
             val pLast = pile.last()
             // add cards if value of last card of pile is 1 more than first card of given cards and
