@@ -33,6 +33,7 @@
     <string name="tools_button_undo">Undo</string>
     <string name="games_klondike_turn_one">Klondike (Turn One)</string>
     <string name="games_klondike_turn_three">Klondike (Turn Three)</string>
+    <string name="games_australian_patience">Australian Patience</string>
     <string name="suits_clubs">Clubs</string>
     <string name="suits_diamonds">Diamonds</string>
     <string name="suits_hearts">Hearts</string>

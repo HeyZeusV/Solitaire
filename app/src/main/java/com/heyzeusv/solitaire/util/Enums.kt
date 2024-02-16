@@ -40,8 +40,9 @@ enum class Games(
     val drawAmount: Int,
     val dataStoreEnum: Game
 ) {
-    KLONDIKETURNONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
-    KLONDIKETURNTHREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE)
+    KLONDIKE_TURN_ONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
+    KLONDIKE_TURN_THREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE),
+    AUSTRALIAN_PATIENCE(R.string.games_australian_patience, 1, Game.GAME_AUSTRALIAN_PATIENCE)
 }
 
 /**

@@ -113,7 +113,7 @@ fun SolitaireMenu(
         val scrollableState = rememberScrollState()
 
         var showGameSwitch by remember { mutableStateOf(false) }
-        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
 
         BackHandler { updateDisplayMenu(false) }
 
@@ -249,7 +249,7 @@ fun SolitaireMenuPreview() {
             displayMenu = true,
             updateDisplayMenu = { },
             lgs = LastGameStats(false, 0, 0, 0),
-            selectedGame = Games.KLONDIKETURNONE,
+            selectedGame = Games.KLONDIKE_TURN_ONE,
             updateSelectedGame = { },
             updateStats = { },
             reset = { },
