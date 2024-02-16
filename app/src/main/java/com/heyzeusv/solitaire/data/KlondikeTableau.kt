@@ -9,6 +9,9 @@ import com.heyzeusv.solitaire.util.Suits
  */
 class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
+    // keeps track of number of face down cards in mPile
+    private var faceDownCards: Int = 0
+
     /**
      *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
      *  [mPile]'s last card value and suit. Returns true if added.
@@ -70,4 +73,9 @@ class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initi
         if (cards.isEmpty()) return
         mPile.addAll(cards)
     }
+
+    /**
+     *  Used to determine if game could be auto completed by having all face up cards
+     */
+    fun allFaceUp(): Boolean = faceDownCards == 0
 }

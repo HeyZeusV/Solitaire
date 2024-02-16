@@ -2,13 +2,11 @@ package com.heyzeusv.solitaire.ui
 
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.Stock
-import com.heyzeusv.solitaire.data.KlondikeTableau
 import com.heyzeusv.solitaire.data.TableauPile
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.MoveResult
@@ -19,11 +17,8 @@ import com.heyzeusv.solitaire.util.MoveResult.MOVE_MINUS_SCORE
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.isNotEqual
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
-import java.util.Random
 
 /**
  *  Data manager for game.
@@ -31,9 +26,9 @@ import java.util.Random
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
-abstract class GameViewModel : ViewModel() {
-
-    protected var mSS: ShuffleSeed = ShuffleSeed(Random())
+abstract class GameViewModel (
+    private val ss: ShuffleSeed
+) : ViewModel() {
 
     // holds all 52 playing Cards
     private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
@@ -42,13 +37,13 @@ abstract class GameViewModel : ViewModel() {
     protected val _stock = Stock()
     val stock: Stock get() = _stock
 
-    private val _waste = Waste()
+    protected val _waste = Waste()
     val waste: Waste get() = _waste
 
     private val _stockWasteEmpty = MutableStateFlow(false)
     val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
-    private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
+    protected val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
     protected abstract val _tableau: MutableList<TableauPile>
@@ -56,15 +51,15 @@ abstract class GameViewModel : ViewModel() {
 
     private val _historyList = mutableListOf<PileHistory>()
     val historyList: List<PileHistory> get() = _historyList
-    private lateinit var currentStep: PileHistory
+    protected lateinit var currentStep: PileHistory
 
     private val _undoEnabled = MutableStateFlow(false)
     val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
 
-    private val _autoCompleteActive = MutableStateFlow(false)
+    protected val _autoCompleteActive = MutableStateFlow(false)
     val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
 
-    private var _autoCompleteCorrection: Int = 0
+    protected var _autoCompleteCorrection: Int = 0
     val autoCompleteCorrection: Int get() = _autoCompleteCorrection
 
     private val _gameWon = MutableStateFlow(false)
@@ -78,7 +73,7 @@ abstract class GameViewModel : ViewModel() {
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
-                shuffledDeck = baseDeck.shuffled(mSS.shuffleSeed)
+                shuffledDeck = baseDeck.shuffled(ss.shuffleSeed)
                 _stock.reset(shuffledDeck)
             }
         }
@@ -192,35 +187,16 @@ abstract class GameViewModel : ViewModel() {
     }
 
     /**
-     *  Checks if Stock and Waste are empty and that all Cards in Tableau are face up. If so, then
-     *  go through each Tableau and call onTableauClick on the last card. This is repeated until
-     *  the game is completed.
+     *  After meeting certain conditions, depending on game, complete the game for the user.
      */
-    private fun autoComplete() {
-        if (_autoCompleteActive.value) return
-        if (_stock.pile.isEmpty() && _waste.pile.isEmpty()) {
-            _tableau.forEach { if (!it.allFaceUp()) return }
-            viewModelScope.launch {
-                _autoCompleteActive.value = true
-                _autoCompleteCorrection = 0
-                while (!gameWon()) {
-                    _tableau.forEachIndexed { i, tableau ->
-                        if (tableau.pile.isEmpty()) return@forEachIndexed
-                        onTableauClick(i, tableau.pile.size - 1)
-                        delay(100)
-                    }
-                }
-            }
-        }
-    }
+    protected abstract fun autoComplete()
 
     /**
      *  Should be called after successful [onWasteClick] or [onTableauClick] since game can only end
      *  after one of those clicks and if each foundation pile has exactly 13 Cards.
      */
-    private fun gameWon(): Boolean {
+    protected fun gameWon(): Boolean {
         foundation.forEach { if (it.pile.size != 13) return false }
-//        _moves.value = _moves.value - autoCompleteMoveCorrection
         _autoCompleteActive.value = false
         _gameWon.value = true
         return true
@@ -246,18 +222,7 @@ abstract class GameViewModel : ViewModel() {
      *  Takes a [Snapshot] of current StateObject values and stores them in a [PileHistory] object. We
      *  then immediately dispose of the [Snapshot] to avoid memory leaks.
      */
-    private fun recordHistory() {
-        val currentSnapshot = Snapshot.takeMutableSnapshot()
-        currentSnapshot.enter {
-            currentStep = PileHistory(
-                stock = Stock(_stock.pile),
-                waste = Waste(_waste.pile),
-                foundation = _foundation.map { Foundation(it.suit, it.pile) },
-                tableau = _tableau.map { KlondikeTableau(it.pile) }
-            )
-        }
-        currentSnapshot.dispose()
-    }
+     protected abstract fun recordHistory()
 
     /**
      *  Adds [currentStep] to our [_historyList] list before overwriting [currentStep] using
