@@ -87,7 +87,6 @@ abstract class GameViewModel (
         _waste.reset()
         _historyList.clear()
         _undoEnabled.value = false
-        recordHistory()
         _gameWon.value = false
         _autoCompleteActive.value = false
         _autoCompleteCorrection = 0
@@ -105,6 +104,7 @@ abstract class GameViewModel (
     fun resetAll(resetOption: ResetOptions) {
         reset(resetOption)
         resetTableau()
+        recordHistory()
     }
 
     /**
