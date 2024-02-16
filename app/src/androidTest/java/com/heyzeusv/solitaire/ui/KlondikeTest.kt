@@ -44,7 +44,7 @@ class KlondikeTest {
 
             onNode(hasTestTag("Waste") and hasAnyChild(hasTestTag("2 of SPADES")))
                 .assertIsDisplayed()
-            onNodeWithTextId(R.string.scoreboard_stat_moves, 1)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 1).assertIsDisplayed()
         }
     }
 
@@ -63,14 +63,14 @@ class KlondikeTest {
             clickOnPileTT("Waste")
             waitUntilPileCardExists("Tableau #3", tc.card2DFU)
             waitUntilPileCardExists("Waste", tc.card3DFU)
-            onNodeWithTextId(R.string.scoreboard_stat_moves, 4)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 4).assertIsDisplayed()
         }
     }
 
     @Test
     fun app_onFoundationClick() {
         composeRule.apply {
-            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
 
             // draw from stock 4 times
             clickOnPileTT("Stock")
@@ -85,7 +85,7 @@ class KlondikeTest {
             // card should move to foundation
             clickOnPileTT("Waste")
             waitUntilPileCardExists("Foundation #0", tc.card1CFU)
-            onNodeWithTextId(R.string.scoreboard_stat_score, 1)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 1).assertIsDisplayed()
             // card should move to tableau
             clickOnPileTT("Waste")
             waitUntilPileCardExists("Tableau #3", tc.card2DFU)
@@ -93,8 +93,8 @@ class KlondikeTest {
             // click on foundation and check that card ends in correct pile
             clickOnPileTT("Foundation #0")
             waitUntilPileCardExists("Tableau #3", tc.card1CFU)
-            onNodeWithTextId(R.string.scoreboard_stat_moves, 7)
-            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 7).assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
         }
     }
 
@@ -104,7 +104,7 @@ class KlondikeTest {
             // click on tableau and check that card ends in correct pile
             clickOnTableauCard("Tableau #3", tc.card3CFU)
             waitUntilPileCardExists("Tableau #1", tc.card3CFU)
-            onNodeWithTextId(R.string.scoreboard_stat_moves, 1)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 1).assertIsDisplayed()
         }
     }
 
@@ -128,14 +128,14 @@ class KlondikeTest {
             waitUntilPileCardExists("Tableau #1", tc.card4DFU)
             waitUntilPileCardExists("Tableau #1", tc.card3CFU)
             waitUntilPileCardExists("Tableau #1", tc.card2DFU)
-            onNodeWithTextId(R.string.scoreboard_stat_moves, 5)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 5).assertIsDisplayed()
         }
     }
 
     @Test
     fun app_undo() {
         composeRule.apply {
-            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
 
             // draw from stock 4 times
             clickOnPileTT("Stock")
@@ -150,11 +150,11 @@ class KlondikeTest {
             // card should move to foundation
             clickOnPileTT("Waste")
             waitUntilPileCardExists("Foundation #0", tc.card1CFU)
-            onNodeWithTextId(R.string.scoreboard_stat_score, 1)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 1).assertIsDisplayed()
             // card should move to tableau
             clickOnPileTT("Waste")
             waitUntilPileCardExists("Tableau #3", tc.card2DFU)
-            onNodeWithTextId(R.string.scoreboard_stat_moves, 6)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 6).assertIsDisplayed()
 
             // undo move to Tableau, should be back at Waste
             onNodeWithTextId(R.string.tools_button_undo).performClick()
@@ -165,8 +165,8 @@ class KlondikeTest {
             onNodeWithTextId(R.string.tools_button_undo).performClick()
             waitUntilPileCardDoesNotExists("Foundation #0", tc.card1CFU)
             waitUntilPileCardExists("Waste", tc.card1CFU)
-            onNodeWithTextId(R.string.scoreboard_stat_score, 0)
-            onNodeWithTextId(R.string.scoreboard_stat_moves, 8)
+            onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 8).assertIsDisplayed()
         }
     }
 
