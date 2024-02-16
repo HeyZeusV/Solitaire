@@ -297,22 +297,10 @@ class KlondikeAndScoreboardViewModelTest {
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun kdSbVmAutoComplete() = runTest {
-        val expectedClubs = listOf(
-            tc.card1CFU, tc.card2CFU, tc.card3CFU, tc.card4CFU, tc.card5CFU, tc.card6CFU, tc.card7CFU,
-            tc.card8CFU, tc.card9CFU, tc.card10CFU, tc.card11CFU, tc.card12CFU, tc.card13CFU
-        )
-        val expectedDiamonds = listOf(
-            tc.card1DFU, tc.card2DFU, tc.card3DFU, tc.card4DFU, tc.card5DFU, tc.card6DFU, tc.card7DFU,
-            tc.card8DFU, tc.card9DFU, tc.card10DFU, tc.card11DFU, tc.card12DFU, tc.card13DFU
-        )
-        val expectedHearts = listOf(
-            tc.card1HFU, tc.card2HFU, tc.card3HFU, tc.card4HFU, tc.card5HFU, tc.card6HFU, tc.card7HFU,
-            tc.card8HFU, tc.card9HFU, tc.card10HFU, tc.card11HFU, tc.card12HFU, tc.card13HFU
-        )
-        val expectedSpades = listOf(
-            tc.card1SFU, tc.card2SFU, tc.card3SFU, tc.card4SFU, tc.card5SFU, tc.card6SFU, tc.card7SFU,
-            tc.card8SFU, tc.card9SFU, tc.card10SFU, tc.card11SFU, tc.card12SFU, tc.card13SFU
-        )
+        val expectedClubs = tc.clubs
+        val expectedDiamonds = tc.diamonds
+        val expectedHearts = tc.hearts
+        val expectedSpades = tc.spades
         val expectedFinalMoves = 52
         val expectedFinalScore = 52
         val expectedSbvmMoves = 1

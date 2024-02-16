@@ -122,4 +122,21 @@ object TestCards {
         card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H ,
         card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
     )
+    
+    val clubs = listOf(
+        card1CFU, card2CFU, card3CFU, card4CFU, card5CFU, card6CFU, card7CFU,
+        card8CFU, card9CFU, card10CFU, card11CFU, card12CFU, card13CFU
+    )
+    val diamonds = listOf(
+        card1DFU, card2DFU, card3DFU, card4DFU, card5DFU, card6DFU, card7DFU,
+        card8DFU, card9DFU, card10DFU, card11DFU, card12DFU, card13DFU
+    )
+    val hearts = listOf(
+        card1HFU, card2HFU, card3HFU, card4HFU, card5HFU, card6HFU, card7HFU,
+        card8HFU, card9HFU, card10HFU, card11HFU, card12HFU, card13HFU
+    )
+    val spades = listOf(
+        card1SFU, card2SFU, card3SFU, card4SFU, card5SFU, card6SFU, card7SFU,
+        card8SFU, card9SFU, card10SFU, card11SFU, card12SFU, card13SFU
+    )
 }

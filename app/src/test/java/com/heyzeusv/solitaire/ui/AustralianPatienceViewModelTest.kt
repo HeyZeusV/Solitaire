@@ -8,7 +8,10 @@ import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.test.StandardTestDispatcher
+import kotlinx.coroutines.test.advanceUntilIdle
+import kotlinx.coroutines.test.runTest
 import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
@@ -300,9 +303,44 @@ class AustralianPatienceAndScoreboardViewModelTest {
         assertEquals(expectedLGS3, sbVM.retrieveLastGameStats(true))
     }
 
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    @Test
-//    fun apSbVmAutoComplete() = runTest {
-//        TODO("Once it is implemented in ViewModel")
-//    }
+    @OptIn(ExperimentalCoroutinesApi::class)
+    @Test
+    fun apSbVmAutoComplete() = runTest {
+        val expectedClubs = tc.clubs
+        val expectedDiamonds = tc.diamonds
+        val expectedHearts = tc.hearts
+        val expectedSpades = tc.spades
+        val expectedFinalMoves = 52
+        val expectedFinalScore = 52
+        val expectedSbvmMoves = 1
+        val expectedSbvmScore = 1
+        val expectedGameWon = true
+        val expectedAutoCompleteActive = false
+
+        // going to cheat and give lists that are ready to auto complete
+        apVM.stock.reset(emptyList())
+        apVM.waste.reset(emptyList())
+        apVM.tableau.forEach { it.undo(emptyList()) }
+        apVM.tableau[0].add(expectedClubs.reversed())
+        apVM.tableau[1].add(expectedDiamonds.reversed())
+        apVM.tableau[2].add(expectedHearts.reversed())
+        apVM.tableau[3].add(expectedSpades.reversed())
+
+        // this should start autoComplete()
+        launch { sbVM.handleMoveResult(apVM.onTableauClick(0, 12)) }
+        advanceUntilIdle()
+
+        val lgs = sbVM.retrieveLastGameStats(true, apVM.autoCompleteCorrection)
+
+        assertEquals(expectedClubs, apVM.foundation[0].pile.toList())
+        assertEquals(expectedDiamonds, apVM.foundation[1].pile.toList())
+        assertEquals(expectedHearts, apVM.foundation[2].pile.toList())
+        assertEquals(expectedSpades, apVM.foundation[3].pile.toList())
+        assertEquals(expectedSbvmMoves, sbVM.moves.value)
+        assertEquals(expectedSbvmScore, sbVM.score.value)
+        assertEquals(expectedFinalMoves, lgs.moves)
+        assertEquals(expectedFinalScore, lgs.score)
+        assertEquals(expectedGameWon, apVM.gameWon.value)
+        assertEquals(expectedAutoCompleteActive, apVM.autoCompleteActive.value)
+    }
 }
