@@ -26,6 +26,9 @@ class KlondikeViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : GameViewModel(ss) {
 
+    override val baseRedealAmount: Int = 1000
+    override var redealLeft: Int = 1000
+
     override val _tableau: MutableList<TableauPile> = MutableList(7) { KlondikeTableau() }
 
     /**

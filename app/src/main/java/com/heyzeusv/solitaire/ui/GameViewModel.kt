@@ -34,6 +34,9 @@ abstract class GameViewModel (
     private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
     private var shuffledDeck = emptyList<Card>()
 
+    protected abstract val baseRedealAmount: Int
+    protected abstract var redealLeft: Int
+
     protected val _stock = Stock()
     val stock: Stock get() = _stock
 
@@ -70,6 +73,7 @@ abstract class GameViewModel (
      *  new game depending on [resetOption].
      */
     protected fun reset(resetOption: ResetOptions) {
+        redealLeft = baseRedealAmount
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
@@ -113,13 +117,18 @@ abstract class GameViewModel (
         if (_stock.pile.isNotEmpty()) {
             _waste.add(_stock.removeMany(drawAmount))
             appendHistory()
-            _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
+            _stockWasteEmpty.value = if (redealLeft == 0) {
+                true
+            } else {
+                _waste.pile.size <= 1 && _stock.pile.isEmpty()
+            }
             return MOVE
-        } else if (_waste.pile.size > 1) {
+        } else if (_waste.pile.size > 1 && redealLeft != 0) {
             // add back all cards from waste to stock
             _stock.add(_waste.pile.toList())
             _waste.reset()
             appendHistory()
+            redealLeft--
             return MOVE
         }
         return ILLEGAL
@@ -138,7 +147,11 @@ abstract class GameViewModel (
                     it.remove()
                     appendHistory()
                     autoComplete()
-                    _stockWasteEmpty.value = it.pile.size <= 1 && _stock.pile.isEmpty()
+                    _stockWasteEmpty.value = if (redealLeft == 0) {
+                        true
+                    } else {
+                        _waste.pile.size <= 1 && _stock.pile.isEmpty()
+                    }
                     return result
                 }
             }
@@ -246,11 +259,19 @@ abstract class GameViewModel (
             if (_historyList.isEmpty()) _undoEnabled.value = false
             if (_stock.pile.isNotEqual(step.stock.pile)) {
                 _stock.undo(step.stock.pile)
-                _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
+                _stockWasteEmpty.value = if (redealLeft == 0) {
+                    true
+                } else {
+                    _waste.pile.size <= 1 && _stock.pile.isEmpty()
+                }
             }
             if (_waste.pile.isNotEqual(step.waste.pile)) {
                 _waste.undo(step.waste.pile)
-                _stockWasteEmpty.value = _waste.pile.size <= 1 && _stock.pile.isEmpty()
+                _stockWasteEmpty.value = if (redealLeft == 0) {
+                    true
+                } else {
+                    _waste.pile.size <= 1 && _stock.pile.isEmpty()
+                }
             }
             _foundation.forEachIndexed { i, foundation ->
                 if (foundation.pile.isNotEqual(step.foundation[i].pile)) {

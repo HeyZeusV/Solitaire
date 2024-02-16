@@ -38,7 +38,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmDeckCreation() {
+    fun kdSbVmDeckCreation() {
         val expectedDeck = tc.deck
         var actualDeck = mutableListOf<Card>()
 
@@ -56,7 +56,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmReset() {
+    fun kdSbVmReset() {
         val expectedTimer = 0L
         val expectedMoves = 0
         val expectedScore = 0
@@ -95,7 +95,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmOnStockClickStockNotEmpty() {
+    fun kdSbVmOnStockClickStockNotEmpty() {
         val expectedStock = kdVM.stock.pile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
         val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU, tc.card2DFU)
         val expectedMoves = 3
@@ -120,7 +120,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmOnStockClickStockEmpty() {
+    fun kdSbVmOnStockClickStockEmpty() {
         val expectedStockBefore = emptyList<Card>()
         val expectedStockAfter = kdVM.stock.pile.toList()
         val expectedWastePileBefore = kdVM.stock.pile.map { it.copy(faceUp = true) }
@@ -148,7 +148,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmOnWasteClick() {
+    fun kdSbVmOnWasteClick() {
         val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU)
         val expectedTableauPile = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU)
         val expectedStockWasteEmpty = false
@@ -164,7 +164,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmOnFoundationClick() {
+    fun kdSbVmOnFoundationClick() {
         val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU)
         val expectedTableauPile = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU, tc.card1CFU)
         val expectedFoundationPile = listOf(tc.card1CFU)
@@ -197,7 +197,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmStockWasteEmptyOnStockClick() {
+    fun kdSbVmStockWasteEmptyOnStockClick() {
         val expectedStockWasteEmptyBefore = false
         val expectedStockWasteEmptyAfter = true
         val expectedStockAfter = emptyList<Card>()
@@ -217,7 +217,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmStockWasteEmptyOnWasteClick() {
+    fun kdSbVmStockWasteEmptyOnWasteClick() {
         val expectedStockWasteEmptyBefore = false
         val expectedStockWasteEmptyAfter = true
         val expectedWasteAfter = listOf(tc.card10CFU)
@@ -235,7 +235,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmOnTableauClick() {
+    fun kdSbVmOnTableauClick() {
         val expectedTableauPile2Before = listOf(tc.card11D, tc.card4DFU)
         val expectedTableauPile2After = listOf(tc.card11D, tc.card4DFU, tc.card3CFU, tc.card2DFU)
         val expectedTableauPile4Before = listOf(tc.card1H, tc.card10C, tc.card7S, tc.card3CFU, tc.card2DFU)
@@ -257,7 +257,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmUndo() {
+    fun kdSbVmUndo() {
         val expectedStock = kdVM.stock.pile.toMutableList().apply { removeFirst() }
         val expectedWaste = listOf(kdVM.stock.pile[0].copy(faceUp = true))
         val expectedMoves = 3
@@ -278,7 +278,7 @@ class KlondikeAndScoreboardViewModelTest {
     }
 
     @Test
-    fun gameSbVmRetrieveLastGameStats() {
+    fun kdSbVmRetrieveLastGameStats() {
         val expectedLGS1 = LastGameStats(false, 0, 0, 0)
         val expectedLGS2 = LastGameStats(false, 5, 0, 1)
         val expectedLGS3 = LastGameStats(true, 5, 0, 1)
@@ -296,7 +296,7 @@ class KlondikeAndScoreboardViewModelTest {
 
     @OptIn(ExperimentalCoroutinesApi::class)
     @Test
-    fun gameSbVmAutoComplete() = runTest {
+    fun kdSbVmAutoComplete() = runTest {
         val expectedClubs = listOf(
             tc.card1CFU, tc.card2CFU, tc.card3CFU, tc.card4CFU, tc.card5CFU, tc.card6CFU, tc.card7CFU,
             tc.card8CFU, tc.card9CFU, tc.card10CFU, tc.card11CFU, tc.card12CFU, tc.card13CFU

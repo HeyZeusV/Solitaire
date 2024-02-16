@@ -19,9 +19,12 @@ import javax.inject.Inject
  *  Data can survive configuration changes.
  */
 @HiltViewModel
-class AustralianPatienceViewModel @Inject constructor(
+open class AustralianPatienceViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : GameViewModel(ss) {
+
+    override val baseRedealAmount: Int = 0
+    override var redealLeft: Int = 0
 
     override val _tableau: MutableList<TableauPile> = MutableList(7) { AustralianPatienceTableau() }
 
@@ -59,4 +62,19 @@ class AustralianPatienceViewModel @Inject constructor(
     init {
         resetAll(ResetOptions.NEW)
     }
+}
+
+/**
+ *  Data manager for Australian Patience (One Redraw).
+ *
+ *  Stores and manages UI-related data in a lifecycle conscious way.
+ *  Data can survive configuration changes.
+ */
+@HiltViewModel
+class AustralianPatienceOneRedrawViewModel @Inject constructor(
+    ss: ShuffleSeed
+) : AustralianPatienceViewModel(ss) {
+
+    override val baseRedealAmount: Int = 1
+    override var redealLeft: Int = 1
 }

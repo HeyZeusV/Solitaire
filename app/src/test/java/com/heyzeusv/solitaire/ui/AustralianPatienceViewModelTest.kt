@@ -35,7 +35,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmDeckCreation() {
+    fun apSbVmDeckCreation() {
         val expectedDeck = tc.deck
         var actualDeck = mutableListOf<Card>()
 
@@ -53,7 +53,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmReset() {
+    fun apSbVmReset() {
         val expectedTimer = 0L
         val expectedMoves = 0
         val expectedScore = 0
@@ -92,13 +92,13 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmOnStockClickStockNotEmpty() {
+    fun apSbVmOnStockClickStockNotEmpty() {
         val expectedStock = apVM.stock.pile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
         val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU, tc.card2DFU)
         val expectedMoves = 3
         val expectedHistoryListSize = 3
         val expectedUndoEnabled = true
-        val expectedStockWasteEmpty = false
+        val expectedStockWasteEmpty = true
 
         // draw 3 Cards
         sbVM.apply {
@@ -117,15 +117,13 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmOnStockClickStockEmpty() {
+    fun apSbVmOnStockClickStockEmpty() {
         val expectedStockBefore = emptyList<Card>()
-        val expectedStockAfter = apVM.stock.pile.toList()
         val expectedWastePileBefore = apVM.stock.pile.map { it.copy(faceUp = true) }
-        val expectedWastePileAfter = emptyList<Card>()
-        val expectedMoves = 25
+        val expectedMoves = 24
         val expectedHistoryListSize = 15
         val expectedUndoEnabled = true
-        val expectedStockWasteEmpty = false
+        val expectedStockWasteEmpty = true
 
         // draw 24 Cards
         apVM.apply { for (i in 1..24) sbVM.handleMoveResult(onStockClick(1)) }
@@ -135,8 +133,6 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
         sbVM.handleMoveResult(apVM.onStockClick(1))
 
-        assertEquals(expectedStockAfter, apVM.stock.pile.toList())
-        assertEquals(expectedWastePileAfter, apVM.waste.pile.toList())
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedHistoryListSize, apVM.historyList.size)
         assertEquals(expectedHistoryListSize, sbVM.historyList.size)
@@ -145,14 +141,14 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmOnWasteClick() {
+    fun apSbVmOnWasteClick() {
         val expectedWastePile = listOf(
             tc.card2SFU, tc.card3DFU, tc.card2DFU, tc.card1CFU, tc.card13SFU,
             tc.card5DFU, tc.card3HFU, tc.card11CFU, tc.card9HFU, tc.card4CFU
         )
         val expectedTableauPile =
             listOf(tc.card9CFU, tc.card2HFU, tc.card13DFU, tc.card12HFU, tc.card11HFU)
-        val expectedStockWasteEmpty = false
+        val expectedStockWasteEmpty = true
         val expectedMoves = 12
 
         // fill Waste with 11 Cards
@@ -167,7 +163,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmOnFoundationClick() {
+    fun apSbVmOnFoundationClick() {
         val expectedWastePile = listOf(
             tc.card2SFU, tc.card3DFU, tc.card2DFU, tc.card1CFU,
             tc.card13SFU, tc.card5DFU, tc.card3HFU
@@ -207,7 +203,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmStockWasteEmptyOnStockClick() {
+    fun apSbVmStockWasteEmptyOnStockClick() {
         val expectedStockWasteEmptyBefore = false
         val expectedStockWasteEmptyAfter = true
         val expectedStockAfter = emptyList<Card>()
@@ -227,7 +223,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmStockWasteEmptyOnWasteClick() {
+    fun apSbVmStockWasteEmptyOnWasteClick() {
         val expectedStockWasteEmptyBefore = false
         val expectedStockWasteEmptyAfter = true
         val expectedWasteAfter = listOf(tc.card10CFU)
@@ -245,7 +241,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmOnTableauClick() {
+    fun apSbVmOnTableauClick() {
         val expectedTableauPile2Before = listOf(tc.card9DFU, tc.card7DFU, tc.card1HFU, tc.card10CFU)
         val expectedTableauPile2After = listOf(
             tc.card9DFU, tc.card7DFU, tc.card1HFU, tc.card10CFU,
@@ -267,7 +263,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmUndo() {
+    fun apSbVmUndo() {
         val expectedStock = apVM.stock.pile.toMutableList().apply { removeFirst() }
         val expectedWaste = listOf(apVM.stock.pile[0].copy(faceUp = true))
         val expectedMoves = 3
@@ -288,7 +284,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     }
 
     @Test
-    fun apSbVmVmRetrieveLastGameStats() {
+    fun apSbVmRetrieveLastGameStats() {
         val expectedLGS1 = LastGameStats(false, 0, 0, 0)
         val expectedLGS2 = LastGameStats(false, 5, 0, 1)
         val expectedLGS3 = LastGameStats(true, 5, 0, 1)
@@ -306,7 +302,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
 //    @OptIn(ExperimentalCoroutinesApi::class)
 //    @Test
-//    fun apSbVmVmAutoComplete() = runTest {
+//    fun apSbVmAutoComplete() = runTest {
 //        TODO("Once it is implemented in ViewModel")
 //    }
 }
