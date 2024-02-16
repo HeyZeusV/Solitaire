@@ -1,12 +1,12 @@
 package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.Tableau
+import com.heyzeusv.solitaire.data.KlondikeTableau
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Test
 
-class TableauTest {
+class KlondikeTableauTest {
 
     private val tc = TestCards
 
@@ -17,18 +17,18 @@ class TableauTest {
         val expectedMixedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU, tc.card5C, tc.card4H)
 
         // add solo King card then 3 that should follow
-        val emptyKingTableau = Tableau()
+        val emptyKingTableau = KlondikeTableau()
         emptyKingTableau.add(listOf(tc.card13D))
         emptyKingTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
         assertEquals(expectedKingPile, emptyKingTableau.pile)
 
         // add cards without king
-        val emptyTableau = Tableau()
+        val emptyTableau = KlondikeTableau()
         emptyTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
         assertEquals(expectedEmptyPile, emptyTableau.pile)
 
         // add cards to Tableau with existing cards
-        val mixedTableau = Tableau()
+        val mixedTableau = KlondikeTableau()
         // reset is used to fill Tableau with existing cards
         mixedTableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D))
         mixedTableau.add(listOf(tc.card5C, tc.card4H))
@@ -37,7 +37,7 @@ class TableauTest {
 
     @Test
     fun tableauRemoveCards() {
-        val tableau = Tableau()
+        val tableau = KlondikeTableau()
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU)
         tableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H))
 
@@ -48,7 +48,7 @@ class TableauTest {
 
     @Test
     fun tableauReset() {
-        val tableau = Tableau()
+        val tableau = KlondikeTableau()
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU)
 
         tableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H))
@@ -58,7 +58,7 @@ class TableauTest {
 
     @Test
     fun tableauUndoEmptyCards() {
-        val tableau = Tableau()
+        val tableau = KlondikeTableau()
         val expectedPile = emptyList<Card>()
 
         tableau.undo(emptyList())
@@ -68,7 +68,7 @@ class TableauTest {
 
     @Test
     fun tableauUndo1Cards() {
-        val tableau = Tableau()
+        val tableau = KlondikeTableau()
         val expectedPile = listOf(tc.card1H)
 
         tableau.undo(listOf(tc.card1H))
@@ -78,7 +78,7 @@ class TableauTest {
 
     @Test
     fun tableauUndoMoreCards() {
-        val tableau = Tableau()
+        val tableau = KlondikeTableau()
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H)
 
         tableau.undo(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H))

@@ -8,7 +8,7 @@ import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.Stock
-import com.heyzeusv.solitaire.data.Tableau
+import com.heyzeusv.solitaire.data.KlondikeTableau
 import com.heyzeusv.solitaire.data.TableauPile
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.MoveResult
@@ -51,7 +51,7 @@ abstract class GameViewModel : ViewModel() {
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
-    protected abstract val _tableau: MutableList<TableauPile> //= MutableList(7) { Tableau() }
+    protected abstract val _tableau: MutableList<TableauPile>
     val tableau: List<TableauPile> get() = _tableau
 
     private val _historyList = mutableListOf<PileHistory>()
@@ -153,7 +153,7 @@ abstract class GameViewModel : ViewModel() {
 
     /**
      *  Runs when user taps on Foundation with given [fIndex]. Checks to see if top [Card] can be
-     *  moved to any [Tableau] pile. If so, it is removed from [_foundation] with given [fIndex].
+     *  moved to any [TableauPile] pile. If so, it is removed from [_foundation] with given [fIndex].
      */
     fun onFoundationClick(fIndex: Int): MoveResult {
         val foundation = _foundation[fIndex]
@@ -173,7 +173,7 @@ abstract class GameViewModel : ViewModel() {
 
     /**
      *  Runs when user taps on Tableau pile with given [tableauIndex] and given [cardIndex]. Checks
-     *  to see if tapped sublist of [Card]s can be moved to another [Tableau] pile or a [Foundation].
+     *  to see if tapped sublist of [Card]s can be moved to another [TableauPile] pile or a [Foundation].
      */
     fun onTableauClick(tableauIndex: Int, cardIndex: Int): MoveResult {
         val tableauPile = _tableau[tableauIndex]
@@ -253,7 +253,7 @@ abstract class GameViewModel : ViewModel() {
                 stock = Stock(_stock.pile),
                 waste = Waste(_waste.pile),
                 foundation = _foundation.map { Foundation(it.suit, it.pile) },
-                tableau = _tableau.map { Tableau(it.pile) }
+                tableau = _tableau.map { KlondikeTableau(it.pile) }
             )
         }
         currentSnapshot.dispose()

@@ -16,6 +16,8 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
     abstract fun reset(cards: List<Card> = emptyList())
     abstract fun undo(cards: List<Card>)
 
+    override fun toString(): String = pile.toList().toString()
+
     init {
         mPile.addAll(initialPile)
     }

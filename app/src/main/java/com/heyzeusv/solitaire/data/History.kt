@@ -8,7 +8,7 @@ data class PileHistory(
     val stock: Stock,
     val waste: Waste,
     val foundation: List<Foundation>,
-    val tableau: List<Tableau>
+    val tableau: List<TableauPile>
 )
 
 /**

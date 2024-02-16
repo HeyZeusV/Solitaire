@@ -32,6 +32,4 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         // makes sure all cards are face up
         mPile.addAll(cards.map { it.copy(faceUp = true) })
     }
-
-    override fun toString(): String = pile.toList().toString()
 }
