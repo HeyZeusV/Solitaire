@@ -82,7 +82,6 @@ class KlondikeViewModel @Inject constructor(
     }
 
     init {
-//        mSS = ss
         resetAll(ResetOptions.NEW)
     }
 }

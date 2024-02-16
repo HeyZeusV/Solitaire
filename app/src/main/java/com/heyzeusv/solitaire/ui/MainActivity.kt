@@ -50,10 +50,10 @@ fun SolitaireApp(finishApp: () -> Unit) {
     val sbVM = hiltViewModel<ScoreboardViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
     val selectedGame by menuVM.selectedGame.collectAsState()
-    val gameVM = if (selectedGame == Games.AUSTRALIAN_PATIENCE) {
-        hiltViewModel<AustralianPatienceViewModel>()
-    } else {
-        hiltViewModel<KlondikeViewModel>()
+    val gameVM = when (selectedGame) {
+        Games.AUSTRALIAN_PATIENCE -> hiltViewModel<AustralianPatienceViewModel>()
+        Games.AUSTRALIAN_PATIENCE_ONE_REDRAW -> hiltViewModel<AustralianPatienceOneRedrawViewModel>()
+        else -> hiltViewModel<KlondikeViewModel>()
     }
 
     var closeGame by remember { mutableStateOf(false) }
