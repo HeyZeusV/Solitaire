@@ -36,7 +36,7 @@ class AustralianPatienceViewModel @Inject constructor(
     }
 
     override fun autoComplete() {
-        TODO("Not yet implemented")
+
     }
 
     /**
