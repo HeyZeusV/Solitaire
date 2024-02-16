@@ -10,7 +10,8 @@ import com.heyzeusv.solitaire.util.Suits
 class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
     // keeps track of number of face down cards in mPile
-    private var faceDownCards: Int = 0
+    private var _faceDownCards: Int = 0
+    val faceDownCards: Int get() = _faceDownCards
 
     /**
      *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
@@ -45,7 +46,7 @@ class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initi
         // flip the last card up
         if (mPile.isNotEmpty() && !mPile.last().faceUp) {
             mPile[mPile.size - 1] = mPile.last().copy(faceUp = true)
-            faceDownCards--
+            _faceDownCards--
         }
         // return value isn't used
         return Card(0, Suits.SPADES, false)
@@ -60,7 +61,7 @@ class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initi
             clear()
             addAll(cards)
             this[this.size - 1] = this.last().copy(faceUp = true)
-            faceDownCards = cards.size - 1
+            _faceDownCards = cards.size - 1
         }
     }
 
@@ -69,7 +70,7 @@ class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initi
      */
     override fun undo(cards: List<Card>) {
         mPile.clear()
-        faceDownCards = cards.filter { !it.faceUp }.size
+        _faceDownCards = cards.filter { !it.faceUp }.size
         if (cards.isEmpty()) return
         mPile.addAll(cards)
     }
@@ -77,5 +78,5 @@ class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initi
     /**
      *  Used to determine if game could be auto completed by having all face up cards
      */
-    fun allFaceUp(): Boolean = faceDownCards == 0
+    fun allFaceUp(): Boolean = _faceDownCards == 0
 }
