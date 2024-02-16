@@ -27,6 +27,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.formatTimeDisplay
 import dagger.hilt.android.AndroidEntryPoint
@@ -47,8 +48,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun SolitaireApp(finishApp: () -> Unit) {
     val sbVM = hiltViewModel<ScoreboardViewModel>()
-    val kdVM = hiltViewModel<KlondikeViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
+    val selectedGame by menuVM.selectedGame.collectAsState()
+    val gameVM = if (selectedGame == Games.AUSTRALIAN_PATIENCE) {
+        hiltViewModel<AustralianPatienceViewModel>()
+    } else {
+        hiltViewModel<KlondikeViewModel>()
+    }
 
     var closeGame by remember { mutableStateOf(false) }
 
@@ -58,9 +64,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
         ShaderBrush(ImageShader(pattern, TileMode.Repeated, TileMode.Repeated))
     }
 
-    val gameWon by kdVM.gameWon.collectAsState()
-
-    val selectedGame by menuVM.selectedGame.collectAsState()
+    val gameWon by gameVM.gameWon.collectAsState()
 
     BackHandler { closeGame = true }
 
@@ -72,13 +76,13 @@ fun SolitaireApp(finishApp: () -> Unit) {
     if (gameWon) {
         // pause timer once user reaches max score
         sbVM.pauseTimer()
-        val lgs = sbVM.retrieveLastGameStats(true, kdVM.autoCompleteCorrection)
+        val lgs = sbVM.retrieveLastGameStats(true, gameVM.autoCompleteCorrection)
         menuVM.updateStats(lgs)
         AlertDialog(
             onDismissRequest = { },
             confirmButton = {
                 TextButton(onClick = {
-                    kdVM.resetAll(ResetOptions.NEW)
+                    gameVM.resetAll(ResetOptions.NEW)
                     sbVM.reset()
                 }) {
                     Text(text = stringResource(R.string.win_ad_confirm))
@@ -129,20 +133,20 @@ fun SolitaireApp(finishApp: () -> Unit) {
         )
         SolitaireBoard(
             sbVM = sbVM,
-            gameVM = kdVM,
+            gameVM = gameVM,
             selectedGame = selectedGame,
             modifier = Modifier.weight(0.78f)
         )
         SolitaireTools(
             sbVM = sbVM,
-            gameVM = kdVM,
+            gameVM = gameVM,
             menuVM = menuVM,
             modifier = Modifier.weight(0.10f)
         )
     }
     SolitaireMenu(
         sbVM = sbVM,
-        gameVM = kdVM,
+        gameVM = gameVM,
         menuVM = menuVM
     )
 }
