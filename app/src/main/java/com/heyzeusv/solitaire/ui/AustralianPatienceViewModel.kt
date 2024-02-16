@@ -89,13 +89,13 @@ open class AustralianPatienceViewModel @Inject constructor(
 }
 
 /**
- *  Data manager for Australian Patience (One Redraw).
+ *  Data manager for Canberra.
  *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
 @HiltViewModel
-class AustralianPatienceOneRedrawViewModel @Inject constructor(
+class CanberraViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : AustralianPatienceViewModel(ss) {
 

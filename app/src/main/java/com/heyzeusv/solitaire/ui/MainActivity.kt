@@ -52,7 +52,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
     val selectedGame by menuVM.selectedGame.collectAsState()
     val gameVM = when (selectedGame) {
         Games.AUSTRALIAN_PATIENCE -> hiltViewModel<AustralianPatienceViewModel>()
-        Games.AUSTRALIAN_PATIENCE_ONE_REDRAW -> hiltViewModel<AustralianPatienceOneRedrawViewModel>()
+        Games.CANBERRA -> hiltViewModel<CanberraViewModel>()
         else -> hiltViewModel<KlondikeViewModel>()
     }
 
