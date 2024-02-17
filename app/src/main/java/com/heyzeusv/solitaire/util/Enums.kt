@@ -40,6 +40,21 @@ enum class Games(
     val drawAmount: Int,
     val dataStoreEnum: Game
 ) {
-    KLONDIKETURNONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
-    KLONDIKETURNTHREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE)
+    KLONDIKE_TURN_ONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
+    KLONDIKE_TURN_THREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE),
+    AUSTRALIAN_PATIENCE(R.string.games_australian_patience, 1, Game.GAME_AUSTRALIAN_PATIENCE),
+    CANBERRA(R.string.games_canberra, 1, Game.GAME_CANBERRA)
+}
+
+/**
+ *  Enum class that will be used to determine Scoreboard action after user makes a move. [MOVE] will
+ *  only increase moves value, [MOVE_SCORE] will increase both moves and score values,
+ *  [MOVE_MINUS_SCORE] increases moves but decreases score, and nothing
+ *  will change when [ILLEGAL].
+ */
+enum class MoveResult {
+    MOVE,
+    MOVE_SCORE,
+    MOVE_MINUS_SCORE,
+    ILLEGAL
 }

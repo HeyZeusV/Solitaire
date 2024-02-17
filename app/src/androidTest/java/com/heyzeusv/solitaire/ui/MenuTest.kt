@@ -49,7 +49,7 @@ class MenuTest {
                         displayMenu = true,
                         updateDisplayMenu = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
-                        selectedGame = Games.KLONDIKETURNONE,
+                        selectedGame = Games.KLONDIKE_TURN_ONE,
                         updateSelectedGame = { },
                         updateStats = { },
                         reset = { },
@@ -85,7 +85,7 @@ class MenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme(darkTheme = true) {
-                    var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+                    var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
                         displayMenu = true,
@@ -132,7 +132,7 @@ class MenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme(darkTheme = true) {
-                    var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+                    var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
                         displayMenu = true,
@@ -184,7 +184,7 @@ class MenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme(darkTheme = true) {
-                    var selectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+                    var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
                         displayMenu = true,

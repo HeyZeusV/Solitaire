@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.clickableSingle
@@ -33,7 +34,8 @@ fun SolitaireTableau(
     cardHeight: Dp,
     tableauIndex: Int = 0,
     pile: List<Card> = emptyList(),
-    onClick: (Int, Int) -> Unit = { _, _ -> }
+    onClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.ILLEGAL},
+    handleMoveResult: (MoveResult) -> Unit = { }
 ) {
     Column(
         modifier = modifier.testTag("Tableau #$tableauIndex"),
@@ -47,12 +49,12 @@ fun SolitaireTableau(
                 contentScale = ContentScale.FillBounds
             )
         } else {
-            pile.forEachIndexed { index, card ->
+            pile.forEachIndexed { cardIndex, card ->
                 SolitaireCard(
                     modifier = Modifier
                         .height(cardHeight)
                         .clip(RoundedCornerShape(4.dp)) // makes click surface have round edges
-                        .clickableSingle { onClick(tableauIndex, index) },
+                        .clickableSingle { handleMoveResult(onClick(tableauIndex, cardIndex)) },
                     card = card
                 )
             }

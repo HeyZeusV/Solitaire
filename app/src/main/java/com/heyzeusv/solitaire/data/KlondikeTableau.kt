@@ -3,14 +3,15 @@ package com.heyzeusv.solitaire.data
 import com.heyzeusv.solitaire.util.Suits
 
 /**
- *  In Solitaire, Tableau refers to the 7 piles that start with 1 face up card per [mPile] and the
- *  rest face down. Users can move cards between [Tableau] piles or move them to a [Foundation] pile
- *  in order to reveal more cards.
+ *  In Klondike Solitaire, Tableau refers to the 7 piles that start with 1 face up card per [mPile]
+ *  and the rest face down. Users can move cards between [KlondikeTableau] piles or move them to a
+ *  [Foundation] pile in order to reveal more cards.
  */
-class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
+class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
     // keeps track of number of face down cards in mPile
-    private var faceDownCards: Int = 0
+    private var _faceDownCards: Int = 0
+    val faceDownCards: Int get() = _faceDownCards
 
     /**
      *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
@@ -22,13 +23,13 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         val cFirst = cards.first()
         if (pile.isNotEmpty()) {
             val pLast = pile.last()
-            // add cards if last card of pile is 1 more than first card of new cards
+            // add cards if value of last card of pile is 1 more than first card of new cards
             // and if they are different colors
             if (cFirst.value == pLast.value - 1 && cFirst.suit.color != pLast.suit.color) {
                 mPile.addAll(cards)
                 return true
             }
-        // add cards if pile is empty and first card of new cards is the highest value
+        // add cards if pile is empty and first card of given cards is the highest value (King)
         } else if (cFirst.value == 12) {
             mPile.addAll(cards)
             return true
@@ -37,7 +38,7 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Removes all cards from [mPile] started from [tappedIndex] to the end of [mPile] and flips
+     *  Removes all cards from [mPile] starting from [tappedIndex] to the end of [mPile] and flips
      *  the last card if any.
      */
     override fun remove(tappedIndex: Int): Card {
@@ -45,7 +46,7 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         // flip the last card up
         if (mPile.isNotEmpty() && !mPile.last().faceUp) {
             mPile[mPile.size - 1] = mPile.last().copy(faceUp = true)
-            faceDownCards--
+            _faceDownCards--
         }
         // return value isn't used
         return Card(0, Suits.SPADES, false)
@@ -60,7 +61,7 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
             clear()
             addAll(cards)
             this[this.size - 1] = this.last().copy(faceUp = true)
-            faceDownCards = cards.size - 1
+            _faceDownCards = cards.size - 1
         }
     }
 
@@ -69,7 +70,7 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
      */
     override fun undo(cards: List<Card>) {
         mPile.clear()
-        faceDownCards = cards.filter { !it.faceUp }.size
+        _faceDownCards = cards.filter { !it.faceUp }.size
         if (cards.isEmpty()) return
         mPile.addAll(cards)
     }
@@ -77,7 +78,5 @@ class Tableau(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     /**
      *  Used to determine if game could be auto completed by having all face up cards
      */
-    fun allFaceUp(): Boolean = faceDownCards == 0
-
-    override fun toString(): String = pile.toList().toString()
+    fun allFaceUp(): Boolean = _faceDownCards == 0
 }

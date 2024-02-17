@@ -1,7 +1,5 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.data
 
-import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Test

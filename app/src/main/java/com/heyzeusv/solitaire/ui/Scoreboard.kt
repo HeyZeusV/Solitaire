@@ -25,16 +25,16 @@ import com.heyzeusv.solitaire.util.formatTimeDisplay
  */
 @Composable
 fun SolitaireScoreboard(
-    gameVM: GameViewModel,
+    sbVM: ScoreboardViewModel,
     modifier: Modifier = Modifier
 ) {
     // stats
-    val moves by gameVM.moves.collectAsState()
-    val timer by gameVM.timer.collectAsState()
-    val score by gameVM.score.collectAsState()
+    val moves by sbVM.moves.collectAsState()
+    val timer by sbVM.time.collectAsState()
+    val score by sbVM.score.collectAsState()
 
     // start timer once user makes a move
-    if (moves == 1 && gameVM.jobIsCancelled()) gameVM.startTimer()
+    if (moves == 1 && sbVM.jobIsCancelled()) sbVM.startTimer()
 
     SolitaireScoreboard(
         modifier = modifier,

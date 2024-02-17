@@ -85,6 +85,44 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.w
 ) = waitUntilDoesNotExist(hasTestTag(parentTT) and hasAnyChild(hasTestTag(card.toString())))
 
 /**
+ *  Waits until given [Card]s appear under pile with given [parentTT] test tag. Uses default
+ *  timeout of 1 second before failing. Used for testing Australian Patience
+ */
+@OptIn(ExperimentalTestApi::class)
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.waitUntilAustralianPatienceTableauExists(
+    parentTT: String,
+    card1: Card,
+    card2: Card,
+    card3: Card,
+    card4: Card
+) = waitUntilExactlyOneExists(
+    hasTestTag(parentTT) and
+            hasAnyChild(hasTestTag(card1.toString())) and
+            hasAnyChild(hasTestTag(card2.toString())) and
+            hasAnyChild(hasTestTag(card3.toString())) and
+            hasAnyChild(hasTestTag(card4.toString()))
+)
+
+/**
+ *  Waits until given [Card]s disappear under pile with given [parentTT] test tag. Uses default
+ *  timeout of 1 second before failing. Used for testing Australian Patience
+ */
+@OptIn(ExperimentalTestApi::class)
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.waitUntilAustralianPatienceTableauDoesNotExist(
+    parentTT: String,
+    card1: Card,
+    card2: Card,
+    card3: Card,
+    card4: Card
+) = waitUntilDoesNotExist(
+    hasTestTag(parentTT) and
+            hasAnyChild(hasTestTag(card1.toString())) and
+            hasAnyChild(hasTestTag(card2.toString())) and
+            hasAnyChild(hasTestTag(card3.toString())) and
+            hasAnyChild(hasTestTag(card4.toString()))
+)
+
+/**
  *  Performs click action at given [position].
  */
 fun SemanticsNodeInteraction.performClickAt(position: Offset): SemanticsNodeInteraction {

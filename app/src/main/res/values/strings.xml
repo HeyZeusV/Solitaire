@@ -2,7 +2,7 @@
     <string name="app_name">Solitaire</string>
     <string name="win_ad_confirm">New Game</string>
     <string name="win_ad_title">You Won!</string>
-    <string name="win_ad_msg">Congratulations! Here are your stats…\nMoves: %1$s\nTime: %2$s\nScore: %3$s\nTotal Score: %4$s\n┗ Moves + Time + Score (Lower is better)\n\n*Useless autocomplete moves have been removed from your final move count!</string>
+    <string name="win_ad_msg">Congratulations! Here are your stats…\nMoves: %1$s\nTime: %2$s\nScore: %3$s\nTotal Score: %4$s\n┗ Moves + Time + Score (Lower is better)\n\n*Moves and Score aren\'t updated live on scoreboard during autocomplete, but they are updated in this dialog!</string>
     <string name="close_ad_confirm">Yes</string>
     <string name="close_ad_dismiss">No</string>
     <string name="close_ad_title">Quit Game?</string>
@@ -33,6 +33,8 @@
     <string name="tools_button_undo">Undo</string>
     <string name="games_klondike_turn_one">Klondike (Turn One)</string>
     <string name="games_klondike_turn_three">Klondike (Turn Three)</string>
+    <string name="games_australian_patience">Australian Patience</string>
+    <string name="games_canberra">Canberra</string>
     <string name="suits_clubs">Clubs</string>
     <string name="suits_diamonds">Diamonds</string>
     <string name="suits_hearts">Hearts</string>

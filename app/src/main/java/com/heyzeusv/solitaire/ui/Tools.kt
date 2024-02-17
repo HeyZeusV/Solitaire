@@ -39,6 +39,7 @@ import com.heyzeusv.solitaire.util.SolitairePreview
  */
 @Composable
 fun SolitaireTools(
+    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
@@ -48,12 +49,16 @@ fun SolitaireTools(
 
     SolitaireTools(
         menuOnClick = menuVM::updateDisplayMenu,
-        resetOnConfirmClick = gameVM::reset,
+        resetOnConfirmClick = gameVM::resetAll,
+        resetScoreboard = sbVM::reset,
         updateStats = {
-            menuVM.checkMovesUpdateStats(gameVM.retrieveLastGameStats(false))
+            menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
         },
         undoEnabled = undoEnabled,
-        undoOnClick = gameVM::undo,
+        undoOnClick = {
+            gameVM.undo()
+            sbVM.undo()
+        },
         autoCompleteActive = autoCompleteActive,
         modifier = modifier
     )
@@ -63,7 +68,7 @@ fun SolitaireTools(
  *  Composable that displays several buttons for the user. Pressing on Menu button, [menuOnClick],
  *  displays a Composable where user can view games and stats. Pressing on Reset button opens up an
  *  AlertDialog which gives user 3 options, restart current game, reset with a brand new shuffle, or
- *  continue current game; first two options call [resetOnConfirmClick] and [updateStats].
+ *  continue current game; first two options call [resetOnConfirmClick],[updateStats], [resetScoreboard].
  *  Undo button state is determined by [undoEnabled] and when pressed calls [undoOnClick], which
  *  returns the game back 1 legal move.
  */
@@ -71,6 +76,7 @@ fun SolitaireTools(
 fun SolitaireTools(
     menuOnClick: (Boolean) -> Unit,
     resetOnConfirmClick: (ResetOptions) -> Unit,
+    resetScoreboard: () -> Unit,
     updateStats: () -> Unit,
     undoEnabled: Boolean,
     undoOnClick: () -> Unit,
@@ -90,6 +96,7 @@ fun SolitaireTools(
                         resetOnClick = false
                         updateStats()
                         resetOnConfirmClick(RESTART)
+                        resetScoreboard()
                     }) {
                         Text(text = stringResource(R.string.reset_ad_confirm_restart))
                     }
@@ -97,6 +104,7 @@ fun SolitaireTools(
                         resetOnClick = false
                         updateStats()
                         resetOnConfirmClick(NEW)
+                        resetScoreboard()
                     }) {
                         Text(text = stringResource(R.string.reset_ad_confirm_new))
                     }
@@ -195,6 +203,7 @@ fun SolitaireToolsPreview() {
         SolitaireTools(
             menuOnClick = { },
             resetOnConfirmClick = { },
+            resetScoreboard = { },
             updateStats = { },
             undoEnabled = true,
             undoOnClick = { },

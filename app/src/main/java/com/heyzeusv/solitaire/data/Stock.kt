@@ -52,6 +52,4 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         mutableCards[mutableCards.size - 1] = mutableCards.last().copy(faceUp = false)
         mPile.addAll(mutableCards)
     }
-
-    override fun toString(): String = pile.toList().toString()
 }

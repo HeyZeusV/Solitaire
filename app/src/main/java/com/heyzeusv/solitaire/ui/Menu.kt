@@ -61,6 +61,7 @@ import com.heyzeusv.solitaire.util.getWinPercentage
  */
 @Composable
 fun SolitaireMenu(
+    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
 ) {
@@ -73,11 +74,14 @@ fun SolitaireMenu(
     SolitaireMenu(
         displayMenu = displayMenu,
         updateDisplayMenu = menuVM::updateDisplayMenu,
-        lgs = gameVM.retrieveLastGameStats(false),
+        lgs = sbVM.retrieveLastGameStats(false),
         selectedGame = selectedGame,
         updateSelectedGame = menuVM::updateSelectedGame,
         updateStats = menuVM::updateStats,
-        reset = { gameVM.reset(ResetOptions.NEW) },
+        reset = {
+            gameVM.resetAll(ResetOptions.NEW)
+            sbVM.reset()
+        },
         stats = currentGameStats
     )
 }
@@ -109,7 +113,7 @@ fun SolitaireMenu(
         val scrollableState = rememberScrollState()
 
         var showGameSwitch by remember { mutableStateOf(false) }
-        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKETURNONE) }
+        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
 
         BackHandler { updateDisplayMenu(false) }
 
@@ -245,7 +249,7 @@ fun SolitaireMenuPreview() {
             displayMenu = true,
             updateDisplayMenu = { },
             lgs = LastGameStats(false, 0, 0, 0),
-            selectedGame = Games.KLONDIKETURNONE,
+            selectedGame = Games.KLONDIKE_TURN_ONE,
             updateSelectedGame = { },
             updateStats = { },
             reset = { },

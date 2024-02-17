@@ -16,7 +16,15 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
     abstract fun reset(cards: List<Card> = emptyList())
     abstract fun undo(cards: List<Card>)
 
+    override fun toString(): String = pile.toList().toString()
+
     init {
         mPile.addAll(initialPile)
     }
 }
+
+/**
+ *  Tableau piles are usually going to have slightly different rules in terms of how Cards can be
+ *  stacked.
+ */
+abstract class TableauPile(initialPile: List<Card> = emptyList()) : Pile(initialPile)
