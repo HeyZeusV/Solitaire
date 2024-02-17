@@ -12,8 +12,8 @@ import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnPileTT
 import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
-import com.heyzeusv.solitaire.util.waitUntilAustralianPatienceTableauDoesNotExist
-import com.heyzeusv.solitaire.util.waitUntilAustralianPatienceTableauExists
+import com.heyzeusv.solitaire.util.waitUntilTableauDoesNotExist
+import com.heyzeusv.solitaire.util.waitUntilTableauExists
 import com.heyzeusv.solitaire.util.waitUntilPileCardDoesNotExists
 import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -201,25 +201,25 @@ class AustralianPatienceTest {
             resetState()
 
             // checking that cards are the same as first shuffle of Random(10L)
-            waitUntilAustralianPatienceTableauExists(
+            waitUntilTableauExists(
                 "Tableau #0", tc.card5HFU, tc.card11DFU, tc.card4DFU, tc.card7CFU
             )
-            waitUntilAustralianPatienceTableauExists(
+            waitUntilTableauExists(
                 "Tableau #1", tc.card9DFU, tc.card7DFU, tc.card1HFU, tc.card10CFU
             )
-            waitUntilAustralianPatienceTableauExists(
+            waitUntilTableauExists(
                 "Tableau #2", tc.card7SFU, tc.card3CFU, tc.card9SFU, tc.card7HFU
             )
-            waitUntilAustralianPatienceTableauExists(
+            waitUntilTableauExists(
                 "Tableau #3", tc.card9CFU, tc.card2HFU, tc.card13DFU, tc.card12HFU
             )
-            waitUntilAustralianPatienceTableauExists(
+            waitUntilTableauExists(
                 "Tableau #4", tc.card11SFU, tc.card8CFU, tc.card4SFU, tc.card10DFU
             )
-            waitUntilAustralianPatienceTableauExists(
+            waitUntilTableauExists(
                 "Tableau #5", tc.card10SFU, tc.card5CFU, tc.card13CFU, tc.card12SFU
             )
-            waitUntilAustralianPatienceTableauExists(
+            waitUntilTableauExists(
                 "Tableau #6", tc.card13HFU, tc.card6DFU, tc.card2CFU, tc.card12CFU
             )
         }
@@ -237,25 +237,25 @@ class AustralianPatienceTest {
             resetState()
 
             // checking that cards are not the same as first shuffle of Random(10L)
-            waitUntilAustralianPatienceTableauDoesNotExist(
+            waitUntilTableauDoesNotExist(
                 "Tableau #0", tc.card5HFU, tc.card11DFU, tc.card4DFU, tc.card7CFU
             )
-            waitUntilAustralianPatienceTableauDoesNotExist(
+            waitUntilTableauDoesNotExist(
                 "Tableau #1", tc.card9DFU, tc.card7DFU, tc.card1HFU, tc.card10CFU
             )
-            waitUntilAustralianPatienceTableauDoesNotExist(
+            waitUntilTableauDoesNotExist(
                 "Tableau #2", tc.card7SFU, tc.card3CFU, tc.card9SFU, tc.card7HFU
             )
-            waitUntilAustralianPatienceTableauDoesNotExist(
+            waitUntilTableauDoesNotExist(
                 "Tableau #3", tc.card9CFU, tc.card2HFU, tc.card13DFU, tc.card12HFU
             )
-            waitUntilAustralianPatienceTableauDoesNotExist(
+            waitUntilTableauDoesNotExist(
                 "Tableau #4", tc.card11SFU, tc.card8CFU, tc.card4SFU, tc.card10DFU
             )
-            waitUntilAustralianPatienceTableauDoesNotExist(
+            waitUntilTableauDoesNotExist(
                 "Tableau #5", tc.card10SFU, tc.card5CFU, tc.card13CFU, tc.card12SFU
             )
-            waitUntilAustralianPatienceTableauDoesNotExist(
+            waitUntilTableauDoesNotExist(
                 "Tableau #6", tc.card13HFU, tc.card6DFU, tc.card2CFU, tc.card12CFU
             )
         }

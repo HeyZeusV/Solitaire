@@ -3,11 +3,11 @@ package com.heyzeusv.solitaire.data
 import com.heyzeusv.solitaire.util.Suits
 
 /**
- *  In Australian Patience, Tableau refers to the 7 piles that start with 4 face up cards per [mPile]
- *  and no face down cards. Users can move cards between [AustralianPatienceTableau] piles or move
- *  them to a [Foundation] pile in order to access covered cards.
+ *  [SameSuitTableau] require last card of [mPile] be the same [Suits] as the first card of new
+ *  cards to be added. Users can move cards between [SameSuitTableau] piles or move them to a
+ *  [Foundation] pile in order to access covered cards.
  */
-class AustralianPatienceTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
+class SameSuitTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
     // keeps track of number of different Suits in mPile
     private var _suitTypes: Int = 0
@@ -26,7 +26,7 @@ class AustralianPatienceTableau(initialPile: List<Card> = emptyList()) : Tableau
             val pLast = pile.last()
             // add cards if value of last card of pile is 1 more than first card of given cards and
             // if they are the same suit
-            if (cFirst.value == pLast.value - 1 && cFirst.suit == pLast.suit) {
+            if (cFirst.suit == pLast.suit && cFirst.value == pLast.value - 1) {
                 mPile.addAll(cards)
                 _suitTypes = mPile.map { it.suit }.distinct().size
                 return true

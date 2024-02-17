@@ -5,18 +5,18 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class AustralianPatienceTableauTest {
+class SameSuitTableauTest {
 
     private val tc = TestCards
-    private lateinit var tableau: AustralianPatienceTableau
+    private lateinit var tableau: SameSuitTableau
 
     @Before
     fun setUp() {
-        tableau = AustralianPatienceTableau()
+        tableau = SameSuitTableau()
     }
 
     @Test
-    fun australianPatienceTableauAddCards() {
+    fun sameSuitTableauAddCards() {
         val expectedKingPile = listOf(tc.card13DFU, tc.card12DFU, tc.card11DFU, tc.card10DFU)
         val expectedKingMultiSuit = false
         val expectedEmptyPile = emptyList<Card>()
@@ -25,7 +25,7 @@ class AustralianPatienceTableauTest {
         val expectedMixedMultiSuit = true
 
         // add solo King card then 3 that should follow
-        val emptyKingTableau = AustralianPatienceTableau()
+        val emptyKingTableau = SameSuitTableau()
         emptyKingTableau.add(listOf(tc.card13DFU))
         emptyKingTableau.add(listOf(tc.card12DFU))
         emptyKingTableau.add(listOf(tc.card11DFU, tc.card10DFU))
@@ -33,20 +33,20 @@ class AustralianPatienceTableauTest {
         assertEquals(expectedKingMultiSuit, emptyKingTableau.isMultiSuit())
 
         // add cards without king
-        val emptyTableau = AustralianPatienceTableau()
+        val emptyTableau = SameSuitTableau()
         emptyTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
         assertEquals(expectedEmptyPile, emptyTableau.pile)
         assertEquals(expectedEmptyMultiSuit, emptyTableau.isMultiSuit())
 
         // add cards to Tableau with existing cards
-        val mixedTableau = AustralianPatienceTableau(listOf(tc.card1HFU, tc.card12CFU, tc.card6DFU))
+        val mixedTableau = SameSuitTableau(listOf(tc.card1HFU, tc.card12CFU, tc.card6DFU))
         mixedTableau.add(listOf(tc.card5DFU, tc.card4DFU))
         assertEquals(expectedMixedPile, mixedTableau.pile.toList())
         assertEquals(expectedMixedMultiSuit, mixedTableau.isMultiSuit())
     }
 
     @Test
-    fun australianPatienceTableauRemoveCards() {
+    fun sameSuitTableauRemoveCards() {
         val expectedPile = listOf(tc.card1HFU, tc.card12CFU, tc.card6DFU)
         val expectedMultiSuit = true
 
@@ -58,7 +58,7 @@ class AustralianPatienceTableauTest {
     }
 
     @Test
-    fun australianPatienceTableauReset() {
+    fun sameSuitTableauReset() {
         val expectedPile = listOf(tc.card1HFU, tc.card12CFU, tc.card6DFU, tc.card5CFU, tc.card4HFU)
         val expectedMultiSuit = true
 
@@ -69,7 +69,7 @@ class AustralianPatienceTableauTest {
     }
 
     @Test
-    fun australianPatienceTableauUndoEmptyCards() {
+    fun sameSuitTableauUndoEmptyCards() {
         val expectedPile = emptyList<Card>()
         val expectedMultiSuit = false
 
@@ -80,7 +80,7 @@ class AustralianPatienceTableauTest {
     }
 
     @Test
-    fun australianPatienceTableauUndo1Cards() {
+    fun sameSuitTableauUndo1Cards() {
         val expectedPile = listOf(tc.card1HFU)
         val expectedMultiSuit = false
 
@@ -91,7 +91,7 @@ class AustralianPatienceTableauTest {
     }
 
     @Test
-    fun australianPatienceTableauUndoMoreCards() {
+    fun sameSuitTableauUndoMoreCards() {
         val expectedPile = listOf(tc.card1HFU, tc.card12CFU, tc.card6DFU, tc.card5CFU, tc.card4HFU)
         val expectedMultiSuit = true
 
@@ -102,11 +102,11 @@ class AustralianPatienceTableauTest {
     }
 
     @Test
-    fun australianPatienceTableauInOrder() {
+    fun sameSuitTableauInOrder() {
         val inOrderTableau =
-            AustralianPatienceTableau(listOf(tc.card13DFU, tc.card12DFU, tc.card11DFU, tc.card10DFU))
+            SameSuitTableau(listOf(tc.card13DFU, tc.card12DFU, tc.card11DFU, tc.card10DFU))
         val outOrderTableau =
-            AustralianPatienceTableau(listOf(tc.card11DFU, tc.card13DFU, tc.card12DFU, tc.card10DFU))
+            SameSuitTableau(listOf(tc.card11DFU, tc.card13DFU, tc.card12DFU, tc.card10DFU))
         val expectedInOrder = true
         val expectedOutOrder = false
 

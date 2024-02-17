@@ -2,7 +2,7 @@ package com.heyzeusv.solitaire.ui
 
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.viewModelScope
-import com.heyzeusv.solitaire.data.AustralianPatienceTableau
+import com.heyzeusv.solitaire.data.SameSuitTableau
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
@@ -29,7 +29,7 @@ open class AustralianPatienceViewModel @Inject constructor(
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
 
-    override val _tableau: MutableList<TableauPile> = MutableList(7) { AustralianPatienceTableau() }
+    override val _tableau: MutableList<TableauPile> = MutableList(7) { SameSuitTableau() }
 
     /**
      *  Each pile starts with exactly 4 cards
@@ -50,7 +50,7 @@ open class AustralianPatienceViewModel @Inject constructor(
         if (_autoCompleteActive.value) return
         if (_stock.pile.isEmpty() && _waste.pile.isEmpty()) {
             _tableau.forEach {
-                if ((it as AustralianPatienceTableau).isMultiSuit() && !it.inOrder()) return
+                if ((it as SameSuitTableau).isMultiSuit() && !it.inOrder()) return
             }
             viewModelScope.launch {
                 _autoCompleteActive.value = true
@@ -77,7 +77,7 @@ open class AustralianPatienceViewModel @Inject constructor(
                 stock = Stock(_stock.pile),
                 waste = Waste(_waste.pile),
                 foundation = _foundation.map { Foundation(it.suit, it.pile) },
-                tableau = _tableau.map { AustralianPatienceTableau(it.pile) }
+                tableau = _tableau.map { SameSuitTableau(it.pile) }
             )
         }
         currentSnapshot.dispose()

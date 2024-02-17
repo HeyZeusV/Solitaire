@@ -25,6 +25,6 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
 
 /**
  *  Tableau piles are usually going to have slightly different rules in terms of how Cards can be
- *  stacked.
+ *  added.
  */
 abstract class TableauPile(initialPile: List<Card> = emptyList()) : Pile(initialPile)
