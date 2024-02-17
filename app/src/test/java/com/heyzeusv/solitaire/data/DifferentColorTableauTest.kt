@@ -5,35 +5,35 @@ import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 
-class KlondikeTableauTest {
+class DifferentColorTableauTest {
 
     private val tc = TestCards
-    private lateinit var tableau: KlondikeTableau
+    private lateinit var tableau: DifferentColorTableau
 
     @Before
     fun setUp() {
-        tableau = KlondikeTableau()
+        tableau = DifferentColorTableau()
     }
 
     @Test
-    fun klondikeTableauAddCards() {
+    fun differentColorTableauAddCards() {
         val expectedKingPile = listOf(tc.card13DFU, tc.card12CFU, tc.card11HFU, tc.card10SFU)
         val expectedEmptyPile = emptyList<Card>()
         val expectedMixedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU, tc.card5CFU, tc.card4HFU)
 
         // add solo King card then 3 that should follow
-        val emptyKingTableau = KlondikeTableau()
+        val emptyKingTableau = DifferentColorTableau()
         emptyKingTableau.add(listOf(tc.card13DFU))
         emptyKingTableau.add(listOf(tc.card12CFU, tc.card11HFU, tc.card10SFU))
         assertEquals(expectedKingPile, emptyKingTableau.pile.toList())
 
         // add cards without king
-        val emptyTableau = KlondikeTableau()
+        val emptyTableau = DifferentColorTableau()
         emptyTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
         assertEquals(expectedEmptyPile, emptyTableau.pile)
 
         // add cards to Tableau with existing cards
-        val mixedTableau = KlondikeTableau()
+        val mixedTableau = DifferentColorTableau()
         // reset is used to fill Tableau with existing cards
         mixedTableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D))
         mixedTableau.add(listOf(tc.card5CFU, tc.card4HFU))
@@ -41,7 +41,7 @@ class KlondikeTableauTest {
     }
 
     @Test
-    fun klondikeTableauRemoveCards() {
+    fun differentColorTableauRemoveCards() {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU)
         val expectedFaceDownCards = 2
 
@@ -53,7 +53,7 @@ class KlondikeTableauTest {
     }
 
     @Test
-    fun klondikeTableauReset() {
+    fun differentColorTableauReset() {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU)
         val expectedFaceDownCards = 4
 
@@ -64,7 +64,7 @@ class KlondikeTableauTest {
     }
 
     @Test
-    fun klondikeTableauUndoEmptyCards() {
+    fun differentColorTableauUndoEmptyCards() {
         val expectedPile = emptyList<Card>()
         val expectedFaceDownCards = 0
 
@@ -75,7 +75,7 @@ class KlondikeTableauTest {
     }
 
     @Test
-    fun klondikeTableauUndo1Cards() {
+    fun differentColorTableauUndo1Cards() {
         val expectedPile = listOf(tc.card1HFU)
         val expectedFaceDownCards = 0
 
@@ -86,7 +86,7 @@ class KlondikeTableauTest {
     }
 
     @Test
-    fun klondikeTableauUndoMoreCards() {
+    fun differentColorTableauUndoMoreCards() {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU)
         val expectedFaceDownCards = 4
 

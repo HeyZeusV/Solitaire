@@ -3,9 +3,9 @@ package com.heyzeusv.solitaire.data
 import com.heyzeusv.solitaire.util.Suits
 
 /**
- *  [SameSuitTableau] require last card of [mPile] be the same [Suits] as the first card of new
- *  cards to be added. Users can move cards between [SameSuitTableau] piles or move them to a
- *  [Foundation] pile in order to access covered cards.
+ *  [SameSuitTableau], apart from the value restraint, require the last card of [mPile] be the same
+ *  [Suits] as the first card of new cards to be added. Users can move cards between
+ *  [SameSuitTableau] piles or move them to a [Foundation] pile in order to access covered cards.
  */
 class SameSuitTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 

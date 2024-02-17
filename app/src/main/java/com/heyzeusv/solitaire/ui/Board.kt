@@ -21,7 +21,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.Stock
-import com.heyzeusv.solitaire.data.KlondikeTableau
+import com.heyzeusv.solitaire.data.DifferentColorTableau
 import com.heyzeusv.solitaire.data.TableauPile
 import com.heyzeusv.solitaire.data.Waste
 import com.heyzeusv.solitaire.util.Games
@@ -170,9 +170,10 @@ fun SolitaireBoardPreview() {
             ),
             onFoundationClick = { _ -> MoveResult.ILLEGAL},
             tableauList = listOf(
-                KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)), KlondikeTableau(listOf(bCard)),
-                KlondikeTableau(listOf(rCard)), KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)),
-                KlondikeTableau(listOf(bCard))
+                DifferentColorTableau(listOf(bCard)), DifferentColorTableau(listOf(rCard)),
+                DifferentColorTableau(listOf(bCard)), DifferentColorTableau(listOf(rCard)),
+                DifferentColorTableau(listOf(bCard)), DifferentColorTableau(listOf(rCard)),
+                DifferentColorTableau(listOf(bCard))
             ),
             onTableauClick = { _, _ -> MoveResult.ILLEGAL}
         )

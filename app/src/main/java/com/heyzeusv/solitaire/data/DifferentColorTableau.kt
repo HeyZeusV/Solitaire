@@ -3,11 +3,12 @@ package com.heyzeusv.solitaire.data
 import com.heyzeusv.solitaire.util.Suits
 
 /**
- *  In Klondike Solitaire, Tableau refers to the 7 piles that start with 1 face up card per [mPile]
- *  and the rest face down. Users can move cards between [KlondikeTableau] piles or move them to a
- *  [Foundation] pile in order to reveal more cards.
+ *  [DifferentColorTableau], apart from the value restraint, require the last card of [mPile] be a
+ *  different [Suits] color than the first card of new cards to be added. Users can move cards
+ *  between [DifferentColorTableau] piles or move them to a [Foundation] pile in order to reveal
+ *  more cards.
  */
-class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
+class DifferentColorTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
     // keeps track of number of face down cards in mPile
     private var _faceDownCards: Int = 0
@@ -25,7 +26,7 @@ class KlondikeTableau(initialPile: List<Card> = emptyList()) : TableauPile(initi
             val pLast = pile.last()
             // add cards if value of last card of pile is 1 more than first card of new cards
             // and if they are different colors
-            if (cFirst.value == pLast.value - 1 && cFirst.suit.color != pLast.suit.color) {
+            if (cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1) {
                 mPile.addAll(cards)
                 return true
             }

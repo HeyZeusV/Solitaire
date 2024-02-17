@@ -4,7 +4,7 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.Foundation
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.data.KlondikeTableau
+import com.heyzeusv.solitaire.data.DifferentColorTableau
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.Stock
 import com.heyzeusv.solitaire.data.TableauPile
@@ -29,7 +29,7 @@ class KlondikeViewModel @Inject constructor(
     override val baseRedealAmount: Int = 1000
     override var redealLeft: Int = 1000
 
-    override val _tableau: MutableList<TableauPile> = MutableList(7) { KlondikeTableau() }
+    override val _tableau: MutableList<TableauPile> = MutableList(7) { DifferentColorTableau() }
 
     /**
      *  Each pile in the tableau has 1 more card than the previous.
@@ -49,7 +49,7 @@ class KlondikeViewModel @Inject constructor(
     override fun autoComplete() {
         if (_autoCompleteActive.value) return
         if (_stock.pile.isEmpty() && _waste.pile.isEmpty()) {
-            _tableau.forEach { if (!(it as KlondikeTableau).allFaceUp()) return }
+            _tableau.forEach { if (!(it as DifferentColorTableau).allFaceUp()) return }
             viewModelScope.launch {
                 _autoCompleteActive.value = true
                 _autoCompleteCorrection = 0
@@ -75,7 +75,7 @@ class KlondikeViewModel @Inject constructor(
                 stock = Stock(_stock.pile),
                 waste = Waste(_waste.pile),
                 foundation = _foundation.map { Foundation(it.suit, it.pile) },
-                tableau = _tableau.map { KlondikeTableau(it.pile) }
+                tableau = _tableau.map { DifferentColorTableau(it.pile) }
             )
         }
         currentSnapshot.dispose()
