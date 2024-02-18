@@ -33,7 +33,8 @@ enum class ResetOptions {
 
 /**
  *  Enum class containing the [gameName]'s string resource id of all available games and [drawAmount]
- *  which is the amount of Cards drawn at a time.
+ *  which is the amount of Cards drawn at a time. It also contains the Proto DataStore enum value
+ *  [dataStoreEnum] which is used to save stats to correct game.
  */
 enum class Games(
     @StringRes val gameName: Int,
@@ -42,6 +43,7 @@ enum class Games(
 ) {
     KLONDIKE_TURN_ONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
     KLONDIKE_TURN_THREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE),
+    YUKON(R.string.games_yukon, 0, Game.GAME_YUKON),
     AUSTRALIAN_PATIENCE(R.string.games_australian_patience, 1, Game.GAME_AUSTRALIAN_PATIENCE),
     CANBERRA(R.string.games_canberra, 1, Game.GAME_CANBERRA)
 }
