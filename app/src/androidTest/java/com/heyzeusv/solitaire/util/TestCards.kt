@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.util
 
 import com.heyzeusv.solitaire.data.Card
 
+@Suppress("MemberVisibilityCanBePrivate", "unused")
 object TestCards {
 
     val card1C = Card(0, Suits.CLUBS)
