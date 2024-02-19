@@ -108,10 +108,10 @@ class SameSuitTableauTest {
             SameSuitTableau(listOf(tc.card13DFU, tc.card12DFU, tc.card11DFU, tc.card10DFU))
         val outOrderTableau =
             SameSuitTableau(listOf(tc.card11DFU, tc.card13DFU, tc.card12DFU, tc.card10DFU))
-        val expectedInOrder = true
-        val expectedOutOrder = false
+        val expectedInOrder = false
+        val expectedOutOrder = true
 
-        assertEquals(expectedInOrder, inOrderTableau.inOrder())
-        assertEquals(expectedOutOrder, outOrderTableau.inOrder())
+        assertEquals(expectedInOrder, inOrderTableau.notInOrder())
+        assertEquals(expectedOutOrder, outOrderTableau.notInOrder())
     }
 }

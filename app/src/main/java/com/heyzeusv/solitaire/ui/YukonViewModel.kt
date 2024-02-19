@@ -1,6 +1,8 @@
 package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.data.pile.TableauPile
+import com.heyzeusv.solitaire.data.pile.tableau.YukonTableau
 import com.heyzeusv.solitaire.util.ResetOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,10 +16,18 @@ import javax.inject.Inject
 @HiltViewModel
 class YukonViewModel @Inject constructor(
     ss: ShuffleSeed
-) : DifferentColorGameViewModel(ss) {
+) : GameViewModel(ss) {
 
-    override val baseRedealAmount: Int = 1000
-    override var redealLeft: Int = 1000
+    override val _tableau: MutableList<TableauPile> = MutableList(7) { YukonTableau() }
+
+    /**
+     *  Autocomplete requires all Tableau piles to be all face up and in order by value.
+     */
+    override fun autoCompleteTableauCheck(): Boolean {
+        _tableau.forEach { if (it.faceDownExists() || it.notInOrder())
+            return false }
+        return true
+    }
 
     /**
      *  Entire deck starts in Tableau, 1 Card in left most, 2nd starts with 6, and the rest have one
@@ -36,6 +46,5 @@ class YukonViewModel @Inject constructor(
 
     init {
         resetAll(ResetOptions.NEW)
-        _stockWasteEmpty.value = true
     }
 }

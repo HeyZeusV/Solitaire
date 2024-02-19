@@ -67,7 +67,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
         val expectedUndoEnabled = false
         val expectedGameWon = false
         val expectedAutoCompleteActive = false
-        val expectedStockWasteEmpty = false
+        val expectedStockWasteEmpty = true
 
         apVM.resetAll(ResetOptions.RESTART)
 
@@ -207,7 +207,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
     @Test
     fun apSbVmStockWasteEmptyOnStockClick() {
-        val expectedStockWasteEmptyBefore = false
+        val expectedStockWasteEmptyBefore = true
         val expectedStockWasteEmptyAfter = true
         val expectedStockAfter = emptyList<Card>()
         val expectedWasteAfter = listOf(tc.card10CFU)
@@ -227,7 +227,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
     @Test
     fun apSbVmStockWasteEmptyOnWasteClick() {
-        val expectedStockWasteEmptyBefore = false
+        val expectedStockWasteEmptyBefore = true
         val expectedStockWasteEmptyAfter = true
         val expectedWasteAfter = listOf(tc.card10CFU)
 

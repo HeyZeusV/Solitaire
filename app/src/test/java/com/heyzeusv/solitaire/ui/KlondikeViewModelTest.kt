@@ -20,8 +20,8 @@ import org.junit.Test
 import java.util.Random
 
 /**
- *  [KlondikeViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have decided
- *  to test both at the same time.
+ *  [KlondikeViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have
+ *  decided to test both at the same time.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class KlondikeAndScoreboardViewModelTest {
@@ -67,7 +67,7 @@ class KlondikeAndScoreboardViewModelTest {
         val expectedUndoEnabled = false
         val expectedGameWon = false
         val expectedAutoCompleteActive = false
-        val expectedStockWasteEmpty = false
+        val expectedStockWasteEmpty = true
 
         kdVM.resetAll(ResetOptions.RESTART)
 
@@ -198,7 +198,7 @@ class KlondikeAndScoreboardViewModelTest {
 
     @Test
     fun kdSbVmStockWasteEmptyOnStockClick() {
-        val expectedStockWasteEmptyBefore = false
+        val expectedStockWasteEmptyBefore = true
         val expectedStockWasteEmptyAfter = true
         val expectedStockAfter = emptyList<Card>()
         val expectedWasteAfter = listOf(tc.card10CFU)
@@ -218,7 +218,7 @@ class KlondikeAndScoreboardViewModelTest {
 
     @Test
     fun kdSbVmStockWasteEmptyOnWasteClick() {
-        val expectedStockWasteEmptyBefore = false
+        val expectedStockWasteEmptyBefore = true
         val expectedStockWasteEmptyAfter = true
         val expectedWasteAfter = listOf(tc.card10CFU)
 
@@ -294,7 +294,6 @@ class KlondikeAndScoreboardViewModelTest {
         assertEquals(expectedLGS3, sbVM.retrieveLastGameStats(true))
     }
 
-    @OptIn(ExperimentalCoroutinesApi::class)
     @Test
     fun kdSbVmAutoComplete() = runTest {
         val expectedClubs = tc.clubs

@@ -12,9 +12,6 @@ import com.heyzeusv.solitaire.util.Suits
  */
 class SameSuitTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
-    // keeps track of number of different Suits in mPile
-    private var _suitTypes: Int = 0
-
     /**
      *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
      *  [mPile]'s last card value and suit. Returns true if added.
@@ -74,23 +71,5 @@ class SameSuitTableau(initialPile: List<Card> = emptyList()) : TableauPile(initi
         _suitTypes = cards.map { it.suit }.distinct().size
         if (cards.isEmpty()) return
         mPile.addAll(cards)
-    }
-
-    fun isMultiSuit(): Boolean = _suitTypes > 1
-
-    /**
-     *  It is possible for pile to be same suit, but out of order. This ensures that pile is in
-     *  order, this way autocomplete will not be stuck in an infinite loop
-     */
-    fun inOrder(): Boolean {
-        val it = mPile.iterator()
-        if (!it.hasNext()) return true
-        var current = it.next()
-        while (true) {
-            if (!it.hasNext()) return true
-            val next = it.next()
-            if (current.value < next.value) return false
-            current = next
-        }
     }
 }

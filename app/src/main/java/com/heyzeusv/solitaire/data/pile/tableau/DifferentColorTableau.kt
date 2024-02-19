@@ -11,11 +11,7 @@ import com.heyzeusv.solitaire.util.Suits
  *  between [DifferentColorTableau] piles or move them to a [Foundation] pile in order to reveal
  *  more cards.
  */
-class DifferentColorTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
-
-    // keeps track of number of face down cards in mPile
-    private var _faceDownCards: Int = 0
-    val faceDownCards: Int get() = _faceDownCards
+abstract class DifferentColorTableau(initialPile: List<Card> = emptyList()) : TableauPile(initialPile) {
 
     /**
      *  Attempts to add given [cards] to [mPile] depending on [cards] first card value and suit and
@@ -25,6 +21,8 @@ class DifferentColorTableau(initialPile: List<Card> = emptyList()) : TableauPile
         if (cards.isEmpty()) return false
 
         val cFirst = cards.first()
+        // can't add a card to its own pile
+        if (mPile.contains(cFirst)) return false
         if (pile.isNotEmpty()) {
             val pLast = pile.last()
             // add cards if value of last card of pile is 1 more than first card of new cards
@@ -57,17 +55,9 @@ class DifferentColorTableau(initialPile: List<Card> = emptyList()) : TableauPile
     }
 
     /**
-     *  Resets [mPile] by clearing existing cards, adding given [cards], and flipping last card
-     *  face up.
+     *  Reset [mPile] to initial game state.
      */
-    override fun reset(cards: List<Card>) {
-        mPile.apply {
-            clear()
-            addAll(cards)
-            this[this.size - 1] = this.last().copy(faceUp = true)
-            _faceDownCards = cards.size - 1
-        }
-    }
+    abstract override fun reset(cards: List<Card>)
 
     /**
      *  Used to return [mPile] to a previous state of given [cards].
@@ -78,9 +68,4 @@ class DifferentColorTableau(initialPile: List<Card> = emptyList()) : TableauPile
         if (cards.isEmpty()) return
         mPile.addAll(cards)
     }
-
-    /**
-     *  Used to determine if game could be auto completed by having all face up cards
-     */
-    fun allFaceUp(): Boolean = _faceDownCards == 0
 }
