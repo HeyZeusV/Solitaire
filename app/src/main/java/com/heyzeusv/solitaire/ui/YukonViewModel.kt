@@ -6,13 +6,13 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**
- *  Data manager for Klondike type games.
+ *  Data manager for Yukon.
  *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
 @HiltViewModel
-class KlondikeViewModel @Inject constructor(
+class YukonViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : DifferentColorGameViewModel(ss) {
 
@@ -20,12 +20,17 @@ class KlondikeViewModel @Inject constructor(
     override var redealLeft: Int = 1000
 
     /**
-     *  Each pile in the tableau has 1 more card than the previous.
+     *  Entire deck starts in Tableau, 1 Card in left most, 2nd starts with 6, and the rest have one
+     *  more Card than the previous.
      */
     override fun resetTableau() {
         _tableau.forEachIndexed { i, tableau ->
-            val cards = MutableList(i + 1) { _stock.remove() }
-            tableau.reset(cards)
+            if (i != 0) {
+                val cards = MutableList(i + 5) { _stock.remove() }
+                tableau.reset(cards)
+            } else {
+                tableau.reset(listOf(_stock.remove()))
+            }
         }
     }
 
