@@ -51,6 +51,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
     val menuVM = hiltViewModel<MenuViewModel>()
     val selectedGame by menuVM.selectedGame.collectAsState()
     val gameVM = when (selectedGame) {
+        Games.YUKON -> hiltViewModel<YukonViewModel>()
         Games.AUSTRALIAN_PATIENCE -> hiltViewModel<AustralianPatienceViewModel>()
         Games.CANBERRA -> hiltViewModel<CanberraViewModel>()
         else -> hiltViewModel<KlondikeViewModel>()

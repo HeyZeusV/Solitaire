@@ -1,5 +1,6 @@
-package com.heyzeusv.solitaire.data
+package com.heyzeusv.solitaire.data.pile
 
+import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.util.Suits
 
 /**

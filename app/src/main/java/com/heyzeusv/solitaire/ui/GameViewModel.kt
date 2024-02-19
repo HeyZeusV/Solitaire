@@ -3,12 +3,12 @@ package com.heyzeusv.solitaire.ui
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.Foundation
+import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.data.Stock
-import com.heyzeusv.solitaire.data.TableauPile
-import com.heyzeusv.solitaire.data.Waste
+import com.heyzeusv.solitaire.data.pile.Stock
+import com.heyzeusv.solitaire.data.pile.TableauPile
+import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.MOVE
 import com.heyzeusv.solitaire.util.MoveResult.MOVE_SCORE
@@ -43,7 +43,7 @@ abstract class GameViewModel (
     protected val _waste = Waste()
     val waste: Waste get() = _waste
 
-    private val _stockWasteEmpty = MutableStateFlow(false)
+    protected val _stockWasteEmpty = MutableStateFlow(false)
     val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
     protected val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()

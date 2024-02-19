@@ -1,4 +1,6 @@
-package com.heyzeusv.solitaire.data
+package com.heyzeusv.solitaire.data.pile
+
+import com.heyzeusv.solitaire.data.Card
 
 /**
  *  In Solitaire, Stock refers to the face down pile where players draw from and place the drawn

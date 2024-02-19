@@ -1,6 +1,7 @@
-package com.heyzeusv.solitaire.data
+package com.heyzeusv.solitaire.data.pile
 
 import androidx.compose.runtime.mutableStateListOf
+import com.heyzeusv.solitaire.data.Card
 
 /**
  *  Originally an interface, but abstract class gave more functionality, specifically a constructor

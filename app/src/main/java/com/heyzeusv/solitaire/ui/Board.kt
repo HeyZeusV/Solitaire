@@ -19,11 +19,11 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.Foundation
-import com.heyzeusv.solitaire.data.Stock
-import com.heyzeusv.solitaire.data.DifferentColorTableau
-import com.heyzeusv.solitaire.data.TableauPile
-import com.heyzeusv.solitaire.data.Waste
+import com.heyzeusv.solitaire.data.pile.Foundation
+import com.heyzeusv.solitaire.data.pile.Stock
+import com.heyzeusv.solitaire.data.pile.tableau.DifferentColorTableau
+import com.heyzeusv.solitaire.data.pile.TableauPile
+import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview

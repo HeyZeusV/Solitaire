@@ -2,13 +2,13 @@ package com.heyzeusv.solitaire.ui
 
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.viewModelScope
-import com.heyzeusv.solitaire.data.DifferentColorTableau
-import com.heyzeusv.solitaire.data.Foundation
+import com.heyzeusv.solitaire.data.pile.tableau.DifferentColorTableau
+import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.data.Stock
-import com.heyzeusv.solitaire.data.TableauPile
-import com.heyzeusv.solitaire.data.Waste
+import com.heyzeusv.solitaire.data.pile.Stock
+import com.heyzeusv.solitaire.data.pile.TableauPile
+import com.heyzeusv.solitaire.data.pile.Waste
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 

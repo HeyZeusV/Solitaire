@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.data
 
+import com.heyzeusv.solitaire.data.pile.tableau.DifferentColorTableau
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Before

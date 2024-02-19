@@ -1,5 +1,10 @@
 package com.heyzeusv.solitaire.data
 
+import com.heyzeusv.solitaire.data.pile.Foundation
+import com.heyzeusv.solitaire.data.pile.Stock
+import com.heyzeusv.solitaire.data.pile.TableauPile
+import com.heyzeusv.solitaire.data.pile.Waste
+
 /**
  *  Data class to hold list of [Card]s for each available pile. This will be used to return the user
  *  to a previous state of the game.

@@ -36,5 +36,6 @@ class YukonViewModel @Inject constructor(
 
     init {
         resetAll(ResetOptions.NEW)
+        _stockWasteEmpty.value = true
     }
 }
