@@ -23,7 +23,7 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- *  Tests tied to Klondike games.
+ *  Tests tied to AustralianPatience.
  */
 @HiltAndroidTest
 class AustralianPatienceTest {
@@ -42,12 +42,12 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_startUp() {
+    fun australianPatience_startUp() {
         resetState()
     }
 
     @Test
-    fun app_onStockClick() {
+    fun australianPatience_onStockClick() {
         composeRule.apply {
             onNode(hasTestTag("Stock")).performClick()
 
@@ -58,7 +58,7 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_onWasteClick() {
+    fun australianPatience_onWasteClick() {
         composeRule.apply {
             val expectedCard = listOf(
                 tc.card2SFU, tc.card3DFU, tc.card2DFU, tc.card1CFU,
@@ -79,7 +79,7 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_onFoundationClick() {
+    fun australianPatience_onFoundationClick() {
         composeRule.apply {
             onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
 
@@ -119,7 +119,7 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_onTableauClick_moveOneCard() {
+    fun australianPatience_onTableauClick_moveOneCard() {
         composeRule.apply {
             // click on tableau and check that card ends in correct pile
             clickOnTableauCard("Tableau #4", tc.card11SFU)
@@ -129,7 +129,7 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_onTableauClick_moveMultipleCards() {
+    fun australianPatience_onTableauClick_moveMultipleCards() {
         composeRule.apply {
             // click on tableau and check that card ends in correct pile
             clickOnTableauCard("Tableau #3", tc.card9CFU)
@@ -142,7 +142,7 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_undo() {
+    fun australianPatience_undo() {
         composeRule.apply {
             onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
             val expectedCard = listOf(
@@ -190,7 +190,7 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_reset_restart() {
+    fun australianPatience_reset_restart() {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_reset).performClick()
 
@@ -226,7 +226,7 @@ class AustralianPatienceTest {
     }
 
     @Test
-    fun app_reset_new() {
+    fun australianPatience_reset_new() {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_reset).performClick()
 
@@ -292,7 +292,7 @@ class AustralianPatienceTest {
     }
 
     /**
-     *  Switches game to Australian Patience
+     *  Switches game to Australian Patience.
      */
     private fun switchToAustralianPatience() {
         composeRule.apply {
