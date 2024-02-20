@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.ui.game
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -19,7 +20,6 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
-import com.heyzeusv.solitaire.ui.clickableSingle
 
 /**
  *  Composable that displays [pile]. If given [pile] is empty, [emptyIconId] is displayed. Clicking
@@ -37,7 +37,7 @@ fun SolitairePile(
 ) {
     if (pile.isEmpty()) {
         Image(
-            modifier = modifier.clickableSingle { onClick() },
+            modifier = modifier.clickable { onClick() },
             painter = painterResource(emptyIconId),
             contentDescription = stringResource(R.string.pile_cdesc_empty),
             contentScale = ContentScale.FillBounds
@@ -70,7 +70,7 @@ fun SolitairePile(
                 modifier = Modifier
                     .width(cardWidth - 2.dp)
                     .fillMaxHeight()
-                    .clickableSingle { onClick() },
+                    .clickable { onClick() },
                 card = pile.last()
             )
         }

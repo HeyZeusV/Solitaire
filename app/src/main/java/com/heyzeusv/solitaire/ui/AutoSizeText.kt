@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.autosizetext
+package com.heyzeusv.solitaire.ui
 
 // LAST UPDATE: 11 January 2023 v4.1 performance fine-tuning
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -14,6 +14,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,12 +36,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
-import com.heyzeusv.solitaire.ui.autosizetext.SuggestedFontSizesStatus.Companion.rememberSuggestedFontSizesStatus
+import com.heyzeusv.solitaire.ui.SuggestedFontSizesStatus.Companion.rememberSuggestedFontSizesStatus
 import kotlin.math.min
+import kotlin.reflect.KProperty
 
 /**
  *  Found here [https://gist.github.com/inidamleader/b594d35362ebcf3cedf81055df519300#file-autosizetext-kt]
@@ -352,10 +355,10 @@ private fun <E> IntProgression.findElectedValue(
 }
 
 enum class SuggestedFontSizesStatus {
-    VALID, INVALID, UNKNOWN;
+    VALID, INVALID;
 
     companion object {
-        val List<TextUnit>.suggestedFontSizesStatus
+        private val List<TextUnit>.suggestedFontSizesStatus
             get() = if (isNotEmpty() && all { it.isSp } && sortedBy { it.value } == this)
                 VALID
             else
@@ -364,6 +367,20 @@ enum class SuggestedFontSizesStatus {
             @Composable get() = remember(this) { value.suggestedFontSizesStatus }
     }
 }
+
+fun Density.roundToPx(sp: TextUnit): Int = sp.roundToPx()
+
+fun Density.toSp(px: Int): TextUnit = px.toSp()
+
+fun Density.toIntSize(dpSize: DpSize): IntSize =
+    IntSize(dpSize.width.roundToPx(), dpSize.height.roundToPx())
+
+@Immutable
+data class ImmutableWrapper<T>(val value: T)
+
+fun <T> T.toImmutableWrapper() = ImmutableWrapper(this)
+
+operator fun <T> ImmutableWrapper<T>.getValue(thisRef: Any?, property: KProperty<*>) = value
 
 @Preview(widthDp = 200, heightDp = 100)
 @Preview(widthDp = 200, heightDp = 30)

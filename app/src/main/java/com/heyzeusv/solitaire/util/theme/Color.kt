@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.theme
+package com.heyzeusv.solitaire.util.theme
 
 import androidx.compose.ui.graphics.Color
 

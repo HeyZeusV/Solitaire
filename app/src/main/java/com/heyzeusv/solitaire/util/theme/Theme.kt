@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.theme
+package com.heyzeusv.solitaire.util.theme
 
 import android.app.Activity
 import android.os.Build

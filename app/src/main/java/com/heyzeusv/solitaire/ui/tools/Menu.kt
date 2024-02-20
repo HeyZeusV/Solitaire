@@ -43,9 +43,9 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
-import com.heyzeusv.solitaire.ui.theme.BackgroundOverlay
-import com.heyzeusv.solitaire.ui.theme.Pink80
-import com.heyzeusv.solitaire.ui.theme.Purple40
+import com.heyzeusv.solitaire.util.theme.BackgroundOverlay
+import com.heyzeusv.solitaire.util.theme.Pink80
+import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview

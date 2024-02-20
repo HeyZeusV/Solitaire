@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.SolitairePile
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onCard
 import com.heyzeusv.solitaire.util.onNodeWithConDescId

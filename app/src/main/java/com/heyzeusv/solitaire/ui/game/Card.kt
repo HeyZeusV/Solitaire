@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -29,9 +28,9 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.cardsMap
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.Suits
-import com.heyzeusv.solitaire.ui.autosizetext.AutoSizeText
+import com.heyzeusv.solitaire.ui.AutoSizeText
 
 /**
  *  Composable that displays a [Card]. Depending on given [card]'s faceUp value will either display
@@ -72,8 +71,7 @@ fun SolitaireCard(
                             .fillMaxSize(),
                         color = card.suit.color,
                         alignment = Alignment.CenterStart,
-                        maxLines = 1,
-                        style = MaterialTheme.typography.bodyMedium
+                        maxLines = 1
                     )
                     Image(
                         painter = painterResource(card.suit.icon),

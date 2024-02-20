@@ -33,7 +33,7 @@ import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.game.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.tools.MenuViewModel
 import com.heyzeusv.solitaire.ui.tools.SolitaireMenu
 import com.heyzeusv.solitaire.ui.tools.SolitaireTools
