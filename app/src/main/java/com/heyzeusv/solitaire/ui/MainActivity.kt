@@ -26,7 +26,17 @@ import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.ui.game.AustralianPatienceViewModel
+import com.heyzeusv.solitaire.ui.game.CanberraViewModel
+import com.heyzeusv.solitaire.ui.game.KlondikeViewModel
+import com.heyzeusv.solitaire.ui.game.SolitaireBoard
+import com.heyzeusv.solitaire.ui.game.YukonViewModel
+import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
+import com.heyzeusv.solitaire.util.theme.SolitaireTheme
+import com.heyzeusv.solitaire.ui.tools.MenuViewModel
+import com.heyzeusv.solitaire.ui.tools.SolitaireMenu
+import com.heyzeusv.solitaire.ui.tools.SolitaireTools
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.formatTimeDisplay
@@ -51,6 +61,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
     val menuVM = hiltViewModel<MenuViewModel>()
     val selectedGame by menuVM.selectedGame.collectAsState()
     val gameVM = when (selectedGame) {
+        Games.YUKON -> hiltViewModel<YukonViewModel>()
         Games.AUSTRALIAN_PATIENCE -> hiltViewModel<AustralianPatienceViewModel>()
         Games.CANBERRA -> hiltViewModel<CanberraViewModel>()
         else -> hiltViewModel<KlondikeViewModel>()

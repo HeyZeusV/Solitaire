@@ -13,7 +13,8 @@ import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
+import com.heyzeusv.solitaire.util.theme.SolitaireTheme
+import com.heyzeusv.solitaire.ui.tools.SolitaireMenu
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.onNodeWithTextId

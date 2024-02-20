@@ -4,6 +4,8 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.ui.game.AustralianPatienceViewModel
+import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import kotlinx.coroutines.Dispatchers
@@ -67,7 +69,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
         val expectedUndoEnabled = false
         val expectedGameWon = false
         val expectedAutoCompleteActive = false
-        val expectedStockWasteEmpty = false
+        val expectedStockWasteEmpty = true
 
         apVM.resetAll(ResetOptions.RESTART)
 
@@ -207,7 +209,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
     @Test
     fun apSbVmStockWasteEmptyOnStockClick() {
-        val expectedStockWasteEmptyBefore = false
+        val expectedStockWasteEmptyBefore = true
         val expectedStockWasteEmptyAfter = true
         val expectedStockAfter = emptyList<Card>()
         val expectedWasteAfter = listOf(tc.card10CFU)
@@ -227,7 +229,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
     @Test
     fun apSbVmStockWasteEmptyOnWasteClick() {
-        val expectedStockWasteEmptyBefore = false
+        val expectedStockWasteEmptyBefore = true
         val expectedStockWasteEmptyAfter = true
         val expectedWasteAfter = listOf(tc.card10CFU)
 

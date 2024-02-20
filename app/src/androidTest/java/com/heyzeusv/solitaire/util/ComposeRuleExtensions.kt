@@ -86,10 +86,10 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.w
 
 /**
  *  Waits until given [Card]s appear under pile with given [parentTT] test tag. Uses default
- *  timeout of 1 second before failing. Used for testing Australian Patience
+ *  timeout of 1 second before failing.
  */
 @OptIn(ExperimentalTestApi::class)
-fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.waitUntilAustralianPatienceTableauExists(
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.waitUntilTableauExists(
     parentTT: String,
     card1: Card,
     card2: Card,
@@ -105,10 +105,10 @@ fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.w
 
 /**
  *  Waits until given [Card]s disappear under pile with given [parentTT] test tag. Uses default
- *  timeout of 1 second before failing. Used for testing Australian Patience
+ *  timeout of 1 second before failing.
  */
 @OptIn(ExperimentalTestApi::class)
-fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.waitUntilAustralianPatienceTableauDoesNotExist(
+fun <A : ComponentActivity> AndroidComposeTestRule<ActivityScenarioRule<A>, A>.waitUntilTableauDoesNotExist(
     parentTT: String,
     card1: Card,
     card2: Card,
