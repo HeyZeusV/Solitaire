@@ -24,34 +24,34 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Add given [cards] to [mPile].
+     *  Add given [cards] to [_pile].
      */
     override fun add(cards: List<Card>): Boolean {
-        return mPile.addAll(cards.map { it.copy(faceUp = false) })
+        return _pile.addAll(cards.map { it.copy(faceUp = false) })
     }
 
     /**
-     *  Remove the first [Card] in [mPile] and return it.
+     *  Remove the first [Card] in [_pile] and return it.
      */
-    override fun remove(tappedIndex: Int): Card = mPile.removeFirst()
+    override fun remove(tappedIndex: Int): Card = _pile.removeFirst()
 
     /**
-     *  Reset [mPile] using given [cards].
+     *  Reset [_pile] using given [cards].
      */
     override fun reset(cards: List<Card>) {
-        mPile.clear()
+        _pile.clear()
         add(cards)
     }
 
     /**
-     *  Used to return [mPile] to a previous state of given [cards].
+     *  Used to return [_pile] to a previous state of given [cards].
      */
     override fun undo(cards: List<Card>) {
-        mPile.clear()
+        _pile.clear()
         if (cards.isEmpty()) return
         // only last card is shown to user, this makes sure it is not visible
         val mutableCards = cards.toMutableList()
         mutableCards[mutableCards.size - 1] = mutableCards.last().copy(faceUp = false)
-        mPile.addAll(mutableCards)
+        _pile.addAll(mutableCards)
     }
 }

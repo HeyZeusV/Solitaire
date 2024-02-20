@@ -1,6 +1,7 @@
-package com.heyzeusv.solitaire.data
+package com.heyzeusv.solitaire.data.tableau
 
-import com.heyzeusv.solitaire.data.pile.tableau.KlondikeTableau
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.pile.Tableau.KlondikeTableau
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -44,56 +45,56 @@ class KlondikeTableauTest {
     @Test
     fun klondikeTableauRemoveCards() {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU)
-        val expectedFaceDownCards = 2
+        val expectedFaceDownExists = true
 
         tableau.undo(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5CFU, tc.card4HFU))
         tableau.remove(3)
 
         assertEquals(expectedPile, tableau.pile.toList())
-        assertEquals(expectedFaceDownCards, tableau.faceDownCards)
+        assertEquals(expectedFaceDownExists, tableau.faceDownExists())
     }
 
     @Test
     fun klondikeTableauReset() {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU)
-        val expectedFaceDownCards = 4
+        val expectedFaceDownExists = true
 
         tableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H))
 
         assertEquals(expectedPile, tableau.pile)
-        assertEquals(expectedFaceDownCards, tableau.faceDownCards)
+        assertEquals(expectedFaceDownExists, tableau.faceDownExists())
     }
 
     @Test
     fun klondikeTableauUndoEmptyCards() {
         val expectedPile = emptyList<Card>()
-        val expectedFaceDownCards = 0
+        val expectedFaceDownExists = false
 
         tableau.undo(emptyList())
 
         assertEquals(expectedPile, tableau.pile)
-        assertEquals(expectedFaceDownCards, tableau.faceDownCards)
+        assertEquals(expectedFaceDownExists, tableau.faceDownExists())
     }
 
     @Test
     fun klondikeTableauUndo1Cards() {
         val expectedPile = listOf(tc.card1HFU)
-        val expectedFaceDownCards = 0
+        val expectedFaceDownExists = false
 
         tableau.undo(listOf(tc.card1HFU))
 
         assertEquals(expectedPile, tableau.pile)
-        assertEquals(expectedFaceDownCards, tableau.faceDownCards)
+        assertEquals(expectedFaceDownExists, tableau.faceDownExists())
     }
 
     @Test
     fun klondikeTableauUndoMoreCards() {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU)
-        val expectedFaceDownCards = 4
+        val expectedFaceDownExists = true
 
         tableau.undo(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU))
 
         assertEquals(expectedPile, tableau.pile.toList())
-        assertEquals(expectedFaceDownCards, tableau.faceDownCards)
+        assertEquals(expectedFaceDownExists, tableau.faceDownExists())
     }
 }

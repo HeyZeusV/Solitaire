@@ -1,24 +1,24 @@
 package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.data.pile.TableauPile
-import com.heyzeusv.solitaire.data.pile.tableau.KlondikeTableau
+import com.heyzeusv.solitaire.data.pile.Tableau
+import com.heyzeusv.solitaire.data.pile.Tableau.KlondikeTableau
 import com.heyzeusv.solitaire.util.ResetOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**
- *  Data manager for Klondike type games.
+ *  Data manager for Klondike (Turn One).
  *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
 @HiltViewModel
-class KlondikeViewModel @Inject constructor(
+open class KlondikeViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : GameViewModel(ss) {
 
-    override val _tableau: MutableList<TableauPile> = MutableList(7) { KlondikeTableau() }
+    override val _tableau: MutableList<Tableau> = MutableList(7) { KlondikeTableau() }
 
     /**
      *  Autocomplete requires all Tableau piles to be all face up.

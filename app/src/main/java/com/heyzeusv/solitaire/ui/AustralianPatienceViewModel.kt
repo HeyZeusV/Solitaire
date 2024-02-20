@@ -1,8 +1,8 @@
 package com.heyzeusv.solitaire.ui
 
-import com.heyzeusv.solitaire.data.pile.tableau.SameSuitTableau
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.data.pile.TableauPile
+import com.heyzeusv.solitaire.data.pile.Tableau
+import com.heyzeusv.solitaire.data.pile.Tableau.AustralianPatienceTableau
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,7 @@ open class AustralianPatienceViewModel @Inject constructor(
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
 
-    override val _tableau: MutableList<TableauPile> = MutableList(7) { SameSuitTableau() }
+    override val _tableau: MutableList<Tableau> = MutableList(7) { AustralianPatienceTableau() }
 
     /**
      *  Each pile starts with exactly 4 cards

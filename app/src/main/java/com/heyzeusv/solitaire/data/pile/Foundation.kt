@@ -17,29 +17,29 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
         if (cards.isEmpty()) return false
         val card = cards[0]
         if (card.suit == suit && card.value == pile.size) {
-            mPile.add(card)
+            _pile.add(card)
             return true
         }
         return false
     }
 
     /**
-     *  Removes the last [Card] in [mPile] which would refer to the top showing card and return it.
+     *  Removes the last [Card] in [_pile] which would refer to the top showing card and return it.
      */
-    override fun remove(tappedIndex: Int): Card = mPile.removeLast()
+    override fun remove(tappedIndex: Int): Card = _pile.removeLast()
 
     /**
-     *  Reset [mPile] using given [cards].
+     *  Reset [_pile] using given [cards].
      */
-    override fun reset(cards: List<Card>) = mPile.clear()
+    override fun reset(cards: List<Card>) = _pile.clear()
 
     /**
-     *  Used to return [mPile] to a previous state of given [cards].
+     *  Used to return [_pile] to a previous state of given [cards].
      */
     override fun undo(cards: List<Card>) {
-        mPile.clear()
+        _pile.clear()
         if (cards.isEmpty()) return
-        mPile.addAll(cards)
+        _pile.addAll(cards)
     }
 
     override fun toString(): String = "${suit.name}: ${pile.toList()}"

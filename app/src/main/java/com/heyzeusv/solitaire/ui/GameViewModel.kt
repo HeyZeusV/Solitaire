@@ -8,11 +8,9 @@ import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Stock
-import com.heyzeusv.solitaire.data.pile.TableauPile
 import com.heyzeusv.solitaire.data.pile.Waste
-import com.heyzeusv.solitaire.data.pile.tableau.KlondikeTableau
-import com.heyzeusv.solitaire.data.pile.tableau.SameSuitTableau
-import com.heyzeusv.solitaire.data.pile.tableau.YukonTableau
+import com.heyzeusv.solitaire.data.pile.Tableau
+import com.heyzeusv.solitaire.data.pile.Tableau.*
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.MOVE
 import com.heyzeusv.solitaire.util.MoveResult.MOVE_SCORE
@@ -55,8 +53,8 @@ abstract class GameViewModel (
     private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
-    protected abstract val _tableau: MutableList<TableauPile>
-    val tableau: List<TableauPile> get() = _tableau
+    protected abstract val _tableau: MutableList<Tableau>
+    val tableau: List<Tableau> get() = _tableau
 
     private val _historyList = mutableListOf<PileHistory>()
     val historyList: List<PileHistory> get() = _historyList
@@ -167,7 +165,7 @@ abstract class GameViewModel (
 
     /**
      *  Runs when user taps on Foundation with given [fIndex]. Checks to see if top [Card] can be
-     *  moved to any [TableauPile] pile. If so, it is removed from [_foundation] with given [fIndex].
+     *  moved to any [Tableau] pile. If so, it is removed from [_foundation] with given [fIndex].
      */
     fun onFoundationClick(fIndex: Int): MoveResult {
         val foundation = _foundation[fIndex]
@@ -187,7 +185,7 @@ abstract class GameViewModel (
 
     /**
      *  Runs when user taps on Tableau pile with given [tableauIndex] and given [cardIndex]. Checks
-     *  to see if tapped sublist of [Card]s can be moved to another [TableauPile] pile or a [Foundation].
+     *  to see if tapped sublist of [Card]s can be moved to another [Tableau] pile or a [Foundation].
      */
     fun onTableauClick(tableauIndex: Int, cardIndex: Int): MoveResult {
         val tableauPile = _tableau[tableauIndex]
@@ -272,7 +270,7 @@ abstract class GameViewModel (
                 tableau = when (_tableau[0]) {
                     is KlondikeTableau -> _tableau.map { KlondikeTableau(it.pile) }
                     is YukonTableau -> _tableau.map { YukonTableau(it.pile) }
-                    else -> _tableau.map { SameSuitTableau(it.pile) }
+                    is AustralianPatienceTableau -> _tableau.map { AustralianPatienceTableau(it.pile) }
                 }
             )
         }

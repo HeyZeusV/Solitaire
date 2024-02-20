@@ -21,9 +21,9 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
-import com.heyzeusv.solitaire.data.pile.tableau.KlondikeTableau
-import com.heyzeusv.solitaire.data.pile.TableauPile
 import com.heyzeusv.solitaire.data.pile.Waste
+import com.heyzeusv.solitaire.data.pile.Tableau
+import com.heyzeusv.solitaire.data.pile.Tableau.KlondikeTableau
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
@@ -73,7 +73,7 @@ fun SolitaireBoard(
     onWasteClick: () -> MoveResult,
     foundationList: List<Foundation>,
     onFoundationClick: (Int) -> MoveResult,
-    tableauList: List<TableauPile>,
+    tableauList: List<Tableau>,
     onTableauClick: (Int, Int) -> MoveResult,
     modifier: Modifier = Modifier
 ) {
