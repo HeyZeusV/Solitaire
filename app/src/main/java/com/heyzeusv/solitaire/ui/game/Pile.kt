@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.Image
@@ -19,7 +19,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
-import com.heyzeusv.solitaire.util.clickableSingle
+import com.heyzeusv.solitaire.ui.clickableSingle
 
 /**
  *  Composable that displays [pile]. If given [pile] is empty, [emptyIconId] is displayed. Clicking

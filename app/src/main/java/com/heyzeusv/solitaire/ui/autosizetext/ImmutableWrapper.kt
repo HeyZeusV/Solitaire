@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.util.autosizetext
+package com.heyzeusv.solitaire.ui.autosizetext
 
 import androidx.compose.runtime.Immutable
 import kotlin.reflect.KProperty

@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.tools
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
@@ -29,6 +29,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.game.GameViewModel
+import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.ResetOptions.NEW
 import com.heyzeusv.solitaire.util.ResetOptions.RESTART

@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -31,7 +31,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.cardsMap
 import com.heyzeusv.solitaire.ui.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.Suits
-import com.heyzeusv.solitaire.util.autosizetext.AutoSizeText
+import com.heyzeusv.solitaire.ui.autosizetext.AutoSizeText
 
 /**
  *  Composable that displays a [Card]. Depending on given [card]'s faceUp value will either display

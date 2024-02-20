@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.tools
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

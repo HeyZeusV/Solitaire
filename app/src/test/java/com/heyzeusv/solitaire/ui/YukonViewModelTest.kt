@@ -3,6 +3,8 @@ package com.heyzeusv.solitaire.ui
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.ui.game.YukonViewModel
+import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import kotlinx.coroutines.Dispatchers

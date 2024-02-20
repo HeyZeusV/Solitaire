@@ -9,6 +9,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.game.SolitaireCard
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onCard

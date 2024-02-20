@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.util
+package com.heyzeusv.solitaire.ui
 
 /**
  *  Found here [https://al-e-shevelev.medium.com/how-to-prevent-multiple-clicks-in-android-jetpack-compose-8e62224c9c5e].

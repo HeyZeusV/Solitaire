@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +24,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.KlondikeTableau
+import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview

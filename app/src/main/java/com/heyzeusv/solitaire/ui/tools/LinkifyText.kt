@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.util
+package com.heyzeusv.solitaire.ui.tools
 
 import android.os.Build
 import android.text.SpannableString
@@ -51,7 +51,9 @@ fun LinkifyText(
     onClickLink: ((linkText: String) -> Unit)? = null
 ) {
     val uriHandler = LocalUriHandler.current
-    val linkInfos = if (linkEntire) listOf(LinkInfo(text, 0, text.length)) else SpannableStr.getLinkInfos(text)
+    val linkInfos = if (linkEntire) listOf(LinkInfo(text, 0, text.length)) else SpannableStr.getLinkInfos(
+        text
+    )
     val annotatedString = buildAnnotatedString {
         append(text)
         linkInfos.forEach {

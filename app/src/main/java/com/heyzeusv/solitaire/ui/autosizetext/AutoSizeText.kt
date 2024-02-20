@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.util.autosizetext
+package com.heyzeusv.solitaire.ui.autosizetext
 
 // LAST UPDATE: 11 January 2023 v4.1 performance fine-tuning
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
-import com.heyzeusv.solitaire.util.autosizetext.SuggestedFontSizesStatus.Companion.rememberSuggestedFontSizesStatus
+import com.heyzeusv.solitaire.ui.autosizetext.SuggestedFontSizesStatus.Companion.rememberSuggestedFontSizesStatus
 import kotlin.math.min
 
 /**

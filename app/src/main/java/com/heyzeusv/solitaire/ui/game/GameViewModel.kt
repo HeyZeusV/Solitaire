@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel

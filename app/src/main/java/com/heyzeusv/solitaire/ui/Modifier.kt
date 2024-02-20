@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.util
+package com.heyzeusv.solitaire.ui
 
 import androidx.compose.foundation.LocalIndication
 import androidx.compose.foundation.clickable

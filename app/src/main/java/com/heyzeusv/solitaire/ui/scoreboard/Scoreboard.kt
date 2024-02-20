@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.scoreboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -17,7 +17,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.SolitairePreview
-import com.heyzeusv.solitaire.util.autosizetext.AutoSizeText
+import com.heyzeusv.solitaire.ui.autosizetext.AutoSizeText
 import com.heyzeusv.solitaire.util.formatTimeDisplay
 
 /**

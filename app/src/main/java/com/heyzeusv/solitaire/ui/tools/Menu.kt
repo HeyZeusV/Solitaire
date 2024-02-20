@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.tools
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
@@ -41,11 +41,12 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.ui.game.GameViewModel
+import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.theme.BackgroundOverlay
 import com.heyzeusv.solitaire.ui.theme.Pink80
 import com.heyzeusv.solitaire.ui.theme.Purple40
 import com.heyzeusv.solitaire.util.Games
-import com.heyzeusv.solitaire.util.LinkifyText
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeStats

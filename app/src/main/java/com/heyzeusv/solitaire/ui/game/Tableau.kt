@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
@@ -21,7 +21,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
-import com.heyzeusv.solitaire.util.clickableSingle
+import com.heyzeusv.solitaire.ui.clickableSingle
 
 /**
  *  Composable that displays Tableau [pile] with [tableauIndex]. [cardHeight] is used to shift each
