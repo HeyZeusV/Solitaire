@@ -16,7 +16,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilterChip
@@ -25,13 +24,9 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -41,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.theme.BackgroundOverlay
@@ -67,18 +63,29 @@ fun SolitaireMenu(
     menuVM: MenuViewModel,
 ) {
     val displayMenu by menuVM.displayMenu.collectAsState()
+    val displayGameSwitch by menuVM.displayGameSwitch.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
     val stats by menuVM.stats.collectAsState()
     val currentGameStats =
         stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
+    val lgs = sbVM.retrieveLastGameStats(false)
     SolitaireMenu(
         displayMenu = displayMenu,
         updateDisplayMenu = menuVM::updateDisplayMenu,
-        lgs = sbVM.retrieveLastGameStats(false),
+        displayGameSwitch = displayGameSwitch,
+        updateDisplayGameSwitch = menuVM::updateDisplayGameSwitch,
+        gameSwitchOnConfirm = {
+            if (lgs.moves > 1) menuVM.updateStats(lgs)
+            menuVM.updateSelectedGame(menuVM.newlySelectedGame.value)
+            menuVM.updateDisplayGameSwitch(false)
+            gameVM.resetAll(ResetOptions.NEW)
+            sbVM.reset()
+        },
+        lgs = lgs,
         selectedGame = selectedGame,
         updateSelectedGame = menuVM::updateSelectedGame,
-        updateStats = menuVM::updateStats,
+        updateNewlySelectedGame = menuVM::updateNewlySelectedGame,
         reset = {
             gameVM.resetAll(ResetOptions.NEW)
             sbVM.reset()
@@ -90,56 +97,39 @@ fun SolitaireMenu(
 /**
  *  Composable that displays Menu which allows user to switch games and view stats for selected game.
  *  All the data has been hoisted into above [SolitaireMenu] thus allowing for easier testing.
- *  Menu can be opened and closed by updating [displayMenu] value using [updateDisplayMenu]. [lgs] is
- *  used to check if a game has been started and the user is trying to switch game types causing an
- *  AlertDialog to appear to confirm game change, as well as to [updateStats] if user confirms game
- *  switch with more than 1 move taken. [reset] is called when game change is confirmed causing
- *  game board to reset. [selectedGame] determines which stats to be displayed and which game to
- *  be shown when user close Menu and is updated by [updateSelectedGame]. [stats] are to be displayed.
+ *  Menu can be opened and closed by updating [displayMenu] value using [updateDisplayMenu].
+ *  [updateDisplayGameSwitch] displays/removes AlertDialog that appears when switching games mid-way
+ *  through another and [updateNewlySelectedGame] changes [selectedGame] if user accepts game change.
+ *  [lgs] is used to check if a game has been started and the user is trying to switch game types.
+ *  [reset] is called when game change is confirmed causing game board to reset. [selectedGame]
+ *  determines which stats to be displayed and which game to be shown when user close Menu and is
+ *  updated by [updateSelectedGame]. [stats] are to be displayed.
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SolitaireMenu(
     displayMenu: Boolean,
     updateDisplayMenu: (Boolean) -> Unit,
+    displayGameSwitch: Boolean,
+    updateDisplayGameSwitch: (Boolean) -> Unit,
+    gameSwitchOnConfirm: () -> Unit,
     lgs: LastGameStats,
     selectedGame: Games,
     updateSelectedGame: (Games) -> Unit,
-    updateStats: (LastGameStats) -> Unit,
+    updateNewlySelectedGame: (Games) -> Unit,
     reset: () -> Unit,
     stats: GameStats
 ) {
-
     if (displayMenu) {
         val scrollableState = rememberScrollState()
 
-        var showGameSwitch by remember { mutableStateOf(false) }
-        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
-
         BackHandler { updateDisplayMenu(false) }
 
-        if (showGameSwitch) {
-            AlertDialog(
-                onDismissRequest = { showGameSwitch = false },
-                confirmButton = {
-                    TextButton(onClick = {
-                        if (lgs.moves > 1) updateStats(lgs)
-                        updateSelectedGame(newlySelectedGame)
-                        showGameSwitch = false
-                        reset()
-                    }) {
-                        Text(text = stringResource(R.string.games_ad_confirm))
-                    }
-                },
-                dismissButton = {
-                    TextButton(onClick = { showGameSwitch = false }) {
-                        Text(text = stringResource(R.string.games_ad_dismiss))
-                    }
-                },
-                title = { Text(text = stringResource(R.string.games_ad_title)) },
-                text = { Text(text = stringResource(R.string.games_ad_msg)) }
-            )
-        }
+        GameSwitchAlertDialog(
+            displayGameSwitch = displayGameSwitch,
+            onConfirm = gameSwitchOnConfirm,
+            onDismiss = { updateDisplayGameSwitch(false) }
+        )
         Surface(
             modifier = Modifier
                 .fillMaxSize()
@@ -175,8 +165,8 @@ fun SolitaireMenu(
                             onClick = {
                                 if (it != selectedGame) {
                                     if (lgs.moves > 0) {
-                                        newlySelectedGame = it
-                                        showGameSwitch = true
+                                        updateNewlySelectedGame(it)
+                                        updateDisplayGameSwitch(true)
                                     } else {
                                         updateSelectedGame(it)
                                         reset()
@@ -249,10 +239,13 @@ fun SolitaireMenuPreview() {
         SolitaireMenu(
             displayMenu = true,
             updateDisplayMenu = { },
+            displayGameSwitch = false,
+            updateDisplayGameSwitch = { },
+            gameSwitchOnConfirm = { },
             lgs = LastGameStats(false, 0, 0, 0),
             selectedGame = Games.KLONDIKE_TURN_ONE,
             updateSelectedGame = { },
-            updateStats = { },
+            updateNewlySelectedGame = { },
             reset = { },
             stats = GameStats.getDefaultInstance()
         )

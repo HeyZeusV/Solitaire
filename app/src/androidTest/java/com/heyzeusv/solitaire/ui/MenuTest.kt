@@ -49,10 +49,13 @@ class MenuTest {
                     SolitaireMenu(
                         displayMenu = true,
                         updateDisplayMenu = { },
+                        displayGameSwitch = false,
+                        updateDisplayGameSwitch = { },
+                        gameSwitchOnConfirm = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         updateSelectedGame = { },
-                        updateStats = { },
+                        updateNewlySelectedGame = { },
                         reset = { },
                         stats = gameOneStats
                     )
@@ -91,13 +94,16 @@ class MenuTest {
                     SolitaireMenu(
                         displayMenu = true,
                         updateDisplayMenu = { },
+                        displayGameSwitch = false,
+                        updateDisplayGameSwitch = { },
+                        gameSwitchOnConfirm = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
                             stats = gameTwoStats
                         },
-                        updateStats = { },
+                        updateNewlySelectedGame = { },
                         reset = { },
                         stats = stats
                     )
@@ -133,18 +139,27 @@ class MenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme(darkTheme = true) {
+                    var displayGameSwitch by remember { mutableStateOf(false) }
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
+                    var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
                         displayMenu = true,
                         updateDisplayMenu = { },
+                        displayGameSwitch = displayGameSwitch,
+                        updateDisplayGameSwitch = { displayGameSwitch = it },
+                        gameSwitchOnConfirm = {
+                            selectedGame = newlySelectedGame
+                            displayGameSwitch = false
+                            stats = gameTwoStats
+                        },
                         lgs = LastGameStats(false, 10, 100L, 2),
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
                             stats = gameTwoStats
                         },
-                        updateStats = { },
+                        updateNewlySelectedGame = { newlySelectedGame = it },
                         reset = { },
                         stats = stats
                     )
@@ -185,18 +200,22 @@ class MenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme(darkTheme = true) {
+                    var displayGameSwitch by remember { mutableStateOf(false) }
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     SolitaireMenu(
                         displayMenu = true,
                         updateDisplayMenu = { },
+                        displayGameSwitch = displayGameSwitch,
+                        updateDisplayGameSwitch = { displayGameSwitch = true },
+                        gameSwitchOnConfirm = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
                             stats = gameTwoStats
                         },
-                        updateStats = { },
+                        updateNewlySelectedGame = { },
                         reset = { },
                         stats = stats
                     )

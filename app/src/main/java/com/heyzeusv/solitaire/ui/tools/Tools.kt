@@ -8,12 +8,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -29,9 +27,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.ResetAlertDialog
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
-import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.ResetOptions.NEW
 import com.heyzeusv.solitaire.util.ResetOptions.RESTART
 import com.heyzeusv.solitaire.util.SolitairePreview
@@ -51,10 +49,15 @@ fun SolitaireTools(
 
     SolitaireTools(
         menuOnClick = menuVM::updateDisplayMenu,
-        resetOnConfirmClick = gameVM::resetAll,
-        resetScoreboard = sbVM::reset,
-        updateStats = {
+        resetRestartOnConfirm = {
             menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
+            gameVM.resetAll(RESTART)
+            sbVM.reset()
+        },
+        resetNewOnConfirm = {
+            menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
+            gameVM.resetAll(NEW)
+            sbVM.reset()
         },
         undoEnabled = undoEnabled,
         undoOnClick = {
@@ -70,57 +73,29 @@ fun SolitaireTools(
  *  Composable that displays several buttons for the user. Pressing on Menu button, [menuOnClick],
  *  displays a Composable where user can view games and stats. Pressing on Reset button opens up an
  *  AlertDialog which gives user 3 options, restart current game, reset with a brand new shuffle, or
- *  continue current game; first two options call [resetOnConfirmClick],[updateStats], [resetScoreboard].
+ *  continue current game; first two options call [resetRestartOnConfirm] or [resetNewOnConfirm].
  *  Undo button state is determined by [undoEnabled] and when pressed calls [undoOnClick], which
- *  returns the game back 1 legal move.
+ *  returns the game back 1 legal move. [autoCompleteActive] determines if Buttons should be enabled
+ *  due to game being in autocomplete mode.
  */
 @Composable
 fun SolitaireTools(
     menuOnClick: (Boolean) -> Unit,
-    resetOnConfirmClick: (ResetOptions) -> Unit,
-    resetScoreboard: () -> Unit,
-    updateStats: () -> Unit,
+    resetRestartOnConfirm: () -> Unit,
+    resetNewOnConfirm: () -> Unit,
     undoEnabled: Boolean,
     undoOnClick: () -> Unit,
     autoCompleteActive: Boolean,
     modifier: Modifier = Modifier
 ) {
-    var resetOnClick by remember { mutableStateOf(false) }
+    var displayReset by remember { mutableStateOf(false) }
 
-    if (resetOnClick) {
-        AlertDialog(
-            onDismissRequest = { resetOnClick = false },
-            confirmButton = {
-                Row(
-                    horizontalArrangement = Arrangement.SpaceEvenly
-                ) {
-                    TextButton(onClick = {
-                        resetOnClick = false
-                        updateStats()
-                        resetOnConfirmClick(RESTART)
-                        resetScoreboard()
-                    }) {
-                        Text(text = stringResource(R.string.reset_ad_confirm_restart))
-                    }
-                    TextButton(onClick = {
-                        resetOnClick = false
-                        updateStats()
-                        resetOnConfirmClick(NEW)
-                        resetScoreboard()
-                    }) {
-                        Text(text = stringResource(R.string.reset_ad_confirm_new))
-                    }
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { resetOnClick = false }) {
-                    Text(text = stringResource(R.string.reset_ad_dismiss))
-                }
-            },
-            title = { Text(text = stringResource(R.string.reset_ad_title)) },
-            text = { Text(text = stringResource(R.string.reset_ad_msg)) }
-        )
-    }
+    ResetAlertDialog(
+        displayReset = displayReset,
+        updateDisplayReset = { displayReset = it },
+        restartOnConfirm = resetRestartOnConfirm,
+        newOnConfirm = resetNewOnConfirm
+    )
     Row(
         modifier = modifier
             .fillMaxWidth()
@@ -141,7 +116,7 @@ fun SolitaireTools(
         )
         // Reset Button
         SolitaireToolsButton(
-            onClick = { resetOnClick = true },
+            onClick = { displayReset = true },
             iconId = R.drawable.button_reset,
             iconContentDes = stringResource(R.string.tools_cdesc_reset),
             buttonText = stringResource(R.string.tools_button_reset),
@@ -204,9 +179,8 @@ fun SolitaireToolsPreview() {
     SolitairePreview {
         SolitaireTools(
             menuOnClick = { },
-            resetOnConfirmClick = { },
-            resetScoreboard = { },
-            updateStats = { },
+            resetRestartOnConfirm = { },
+            resetNewOnConfirm = { },
             undoEnabled = true,
             undoOnClick = { },
             autoCompleteActive = false
