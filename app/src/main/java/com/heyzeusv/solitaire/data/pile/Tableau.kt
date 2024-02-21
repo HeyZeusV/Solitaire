@@ -146,7 +146,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
      *  It is possible for pile to be same suit, but out of order. This checks if pile is not in
      *  order descending, this way autocomplete will not be stuck in an infinite loop.
      */
-    fun notInOrderDesc(): Boolean {
+    fun notInOrder(): Boolean {
         val it = _pile.iterator()
         if (!it.hasNext()) return false
         var current = it.next()
@@ -154,22 +154,6 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             if (!it.hasNext()) return false
             val next = it.next()
             if (current.value < next.value) return true
-            current = next
-        }
-    }
-
-    /**
-     *  It is possible for pile to be same suit, but out of order. This checks if pile is not in
-     *  order ascending, this way autocomplete will not be stuck in an infinite loop.
-     */
-    fun notInOrderAsc(): Boolean {
-        val it = _pile.iterator()
-        if (!it.hasNext()) return false
-        var current = it.next()
-        while (true) {
-            if (!it.hasNext()) return false
-            val next = it.next()
-            if (current.value > next.value) return true
             current = next
         }
     }

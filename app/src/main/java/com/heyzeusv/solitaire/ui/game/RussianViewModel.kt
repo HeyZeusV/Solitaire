@@ -25,7 +25,7 @@ class RussianViewModel @Inject constructor(
      */
     override fun autoCompleteTableauCheck(): Boolean {
         _tableau.forEach {
-            if (it.faceDownExists() || it.isMultiSuit() || it.notInOrderDesc()) return false
+            if (it.faceDownExists() || it.isMultiSuit() || it.notInOrder()) return false
         }
         return true
     }

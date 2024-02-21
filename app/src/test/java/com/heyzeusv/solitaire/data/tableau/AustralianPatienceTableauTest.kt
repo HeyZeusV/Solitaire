@@ -102,7 +102,7 @@ class AustralianPatienceTableauTest {
         val expectedInOrder = false
         val expectedOutOrder = true
 
-        assertEquals(expectedInOrder, inOrderTableau.notInOrderDesc())
-        assertEquals(expectedOutOrder, outOrderTableau.notInOrderDesc())
+        assertEquals(expectedInOrder, inOrderTableau.notInOrder())
+        assertEquals(expectedOutOrder, outOrderTableau.notInOrder())
     }
 }

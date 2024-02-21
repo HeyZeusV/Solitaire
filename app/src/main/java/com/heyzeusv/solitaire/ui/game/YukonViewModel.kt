@@ -26,7 +26,7 @@ open class YukonViewModel @Inject constructor(
      *  Autocomplete requires all Tableau piles to be all face up and in order by value descending.
      */
     override fun autoCompleteTableauCheck(): Boolean {
-        _tableau.forEach { if (it.faceDownExists() || it.notInOrderDesc()) return false }
+        _tableau.forEach { if (it.faceDownExists() || it.notInOrder()) return false }
         return true
     }
 
