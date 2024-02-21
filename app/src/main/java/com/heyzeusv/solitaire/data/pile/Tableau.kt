@@ -27,6 +27,21 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
+    class AlaskaTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+        override val resetFaceUpAmount: Int = 5
+
+        override fun addCondition(cFirst: Card, pLast: Card): Boolean {
+            return cFirst.suit == pLast.suit &&
+                    (cFirst.value == pLast.value - 1 || cFirst.value == pLast.value + 1)
+        }
+    }
+    class RussianTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+        override val resetFaceUpAmount: Int = 5
+
+        override fun addCondition(cFirst: Card, pLast: Card): Boolean {
+            return cFirst.suit == pLast.suit && cFirst.value == pLast.value - 1
+        }
+    }
     /**
      *  AustralianPatienceTableauTest also tests for isMultiSuit() and notInOrder().
      *
@@ -129,9 +144,9 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
 
     /**
      *  It is possible for pile to be same suit, but out of order. This checks if pile is not in
-     *  order, this way autocomplete will not be stuck in an infinite loop.
+     *  order descending, this way autocomplete will not be stuck in an infinite loop.
      */
-    fun notInOrder(): Boolean {
+    fun notInOrderDesc(): Boolean {
         val it = _pile.iterator()
         if (!it.hasNext()) return false
         var current = it.next()
@@ -139,6 +154,22 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             if (!it.hasNext()) return false
             val next = it.next()
             if (current.value < next.value) return true
+            current = next
+        }
+    }
+
+    /**
+     *  It is possible for pile to be same suit, but out of order. This checks if pile is not in
+     *  order ascending, this way autocomplete will not be stuck in an infinite loop.
+     */
+    fun notInOrderAsc(): Boolean {
+        val it = _pile.iterator()
+        if (!it.hasNext()) return false
+        var current = it.next()
+        while (true) {
+            if (!it.hasNext()) return false
+            val next = it.next()
+            if (current.value > next.value) return true
             current = next
         }
     }

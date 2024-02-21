@@ -38,7 +38,7 @@ open class AustralianPatienceViewModel @Inject constructor(
      *  Autocomplete requires all Tableau piles to be a single [Suits] type and in order by value.
      */
     override fun autoCompleteTableauCheck(): Boolean {
-        _tableau.forEach { if (it.isMultiSuit() || it.notInOrder()) return false}
+        _tableau.forEach { if (it.isMultiSuit() || it.notInOrderDesc()) return false}
         return true
     }
 

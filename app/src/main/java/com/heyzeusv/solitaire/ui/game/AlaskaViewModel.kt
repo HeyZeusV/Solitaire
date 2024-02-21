@@ -7,26 +7,31 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**
- *  Data manager for Yukon.
+ *  Data manager for Alaska.
  *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
 @HiltViewModel
-open class YukonViewModel @Inject constructor(
+class AlaskaViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : GameViewModel(ss) {
 
-    override val baseRedealAmount: Int = 0
-    override var redealLeft: Int = 0
-
-    override val _tableau: MutableList<Tableau> = MutableList(7) { Tableau.YukonTableau() }
+    override val _tableau: MutableList<Tableau> = MutableList(7) { Tableau.AlaskaTableau() }
 
     /**
-     *  Autocomplete requires all Tableau piles to be all face up and in order by value descending.
+     *  Autocomplete requires all Tableau piles to be all face up, single suit, and in order by
+     *  value ascending or descending.
      */
     override fun autoCompleteTableauCheck(): Boolean {
-        _tableau.forEach { if (it.faceDownExists() || it.notInOrderDesc()) return false }
+        _tableau.forEach {
+            if (
+                it.faceDownExists() || it.isMultiSuit() ||
+                (it.notInOrderDesc() && it.notInOrderAsc())
+            ) {
+                return false
+            }
+        }
         return true
     }
 
