@@ -27,6 +27,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
@@ -37,6 +40,7 @@ import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
+import com.heyzeusv.solitaire.ui.SolitaireAlertDialog
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.theme.BackgroundOverlay
@@ -63,7 +67,6 @@ fun SolitaireMenu(
     menuVM: MenuViewModel,
 ) {
     val displayMenu by menuVM.displayMenu.collectAsState()
-    val displayGameSwitch by menuVM.displayGameSwitch.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
     val stats by menuVM.stats.collectAsState()
     val currentGameStats =
@@ -73,19 +76,10 @@ fun SolitaireMenu(
     SolitaireMenu(
         displayMenu = displayMenu,
         updateDisplayMenu = menuVM::updateDisplayMenu,
-        displayGameSwitch = displayGameSwitch,
-        updateDisplayGameSwitch = menuVM::updateDisplayGameSwitch,
-        gameSwitchOnConfirm = {
-            if (lgs.moves > 1) menuVM.updateStats(lgs)
-            menuVM.updateSelectedGame(menuVM.newlySelectedGame.value)
-            menuVM.updateDisplayGameSwitch(false)
-            gameVM.resetAll(ResetOptions.NEW)
-            sbVM.reset()
-        },
+        updateStats = menuVM::updateStats,
         lgs = lgs,
         selectedGame = selectedGame,
         updateSelectedGame = menuVM::updateSelectedGame,
-        updateNewlySelectedGame = menuVM::updateNewlySelectedGame,
         reset = {
             gameVM.resetAll(ResetOptions.NEW)
             sbVM.reset()
@@ -97,26 +91,23 @@ fun SolitaireMenu(
 /**
  *  Composable that displays Menu which allows user to switch games and view stats for selected game.
  *  All the data has been hoisted into above [SolitaireMenu] thus allowing for easier testing.
- *  Menu can be opened and closed by updating [displayMenu] value using [updateDisplayMenu].
- *  [updateDisplayGameSwitch] displays/removes AlertDialog that appears when switching games mid-way
- *  through another and [updateNewlySelectedGame] changes [selectedGame] if user accepts game change.
- *  [lgs] is used to check if a game has been started and the user is trying to switch game types.
- *  [reset] is called when game change is confirmed causing game board to reset. [selectedGame]
- *  determines which stats to be displayed and which game to be shown when user close Menu and is
- *  updated by [updateSelectedGame]. [stats] are to be displayed.
+ *  Menu can be opened and closed by updating [displayMenu] value using [updateDisplayMenu]. [lgs]
+ *  is used to check if a game has been started and the user is trying to switch game types causing
+ *  a [SolitaireAlertDialog] to appear to confirm game change, as well as to [updateStats] if user
+ *  confirms game switch with more than 1 move taken. [reset] is called when game change is
+ *  confirmed causing game board to reset. [selectedGame] determines which stats to be displayed
+ *  and which game to be shown when user close Menu and is updated by [updateSelectedGame].
+ *  [stats] are to be displayed.
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SolitaireMenu(
     displayMenu: Boolean,
     updateDisplayMenu: (Boolean) -> Unit,
-    displayGameSwitch: Boolean,
-    updateDisplayGameSwitch: (Boolean) -> Unit,
-    gameSwitchOnConfirm: () -> Unit,
+    updateStats: (LastGameStats) -> Unit,
     lgs: LastGameStats,
     selectedGame: Games,
     updateSelectedGame: (Games) -> Unit,
-    updateNewlySelectedGame: (Games) -> Unit,
     reset: () -> Unit,
     stats: GameStats
 ) {
@@ -125,10 +116,18 @@ fun SolitaireMenu(
 
         BackHandler { updateDisplayMenu(false) }
 
+        var displayGameSwitch by remember { mutableStateOf(false) }
+        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_THREE) }
+
         GameSwitchAlertDialog(
             displayGameSwitch = displayGameSwitch,
-            onConfirm = gameSwitchOnConfirm,
-            onDismiss = { updateDisplayGameSwitch(false) }
+            confirmOnClick = {
+                if (lgs.moves > 1) updateStats(lgs)
+                updateSelectedGame(newlySelectedGame)
+                reset()
+                displayGameSwitch = false
+            },
+            dismissOnClick = { displayGameSwitch = false }
         )
         Surface(
             modifier = Modifier
@@ -165,8 +164,8 @@ fun SolitaireMenu(
                             onClick = {
                                 if (it != selectedGame) {
                                     if (lgs.moves > 0) {
-                                        updateNewlySelectedGame(it)
-                                        updateDisplayGameSwitch(true)
+                                        displayGameSwitch = true
+                                        newlySelectedGame = it
                                     } else {
                                         updateSelectedGame(it)
                                         reset()
@@ -239,13 +238,10 @@ fun SolitaireMenuPreview() {
         SolitaireMenu(
             displayMenu = true,
             updateDisplayMenu = { },
-            displayGameSwitch = false,
-            updateDisplayGameSwitch = { },
-            gameSwitchOnConfirm = { },
+            updateStats = { },
             lgs = LastGameStats(false, 0, 0, 0),
             selectedGame = Games.KLONDIKE_TURN_ONE,
             updateSelectedGame = { },
-            updateNewlySelectedGame = { },
             reset = { },
             stats = GameStats.getDefaultInstance()
         )

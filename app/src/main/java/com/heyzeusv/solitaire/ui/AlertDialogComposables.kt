@@ -20,6 +20,46 @@ import com.heyzeusv.solitaire.ui.tools.MenuViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.formatTimeDisplay
 
+/**
+ *  Basic AlertDialog with a few additional features. [display] determines if AlertDialog should be
+ *  displayed and is checked here in order to keep parent Composable a little cleaner.
+ *  [runOnDisplay] is called immediately when AlertDialog is shown, without user input. Dismiss
+ *  option is completely optional and is not shown if [dismissText] is passed with default value.
+ */
+@Composable
+fun SolitaireAlertDialog(
+    display: Boolean,
+    title: String,
+    message: String,
+    confirmText: String,
+    confirmOnClick: () -> Unit,
+    dismissText: String = "",
+    dismissOnClick: () -> Unit = { },
+    runOnDisplay: () -> Unit = { }
+) {
+    if (display) {
+        runOnDisplay()
+        AlertDialog(
+            onDismissRequest = dismissOnClick,
+            confirmButton = {
+                TextButton(onClick = confirmOnClick) {
+                    Text(text = confirmText)
+                }
+            },
+            dismissButton = { if (dismissText.isNotBlank()) {
+                TextButton(onClick = dismissOnClick) {
+                    Text(text = dismissText)
+                }
+            }},
+            title = { Text(text = title) },
+            text = { Text(text = message) }
+        )
+    }
+}
+
+/**
+ *  AlertDialog for when user tries to close the game with back button and menu closed.
+ */
 @Composable
 fun CloseGameAlertDialog(
     sbVM: ScoreboardViewModel,
@@ -29,28 +69,23 @@ fun CloseGameAlertDialog(
     var closeGame by remember { mutableStateOf(false) }
 
     BackHandler { closeGame = true }
-    if (closeGame) {
-        AlertDialog(
-            onDismissRequest = { closeGame = false },
-            confirmButton = {
-                TextButton(onClick = {
-                    menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
-                    finishApp()
-                }) {
-                    Text(text = stringResource(R.string.close_ad_confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { closeGame = false }) {
-                    Text(text = stringResource(R.string.close_ad_dismiss))
-                }
-            },
-            title = { Text(text = stringResource(R.string.close_ad_title)) },
-            text = { Text(text = stringResource(R.string.close_ad_msg)) }
-        )
-    }
+    SolitaireAlertDialog(
+        display = closeGame,
+        title = stringResource(R.string.close_ad_title),
+        message = stringResource(R.string.close_ad_msg),
+        confirmText = stringResource(R.string.close_ad_confirm),
+        confirmOnClick = {
+            menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
+            finishApp()
+        },
+        dismissText = stringResource(R.string.close_ad_dismiss),
+        dismissOnClick = { closeGame = false}
+    )
 }
 
+/**
+ *  AlertDialog for when user wins the game.
+ */
 @Composable
 fun GameWonAlertDialog(
     sbVM: ScoreboardViewModel,
@@ -58,63 +93,54 @@ fun GameWonAlertDialog(
     menuVM: MenuViewModel
 ) {
     val gameWon by gameVM.gameWon.collectAsState()
+    val lgs = sbVM.retrieveLastGameStats(true, gameVM.autoCompleteCorrection)
 
-    if (gameWon) {
-        // pause timer once user reaches max score
-        sbVM.pauseTimer()
-        val lgs = sbVM.retrieveLastGameStats(true, gameVM.autoCompleteCorrection)
-        menuVM.updateStats(lgs)
-        AlertDialog(
-            onDismissRequest = { },
-            confirmButton = {
-                TextButton(onClick = {
-                    gameVM.resetAll(ResetOptions.NEW)
-                    sbVM.reset()
-                }) {
-                    Text(text = stringResource(R.string.win_ad_confirm))
-                }
-            },
-            title = { Text(text = stringResource(R.string.win_ad_title)) },
-            text = {
-                Text(
-                    text = stringResource(
-                        R.string.win_ad_msg,
-                        lgs.moves,
-                        lgs.time.formatTimeDisplay(),
-                        lgs.score,
-                        lgs.totalScore
-                    )
-                )
-            }
-        )
-    }
+    SolitaireAlertDialog(
+        display = gameWon,
+        title = stringResource(R.string.win_ad_title),
+        message = stringResource(
+            R.string.win_ad_msg,
+            lgs.moves,
+            lgs.time.formatTimeDisplay(),
+            lgs.score,
+            lgs.totalScore
+        ),
+        confirmText = stringResource(R.string.win_ad_confirm),
+        confirmOnClick = {
+            gameVM.resetAll(ResetOptions.NEW)
+            sbVM.reset()
+        },
+        runOnDisplay = {
+            sbVM.pauseTimer()
+            menuVM.updateStats(lgs)
+        }
+    )
 }
 
+/**
+ *  AlertDialog for when user tries to switch games midway through another.
+ */
 @Composable
 fun GameSwitchAlertDialog(
     displayGameSwitch: Boolean,
-    onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    confirmOnClick: () -> Unit,
+    dismissOnClick: () -> Unit
 ) {
-    if (displayGameSwitch) {
-        AlertDialog(
-            onDismissRequest = { onDismiss() },
-            confirmButton = {
-                TextButton(onClick = { onConfirm() }) {
-                    Text(text = stringResource(R.string.games_ad_confirm))
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = { onDismiss() }) {
-                    Text(text = stringResource(R.string.games_ad_dismiss))
-                }
-            },
-            title = { Text(text = stringResource(R.string.games_ad_title)) },
-            text = { Text(text = stringResource(R.string.games_ad_msg)) }
-        )
-    }
+    SolitaireAlertDialog(
+        display = displayGameSwitch,
+        title = stringResource(R.string.games_ad_title),
+        message = stringResource(R.string.games_ad_msg),
+        confirmText = stringResource(R.string.games_ad_confirm),
+        confirmOnClick = confirmOnClick,
+        dismissText = stringResource(R.string.games_ad_dismiss),
+        dismissOnClick = dismissOnClick
+    )
 }
 
+/**
+ *  AlertDialog for when user presses Reset button on Toolbar, which gives restart, new, or cancel
+ *  options. Does not use [SolitaireAlertDialog] since it has 2 confirm buttons.
+ */
 @Composable
 fun ResetAlertDialog(
     displayReset: Boolean,

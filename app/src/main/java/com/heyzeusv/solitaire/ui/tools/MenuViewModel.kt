@@ -31,17 +31,9 @@ class MenuViewModel @Inject constructor(
     val displayMenu: StateFlow<Boolean> get() = _displayMenu
     fun updateDisplayMenu(newValue: Boolean) { _displayMenu.value = newValue }
 
-    private val _displayGameSwitch = MutableStateFlow(false)
-    val displayGameSwitch: StateFlow<Boolean> get() = _displayGameSwitch
-    fun updateDisplayGameSwitch(newValue: Boolean) { _displayGameSwitch.value = newValue }
-
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
     val selectedGame: StateFlow<Games> get() = _selectedGame
     fun updateSelectedGame(newValue: Games) { _selectedGame.value = newValue }
-
-    private val _newlySelectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
-    val newlySelectedGame: StateFlow<Games> get() = _newlySelectedGame
-    fun updateNewlySelectedGame(newValue: Games) { _newlySelectedGame.value = newValue }
 
     val stats: StateFlow<StatPreferences> = statManager.statData.stateIn(
         scope = viewModelScope,
@@ -68,7 +60,11 @@ class MenuViewModel @Inject constructor(
                 new.totalTime = old.totalTime.plus(lgs.time)
                 new.totalScore = old.totalScore.plus(lgs.score)
                 new.bestTotalScore =
-                    if (lgs.gameWon) old.bestTotalScore.coerceAtMost(lgs.totalScore) else old.bestTotalScore
+                    if (lgs.gameWon) {
+                        old.bestTotalScore.coerceAtMost(lgs.totalScore)
+                    } else {
+                        old.bestTotalScore
+                    }
             }.build()
         }
         viewModelScope.launch {
