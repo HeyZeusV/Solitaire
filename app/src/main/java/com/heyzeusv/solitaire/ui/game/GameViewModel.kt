@@ -271,6 +271,8 @@ abstract class GameViewModel (
                     is KlondikeTableau -> _tableau.map { KlondikeTableau(it.pile) }
                     is YukonTableau -> _tableau.map { YukonTableau(it.pile) }
                     is AustralianPatienceTableau -> _tableau.map { AustralianPatienceTableau(it.pile) }
+                    is AlaskaTableau -> _tableau.map { AlaskaTableau(it.pile) }
+                    is RussianTableau -> _tableau.map { RussianTableau(it.pile) }
                 }
             )
         }

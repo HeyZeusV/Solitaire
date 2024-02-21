@@ -45,7 +45,9 @@ enum class Games(
     KLONDIKE_TURN_THREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE),
     YUKON(R.string.games_yukon, 0, Game.GAME_YUKON),
     AUSTRALIAN_PATIENCE(R.string.games_australian_patience, 1, Game.GAME_AUSTRALIAN_PATIENCE),
-    CANBERRA(R.string.games_canberra, 1, Game.GAME_CANBERRA)
+    CANBERRA(R.string.games_canberra, 1, Game.GAME_CANBERRA),
+    ALASKA(R.string.games_alaska, 0, Game.GAME_ALASKA),
+    RUSSIAN(R.string.games_russian, 0, Game.GAME_RUSSIAN)
 }
 
 /**

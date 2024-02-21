@@ -90,8 +90,6 @@ class YukonViewModelTest {
         val expectedAutoCompleteActive = false
 
         // going to cheat and give lists that are ready to auto complete
-        ykVM.stock.reset(emptyList())
-        ykVM.waste.reset(emptyList())
         ykVM.tableau.forEach { it.undo(emptyList()) }
         ykVM.tableau[0].add(tc.heartSpade.reversed())
         ykVM.tableau[1].add(tc.spadeHeart.reversed())
