@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
@@ -100,11 +101,12 @@ fun SolitaireTools(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 12.dp)
+            .padding(bottom = 24.dp)
             .testTag("Tools"),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.Top
     ) {
-        val rowModifier = Modifier.weight(1.0f)
+        val rowModifier = Modifier.weight(1f)
         // Menu Button
         SolitaireToolsButton(
             onClick = { menuOnClick(true) },
@@ -152,7 +154,7 @@ fun SolitaireToolsButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier,
+        modifier = modifier.height(48.dp),
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,
