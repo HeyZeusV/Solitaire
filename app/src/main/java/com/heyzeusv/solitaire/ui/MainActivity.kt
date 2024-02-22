@@ -4,13 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.ShaderBrush
@@ -73,26 +74,29 @@ fun SolitaireApp(finishApp: () -> Unit) {
         onPauseOrDispose { sbVM.pauseTimer() }
     }
 
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(brush)
-    ) {
-        SolitaireScoreboard(
-            sbVM = sbVM,
-            modifier = Modifier.weight(0.12f)
-        )
+    Scaffold(
+        modifier = Modifier.background(brush),
+        topBar = {
+            SolitaireScoreboard(
+                sbVM = sbVM,
+                modifier = Modifier
+            )
+        },
+        bottomBar = {
+            SolitaireTools(
+                sbVM = sbVM,
+                gameVM = gameVM,
+                menuVM = menuVM,
+                modifier = Modifier
+            )
+        },
+        containerColor = Color.Transparent
+    ) { paddingValues ->
         SolitaireBoard(
             sbVM = sbVM,
             gameVM = gameVM,
             selectedGame = selectedGame,
-            modifier = Modifier.weight(0.78f)
-        )
-        SolitaireTools(
-            sbVM = sbVM,
-            gameVM = gameVM,
-            menuVM = menuVM,
-            modifier = Modifier.weight(0.10f)
+            modifier = Modifier.padding(paddingValues)
         )
     }
     SolitaireMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
