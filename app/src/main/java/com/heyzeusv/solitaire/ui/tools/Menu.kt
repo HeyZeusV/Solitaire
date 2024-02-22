@@ -1,6 +1,9 @@
 package com.heyzeusv.solitaire.ui.tools
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
@@ -8,10 +11,13 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.material.icons.Icons
@@ -30,8 +36,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,12 +49,14 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
 import com.heyzeusv.solitaire.ui.SolitaireAlertDialog
+import com.heyzeusv.solitaire.ui.SolitaireButton
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.theme.BackgroundOverlay
 import com.heyzeusv.solitaire.util.theme.Pink80
 import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.Games
+import com.heyzeusv.solitaire.util.MenuOptions
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeStats
@@ -111,7 +121,7 @@ fun SolitaireMenu(
     reset: () -> Unit,
     stats: GameStats
 ) {
-    if (displayMenu) {
+    if (false) {
         val scrollableState = rememberScrollState()
 
         BackHandler { updateDisplayMenu(false) }
@@ -228,6 +238,75 @@ fun SolitaireMenu(
                 )
             }
         }
+    }
+}
+
+@Composable
+fun SolitaireMenuButtons(
+    menuVM: MenuViewModel,
+    modifier: Modifier = Modifier
+) {
+
+    val displayMenu by menuVM.displayMenu.collectAsState()
+    SolitaireMenuButtons(
+        displayMenu = displayMenu,
+        modifier = modifier
+    )
+}
+
+@Composable
+fun SolitaireMenuButtons(
+    displayMenu: Boolean,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .padding(start = 12.dp, bottom = 8.dp)
+            .width(IntrinsicSize.Max),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        horizontalAlignment = Alignment.Start
+    ) {
+        MenuOptionButton(
+            displayMenu = displayMenu,
+            option = MenuOptions.GAMES,
+            onClick = { },
+            modifier = Modifier.fillMaxWidth()
+        )
+        MenuOptionButton(
+            displayMenu = displayMenu,
+            option = MenuOptions.STATS,
+            onClick = { },
+            modifier = Modifier.fillMaxWidth()
+        )
+        MenuOptionButton(
+            displayMenu = displayMenu,
+            option = MenuOptions.ABOUT,
+            onClick = { },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+fun MenuOptionButton(
+    displayMenu: Boolean,
+    option: MenuOptions,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    AnimatedVisibility(
+        visible = displayMenu,
+        modifier = modifier,
+        enter = scaleIn(),
+        exit = scaleOut()
+    ) {
+        SolitaireButton(
+            onClick = onClick,
+            icon = painterResource(option.iconId),
+            iconContentDes = stringResource(option.iconDescId),
+            buttonText = stringResource(option.nameId),
+            modifier = Modifier.height(40.dp)
+        )
     }
 }
 

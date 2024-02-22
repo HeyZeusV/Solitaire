@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire.ui.tools
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -72,7 +73,7 @@ fun SolitaireTools(
  */
 @Composable
 fun SolitaireTools(
-    menuOnClick: (Boolean) -> Unit,
+    menuOnClick: () -> Unit,
     resetRestartOnConfirm: () -> Unit,
     resetNewOnConfirm: () -> Unit,
     undoEnabled: Boolean,
@@ -97,10 +98,10 @@ fun SolitaireTools(
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.Top
     ) {
-        val rowModifier = Modifier.weight(1f)
+        val rowModifier = Modifier.weight(1f).height(48.dp)
         // Menu Button
         SolitaireButton(
-            onClick = { menuOnClick(true) },
+            onClick = menuOnClick,
             icon = painterResource(R.drawable.button_menu),
             iconContentDes = stringResource(R.string.tools_cdesc_menu),
             buttonText = stringResource(R.string.tools_button_menu),

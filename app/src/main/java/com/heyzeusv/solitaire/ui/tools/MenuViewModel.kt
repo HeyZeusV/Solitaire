@@ -30,6 +30,7 @@ class MenuViewModel @Inject constructor(
     private val _displayMenu = MutableStateFlow(false)
     val displayMenu: StateFlow<Boolean> get() = _displayMenu
     fun updateDisplayMenu(newValue: Boolean) { _displayMenu.value = newValue }
+    fun updateDisplayMenu() { _displayMenu.value = !_displayMenu.value }
 
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
     val selectedGame: StateFlow<Games> get() = _selectedGame

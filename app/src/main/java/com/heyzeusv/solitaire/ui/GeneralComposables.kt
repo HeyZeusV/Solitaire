@@ -3,7 +3,6 @@ package com.heyzeusv.solitaire.ui
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -35,7 +34,7 @@ fun SolitaireButton(
 ) {
     OutlinedButton(
         onClick = onClick,
-        modifier = modifier.height(48.dp),
+        modifier = modifier,
         enabled = enabled,
         colors = ButtonDefaults.buttonColors(
             containerColor = Color.Transparent,

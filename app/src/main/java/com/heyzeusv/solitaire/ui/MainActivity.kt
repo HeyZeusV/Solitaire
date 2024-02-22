@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
@@ -34,6 +35,7 @@ import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.tools.MenuViewModel
 import com.heyzeusv.solitaire.ui.tools.SolitaireMenu
+import com.heyzeusv.solitaire.ui.tools.SolitaireMenuButtons
 import com.heyzeusv.solitaire.ui.tools.SolitaireTools
 import com.heyzeusv.solitaire.util.Games
 import dagger.hilt.android.AndroidEntryPoint
@@ -103,6 +105,10 @@ fun SolitaireApp(finishApp: () -> Unit) {
                 gameVM = gameVM,
                 selectedGame = selectedGame,
                 modifier = Modifier
+            )
+            SolitaireMenuButtons(
+                menuVM = menuVM,
+                modifier = Modifier.align(Alignment.BottomStart)
             )
         }
     }
