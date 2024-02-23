@@ -64,13 +64,15 @@ enum class MoveResult {
 }
 
 /**
- *  Enum class that represents the available options when user clicks on Menu button.
+ *  Enum class that represents the available options when user clicks on Menu button. Also to be
+ *  used as state to determine which screen to show.
  */
-enum class MenuOptions(
+enum class MenuState(
     @StringRes val nameId: Int,
     @DrawableRes val iconId: Int,
     @StringRes val iconDescId: Int
 ) {
+    BUTTONS(0, 0, 0),
     GAMES(R.string.menu_button_games, R.drawable.button_menu_games, R.string.menu_cdesc_games),
     STATS(R.string.menu_button_stats, R.drawable.button_menu_stats, R.string.menu_cdesc_stats),
     ABOUT(R.string.menu_button_about, R.drawable.button_menu_about, R.string.menu_cdesc_about)

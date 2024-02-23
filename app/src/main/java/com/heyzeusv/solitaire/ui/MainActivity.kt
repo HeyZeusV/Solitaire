@@ -32,10 +32,9 @@ import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.game.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
+import com.heyzeusv.solitaire.ui.tools.MenuContainer
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.tools.MenuViewModel
-import com.heyzeusv.solitaire.ui.tools.SolitaireMenu
-import com.heyzeusv.solitaire.ui.tools.SolitaireMenuButtons
 import com.heyzeusv.solitaire.ui.tools.SolitaireTools
 import com.heyzeusv.solitaire.util.Games
 import dagger.hilt.android.AndroidEntryPoint
@@ -83,6 +82,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
         topBar = {
             SolitaireScoreboard(
                 sbVM = sbVM,
+                menuVM = menuVM,
                 modifier = Modifier
             )
         },
@@ -96,23 +96,23 @@ fun SolitaireApp(finishApp: () -> Unit) {
         },
         containerColor = Color.Transparent
     ) { paddingValues ->
-        Box(modifier = Modifier
-            .padding(paddingValues)
-            .fillMaxSize()
-        ) {
+        Box(modifier = Modifier.fillMaxSize()) {
             SolitaireBoard(
                 sbVM = sbVM,
                 gameVM = gameVM,
                 selectedGame = selectedGame,
-                modifier = Modifier
+                modifier = Modifier.padding(paddingValues)
             )
-            SolitaireMenuButtons(
+            MenuContainer(
+                sbVM = sbVM,
+                gameVM = gameVM,
                 menuVM = menuVM,
+                paddingValues = paddingValues,
                 modifier = Modifier.align(Alignment.BottomStart)
             )
         }
     }
-    SolitaireMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
+//    SolitaireMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
     CloseGameAlertDialog(sbVM = sbVM, menuVM = menuVM, finishApp = finishApp)
     GameWonAlertDialog(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
 }

@@ -7,6 +7,7 @@ import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.Games
+import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,6 +32,10 @@ class MenuViewModel @Inject constructor(
     val displayMenu: StateFlow<Boolean> get() = _displayMenu
     fun updateDisplayMenu(newValue: Boolean) { _displayMenu.value = newValue }
     fun updateDisplayMenu() { _displayMenu.value = !_displayMenu.value }
+
+    private val _menuState = MutableStateFlow(MenuState.BUTTONS)
+    val menuState: StateFlow<MenuState> get() = _menuState
+    fun updateMenuState(newValue: MenuState) { _menuState.value = newValue}
 
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
     val selectedGame: StateFlow<Games> get() = _selectedGame

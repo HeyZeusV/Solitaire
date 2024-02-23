@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.ui.tools
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
@@ -12,6 +13,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -56,7 +58,7 @@ import com.heyzeusv.solitaire.util.theme.BackgroundOverlay
 import com.heyzeusv.solitaire.util.theme.Pink80
 import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.Games
-import com.heyzeusv.solitaire.util.MenuOptions
+import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeStats
@@ -67,6 +69,33 @@ import com.heyzeusv.solitaire.util.getScorePercentage
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.getWinPercentage
 
+@Composable
+fun MenuContainer(
+    sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
+    menuVM: MenuViewModel,
+    paddingValues: PaddingValues,
+    modifier: Modifier = Modifier
+) {
+    val displayMenu by menuVM.displayMenu.collectAsState()
+    val menuState by menuVM.menuState.collectAsState()
+
+    AnimatedContent(
+        targetState = menuState,
+        modifier = modifier,
+        label = "Menu Transform"
+    ) { state ->
+        when (state) {
+            MenuState.BUTTONS -> SolitaireMenuButtons(
+                displayMenu = displayMenu,
+                updateMenuState = { menuVM.updateMenuState(it) },
+                modifier = Modifier.padding(paddingValues)
+            )
+            else -> SolitaireMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
+        }
+    }
+}
+
 /**
  *  Composable that displays Menu which allows user to switch games and view stats for selected game.
  */
@@ -76,7 +105,6 @@ fun SolitaireMenu(
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
 ) {
-    val displayMenu by menuVM.displayMenu.collectAsState()
     val selectedGame by menuVM.selectedGame.collectAsState()
     val stats by menuVM.stats.collectAsState()
     val currentGameStats =
@@ -84,7 +112,6 @@ fun SolitaireMenu(
 
     val lgs = sbVM.retrieveLastGameStats(false)
     SolitaireMenu(
-        displayMenu = displayMenu,
         updateDisplayMenu = menuVM::updateDisplayMenu,
         updateStats = menuVM::updateStats,
         lgs = lgs,
@@ -112,7 +139,6 @@ fun SolitaireMenu(
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun SolitaireMenu(
-    displayMenu: Boolean,
     updateDisplayMenu: (Boolean) -> Unit,
     updateStats: (LastGameStats) -> Unit,
     lgs: LastGameStats,
@@ -121,142 +147,132 @@ fun SolitaireMenu(
     reset: () -> Unit,
     stats: GameStats
 ) {
-    if (false) {
-        val scrollableState = rememberScrollState()
+    val scrollableState = rememberScrollState()
 
-        BackHandler { updateDisplayMenu(false) }
+    BackHandler { updateDisplayMenu(false) }
 
-        var displayGameSwitch by remember { mutableStateOf(false) }
-        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_THREE) }
+    var displayGameSwitch by remember { mutableStateOf(false) }
+    var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_THREE) }
 
-        GameSwitchAlertDialog(
-            displayGameSwitch = displayGameSwitch,
-            confirmOnClick = {
-                if (lgs.moves > 1) updateStats(lgs)
-                updateSelectedGame(newlySelectedGame)
-                reset()
-                displayGameSwitch = false
-            },
-            dismissOnClick = { displayGameSwitch = false }
-        )
-        Surface(
+    GameSwitchAlertDialog(
+        displayGameSwitch = displayGameSwitch,
+        confirmOnClick = {
+            if (lgs.moves > 1) updateStats(lgs)
+            updateSelectedGame(newlySelectedGame)
+            reset()
+            displayGameSwitch = false
+        },
+        dismissOnClick = { displayGameSwitch = false }
+    )
+    Surface(
+        modifier = Modifier
+            .fillMaxSize()
+            .clickable { updateDisplayMenu(false) }
+            .testTag("Close Menu"),
+        color = BackgroundOverlay
+    ) {}
+    Card(
+        modifier = Modifier
+            .wrapContentHeight()
+            .fillMaxWidth()
+            .padding(all = 32.dp)
+            .testTag("Menu")
+    ) {
+        Column(
             modifier = Modifier
-                .fillMaxSize()
-                .clickable { updateDisplayMenu(false) }
-                .testTag("Close Menu"),
-            color = BackgroundOverlay
-        ) {}
-        Card(
-            modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(all = 32.dp)
-                .testTag("Menu")
+                .padding(all = 24.dp)
+                .scrollable(state = scrollableState, orientation = Orientation.Vertical),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(all = 24.dp)
-                    .scrollable(state = scrollableState, orientation = Orientation.Vertical),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+            Text(
+                text = stringResource(R.string.menu_header_games),
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.menu_header_games),
-                    textDecoration = TextDecoration.Underline,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Games.entries.forEach {
-                        FilterChip(
-                            selected = it == selectedGame,
-                            onClick = {
-                                if (it != selectedGame) {
-                                    if (lgs.moves > 0) {
-                                        displayGameSwitch = true
-                                        newlySelectedGame = it
-                                    } else {
-                                        updateSelectedGame(it)
-                                        reset()
-                                    }
+                Games.entries.forEach {
+                    FilterChip(
+                        selected = it == selectedGame,
+                        onClick = {
+                            if (it != selectedGame) {
+                                if (lgs.moves > 0) {
+                                    displayGameSwitch = true
+                                    newlySelectedGame = it
+                                } else {
+                                    updateSelectedGame(it)
+                                    reset()
                                 }
-                            },
-                            label = { Text(text = stringResource(it.gameName)) },
-                            leadingIcon = {
-                                if (it == selectedGame) {
-                                    Icon(
-                                        imageVector = Icons.Default.Done,
-                                        contentDescription = stringResource(
-                                            R.string.menu_cdesc_chip,
-                                            stringResource(it.gameName)
-                                        ),
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                    )
-                                }
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Purple40
-                            )
+                            }
+                        },
+                        label = { Text(text = stringResource(it.gameName)) },
+                        leadingIcon = {
+                            if (it == selectedGame) {
+                                Icon(
+                                    imageVector = Icons.Default.Done,
+                                    contentDescription = stringResource(
+                                        R.string.menu_cdesc_chip,
+                                        stringResource(it.gameName)
+                                    ),
+                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
+                                )
+                            }
+                        },
+                        colors = FilterChipDefaults.filterChipColors(
+                            selectedContainerColor = Purple40
                         )
-                    }
-                }
-                Text(
-                    text = stringResource(R.string.menu_header_stats),
-                    textDecoration = TextDecoration.Underline,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                Text(
-                    text = stringResource(
-                        R.string.menu_content_stats,
-                        stats.gamesPlayed,
-                        stats.gamesWon,
-                        stats.getWinPercentage(),
-                        stats.lowestMoves,
-                        stats.getAverageMoves(),
-                        stats.totalMoves,
-                        stats.fastestWin.formatTimeStats(),
-                        stats.getAverageTime().formatTimeStats(),
-                        stats.totalTime.formatTimeStats(),
-                        stats.getAverageScore(),
-                        stats.getScorePercentage(),
-                        stats.bestTotalScore
                     )
-                )
-                Text(
-                    text = stringResource(R.string.menu_tip_totalscore),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = stringResource(R.string.menu_header_credits),
-                    textDecoration = TextDecoration.Underline,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                LinkifyText(
-                    text = stringResource(R.string.menu_content_credits),
-                    linkColor = Pink80
-                )
+                }
             }
+            Text(
+                text = stringResource(R.string.menu_header_stats),
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            Text(
+                text = stringResource(
+                    R.string.menu_content_stats,
+                    stats.gamesPlayed,
+                    stats.gamesWon,
+                    stats.getWinPercentage(),
+                    stats.lowestMoves,
+                    stats.getAverageMoves(),
+                    stats.totalMoves,
+                    stats.fastestWin.formatTimeStats(),
+                    stats.getAverageTime().formatTimeStats(),
+                    stats.totalTime.formatTimeStats(),
+                    stats.getAverageScore(),
+                    stats.getScorePercentage(),
+                    stats.bestTotalScore
+                )
+            )
+            Text(
+                text = stringResource(R.string.menu_tip_totalscore),
+                style = MaterialTheme.typography.bodySmall
+            )
+            Text(
+                text = stringResource(R.string.menu_header_credits),
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.headlineMedium
+            )
+            LinkifyText(
+                text = stringResource(R.string.menu_content_credits),
+                linkColor = Pink80
+            )
         }
     }
 }
 
-@Composable
-fun SolitaireMenuButtons(
-    menuVM: MenuViewModel,
-    modifier: Modifier = Modifier
-) {
-
-    val displayMenu by menuVM.displayMenu.collectAsState()
-    SolitaireMenuButtons(
-        displayMenu = displayMenu,
-        modifier = modifier
-    )
-}
-
+/**
+ *  Composable that displays the various [MenuState] available to user. [displayMenu] determines
+ *  if [MenuOptionButton]s should be displayed.
+ */
 @Composable
 fun SolitaireMenuButtons(
     displayMenu: Boolean,
+    updateMenuState: (MenuState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -266,32 +282,46 @@ fun SolitaireMenuButtons(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.Start
     ) {
-        MenuOptionButton(
-            displayMenu = displayMenu,
-            option = MenuOptions.GAMES,
-            onClick = { },
-            modifier = Modifier.fillMaxWidth()
-        )
-        MenuOptionButton(
-            displayMenu = displayMenu,
-            option = MenuOptions.STATS,
-            onClick = { },
-            modifier = Modifier.fillMaxWidth()
-        )
-        MenuOptionButton(
-            displayMenu = displayMenu,
-            option = MenuOptions.ABOUT,
-            onClick = { },
-            modifier = Modifier.fillMaxWidth()
-        )
+        val menuButtons = listOf(MenuState.GAMES, MenuState.STATS, MenuState.ABOUT)
+        menuButtons.forEach { option ->
+            MenuOptionButton(
+                displayMenu = displayMenu,
+                option = option,
+                onClick = updateMenuState,
+                modifier = Modifier.fillMaxWidth()
+            )
+        }
+//        MenuOptionButton(
+//            displayMenu = displayMenu,
+//            option = MenuState.GAMES,
+//            onClick = updateMenuState,
+//            modifier = Modifier.fillMaxWidth()
+//        )
+//        MenuOptionButton(
+//            displayMenu = displayMenu,
+//            option = MenuState.STATS,
+//            onClick = updateMenuState,
+//            modifier = Modifier.fillMaxWidth()
+//        )
+//        MenuOptionButton(
+//            displayMenu = displayMenu,
+//            option = MenuState.ABOUT,
+//            onClick = updateMenuState,
+//            modifier = Modifier.fillMaxWidth()
+//        )
     }
 }
 
+/**
+ *  [SolitaireButton] Composable wrapped in a [AnimatedVisibility] Composable. [displayMenu] causes
+ *  enter/exit animation to start. [option] contains the text/icon data to be displayed. [onClick]
+ *  is ran when pressed.
+ */
 @Composable
 fun MenuOptionButton(
     displayMenu: Boolean,
-    option: MenuOptions,
-    onClick: () -> Unit,
+    option: MenuState,
+    onClick: (MenuState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     AnimatedVisibility(
@@ -301,7 +331,7 @@ fun MenuOptionButton(
         exit = scaleOut()
     ) {
         SolitaireButton(
-            onClick = onClick,
+            onClick = { onClick(option) },
             icon = painterResource(option.iconId),
             iconContentDes = stringResource(option.iconDescId),
             buttonText = stringResource(option.nameId),
@@ -315,7 +345,6 @@ fun MenuOptionButton(
 fun SolitaireMenuPreview() {
     SolitairePreview {
         SolitaireMenu(
-            displayMenu = true,
             updateDisplayMenu = { },
             updateStats = { },
             lgs = LastGameStats(false, 0, 0, 0),
@@ -323,6 +352,29 @@ fun SolitaireMenuPreview() {
             updateSelectedGame = { },
             reset = { },
             stats = GameStats.getDefaultInstance()
+        )
+    }
+}
+
+@Preview
+@Composable
+fun SolitaireMenuButtonsPreview() {
+    SolitairePreview {
+        SolitaireMenuButtons(
+            displayMenu = true,
+            updateMenuState = { }
+        )
+    }
+}
+
+@Preview
+@Composable
+fun MenuOptionButtonPreview() {
+    SolitairePreview {
+        MenuOptionButton(
+            displayMenu = true,
+            option = MenuState.GAMES,
+            onClick = { }
         )
     }
 }
