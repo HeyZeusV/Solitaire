@@ -77,6 +77,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
         onPauseOrDispose { sbVM.pauseTimer() }
     }
 
+    // TODO Look into getting away from scaffold, not that helpful in this situation
     Scaffold(
         modifier = Modifier.background(brush),
         topBar = {

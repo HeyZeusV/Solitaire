@@ -28,10 +28,10 @@ class MenuViewModel @Inject constructor(
     private val statManager: StatManager
 ) : ViewModel() {
 
-    private val _displayMenu = MutableStateFlow(false)
-    val displayMenu: StateFlow<Boolean> get() = _displayMenu
-    fun updateDisplayMenu(newValue: Boolean) { _displayMenu.value = newValue }
-    fun updateDisplayMenu() { _displayMenu.value = !_displayMenu.value }
+    private val _displayMenuButtons = MutableStateFlow(false)
+    val displayMenuButtons: StateFlow<Boolean> get() = _displayMenuButtons
+    fun updateDisplayMenuButtons(newValue: Boolean) { _displayMenuButtons.value = newValue }
+    fun updateDisplayMenuButtons() { _displayMenuButtons.value = !_displayMenuButtons.value }
 
     private val _menuState = MutableStateFlow(MenuState.BUTTONS)
     val menuState: StateFlow<MenuState> get() = _menuState

@@ -47,7 +47,7 @@ fun SolitaireTools(
     val menuState by menuVM.menuState.collectAsState()
 
     SolitaireTools(
-        menuOnClick = menuVM::updateDisplayMenu,
+        menuOnClick = menuVM::updateDisplayMenuButtons,
         resetRestartOnConfirm = {
             menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
             gameVM.resetAll(RESTART)

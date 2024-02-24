@@ -14,7 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
-import com.heyzeusv.solitaire.ui.tools.SolitaireMenu
+import com.heyzeusv.solitaire.ui.tools.StatsScreen
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.onNodeWithTextId
@@ -46,13 +46,12 @@ class MenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme(darkTheme = true) {
-                    SolitaireMenu(
-                        displayMenu = true,
-                        updateDisplayMenu = { },
+                    StatsScreen(
+                        updateMenuState = { },
+                        updateStats = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         updateSelectedGame = { },
-                        updateStats = { },
                         reset = { },
                         stats = gameOneStats
                     )
@@ -88,16 +87,15 @@ class MenuTest {
                 SolitaireTheme(darkTheme = true) {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
-                    SolitaireMenu(
-                        displayMenu = true,
-                        updateDisplayMenu = { },
+                    StatsScreen(
+                        updateMenuState = { },
+                        updateStats = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
                             stats = gameTwoStats
                         },
-                        updateStats = { },
                         reset = { },
                         stats = stats
                     )
@@ -135,16 +133,15 @@ class MenuTest {
                 SolitaireTheme(darkTheme = true) {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
-                    SolitaireMenu(
-                        displayMenu = true,
-                        updateDisplayMenu = { },
+                    StatsScreen(
+                        updateMenuState = { },
+                        updateStats = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
                             stats = gameTwoStats
                         },
-                        updateStats = { },
                         reset = { },
                         stats = stats
                     )
@@ -187,16 +184,15 @@ class MenuTest {
                 SolitaireTheme(darkTheme = true) {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
-                    SolitaireMenu(
-                        displayMenu = true,
-                        updateDisplayMenu = { },
+                    StatsScreen(
+                        updateMenuState = { },
+                        updateStats = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
                             stats = gameTwoStats
                         },
-                        updateStats = { },
                         reset = { },
                         stats = stats
                     )
