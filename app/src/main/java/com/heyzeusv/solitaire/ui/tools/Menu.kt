@@ -16,19 +16,18 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
@@ -42,9 +41,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.ui.SolitaireButton
 import com.heyzeusv.solitaire.ui.game.GameViewModel
@@ -52,6 +54,9 @@ import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.SolitairePreview
 
+/**
+ *  Composable that displays Menu options which transition into Menu screens.
+ */
 @Composable
 fun MenuContainer(
     sbVM: ScoreboardViewModel,
@@ -59,140 +64,195 @@ fun MenuContainer(
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
 ) {
-    val displayMenu by menuVM.displayMenuButtons.collectAsState()
+    val displayMenuButtons by menuVM.displayMenuButtons.collectAsState()
     val menuState by menuVM.menuState.collectAsState()
+    Column(modifier = modifier) {
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
+            option = MenuState.GAMES,
+            content = { StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
+        )
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
+            option = MenuState.STATS,
+            content = { StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
+        )
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
+            option = MenuState.ABOUT,
+            transformOrigin = TransformOrigin(0.5f, 0.20f),
+            content = { StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) },
+            bottomPadding = 80.dp
+        )
+    }
+}
+
+/**
+ *  Composable that transitions from given [option] Button to [content] Screen. [displayMenuButtons]
+ *  determines if initial Button should be animated in/out. [menuState] determines which Composable
+ *  to Transition to, while [updateMenuState] changes that value. [bottomPadding] is needed due to
+ *  not being anchored to another Composable, as well as having to transition to full screen.
+ *  [transformOrigin] determines where Button scales in/out from.
+ */
+@Composable
+fun MenuOptionTransition(
+    displayMenuButtons: Boolean,
+    menuState: MenuState,
+    updateMenuState: (MenuState) -> Unit,
+    option: MenuState,
+    content: @Composable () -> Unit,
+    bottomPadding: Dp = 8.dp,
+    transformOrigin: TransformOrigin = TransformOrigin.Center
+) {
 
     val transition = updateTransition(targetState = menuState, label = "Menu Transition")
-    val backgroundColor by transition.animateColor(label = "Menu backgroundColor Transform") { state ->
-        when (state) {
-            MenuState.BUTTONS -> Color.Transparent
-            else -> MaterialTheme.colorScheme.surfaceVariant
-        }
-    }
-    val cornerRadius by transition.animateDp(
-        label = "Menu cornerRadius Transform",
-        transitionSpec = {
-            when (targetState) {
-                MenuState.BUTTONS -> tween(
-                    durationMillis = 250,
-                    easing = EaseOutCubic
-                )
-                else -> tween(
-                    durationMillis = 250,
-                    easing = EaseInCubic
-                )
-            }
-        }
+    val backgroundColor by transition.animateColor(
+        label = "Menu ${option.name} backgroundColor Transition"
     ) { state ->
         when (state) {
-            MenuState.BUTTONS -> 20.dp
-            else -> 0.dp
-        }
-    }
-    val borderWidth by transition.animateDp(
-        label = "border width",
-        transitionSpec = {
-            when (targetState) {
-                MenuState.BUTTONS -> tween(
-                    durationMillis = 250,
-                    easing = EaseOutCubic
-                )
-                else -> tween(
-                    durationMillis = 250,
-                    easing = EaseInCubic
-                )
-            }
-        }
-    ) { state ->
-        when (state) {
-            MenuState.BUTTONS -> 2.dp
-            else -> 0.dp
-        }
-    }
-    val borderColor by transition.animateColor(
-        label = "border color",
-        transitionSpec = {
-            when (targetState) {
-                MenuState.BUTTONS -> tween(
-                    durationMillis = 250,
-                    easing = EaseOutCubic
-                )
-                else -> tween(
-                    durationMillis = 250,
-                    easing = EaseInCubic
-                )
-            }
-        }
-    ) { state ->
-        when (state) {
-            MenuState.BUTTONS -> Color.White
+            option -> MaterialTheme.colorScheme.surfaceVariant
             else -> Color.Transparent
         }
     }
-    val elevation by transition.animateDp(
-        label = "elevation",
+    val cornerRadius by transition.animateDp(
+        label = "Menu ${option.name} cornerRadius Transition",
         transitionSpec = {
             when (targetState) {
                 MenuState.BUTTONS -> tween(
                     durationMillis = 250,
-                    easing = EaseOutCubic,
+                    easing = EaseOutCubic
                 )
-
                 else -> tween(
                     durationMillis = 250,
-                    easing = EaseOutCubic,
+                    easing = EaseInCubic
                 )
             }
         }
     ) { state ->
         when (state) {
-            MenuState.BUTTONS -> 1.dp
-            else -> 0.dp
+            option -> 0.dp
+            else -> 20.dp
         }
     }
-    val paddingStart by transition.animateDp(label = "Menu paddingStart Transform") { state ->
+    val borderWidth by transition.animateDp(
+        label = "Menu ${option.name} borderWidth Transition",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 250,
+                    easing = EaseOutCubic
+                )
+                else -> tween(
+                    durationMillis = 250,
+                    easing = EaseInCubic
+                )
+            }
+        }
+    ) { state ->
         when (state) {
-            MenuState.BUTTONS -> 12.dp
-            else -> 0.dp
+            option -> 0.dp
+            else -> 2.dp
         }
     }
-    val paddingBottom by transition.animateDp(label = "Menu paddingBottom Transform") { state ->
+    val borderColor by transition.animateColor(
+        label = "Menu ${option.name} borderColor Transition",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 250,
+                    easing = EaseOutCubic
+                )
+                else -> tween(
+                    durationMillis = 250,
+                    easing = EaseInCubic
+                )
+            }
+        }
+    ) { state ->
         when (state) {
-            MenuState.BUTTONS -> 72.dp + 8.dp
+            option -> Color.Transparent
+            else -> Color.White
+        }
+    }
+    val elevation by transition.animateDp(
+        label = "Menu ${option.name} elevation Transition",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 250,
+                    easing = EaseOutCubic,
+                )else -> tween(
+                    durationMillis = 250,
+                    easing = EaseInCubic,
+                )
+            }
+        }
+    ) { state ->
+        when (state) {
+            option -> 0.dp
+            else -> 1.dp
+        }
+    }
+    val paddingStart by transition.animateDp(
+        label = "Menu ${option.name} paddingStart Transition"
+    ) { state ->
+        when (state) {
+            option -> 0.dp
+            else -> 12.dp
+        }
+    }
+    val paddingBottom by transition.animateDp(
+        label = "Menu ${option.name} paddingBottom Transition"
+    ) { state ->
+        when (state) {
+            MenuState.BUTTONS -> bottomPadding
             else -> 0.dp
         }
     }
 
-    transition.AnimatedContent(
-        modifier = modifier
-            .padding(start = paddingStart, bottom = paddingBottom)
-            .shadow(
-                elevation = elevation, shape = RoundedCornerShape(cornerRadius),
-                ambientColor = Color.Transparent,
-                spotColor = Color.Transparent
-            )
-            .border(
-                border = BorderStroke(
-                    width = borderWidth,
-                    color = borderColor
-                ),
-                shape = RoundedCornerShape(cornerRadius)
-            )
-            .drawBehind { drawRect(backgroundColor) },
-        transitionSpec = {
-            (fadeIn(animationSpec = tween(durationMillis = 250, delayMillis = 90)))
-                .togetherWith(fadeOut(animationSpec = tween(durationMillis = 250)))
-                .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ ->
-                    tween(durationMillis = 250, easing = FastOutSlowInEasing)
-                }))
-        }
-    ) { state ->
-        when (state) {
-            MenuState.STATS -> StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
-            else -> MenuOptionButton(
-                option = MenuState.STATS,
-                onClick = {menuVM.updateMenuState(MenuState.STATS) }
-            )
+    AnimatedVisibility(
+        visible = displayMenuButtons,
+        enter = scaleIn(transformOrigin = transformOrigin),
+        exit = scaleOut(transformOrigin = transformOrigin)
+    ) {
+        transition.AnimatedContent(
+            modifier = Modifier
+                .padding(start = paddingStart, bottom = paddingBottom)
+                .shadow(
+                    elevation = elevation, shape = RoundedCornerShape(cornerRadius),
+                    ambientColor = Color.Transparent,
+                    spotColor = Color.Transparent
+                )
+                .border(
+                    border = BorderStroke(
+                        width = borderWidth,
+                        color = borderColor
+                    ),
+                    shape = RoundedCornerShape(cornerRadius)
+                )
+                .drawBehind { drawRect(backgroundColor) },
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(durationMillis = 250, delayMillis = 90)))
+                    .togetherWith(fadeOut(animationSpec = tween(durationMillis = 250)))
+                    .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ ->
+                        tween(durationMillis = 250, easing = FastOutSlowInEasing)
+                    }))
+            }
+        ) { state ->
+            when (state) {
+                option -> content()
+                MenuState.BUTTONS -> MenuOptionButton(
+                    option = option,
+                    onClick = { updateMenuState(option) }
+                )
+                else -> {}
+            }
         }
     }
 }
@@ -211,16 +271,15 @@ fun MenuOptionButton(
     Box(
         modifier = modifier
             .height(40.dp)
-            .clickable(
-                onClick = onClick,
-            ),
+            .fillMaxWidth(0.3f)
+            .clickable(onClick = onClick),
         contentAlignment = Alignment.Center,
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 24.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
-            ) {
+        ) {
             Icon(
                 painter = painterResource(option.iconId),
                 contentDescription = stringResource(option.iconDescId),
@@ -237,90 +296,39 @@ fun MenuOptionButton(
     }
 }
 
-/**
- *  Composable that displays the various [MenuState] available to user. [displayMenu] determines
- *  if [MenuOptionButtonOld]s should be displayed.
- */
-@Composable
-fun SolitaireMenuButtons(
-    displayMenu: Boolean,
-    updateMenuState: (MenuState) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-//            .padding(start = 12.dp, bottom = 8.dp)
-            .width(IntrinsicSize.Max),
-        verticalArrangement = Arrangement.spacedBy(8.dp),
-        horizontalAlignment = Alignment.Start
-    ) {
-        val menuButtons = listOf(MenuState.GAMES)
-        menuButtons.forEach { option ->
-            MenuOptionButtonOld(
-                displayMenu = displayMenu,
-                option = option,
-                onClick = updateMenuState,
-                modifier = Modifier.fillMaxWidth()
-            )
-        }
-    }
-}
-
-/**
- *  [SolitaireButton] Composable wrapped in a [AnimatedVisibility] Composable. [displayMenu] causes
- *  enter/exit animation to start. [option] contains the text/icon data to be displayed. [onClick]
- *  is ran when pressed.
- */
-@Composable
-fun MenuOptionButtonOld(
-    displayMenu: Boolean,
-    option: MenuState,
-    onClick: (MenuState) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    AnimatedVisibility(
-        visible = displayMenu,
-        modifier = modifier,
-        enter = scaleIn(),
-        exit = scaleOut()
-    ) {
-        SolitaireButton(
-            onClick = { onClick(option) },
-            icon = painterResource(option.iconId),
-            iconContentDes = stringResource(option.iconDescId),
-            buttonText = stringResource(option.nameId),
-            modifier = Modifier.height(40.dp)
-        )
-    }
-}
-
+@Preview(name = "NEXUS_7", device = Devices.NEXUS_7)
+@Preview(name = "NEXUS_7_2013", device = Devices.NEXUS_7_2013)
+@Preview(name = "NEXUS_5", device = Devices.NEXUS_5) // 2013
+@Preview(name = "NEXUS_6", device = Devices.NEXUS_6)
+@Preview(name = "NEXUS_9", device = Devices.NEXUS_9)
+@Preview(name = "NEXUS_10", device = Devices.NEXUS_10)
+@Preview(name = "NEXUS_5X", device = Devices.NEXUS_5X)
+@Preview(name = "NEXUS_6P", device = Devices.NEXUS_6P)
+@Preview(name = "PIXEL_C", device = Devices.PIXEL_C)
+@Preview(name = "PIXEL", device = Devices.PIXEL)
+@Preview(name = "PIXEL_XL", device = Devices.PIXEL_XL)
+@Preview(name = "PIXEL_2", device = Devices.PIXEL_2)
+@Preview(name = "PIXEL_2_XL", device = Devices.PIXEL_2_XL)
+@Preview(name = "PIXEL_3", device = Devices.PIXEL_3)
+@Preview(name = "PIXEL_3_XL", device = Devices.PIXEL_3_XL)
+@Preview(name = "PIXEL_3A", device = Devices.PIXEL_3A)
+@Preview(name = "PIXEL_3A_XL", device = Devices.PIXEL_3A_XL)
+@Preview(name = "PIXEL_4", device = Devices.PIXEL_4)
+@Preview(name = "PIXEL_4_XL", device = Devices.PIXEL_4_XL)
 @Preview
 @Composable
 fun MenuOptionButtonPreview() {
     SolitairePreview {
-        MenuOptionButton(option = MenuState.STATS, onClick = { })
-    }
-}
-
-@Preview
-@Composable
-fun SolitaireMenuButtonsPreview() {
-    SolitairePreview {
-        SolitaireMenuButtons(
-            displayMenu = true,
-            updateMenuState = { }
-        )
-    }
-}
-
-@Preview
-@Composable
-fun MenuOptionButtonOldPreview() {
-    SolitairePreview {
-        MenuOptionButtonOld(
-            displayMenu = true,
-            option = MenuState.GAMES,
-            onClick = { }
-        )
+        Box(modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth()) {
+            MenuOptionButton(
+                option = MenuState.STATS,
+                onClick = { },
+                modifier = Modifier
+                    .fillMaxWidth(0.3f)
+                    .background(Color.Gray)
+            )
+        }
     }
 }
