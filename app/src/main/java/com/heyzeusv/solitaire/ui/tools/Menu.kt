@@ -20,7 +20,6 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -55,7 +54,6 @@ fun MenuContainer(
     sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
-    paddingValues: PaddingValues,
     modifier: Modifier = Modifier
 ) {
     val displayMenu by menuVM.displayMenuButtons.collectAsState()
@@ -117,7 +115,7 @@ fun MenuContainer(
     }
     val paddingBottom by transition.animateDp(label = "Menu paddingBottom Transform") { state ->
         when (state) {
-            MenuState.BUTTONS -> paddingValues.calculateBottomPadding() + 8.dp
+            MenuState.BUTTONS -> 72.dp + 8.dp
             else -> 0.dp
         }
     }

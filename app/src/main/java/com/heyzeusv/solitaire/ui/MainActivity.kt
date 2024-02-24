@@ -5,16 +5,14 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.ShaderBrush
@@ -26,6 +24,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.AlaskaViewModel
 import com.heyzeusv.solitaire.ui.game.AustralianPatienceViewModel
 import com.heyzeusv.solitaire.ui.game.CanberraViewModel
+import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.game.KlondikeViewModel
 import com.heyzeusv.solitaire.ui.game.RussianViewModel
 import com.heyzeusv.solitaire.ui.game.SolitaireBoard
@@ -77,43 +76,55 @@ fun SolitaireApp(finishApp: () -> Unit) {
         onPauseOrDispose { sbVM.pauseTimer() }
     }
 
-    // TODO Look into getting away from scaffold, not that helpful in this situation
-    Scaffold(
-        modifier = Modifier.background(brush),
-        topBar = {
-            SolitaireScoreboard(
-                sbVM = sbVM,
-                menuVM = menuVM,
-                modifier = Modifier
-            )
-        },
-        bottomBar = {
-            SolitaireTools(
-                sbVM = sbVM,
-                gameVM = gameVM,
-                menuVM = menuVM,
-                modifier = Modifier
-            )
-        },
-        containerColor = Color.Transparent
-    ) { paddingValues ->
-        Box(modifier = Modifier.fillMaxSize()) {
-            SolitaireBoard(
-                sbVM = sbVM,
-                gameVM = gameVM,
-                selectedGame = selectedGame,
-                modifier = Modifier.padding(paddingValues)
-            )
-            MenuContainer(
-                sbVM = sbVM,
-                gameVM = gameVM,
-                menuVM = menuVM,
-                paddingValues = paddingValues,
-                modifier = Modifier.align(Alignment.BottomStart)
-            )
-        }
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(brush)
+    ) {
+        SolitaireScreen(
+            sbVM = sbVM,
+            gameVM = gameVM,
+            menuVM = menuVM,
+            selectedGame = selectedGame
+        )
+        MenuContainer(
+            sbVM = sbVM,
+            gameVM = gameVM,
+            menuVM = menuVM,
+            modifier = Modifier.align(Alignment.BottomStart)
+        )
     }
 //    SolitaireMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
     CloseGameAlertDialog(sbVM = sbVM, menuVM = menuVM, finishApp = finishApp)
     GameWonAlertDialog(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
+}
+
+/**
+ *  Composable which displays Scoreboard, Board, and Tools.
+ */
+@Composable
+fun SolitaireScreen(
+    sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
+    menuVM: MenuViewModel,
+    selectedGame: Games
+) {
+    Column(Modifier.fillMaxSize()) {
+        SolitaireScoreboard(
+            sbVM = sbVM,
+            modifier = Modifier
+        )
+        SolitaireBoard(
+            sbVM = sbVM,
+            gameVM = gameVM,
+            selectedGame = selectedGame,
+            modifier = Modifier.weight(1f)
+        )
+        SolitaireTools(
+            sbVM = sbVM,
+            gameVM = gameVM,
+            menuVM = menuVM,
+            modifier = Modifier
+        )
+    }
 }

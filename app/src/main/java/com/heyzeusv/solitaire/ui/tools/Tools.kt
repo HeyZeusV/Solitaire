@@ -1,14 +1,10 @@
 package com.heyzeusv.solitaire.ui.tools
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,7 +23,6 @@ import com.heyzeusv.solitaire.ui.ResetAlertDialog
 import com.heyzeusv.solitaire.ui.SolitaireButton
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
-import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.ResetOptions.NEW
 import com.heyzeusv.solitaire.util.ResetOptions.RESTART
 import com.heyzeusv.solitaire.util.SolitairePreview
@@ -44,7 +39,6 @@ fun SolitaireTools(
 ) {
     val undoEnabled by gameVM.undoEnabled.collectAsState()
     val autoCompleteActive by gameVM.autoCompleteActive.collectAsState()
-    val menuState by menuVM.menuState.collectAsState()
 
     SolitaireTools(
         menuOnClick = menuVM::updateDisplayMenuButtons,
@@ -64,8 +58,7 @@ fun SolitaireTools(
             sbVM.undo()
         },
         autoCompleteActive = autoCompleteActive,
-        modifier = modifier,
-        menuState = menuState
+        modifier = modifier
     )
 }
 
@@ -76,8 +69,7 @@ fun SolitaireTools(
  *  continue current game; first two options call [resetRestartOnConfirm] or [resetNewOnConfirm].
  *  Undo button state is determined by [undoEnabled] and when pressed calls [undoOnClick], which
  *  returns the game back 1 legal move. [autoCompleteActive] determines if Buttons should be enabled
- *  due to game being in autocomplete mode. [menuState] controls the [AnimatedVisibility] to slide
- *  Composable in/out.
+ *  due to game being in autocomplete mode.
  */
 @Composable
 fun SolitaireTools(
@@ -88,7 +80,6 @@ fun SolitaireTools(
     undoOnClick: () -> Unit,
     autoCompleteActive: Boolean,
     modifier: Modifier = Modifier,
-    menuState: MenuState = MenuState.BUTTONS
 ) {
     var displayReset by remember { mutableStateOf(false) }
 
@@ -98,52 +89,45 @@ fun SolitaireTools(
         restartOnConfirm = resetRestartOnConfirm,
         newOnConfirm = resetNewOnConfirm
     )
-    AnimatedVisibility(
-        visible = menuState == MenuState.BUTTONS,
-        modifier = Modifier.wrapContentSize(),
-        enter = slideInVertically(initialOffsetY = { it }),
-        exit = slideOutVertically(targetOffsetY = { it })
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 12.dp)
+            .padding(bottom = 24.dp)
+            .testTag("Tools"),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.Top
     ) {
-        Row(
-            modifier = modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp)
-                .padding(bottom = 24.dp)
-                .testTag("Tools"),
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.Top
-        ) {
-            val rowModifier = Modifier
-                .weight(1f)
-                .height(48.dp)
-            // Menu Button
-            SolitaireButton(
-                onClick = menuOnClick,
-                icon = painterResource(R.drawable.button_menu),
-                iconContentDes = stringResource(R.string.tools_cdesc_menu),
-                buttonText = stringResource(R.string.tools_button_menu),
-                modifier = rowModifier,
-                enabled = !autoCompleteActive
-            )
-            // Reset Button
-            SolitaireButton(
-                onClick = { displayReset = true },
-                icon = painterResource(R.drawable.button_reset),
-                iconContentDes = stringResource(R.string.tools_cdesc_reset),
-                buttonText = stringResource(R.string.tools_button_reset),
-                modifier = rowModifier,
-                enabled = !autoCompleteActive
-            )
-            // Undo Button
-            SolitaireButton(
-                onClick = undoOnClick,
-                icon = painterResource(R.drawable.button_undo),
-                iconContentDes = stringResource(R.string.tools_cdesc_undo),
-                buttonText = stringResource(R.string.tools_button_undo),
-                modifier = rowModifier,
-                enabled = undoEnabled && !autoCompleteActive
-            )
-        }
+        val rowModifier = Modifier
+            .weight(1f)
+            .height(48.dp)
+        // Menu Button
+        SolitaireButton(
+            onClick = menuOnClick,
+            icon = painterResource(R.drawable.button_menu),
+            iconContentDes = stringResource(R.string.tools_cdesc_menu),
+            buttonText = stringResource(R.string.tools_button_menu),
+            modifier = rowModifier,
+            enabled = !autoCompleteActive
+        )
+        // Reset Button
+        SolitaireButton(
+            onClick = { displayReset = true },
+            icon = painterResource(R.drawable.button_reset),
+            iconContentDes = stringResource(R.string.tools_cdesc_reset),
+            buttonText = stringResource(R.string.tools_button_reset),
+            modifier = rowModifier,
+            enabled = !autoCompleteActive
+        )
+        // Undo Button
+        SolitaireButton(
+            onClick = undoOnClick,
+            icon = painterResource(R.drawable.button_undo),
+            iconContentDes = stringResource(R.string.tools_cdesc_undo),
+            buttonText = stringResource(R.string.tools_button_undo),
+            modifier = rowModifier,
+            enabled = undoEnabled && !autoCompleteActive
+        )
     }
 }
 
