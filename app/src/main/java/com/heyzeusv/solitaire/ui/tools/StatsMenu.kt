@@ -59,7 +59,7 @@ import com.heyzeusv.solitaire.util.theme.Purple40
  *  Composable that displays Menu which allows user to switch games and view stats for selected game.
  */
 @Composable
-fun StatsScreen(
+fun StatsMenu(
     sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
@@ -70,7 +70,7 @@ fun StatsScreen(
         stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
     val lgs = sbVM.retrieveLastGameStats(false)
-    StatsScreen(
+    StatsMenu(
         updateMenuState = menuVM::updateMenuState,
         updateStats = menuVM::updateStats,
         lgs = lgs,
@@ -86,7 +86,7 @@ fun StatsScreen(
 
 /**
  *  Composable that displays Menu which allows user to switch games and view stats for selected game.
- *  All the data has been hoisted into above [StatsScreen] thus allowing for easier testing.
+ *  All the data has been hoisted into above [StatsMenu] thus allowing for easier testing.
  *  Menu can be opened and closed by updating MenuState value using [updateMenuState]. [lgs]
  *  is used to check if a game has been started and the user is trying to switch game types causing
  *  a [SolitaireAlertDialog] to appear to confirm game change, as well as to [updateStats] if user
@@ -97,7 +97,7 @@ fun StatsScreen(
  */
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun StatsScreen(
+fun StatsMenu(
     updateMenuState: (MenuState) -> Unit,
     updateStats: (LastGameStats) -> Unit,
     lgs: LastGameStats,
@@ -222,7 +222,7 @@ fun StatsScreen(
 @Composable
 fun StatsScreenPreview() {
     SolitairePreview {
-        StatsScreen(
+        StatsMenu(
             updateMenuState = { },
             updateStats = { },
             lgs = LastGameStats(false, 0, 0, 0),

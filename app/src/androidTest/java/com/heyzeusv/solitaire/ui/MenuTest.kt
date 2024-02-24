@@ -14,7 +14,7 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
-import com.heyzeusv.solitaire.ui.tools.StatsScreen
+import com.heyzeusv.solitaire.ui.tools.StatsMenu
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.onNodeWithTextId
@@ -46,7 +46,7 @@ class MenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme(darkTheme = true) {
-                    StatsScreen(
+                    StatsMenu(
                         updateMenuState = { },
                         updateStats = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
@@ -87,7 +87,7 @@ class MenuTest {
                 SolitaireTheme(darkTheme = true) {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
-                    StatsScreen(
+                    StatsMenu(
                         updateMenuState = { },
                         updateStats = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
@@ -133,7 +133,7 @@ class MenuTest {
                 SolitaireTheme(darkTheme = true) {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
-                    StatsScreen(
+                    StatsMenu(
                         updateMenuState = { },
                         updateStats = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
@@ -184,7 +184,7 @@ class MenuTest {
                 SolitaireTheme(darkTheme = true) {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
-                    StatsScreen(
+                    StatsMenu(
                         updateMenuState = { },
                         updateStats = { },
                         lgs = LastGameStats(false, 10, 100L, 2),

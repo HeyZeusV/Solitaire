@@ -19,6 +19,7 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +30,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -36,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -72,14 +75,14 @@ fun MenuContainer(
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.GAMES,
-            content = { StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
+            content = { StatsMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
         )
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.STATS,
-            content = { StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
+            content = { StatsMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
         )
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
@@ -87,7 +90,7 @@ fun MenuContainer(
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.ABOUT,
             transformOrigin = TransformOrigin(0.5f, 0.20f),
-            content = { StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) },
+            content = { StatsMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) },
             bottomPadding = 80.dp
         )
     }
@@ -272,7 +275,11 @@ fun MenuOptionButton(
         modifier = modifier
             .height(40.dp)
             .fillMaxWidth(0.3f)
-            .clickable(onClick = onClick),
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(color = Color.White),
+                onClick = onClick
+            ),
         contentAlignment = Alignment.Center,
     ) {
         Row(
