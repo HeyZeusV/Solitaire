@@ -94,7 +94,6 @@ fun SolitaireApp(finishApp: () -> Unit) {
             modifier = Modifier.align(Alignment.BottomStart)
         )
     }
-//    SolitaireMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
     CloseGameAlertDialog(sbVM = sbVM, menuVM = menuVM, finishApp = finishApp)
     GameWonAlertDialog(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
 }

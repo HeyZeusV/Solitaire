@@ -15,21 +15,25 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
-import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,7 +42,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -71,11 +74,11 @@ fun MenuContainer(
         transitionSpec = {
             when (targetState) {
                 MenuState.BUTTONS -> tween(
-                    durationMillis = 400,
+                    durationMillis = 250,
                     easing = EaseOutCubic
                 )
                 else -> tween(
-                    durationMillis = 200,
+                    durationMillis = 250,
                     easing = EaseInCubic
                 )
             }
@@ -86,17 +89,57 @@ fun MenuContainer(
             else -> 0.dp
         }
     }
+    val borderWidth by transition.animateDp(
+        label = "border width",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 250,
+                    easing = EaseOutCubic
+                )
+                else -> tween(
+                    durationMillis = 250,
+                    easing = EaseInCubic
+                )
+            }
+        }
+    ) { state ->
+        when (state) {
+            MenuState.BUTTONS -> 2.dp
+            else -> 0.dp
+        }
+    }
+    val borderColor by transition.animateColor(
+        label = "border color",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 250,
+                    easing = EaseOutCubic
+                )
+                else -> tween(
+                    durationMillis = 250,
+                    easing = EaseInCubic
+                )
+            }
+        }
+    ) { state ->
+        when (state) {
+            MenuState.BUTTONS -> Color.White
+            else -> Color.Transparent
+        }
+    }
     val elevation by transition.animateDp(
         label = "elevation",
         transitionSpec = {
             when (targetState) {
                 MenuState.BUTTONS -> tween(
-                    durationMillis = 200,
+                    durationMillis = 250,
                     easing = EaseOutCubic,
                 )
 
                 else -> tween(
-                    durationMillis = 200,
+                    durationMillis = 250,
                     easing = EaseOutCubic,
                 )
             }
@@ -128,57 +171,75 @@ fun MenuContainer(
                 ambientColor = Color.Transparent,
                 spotColor = Color.Transparent
             )
+            .border(
+                border = BorderStroke(
+                    width = borderWidth,
+                    color = borderColor
+                ),
+                shape = RoundedCornerShape(cornerRadius)
+            )
             .drawBehind { drawRect(backgroundColor) },
         transitionSpec = {
             (fadeIn(animationSpec = tween(durationMillis = 250, delayMillis = 90)))
                 .togetherWith(fadeOut(animationSpec = tween(durationMillis = 250)))
                 .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ ->
-                    tween(
-                        durationMillis = 250,
-                        easing = FastOutSlowInEasing
-                    )
+                    tween(durationMillis = 250, easing = FastOutSlowInEasing)
                 }))
         }
     ) { state ->
         when (state) {
-            MenuState.BUTTONS -> Fab {
-                menuVM.updateMenuState(MenuState.STATS)
-            }
             MenuState.STATS -> StatsScreen(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
-            else -> {
-
-            }
+            else -> MenuOptionButton(
+                option = MenuState.STATS,
+                onClick = {menuVM.updateMenuState(MenuState.STATS) }
+            )
         }
     }
 }
 
-// TODO: MenuOptionButton should be built like this
+/**
+ *  Copy of [SolitaireButton] Composable built from Box rather than Button in order for
+ *  [AnimatedContent] to work correctly. [option] contains the text/icon data to be displayed.
+ *  [onClick] is ran when pressed.
+ */
 @Composable
-private fun Fab(
-    modifier: Modifier = Modifier,
-    onClick: () -> Unit
+fun MenuOptionButton(
+    option: MenuState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
-            .defaultMinSize(
-                minWidth = 76.dp,
-                minHeight = 76.dp,
-            )
+            .height(40.dp)
             .clickable(
                 onClick = onClick,
             ),
         contentAlignment = Alignment.Center,
     ) {
-        Icon(
-            painter = rememberVectorPainter(Icons.Filled.Add),
-            contentDescription = null,
-        )
+        Row(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+            ) {
+            Icon(
+                painter = painterResource(option.iconId),
+                contentDescription = stringResource(option.iconDescId),
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+                tint = Color.White
+            )
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(
+                text = stringResource(option.nameId),
+                color = Color.White,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
     }
 }
 
 /**
  *  Composable that displays the various [MenuState] available to user. [displayMenu] determines
- *  if [MenuOptionButton]s should be displayed.
+ *  if [MenuOptionButtonOld]s should be displayed.
  */
 @Composable
 fun SolitaireMenuButtons(
@@ -195,7 +256,7 @@ fun SolitaireMenuButtons(
     ) {
         val menuButtons = listOf(MenuState.GAMES)
         menuButtons.forEach { option ->
-            MenuOptionButton(
+            MenuOptionButtonOld(
                 displayMenu = displayMenu,
                 option = option,
                 onClick = updateMenuState,
@@ -211,7 +272,7 @@ fun SolitaireMenuButtons(
  *  is ran when pressed.
  */
 @Composable
-fun MenuOptionButton(
+fun MenuOptionButtonOld(
     displayMenu: Boolean,
     option: MenuState,
     onClick: (MenuState) -> Unit,
@@ -233,6 +294,13 @@ fun MenuOptionButton(
     }
 }
 
+@Preview
+@Composable
+fun MenuOptionButtonPreview() {
+    SolitairePreview {
+        MenuOptionButton(option = MenuState.STATS, onClick = { })
+    }
+}
 
 @Preview
 @Composable
@@ -247,9 +315,9 @@ fun SolitaireMenuButtonsPreview() {
 
 @Preview
 @Composable
-fun MenuOptionButtonPreview() {
+fun MenuOptionButtonOldPreview() {
     SolitairePreview {
-        MenuOptionButton(
+        MenuOptionButtonOld(
             displayMenu = true,
             option = MenuState.GAMES,
             onClick = { }
