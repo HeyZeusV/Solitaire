@@ -32,7 +32,6 @@ import com.heyzeusv.solitaire.util.getAverageTime
 import com.heyzeusv.solitaire.util.getScorePercentage
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.getWinPercentage
-import com.heyzeusv.solitaire.util.theme.Pink80
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of selected game.
@@ -70,7 +69,7 @@ fun StatsMenu(
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .testTag("Menu"),
+            .testTag("Stats Menu"),
         shape = RectangleShape
     ) {
         Column(
@@ -105,15 +104,6 @@ fun StatsMenu(
             Text(
                 text = stringResource(R.string.menu_tip_totalscore),
                 style = MaterialTheme.typography.bodySmall
-            )
-            Text(
-                text = stringResource(R.string.menu_header_credits),
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.headlineMedium
-            )
-            LinkifyText(
-                text = stringResource(R.string.menu_content_credits),
-                linkColor = Pink80
             )
         }
     }

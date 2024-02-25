@@ -25,6 +25,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
@@ -104,7 +105,8 @@ fun GamesMenu(
     Card(
         modifier = Modifier
             .fillMaxSize()
-            .testTag("Games Menu")
+            .testTag("Games Menu"),
+        shape = RectangleShape
     ) {
         Column(
             modifier = Modifier
