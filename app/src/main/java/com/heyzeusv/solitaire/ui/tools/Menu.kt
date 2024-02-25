@@ -75,14 +75,14 @@ fun MenuContainer(
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.GAMES,
-            content = { StatsMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
+            content = { GamesMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
         )
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.STATS,
-            content = { StatsMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
+            content = { StatsMenu(menuVM = menuVM) }
         )
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
@@ -90,7 +90,7 @@ fun MenuContainer(
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.ABOUT,
             transformOrigin = TransformOrigin(0.5f, 0.20f),
-            content = { StatsMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) },
+            content = { StatsMenu(menuVM = menuVM) },
             bottomPadding = 80.dp
         )
     }
