@@ -5,6 +5,9 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.graphics.Color
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.game.GameViewModel
+import com.heyzeusv.solitaire.ui.tools.GamesMenu
+import com.heyzeusv.solitaire.util.Redeals.*
 
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
@@ -32,22 +35,88 @@ enum class ResetOptions {
 }
 
 /**
- *  Enum class containing the [gameName]'s string resource id of all available games and [drawAmount]
- *  which is the amount of Cards drawn at a time. It also contains the Proto DataStore enum value
- *  [dataStoreEnum] which is used to save stats to correct game.
+ *  Enum class containing the [nameId]'s string resource id of all available games and
+ *  [drawAmount] which is the amount of Cards drawn at a time. It also contains the Proto DataStore
+ *  enum value [dataStoreEnum] which is used to save stats to correct game.
  */
 enum class Games(
-    @StringRes val gameName: Int,
+    @StringRes val nameId: Int,
+    @StringRes val familyId: Int,
+    @DrawableRes val iconId: Int,
+    val redeals: Redeals,
     val drawAmount: Int,
     val dataStoreEnum: Game
 ) {
-    KLONDIKE_TURN_ONE(R.string.games_klondike_turn_one, 1, Game.GAME_KLONDIKETURNONE),
-    KLONDIKE_TURN_THREE(R.string.games_klondike_turn_three, 3, Game.GAME_KLONDIKETURNTHREE),
-    YUKON(R.string.games_yukon, 0, Game.GAME_YUKON),
-    AUSTRALIAN_PATIENCE(R.string.games_australian_patience, 1, Game.GAME_AUSTRALIAN_PATIENCE),
-    CANBERRA(R.string.games_canberra, 1, Game.GAME_CANBERRA),
-    ALASKA(R.string.games_alaska, 0, Game.GAME_ALASKA),
-    RUSSIAN(R.string.games_russian, 0, Game.GAME_RUSSIAN)
+    KLONDIKE_TURN_ONE(
+        R.string.games_klondike_turn_one,
+        R.string.games_family_klondike,
+        R.drawable.games_klondike,
+        UNLIMITED,
+        1,
+        Game.GAME_KLONDIKETURNONE
+    ),
+    KLONDIKE_TURN_THREE(
+        R.string.games_klondike_turn_three,
+        R.string.games_family_klondike,
+        R.drawable.games_klondike,
+        UNLIMITED,
+        3,
+        Game.GAME_KLONDIKETURNTHREE
+    ),
+    YUKON(
+        R.string.games_yukon,
+        R.string.games_family_yukon,
+        R.drawable.games_yukon,
+        NONE,
+        0,
+        Game.GAME_YUKON
+    ),
+    AUSTRALIAN_PATIENCE(
+        R.string.games_australian_patience,
+        R.string.games_family_yukon,
+        R.drawable.games_klondike,
+        NONE,
+        1,
+        Game.GAME_AUSTRALIAN_PATIENCE
+    ),
+    CANBERRA(
+        R.string.games_canberra,
+        R.string.games_family_yukon,
+        R.drawable.games_yukon,
+        ONCE,
+        1,
+        Game.GAME_CANBERRA
+    ),
+    ALASKA(
+        R.string.games_alaska,
+        R.string.games_family_yukon,
+        R.drawable.games_yukon,
+        NONE,
+        0,
+        Game.GAME_ALASKA
+    ),
+    RUSSIAN(
+        R.string.games_russian,
+        R.string.games_family_yukon,
+        R.drawable.games_yukon,
+        NONE,
+        0,
+        Game.GAME_RUSSIAN
+    )
+}
+
+/**
+ *  Enum class that holds the possible amount of redeals a [Game] can have. [nameId] is used to
+ *  display redeal amount on [GamesMenu]. [amount] will be used by [GameViewModel] for redeal
+ *  logic.
+ */
+enum class Redeals(
+    @StringRes val nameId: Int,
+    val amount: Int
+) {
+    NONE(R.string.redeal_none, 0),
+    ONCE(R.string.redeal_once, 1),
+    UNLIMITED(R.string.redeal_unlimited, Int.MAX_VALUE)
 }
 
 /**

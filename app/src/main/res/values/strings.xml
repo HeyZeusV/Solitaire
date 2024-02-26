@@ -44,6 +44,13 @@
     <string name="games_canberra">Canberra</string>
     <string name="games_alaska">Alaska</string>
     <string name="games_russian">Russian</string>
+    <string name="games_family">Family: %1$s</string>
+    <string name="games_family_klondike">Klondike</string>
+    <string name="games_family_yukon">Yukon</string>
+    <string name="redeal">Redeals: %1$s</string>
+    <string name="redeal_none">None</string>
+    <string name="redeal_once">1</string>
+    <string name="redeal_unlimited">Unlimited</string>
     <string name="suits_clubs">Clubs</string>
     <string name="suits_diamonds">Diamonds</string>
     <string name="suits_hearts">Hearts</string>

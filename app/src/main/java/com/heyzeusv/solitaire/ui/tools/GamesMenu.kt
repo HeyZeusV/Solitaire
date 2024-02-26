@@ -1,22 +1,22 @@
 package com.heyzeusv.solitaire.ui.tools
 
 import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -26,7 +26,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,7 +42,6 @@ import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview
-import com.heyzeusv.solitaire.util.theme.Purple40
 
 /**
  *   Composable that displays Menu which allows user to switch games.
@@ -77,7 +78,6 @@ fun GamesMenu(
  *   [selectedGame] determines which stats to be displayed and which game to be shown when user
  *   close Menu and is updated by [updateSelectedGame].
  */
-@OptIn(ExperimentalLayoutApi::class, ExperimentalMaterial3Api::class)
 @Composable
 fun GamesMenu(
     updateMenuState: (MenuState) -> Unit,
@@ -111,7 +111,7 @@ fun GamesMenu(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = 24.dp),
+                .padding(all = 8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ){
             Text(
@@ -119,43 +119,55 @@ fun GamesMenu(
                 textDecoration = TextDecoration.Underline,
                 style = MaterialTheme.typography.headlineMedium
             )
-            FlowRow(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            LazyColumn(
+                verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
-                Games.entries.forEach {
-                    FilterChip(
-                        selected = it == selectedGame,
-                        onClick = {
-                            if (it != selectedGame) {
-                                if (lgs.moves > 0) {
-                                    displayGameSwitch = true
-                                    newlySelectedGame = it
-                                } else {
-                                    updateSelectedGame(it)
-                                    reset()
-                                }
-                            }
-                        },
-                        label = { Text(text = stringResource(it.gameName)) },
-                        leadingIcon = {
-                            if (it == selectedGame) {
-                                Icon(
-                                    imageVector = Icons.Default.Done,
-                                    contentDescription = stringResource(
-                                        R.string.menu_cdesc_chip,
-                                        stringResource(it.gameName)
-                                    ),
-                                    modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                )
-                            }
-                        },
-                        colors = FilterChipDefaults.filterChipColors(
-                            selectedContainerColor = Purple40
-                        )
-                    )
+                items(Games.entries) { game ->
+                    GamesInfo(game = game)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun GamesInfo(game: Games) {
+    Card(
+        shape = ShapeDefaults.Small,
+        colors = CardDefaults.cardColors(
+            containerColor = MaterialTheme.colorScheme.surface
+        )
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(150.dp),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            val family = stringResource(game.familyId)
+            val redeals = stringResource(game.redeals.nameId)
+            Column(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .weight(1f),
+                verticalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                Text(
+                    text = stringResource(game.nameId),
+                    style = MaterialTheme.typography.titleLarge
+                )
+                Text(text = stringResource(R.string.games_family, family))
+                Text(text = stringResource(R.string.redeal, redeals))
+            }
+            Image(
+                painter = painterResource(game.iconId),
+                contentDescription = stringResource(game.nameId),
+                modifier = Modifier
+                    .padding(8.dp)
+                    .height(150.dp)
+                    .width(150.dp),
+                contentScale = ContentScale.FillBounds
+            )
         }
     }
 }
@@ -172,5 +184,17 @@ fun GamesMenuPreview() {
             updateSelectedGame = { },
             reset = { }
         )
+    }
+}
+
+@Preview
+@Composable
+fun GamesInfoPreview() {
+    SolitairePreview {
+        Column(modifier = Modifier.padding(all = 8.dp)) {
+            GamesInfo(game = Games.KLONDIKE_TURN_ONE)
+            Divider()
+            GamesInfo(game = Games.YUKON)
+        }
     }
 }
