@@ -2,19 +2,23 @@ package com.heyzeusv.solitaire.ui.tools
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
@@ -24,6 +28,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.ContentScale
@@ -42,6 +47,7 @@ import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview
+import com.heyzeusv.solitaire.util.theme.Purple40
 
 /**
  *   Composable that displays Menu which allows user to switch games.
@@ -87,10 +93,25 @@ fun GamesMenu(
     updateSelectedGame: (Games) -> Unit,
     reset: () -> Unit,
 ) {
-    BackHandler { updateMenuState(MenuState.BUTTONS) }
-
     var displayGameSwitch by remember { mutableStateOf(false) }
+    var menuSelectedGame by remember { mutableStateOf(selectedGame) }
     var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_THREE) }
+    val gamesInfoOnClick = { game: Games ->
+        if (game != menuSelectedGame) {
+            if (lgs.moves > 0) {
+                displayGameSwitch = true
+                newlySelectedGame = game
+            } else {
+                menuSelectedGame = game
+                reset()
+            }
+        }
+    }
+
+    BackHandler {
+        updateMenuState(MenuState.BUTTONS)
+//        updateSelectedGame(menuSelectedGame)
+    }
 
     GameSwitchAlertDialog(
         displayGameSwitch = displayGameSwitch,
@@ -112,18 +133,42 @@ fun GamesMenu(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(all = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(4.dp)
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ){
-            Text(
-                text = stringResource(R.string.menu_header_games),
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.headlineMedium
-            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                val gamesHeader = stringResource(R.string.menu_header_games)
+                Icon(
+                    painter = painterResource(R.drawable.button_menu_back),
+                    contentDescription = stringResource(R.string.menu_cdesc_close, gamesHeader),
+                    modifier = Modifier
+                        .align(Alignment.CenterStart)
+                        .padding(top = 3.dp)
+                        .size(50.dp)
+                        .clickable {
+                            updateMenuState(MenuState.BUTTONS)
+//                            updateSelectedGame(menuSelectedGame)
+                        }
+                )
+                Text(
+                    text = gamesHeader,
+                    modifier = Modifier.align(Alignment.Center),
+                    textDecoration = TextDecoration.Underline,
+                    style = MaterialTheme.typography.displayMedium
+                )
+            }
             LazyColumn(
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
                 items(Games.entries) { game ->
-                    GamesInfo(game = game)
+                    GamesInfo(
+                        game = game,
+                        selected = menuSelectedGame == game,
+                        onClick = gamesInfoOnClick
+                    )
                 }
             }
         }
@@ -131,11 +176,16 @@ fun GamesMenu(
 }
 
 @Composable
-fun GamesInfo(game: Games) {
+fun GamesInfo(
+    game: Games,
+    selected: Boolean,
+    onClick: (Games) -> Unit
+) {
     Card(
+        modifier = Modifier.clickable { onClick.invoke(game) },
         shape = ShapeDefaults.Small,
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface
         )
     ) {
         Row(
@@ -192,9 +242,15 @@ fun GamesMenuPreview() {
 fun GamesInfoPreview() {
     SolitairePreview {
         Column(modifier = Modifier.padding(all = 8.dp)) {
-            GamesInfo(game = Games.KLONDIKE_TURN_ONE)
+            GamesInfo(
+                game = Games.KLONDIKE_TURN_ONE,
+                true
+            ) { }
             Divider()
-            GamesInfo(game = Games.YUKON)
+            GamesInfo(
+                game = Games.YUKON,
+                false
+            ) { }
         }
     }
 }
