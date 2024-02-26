@@ -50,7 +50,7 @@ enum class Games(
     KLONDIKE_TURN_ONE(
         R.string.games_klondike_turn_one,
         R.string.games_family_klondike,
-        R.drawable.games_klondike,
+        R.drawable.games_klondike_turn_one,
         UNLIMITED,
         1,
         Game.GAME_KLONDIKETURNONE
@@ -58,7 +58,7 @@ enum class Games(
     KLONDIKE_TURN_THREE(
         R.string.games_klondike_turn_three,
         R.string.games_family_klondike,
-        R.drawable.games_klondike,
+        R.drawable.games_klondike_turn_three,
         UNLIMITED,
         3,
         Game.GAME_KLONDIKETURNTHREE
@@ -74,7 +74,7 @@ enum class Games(
     AUSTRALIAN_PATIENCE(
         R.string.games_australian_patience,
         R.string.games_family_yukon,
-        R.drawable.games_klondike,
+        R.drawable.games_australian_patience,
         NONE,
         1,
         Game.GAME_AUSTRALIAN_PATIENCE
@@ -82,7 +82,7 @@ enum class Games(
     CANBERRA(
         R.string.games_canberra,
         R.string.games_family_yukon,
-        R.drawable.games_yukon,
+        R.drawable.games_australian_patience,
         ONCE,
         1,
         Game.GAME_CANBERRA
