@@ -89,7 +89,6 @@ fun SolitaireApp(finishApp: () -> Unit) {
         )
         MenuContainer(
             sbVM = sbVM,
-            gameVM = gameVM,
             menuVM = menuVM,
             modifier = Modifier.align(Alignment.BottomStart)
         )
