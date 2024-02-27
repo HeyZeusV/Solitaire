@@ -18,11 +18,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.TextUnit
+import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.MenuHeaderBar
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeStats
@@ -75,15 +77,15 @@ fun StatsMenu(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = 24.dp)
+                .padding(all = 8.dp)
                 .scrollable(state = scrollableState, orientation = Orientation.Vertical),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            Text(
-                text = stringResource(R.string.menu_header_stats),
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.headlineMedium
+            MenuHeaderBar(
+                menu = MenuState.STATS,
+                onBackPress = { updateMenuState(MenuState.BUTTONS) }
             )
+            
             Text(
                 text = stringResource(
                     R.string.menu_content_stats,
@@ -99,11 +101,13 @@ fun StatsMenu(
                     stats.getAverageScore(),
                     stats.getScorePercentage(),
                     stats.bestTotalScore
-                )
+                ),
+                lineHeight = TextUnit(32f, TextUnitType.Sp),
+                style = MaterialTheme.typography.titleLarge
             )
             Text(
                 text = stringResource(R.string.menu_tip_totalscore),
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.titleMedium
             )
         }
     }
