@@ -88,7 +88,7 @@ fun MenuContainer(
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.ABOUT,
             transformOrigin = TransformOrigin(0.5f, 0.20f),
-            content = { AboutMenu(menuVM::updateMenuState) },
+            content = { AboutMenu { menuVM.updateMenuState(MenuState.BUTTONS) } },
             bottomPadding = 80.dp
         )
     }

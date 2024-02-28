@@ -198,10 +198,8 @@ fun StatsDropDownMenu(
  */
 @Composable
 fun StatColumn(stats: GameStats) {
-    val scrollState = rememberScrollState()
-
     Column(
-        modifier = Modifier.verticalScroll(scrollState),
+        modifier = Modifier.verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(2.dp)
     ) {
         StatField(
