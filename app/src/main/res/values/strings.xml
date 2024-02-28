@@ -60,4 +60,6 @@
     <string name="games_ad_dismiss">No</string>
     <string name="games_ad_title">Switch games?</string>
     <string name="games_ad_msg">A game has already been started, are you sure you want to switch games?\n\nThis game will count on your stats if more than 1 move has been made!!</string>
+    <string name="stats_label_ddm">Game</string>
+    <string name="stats_cdesc_ddm">Expand or collapse.</string>
 </resources>

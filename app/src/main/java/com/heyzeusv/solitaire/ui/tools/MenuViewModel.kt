@@ -30,7 +30,6 @@ class MenuViewModel @Inject constructor(
 
     private val _displayMenuButtons = MutableStateFlow(false)
     val displayMenuButtons: StateFlow<Boolean> get() = _displayMenuButtons
-    fun updateDisplayMenuButtons(newValue: Boolean) { _displayMenuButtons.value = newValue }
     fun updateDisplayMenuButtons() { _displayMenuButtons.value = !_displayMenuButtons.value }
 
     private val _menuState = MutableStateFlow(MenuState.BUTTONS)
@@ -39,7 +38,14 @@ class MenuViewModel @Inject constructor(
 
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
     val selectedGame: StateFlow<Games> get() = _selectedGame
-    fun updateSelectedGame(newValue: Games) { _selectedGame.value = newValue }
+    fun updateSelectedGame(newValue: Games) {
+        _selectedGame.value = newValue
+        _statsSelectedGame.value = newValue
+    }
+
+    private val _statsSelectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
+    val statsSelectedGame: StateFlow<Games> get() = _statsSelectedGame
+    fun updateStatsSelectedGame(newValue: Games) { _statsSelectedGame.value = newValue }
 
     val stats: StateFlow<StatPreferences> = statManager.statData.stateIn(
         scope = viewModelScope,
