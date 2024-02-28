@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeDisplay
+import com.heyzeusv.solitaire.util.theme.scoreboardText
 
 /**
  *  Composable that displays current game stats to the user
@@ -68,17 +69,17 @@ fun SolitaireScoreboard(
         Text(
             text = stringResource(R.string.scoreboard_stat_moves, moves),
             modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.scoreboardText
         )
         Text(
             text = stringResource(R.string.scoreboard_stat_time, timer.formatTimeDisplay()),
             modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.scoreboardText
         )
         Text(
             text = stringResource(R.string.scoreboard_stat_score, score),
             modifier = Modifier.weight(1f),
-            style = MaterialTheme.typography.headlineSmall
+            style = MaterialTheme.typography.scoreboardText
         )
     }
 }

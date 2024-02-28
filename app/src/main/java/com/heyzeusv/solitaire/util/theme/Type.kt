@@ -16,15 +16,6 @@ val Typography = Typography(
         fontSize = 16.sp,
         lineHeight = 24.sp,
         letterSpacing = 0.5.sp
-    ),
-    headlineSmall = TextStyle(
-        color = Color.White,
-        fontSize = 24.sp,
-        fontWeight = FontWeight.Normal,
-        fontFamily = FontFamily.SansSerif,
-        letterSpacing = 0.0.sp,
-        textAlign = TextAlign.Center,
-        lineHeight = 32.0.sp
     )
     /* Other default text styles to override
     titleLarge = TextStyle(
@@ -43,3 +34,14 @@ val Typography = Typography(
     )
     */
 )
+
+val Typography.scoreboardText: TextStyle
+    get() =  TextStyle(
+        color = Color.White,
+        fontSize = 24.sp,
+        fontWeight = FontWeight.Normal,
+        fontFamily = FontFamily.SansSerif,
+        letterSpacing = 0.0.sp,
+        textAlign = TextAlign.Center,
+        lineHeight = 32.0.sp
+    )
