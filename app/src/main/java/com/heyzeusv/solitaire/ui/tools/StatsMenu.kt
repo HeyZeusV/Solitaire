@@ -1,9 +1,8 @@
 package com.heyzeusv.solitaire.ui.tools
 
 import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
@@ -14,9 +13,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.DisableSelection
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
+import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -40,8 +41,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.heyzeusv.solitaire.GameStats
@@ -92,8 +91,6 @@ fun StatsMenu(
     updateSelectedGame: (Games) -> Unit,
     stats: GameStats
 ) {
-    val scrollableState = rememberScrollState()
-
     BackHandler { updateMenuState(MenuState.BUTTONS) }
     Card(
         modifier = Modifier
@@ -104,8 +101,7 @@ fun StatsMenu(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(all = 8.dp)
-                .scrollable(state = scrollableState, orientation = Orientation.Vertical),
+                .padding(all = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             MenuHeaderBar(
@@ -116,29 +112,7 @@ fun StatsMenu(
                 selectedGame = selectedGame,
                 updateSelectedGame = { updateSelectedGame(it) }
             )
-            Text(
-                text = stringResource(
-                    R.string.menu_content_stats,
-                    stats.gamesPlayed,
-                    stats.gamesWon,
-                    stats.getWinPercentage(),
-                    stats.lowestMoves,
-                    stats.getAverageMoves(),
-                    stats.totalMoves,
-                    stats.fastestWin.formatTimeStats(),
-                    stats.getAverageTime().formatTimeStats(),
-                    stats.totalTime.formatTimeStats(),
-                    stats.getAverageScore(),
-                    stats.getScorePercentage(),
-                    stats.bestTotalScore
-                ),
-                lineHeight = TextUnit(32f, TextUnitType.Sp),
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                text = stringResource(R.string.menu_tip_totalscore),
-                style = MaterialTheme.typography.titleMedium
-            )
+            StatColumn(stats = stats)
         }
     }
 }
@@ -218,6 +192,102 @@ fun StatsDropDownMenu(
     }
 }
 
+/**
+ *  Composable which displays all stats stored in given [stats] plus a few extras thanks to
+ *  extension functions.
+ */
+@Composable
+fun StatColumn(stats: GameStats) {
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier.verticalScroll(scrollState),
+        verticalArrangement = Arrangement.spacedBy(2.dp)
+    ) {
+        StatField(
+            statNameId = R.string.stats_games_played,
+            statValue = "${stats.gamesPlayed}"
+        )
+        StatField(
+            statNameId = R.string.stats_games_won,
+            statValue = stringResource(
+                R.string.stats_games_won_value,
+                stats.gamesWon,
+                stats.getWinPercentage()
+            )
+        )
+        StatField(
+            statNameId = R.string.stats_lowest_moves,
+            statValue = "${stats.lowestMoves}"
+        )
+        StatField(
+            statNameId = R.string.stats_average_moves,
+            statValue = "${stats.getAverageMoves()}"
+        )
+        StatField(
+            statNameId = R.string.stats_total_moves,
+            statValue = "${stats.totalMoves}"
+        )
+        StatField(
+            statNameId = R.string.stats_fastest_win,
+            statValue = stats.fastestWin.formatTimeStats()
+        )
+        StatField(
+            statNameId = R.string.stats_average_time,
+            statValue = stats.getAverageTime().formatTimeStats()
+        )
+        StatField(
+            statNameId = R.string.stats_total_time,
+            statValue = stats.totalTime.formatTimeStats()
+        )
+        StatField(
+            statNameId = R.string.stats_average_score,
+            statValue = stringResource(
+                R.string.stats_average_score_value,
+                stats.getAverageScore(),
+                stats.getScorePercentage()
+            )
+        )
+        StatField(
+            statNameId = R.string.stats_best_score,
+            statValue = "${stats.bestTotalScore}",
+            statTipId = R.string.stats_best_score_tip
+        )
+    }
+}
+
+/**
+ *  Composable that displays a single stat. It contains its name [statNameId], a small tip
+ *  [statTipId] if given, and the [statValue].
+ */
+@Composable
+fun StatField(
+    @StringRes statNameId: Int,
+    statValue: String,
+    @StringRes statTipId: Int? = null,
+) {
+    Column {
+        Text(
+            text = stringResource(statNameId),
+            style = MaterialTheme.typography.bodyMedium
+        )
+        if (statTipId != null) {
+            Text(
+                text = stringResource(statTipId),
+                style = MaterialTheme.typography.bodySmall
+            )
+        }
+        Text(
+            text = statValue,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Divider(
+            modifier = Modifier.padding(top = 4.dp),
+            color = Purple80
+        )
+    }
+}
+
 @Preview
 @Composable
 fun StatsMenuPreview() {
@@ -239,5 +309,30 @@ fun StatsDropDownMenuPreview() {
             selectedGame = Games.AUSTRALIAN_PATIENCE,
             updateSelectedGame = { }
         )
+    }
+}
+
+@Preview
+@Composable
+fun StatFieldPreview() {
+    SolitairePreview {
+        val test1 = 100
+        val test2 = 100000f
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RectangleShape
+        ) {
+            Column {
+                StatField(
+                    statNameId = R.string.stats_average_score,
+                    statValue = "$test1"
+                )
+                StatField(
+                    statNameId = R.string.stats_best_score,
+                    statValue = "$test2",
+                    statTipId = R.string.stats_best_score_tip
+                )
+            }
+        }
     }
 }

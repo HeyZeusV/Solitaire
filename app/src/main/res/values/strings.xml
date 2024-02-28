@@ -19,8 +19,6 @@
     <string name="menu_cdesc_chip">%1$s is selected</string>
     <string name="menu_header_stats">Stats</string>
     <string name="menu_header_games">Games</string>
-    <string name="menu_tip_totalscore">┗ Moves + Time + Score (Lower is better)</string>
-    <string name="menu_content_stats">Games Played: %1$s\nGames Won: %2$s (%3$s%%)\nLowest Moves in Win: %4$s\nAverage Moves: %5$s\nTotal Moves: %6$s\nFastest Win: %7$s\nAverage Time: %8$s\nTotal Time Played: %9$s\nAverage Score: %10$s of 52 (%11$s%%)\nBest Total Score: %12$s</string>
     <string name="menu_header_credits">Credits</string>
     <string name="menu_content_credits">Card Suits by Amethyst Studio from https://thenounproject.com/icon/card-suits-5874222 (CC BY 3.0)</string>
     <string name="pile_cdesc_empty">Pile is empty.</string>
@@ -62,4 +60,17 @@
     <string name="games_ad_msg">A game has already been started, are you sure you want to switch games?\n\nThis game will count on your stats if more than 1 move has been made!!</string>
     <string name="stats_label_ddm">Game</string>
     <string name="stats_cdesc_ddm">Expand or collapse.</string>
+    <string name="stats_games_played">Games Played</string>
+    <string name="stats_games_won">Games Won</string>
+    <string name="stats_games_won_value">%1$s (%2$s%%)</string>
+    <string name="stats_lowest_moves">Lowest Moves in Win</string>
+    <string name="stats_average_moves">Average Moves</string>
+    <string name="stats_total_moves">Total Moves</string>
+    <string name="stats_fastest_win">Fastest Win</string>
+    <string name="stats_average_time">Average Time</string>
+    <string name="stats_total_time">Total Time Played</string>
+    <string name="stats_average_score">Average Score</string>
+    <string name="stats_average_score_value">%1$s of 52 (%2$s%%)</string>
+    <string name="stats_best_score">Best Total Score</string>
+    <string name="stats_best_score_tip">┗ Moves + Time + Score (Lower is better)</string>
 </resources>
