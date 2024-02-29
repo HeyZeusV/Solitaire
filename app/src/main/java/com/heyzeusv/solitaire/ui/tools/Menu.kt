@@ -51,6 +51,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.ui.SolitaireButton
+import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewDevices
@@ -62,6 +63,7 @@ import com.heyzeusv.solitaire.util.SolitairePreview
 @Composable
 fun MenuContainer(
     sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
 ) {
@@ -73,7 +75,7 @@ fun MenuContainer(
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.GAMES,
-            content = { GamesMenu(sbVM = sbVM, menuVM = menuVM) }
+            content = { GamesMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
         )
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,

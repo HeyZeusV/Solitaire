@@ -8,6 +8,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
@@ -28,9 +29,10 @@ class GamesMenuTest {
     @get:Rule
     var composeRule = createAndroidComposeRule<ComponentActivity>()
 
+    private var surfaceColor: Color = Color.White
+
     @Test
     fun gamesMenu_display() {
-        var surfaceColor: Color = Color.White
         composeRule.apply {
             setContent {
                 SolitaireTheme {
@@ -53,7 +55,119 @@ class GamesMenuTest {
                     checkBackgroundColor("${game.name} Card", surfaceColor)
                 }
             }
+        }
+    }
 
+    @Test
+    fun gamesMenu_switchGames() {
+        composeRule.apply {
+            setContent {
+                SolitaireTheme {
+                    surfaceColor = MaterialTheme.colorScheme.surface
+                    GamesMenu(
+                        updateStats = { },
+                        lgs = LastGameStats(false, 0, 0L, 0),
+                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        onBackPress = { }
+                    )
+                }
+            }
+
+            // switch to Alaska and check backgrounds
+            onLazyListScrollToNode("Games Menu List", Games.ALASKA.nameId)
+            onNodeWithTextId(Games.ALASKA.nameId).performClick()
+            // small delay to account for highlight that happens when tapped on
+            Thread.sleep(300)
+            Games.entries.forEach { game ->
+                onLazyListScrollToNode("Games Menu List", game.nameId)
+                if (game == Games.ALASKA) {
+                    checkBackgroundColor("${game.name} Card", Purple40)
+                } else {
+                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                }
+            }
+
+            // switch to Australian Patience and check backgrounds
+            onLazyListScrollToNode("Games Menu List", Games.AUSTRALIAN_PATIENCE.nameId)
+            onNodeWithTextId(Games.AUSTRALIAN_PATIENCE.nameId).performClick()
+            // small delay to account for highlight that happens when tapped on
+            Thread.sleep(300)
+            Games.entries.forEach { game ->
+                onLazyListScrollToNode("Games Menu List", game.nameId)
+                if (game == Games.AUSTRALIAN_PATIENCE) {
+                    checkBackgroundColor("${game.name} Card", Purple40)
+                } else {
+                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun gamesMenu_switchGames_midGame_confirm() {
+        composeRule.apply {
+            setContent {
+                SolitaireTheme {
+                    surfaceColor = MaterialTheme.colorScheme.surface
+                    GamesMenu(
+                        updateStats = { },
+                        lgs = LastGameStats(false, 10, 100L, 2),
+                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        onBackPress = { }
+                    )
+                }
+            }
+
+            // switch to Alaska
+            onLazyListScrollToNode("Games Menu List", Games.ALASKA.nameId)
+            onNodeWithTextId(Games.ALASKA.nameId).performClick()
+
+            // confirm game switch
+            onNodeWithTextId(R.string.games_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.games_ad_confirm).performClick()
+
+            Games.entries.forEach { game ->
+                onLazyListScrollToNode("Games Menu List", game.nameId)
+                if (game == Games.ALASKA) {
+                    checkBackgroundColor("${game.name} Card", Purple40)
+                } else {
+                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                }
+            }
+        }
+    }
+
+    @Test
+    fun gamesMenu_switchGames_midGame_dismiss() {
+        composeRule.apply {
+            setContent {
+                SolitaireTheme {
+                    surfaceColor = MaterialTheme.colorScheme.surface
+                    GamesMenu(
+                        updateStats = { },
+                        lgs = LastGameStats(false, 10, 100L, 2),
+                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        onBackPress = { }
+                    )
+                }
+            }
+
+            // switch to Alaska
+            onLazyListScrollToNode("Games Menu List", Games.ALASKA.nameId)
+            onNodeWithTextId(Games.ALASKA.nameId).performClick()
+
+            // confirm game switch
+            onNodeWithTextId(R.string.games_ad_title).assertIsDisplayed()
+            onNodeWithTextId(R.string.games_ad_dismiss).performClick()
+
+            Games.entries.forEach { game ->
+                onLazyListScrollToNode("Games Menu List", game.nameId)
+                if (game == Games.KLONDIKE_TURN_ONE) {
+                    checkBackgroundColor("${game.name} Card", Purple40)
+                } else {
+                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                }
+            }
         }
     }
 

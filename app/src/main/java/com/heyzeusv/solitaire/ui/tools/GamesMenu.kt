@@ -40,10 +40,12 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
 import com.heyzeusv.solitaire.ui.MenuHeaderBar
+import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
+import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.theme.Purple40
 import kotlinx.coroutines.delay
@@ -55,6 +57,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun GamesMenu(
     sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
     menuVM: MenuViewModel
 ) {
     val selectedGame by menuVM.selectedGame.collectAsState()
@@ -67,8 +70,12 @@ fun GamesMenu(
         selectedGame = selectedGame,
         onBackPress = { game ->
             scope.launch {
-                menuVM.updateSelectedGame(game)
-                delay(300)
+                if (game != selectedGame) {
+                    menuVM.updateSelectedGame(game)
+                    sbVM.reset()
+                    gameVM.resetAll(ResetOptions.NEW)
+                    delay(300)
+                }
                 menuVM.updateMenuState(MenuState.BUTTONS)
             }
         }

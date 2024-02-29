@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onNodeWithText
+import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.ui.tools.AboutMenu
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
@@ -33,6 +34,17 @@ class AboutMenuTest {
     fun aboutMenu_display() {
         composeRule.apply {
             onNodeWithText("CHANGELOG").assertIsDisplayed().assertIsEnabled()
+            onNode(hasTestTag("About Changelog.txt")).assertDoesNotExist()
+        }
+    }
+
+    @Test
+    fun aboutMenu_ButtonRevealContent_show_hide() {
+        composeRule.apply {
+            onNodeWithText("CHANGELOG").performClick()
+            onNode(hasTestTag("About Changelog.txt")).assertIsDisplayed()
+
+            onNodeWithText("CHANGELOG").performClick()
             onNode(hasTestTag("About Changelog.txt")).assertDoesNotExist()
         }
     }
