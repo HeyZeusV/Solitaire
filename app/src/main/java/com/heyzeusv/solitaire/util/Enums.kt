@@ -71,22 +71,6 @@ enum class Games(
         0,
         Game.GAME_YUKON
     ),
-    AUSTRALIAN_PATIENCE(
-        R.string.games_australian_patience,
-        R.string.games_family_yukon,
-        R.drawable.games_australian_patience,
-        NONE,
-        1,
-        Game.GAME_AUSTRALIAN_PATIENCE
-    ),
-    CANBERRA(
-        R.string.games_canberra,
-        R.string.games_family_yukon,
-        R.drawable.games_australian_patience,
-        ONCE,
-        1,
-        Game.GAME_CANBERRA
-    ),
     ALASKA(
         R.string.games_alaska,
         R.string.games_family_yukon,
@@ -102,6 +86,22 @@ enum class Games(
         NONE,
         0,
         Game.GAME_RUSSIAN
+    ),
+    AUSTRALIAN_PATIENCE(
+        R.string.games_australian_patience,
+        R.string.games_family_yukon,
+        R.drawable.games_australian_patience,
+        NONE,
+        1,
+        Game.GAME_AUSTRALIAN_PATIENCE
+    ),
+    CANBERRA(
+        R.string.games_canberra,
+        R.string.games_family_yukon,
+        R.drawable.games_australian_patience,
+        ONCE,
+        1,
+        Game.GAME_CANBERRA
     )
 }
 

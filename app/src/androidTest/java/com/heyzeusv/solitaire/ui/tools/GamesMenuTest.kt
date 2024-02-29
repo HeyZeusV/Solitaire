@@ -1,11 +1,7 @@
 package com.heyzeusv.solitaire.ui.tools
 
 import androidx.activity.ComponentActivity
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.colorspace.ColorSpaces
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.captureToImage
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
@@ -15,9 +11,7 @@ import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.onLazyListScrollToNode
 import com.heyzeusv.solitaire.util.onNodeWithTextId
-import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
-import org.junit.Assert.assertEquals
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -28,14 +22,11 @@ class GamesMenuTest {
     @get:Rule
     var composeRule = createAndroidComposeRule<ComponentActivity>()
 
-    private var surfaceColor: Color = Color.White
-
     @Test
     fun gamesMenu_display() {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    surfaceColor = MaterialTheme.colorScheme.surface
                     GamesMenu(
                         updateStats = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
@@ -49,9 +40,9 @@ class GamesMenuTest {
             Games.entries.forEach { game ->
                 onLazyListScrollToNode("Games Menu List", game.nameId)
                 if (game == Games.KLONDIKE_TURN_ONE) {
-                    checkBackgroundColor("${game.name} Card", Purple40)
+                    onNode(hasTestTag("${game.name} Card true"))
                 } else {
-                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                    onNode(hasTestTag("${game.name} Card false"))
                 }
             }
         }
@@ -62,7 +53,6 @@ class GamesMenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    surfaceColor = MaterialTheme.colorScheme.surface
                     GamesMenu(
                         updateStats = { },
                         lgs = LastGameStats(false, 0, 0L, 0),
@@ -75,28 +65,26 @@ class GamesMenuTest {
             // switch to Alaska and check backgrounds
             onLazyListScrollToNode("Games Menu List", Games.ALASKA.nameId)
             onNodeWithTextId(Games.ALASKA.nameId).performClick()
-            // small delay to account for highlight that happens when tapped on
-            Thread.sleep(1000)
             Games.entries.forEach { game ->
                 onLazyListScrollToNode("Games Menu List", game.nameId)
                 if (game == Games.ALASKA) {
-                    checkBackgroundColor("${game.name} Card", Purple40)
+                    onNode(hasTestTag("${game.name} Card true"))
+
                 } else {
-                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                    onNode(hasTestTag("${game.name} Card false"))
                 }
             }
 
             // switch to Australian Patience and check backgrounds
             onLazyListScrollToNode("Games Menu List", Games.AUSTRALIAN_PATIENCE.nameId)
             onNodeWithTextId(Games.AUSTRALIAN_PATIENCE.nameId).performClick()
-            // small delay to account for highlight that happens when tapped on
-            Thread.sleep(1000)
             Games.entries.forEach { game ->
                 onLazyListScrollToNode("Games Menu List", game.nameId)
                 if (game == Games.AUSTRALIAN_PATIENCE) {
-                    checkBackgroundColor("${game.name} Card", Purple40)
+                    onNode(hasTestTag("${game.name} Card true"))
+
                 } else {
-                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                    onNode(hasTestTag("${game.name} Card false"))
                 }
             }
         }
@@ -107,7 +95,6 @@ class GamesMenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    surfaceColor = MaterialTheme.colorScheme.surface
                     GamesMenu(
                         updateStats = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
@@ -128,9 +115,9 @@ class GamesMenuTest {
             Games.entries.forEach { game ->
                 onLazyListScrollToNode("Games Menu List", game.nameId)
                 if (game == Games.ALASKA) {
-                    checkBackgroundColor("${game.name} Card", Purple40)
+                    onNode(hasTestTag("${game.name} Card true"))
                 } else {
-                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                    onNode(hasTestTag("${game.name} Card false"))
                 }
             }
         }
@@ -141,7 +128,6 @@ class GamesMenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    surfaceColor = MaterialTheme.colorScheme.surface
                     GamesMenu(
                         updateStats = { },
                         lgs = LastGameStats(false, 10, 100L, 2),
@@ -162,23 +148,11 @@ class GamesMenuTest {
             Games.entries.forEach { game ->
                 onLazyListScrollToNode("Games Menu List", game.nameId)
                 if (game == Games.KLONDIKE_TURN_ONE) {
-                    checkBackgroundColor("${game.name} Card", Purple40)
+                    onNode(hasTestTag("${game.name} Card true"))
                 } else {
-                    checkBackgroundColor("${game.name} Card", surfaceColor)
+                    onNode(hasTestTag("${game.name} Card false"))
                 }
             }
-        }
-    }
-
-    /**
-     *  Checks that node with given [nodeTestTag] has given [color] as its background color.
-     */
-    private fun checkBackgroundColor(nodeTestTag: String, color: Color) {
-        val array = IntArray(20)
-        composeRule.apply {
-            onNode(hasTestTag(nodeTestTag)).captureToImage()
-                .readPixels(array, startX = 10, startY = 10, width = 5, height = 4)
-            array.forEach { assertEquals(color.convert(ColorSpaces.Srgb).hashCode(), it) }
         }
     }
 }

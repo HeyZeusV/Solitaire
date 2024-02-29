@@ -177,7 +177,7 @@ fun GamesInfo(
     Card(
         modifier = Modifier
             .clickable { onClick.invoke(game) }
-            .testTag("${game.name} Card"),
+            .testTag("${game.name} Card $selected"),
         shape = ShapeDefaults.Small,
         colors = CardDefaults.cardColors(
             containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface
