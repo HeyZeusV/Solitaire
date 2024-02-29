@@ -4,13 +4,13 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.MainActivity
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
+import com.heyzeusv.solitaire.util.switchGame
 import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import com.heyzeusv.solitaire.util.waitUntilTableauExists
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -35,7 +35,7 @@ class YukonTest {
 
     @Before
     fun setUp() {
-        switchToYukon()
+        composeRule.switchGame(Games.YUKON)
     }
 
     @Test
@@ -95,19 +95,6 @@ class YukonTest {
             // check that tools is displayed and that Undo is disabled
             onNode(hasTestTag("Tools")).assertIsDisplayed()
             onNodeWithTextId(R.string.tools_button_undo).assertIsNotEnabled()
-        }
-    }
-
-    /**
-     *  Switches game to Yukon.
-     */
-    private fun switchToYukon() {
-        composeRule.apply {
-            onNodeWithTextId(R.string.tools_button_menu).performClick()
-            onNodeWithTextId(R.string.games_yukon).performClick()
-
-            // close by pressing back button
-            Espresso.pressBack()
         }
     }
 }
