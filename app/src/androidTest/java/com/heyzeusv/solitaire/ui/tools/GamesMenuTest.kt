@@ -76,7 +76,7 @@ class GamesMenuTest {
             onLazyListScrollToNode("Games Menu List", Games.ALASKA.nameId)
             onNodeWithTextId(Games.ALASKA.nameId).performClick()
             // small delay to account for highlight that happens when tapped on
-            Thread.sleep(300)
+            Thread.sleep(1000)
             Games.entries.forEach { game ->
                 onLazyListScrollToNode("Games Menu List", game.nameId)
                 if (game == Games.ALASKA) {
@@ -90,7 +90,7 @@ class GamesMenuTest {
             onLazyListScrollToNode("Games Menu List", Games.AUSTRALIAN_PATIENCE.nameId)
             onNodeWithTextId(Games.AUSTRALIAN_PATIENCE.nameId).performClick()
             // small delay to account for highlight that happens when tapped on
-            Thread.sleep(300)
+            Thread.sleep(1000)
             Games.entries.forEach { game ->
                 onLazyListScrollToNode("Games Menu List", game.nameId)
                 if (game == Games.AUSTRALIAN_PATIENCE) {

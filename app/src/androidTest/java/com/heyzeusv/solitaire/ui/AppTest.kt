@@ -1,17 +1,15 @@
 package com.heyzeusv.solitaire.ui
 
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotDisplayed
-import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnPileTT
 import com.heyzeusv.solitaire.util.onNodeWithTextId
-import com.heyzeusv.solitaire.util.performClickAt
 import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -38,7 +36,9 @@ class AppTest {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-            onNode(hasTestTag("Menu")).assertIsDisplayed()
+            onNodeWithTextId(MenuState.GAMES.nameId).assertIsDisplayed()
+            onNodeWithTextId(MenuState.STATS.nameId).assertIsDisplayed()
+            onNodeWithTextId(MenuState.ABOUT.nameId).assertIsDisplayed()
         }
     }
 
@@ -46,16 +46,11 @@ class AppTest {
     fun app_closeMenu() {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_menu).performClick()
-
-            // close by clicking outside Card bounds
-            onNode(hasTestTag("Close Menu")).performClickAt(Offset.Zero)
-            onNode(hasTestTag("Menu")).assertIsNotDisplayed()
-
             onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-            // close by pressing back button
-            Espresso.pressBack()
-            onNode(hasTestTag("Menu")).assertIsNotDisplayed()
+            onNodeWithTextId(MenuState.GAMES.nameId).assertDoesNotExist()
+            onNodeWithTextId(MenuState.STATS.nameId).assertDoesNotExist()
+            onNodeWithTextId(MenuState.ABOUT.nameId).assertDoesNotExist()
         }
     }
 
