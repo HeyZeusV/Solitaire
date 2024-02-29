@@ -206,7 +206,7 @@ fun ButtonRevealContent(buttonText: String, file: String) {
                     modifier = Modifier
                         .padding(all = 8.dp)
                         .verticalScroll(rememberScrollState())
-                        .testTag("About Changelog"),
+                        .testTag("About $file"),
                     style = MaterialTheme.typography.bodyLarge
                 )
             }

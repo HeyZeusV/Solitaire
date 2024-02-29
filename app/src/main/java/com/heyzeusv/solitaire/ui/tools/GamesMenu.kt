@@ -140,6 +140,7 @@ fun GamesMenu(
                 onBackPress = { onBackPress(menuSelectedGame) }
             )
             LazyColumn(
+                modifier = Modifier.testTag("Games Menu List"),
                 state = lazyColumnState,
                 verticalArrangement = Arrangement.spacedBy(2.dp)
             ) {
@@ -167,7 +168,9 @@ fun GamesInfo(
     onClick: (Games) -> Unit
 ) {
     Card(
-        modifier = Modifier.clickable { onClick.invoke(game) },
+        modifier = Modifier
+            .clickable { onClick.invoke(game) }
+            .testTag("${game.name} Card"),
         shape = ShapeDefaults.Small,
         colors = CardDefaults.cardColors(
             containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface

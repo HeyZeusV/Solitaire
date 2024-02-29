@@ -151,7 +151,8 @@ fun StatsDropDownMenu(
                     .fillMaxWidth()
                     .onGloballyPositioned { coordinates ->
                         textFieldSize = coordinates.size.toSize()
-                    },
+                    }
+                    .testTag("DropDownMenu"),
                 readOnly = true,
                 textStyle = MaterialTheme.typography.titleMedium,
                 label = { Text(stringResource(R.string.stats_label_ddm)) },
@@ -184,7 +185,8 @@ fun StatsDropDownMenu(
                         onClick = {
                             updateSelectedGame(game)
                             expanded = false
-                        }
+                        },
+                        modifier = Modifier.testTag("DropDownMenu Item ${game.name}")
                     )
                 }
             }
@@ -264,9 +266,10 @@ fun StatField(
     statValue: String,
     @StringRes statTipId: Int? = null,
 ) {
-    Column {
+    val statName = stringResource(statNameId)
+    Column(modifier = Modifier.testTag("$statName: $statValue")){
         Text(
-            text = stringResource(statNameId),
+            text = statName,
             style = MaterialTheme.typography.bodyMedium
         )
         if (statTipId != null) {

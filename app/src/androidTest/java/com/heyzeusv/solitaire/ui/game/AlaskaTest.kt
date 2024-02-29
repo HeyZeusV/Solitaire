@@ -1,10 +1,11 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.MainActivity
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnPileTT
 import com.heyzeusv.solitaire.util.clickOnTableauCard
@@ -18,10 +19,10 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- *  Tests ties to Russian.
+ *  Tests ties to Alaska.
  */
 @HiltAndroidTest
-class RussianTest {
+class AlaskaTest {
 
     @get:Rule(order = 1)
     var hiltRule = HiltAndroidRule(this)
@@ -33,7 +34,7 @@ class RussianTest {
 
     @Before
     fun setUp() {
-        switchToRussian()
+        switchToAlaska()
     }
 
     /**
@@ -41,7 +42,7 @@ class RussianTest {
      */
 
     @Test
-    fun russian_onTableauClick_moveOneCard() {
+    fun alaska_onTableauClick_moveOneCardDesc() {
         composeRule.apply {
             // click on tableau and check that cards ends in correct pile
             clickOnTableauCard("Tableau #1", tc.card1HFU)
@@ -53,7 +54,17 @@ class RussianTest {
     }
 
     @Test
-    fun russian_onTableauClick_moveMultipleCards() {
+    fun alaska_onTableauClick_moveOneCardAsc() {
+        composeRule.apply {
+            // click on tableau and check that cards ends in correct pile
+            clickOnTableauCard("Tableau #2", tc.card2HFU)
+            waitUntilPileCardExists("Tableau #1", tc.card2HFU)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 1).assertIsDisplayed()
+        }
+    }
+
+    @Test
+    fun alaska_onTableauClick_moveMultipleCardsDesc() {
         composeRule.apply {
             // click on tableau and check that cards ends in correct pile
             clickOnTableauCard("Tableau #5", tc.card4CFU)
@@ -62,13 +73,23 @@ class RussianTest {
         }
     }
 
+    @Test
+    fun alaska_onTableauClick_moveMultipleCardsAsc() {
+        composeRule.apply {
+            // click on tableau and check that cards ends in correct pile
+            clickOnTableauCard("Tableau #3", tc.card4SFU)
+            waitUntilTableauExists("Tableau #6", tc.card3SFU, tc.card4SFU, tc.card10DFU, tc.card10SFU)
+            onNodeWithTextId(R.string.scoreboard_stat_moves, 1).assertIsDisplayed()
+        }
+    }
+
     /**
      *  Switches game to Yukon.
      */
-    private fun switchToRussian() {
+    private fun switchToAlaska() {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_menu).performClick()
-            onNodeWithTextId(R.string.games_russian).performClick()
+            onNodeWithTextId(R.string.games_alaska).performClick()
 
             // close by pressing back button
             Espresso.pressBack()
