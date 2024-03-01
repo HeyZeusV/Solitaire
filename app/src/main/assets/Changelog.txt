@@ -1,3 +1,8 @@
+v2.0.0
+-New: Game selection has its own screen now with some info on each game as well as a preview image.
+-New: Stats has its own screen now and any game stats can be viewed without changing game.
+-New: About screen where changelog, contact info, and credits can be found.
+
 v1.7.0
 -New: Alaska and Russian, 2 variants of Yukon, are now available to play!
 
