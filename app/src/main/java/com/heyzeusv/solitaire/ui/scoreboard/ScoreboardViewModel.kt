@@ -108,6 +108,7 @@ class ScoreboardViewModel @Inject constructor() : ViewModel() {
         _moves.value = 0
         resetTimer()
         _score.value = 0
+        _historyList.clear()
         recordHistory()
     }
 

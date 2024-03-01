@@ -7,7 +7,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.onLazyListScrollToNode
 import com.heyzeusv.solitaire.util.onNodeWithTextId
@@ -28,8 +27,8 @@ class GamesMenuTest {
             setContent {
                 SolitaireTheme {
                     GamesMenu(
-                        updateStats = { },
-                        lgs = LastGameStats(false, 0, 0L, 0),
+                        gameSwitchConfirmOnClick = { },
+                        gameInfoOnClickCheck = { false },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         onBackPress = { }
                     )
@@ -54,8 +53,8 @@ class GamesMenuTest {
             setContent {
                 SolitaireTheme {
                     GamesMenu(
-                        updateStats = { },
-                        lgs = LastGameStats(false, 0, 0L, 0),
+                        gameSwitchConfirmOnClick = { },
+                        gameInfoOnClickCheck = { false },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         onBackPress = { }
                     )
@@ -96,8 +95,8 @@ class GamesMenuTest {
             setContent {
                 SolitaireTheme {
                     GamesMenu(
-                        updateStats = { },
-                        lgs = LastGameStats(false, 10, 100L, 2),
+                        gameSwitchConfirmOnClick = { },
+                        gameInfoOnClickCheck = { true },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         onBackPress = { }
                     )
@@ -129,8 +128,8 @@ class GamesMenuTest {
             setContent {
                 SolitaireTheme {
                     GamesMenu(
-                        updateStats = { },
-                        lgs = LastGameStats(false, 10, 100L, 2),
+                        gameSwitchConfirmOnClick = { },
+                        gameInfoOnClickCheck = { true },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         onBackPress = { }
                     )

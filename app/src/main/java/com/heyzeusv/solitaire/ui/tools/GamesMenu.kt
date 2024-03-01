@@ -37,7 +37,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
 import com.heyzeusv.solitaire.ui.MenuHeaderBar
 import com.heyzeusv.solitaire.ui.game.GameViewModel
@@ -61,12 +60,17 @@ fun GamesMenu(
     menuVM: MenuViewModel
 ) {
     val selectedGame by menuVM.selectedGame.collectAsState()
-    val lgs = sbVM.retrieveLastGameStats(false)
     val scope = rememberCoroutineScope()
 
     GamesMenu(
-        updateStats = menuVM::updateStats,
-        lgs = lgs,
+        gameSwitchConfirmOnClick = {
+            val lgs = sbVM.retrieveLastGameStats(false)
+            if (lgs.moves > 1) {
+                menuVM.updateStats(lgs)
+                sbVM.reset()
+            }
+        },
+        gameInfoOnClickCheck = { sbVM.retrieveLastGameStats(false).moves > 0 },
         selectedGame = selectedGame,
         onBackPress = { game ->
             scope.launch {
@@ -84,19 +88,19 @@ fun GamesMenu(
 
 /**
  *   Composable that displays Menu which allows user to switch games. All the data has been hoisted
- *   into above [GamesMenu] thus allowing for easier testing. [lgs] is used to check if a game has
- *   been started and the user is trying to switch game types causing a [GameSwitchAlertDialog] to
- *   appear to confirm game change, as well as to [updateStats] if user confirms game switch with
- *   more than 1 move taken. [selectedGame] determines which game is selected when user opens
- *   [GamesMenu]. [onBackPress] is launched when user tries to close [GamesMenu] using either top
- *   left arrow icon or back button on phone; it updates [selectedGame] which causes
+ *   into above [GamesMenu] thus allowing for easier testing. [gameInfoOnClickCheck] is used to
+ *   check if a game has been started and the user is trying to switch game types causing a
+ *   [GameSwitchAlertDialog] to appear to confirm/decline game change, running
+ *   [gameSwitchConfirmOnClick] on confirm. [selectedGame] determines which game is selected when
+ *   user opens [GamesMenu]. [onBackPress] is launched when user tries to close [GamesMenu] using
+ *   either top left arrow icon or back button on phone; it updates [selectedGame] which causes
  *   [SolitaireBoard] to recompose, so small delay is added before closing [GamesMenu] by updating
  *   [MenuState].
  */
 @Composable
 fun GamesMenu(
-    updateStats: (LastGameStats) -> Unit,
-    lgs: LastGameStats,
+    gameSwitchConfirmOnClick: () -> Unit,
+    gameInfoOnClickCheck: () -> Boolean,
     selectedGame: Games,
     onBackPress: (Games) -> Unit
 ) {
@@ -105,7 +109,7 @@ fun GamesMenu(
     var inProgressSelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_THREE) }
     val gamesInfoOnClick = { game: Games ->
         if (game != menuSelectedGame) {
-            if (lgs.moves > 0) {
+            if (gameInfoOnClickCheck()) {
                 displayGameSwitch = true
                 inProgressSelectedGame = game
             } else {
@@ -124,7 +128,7 @@ fun GamesMenu(
     GameSwitchAlertDialog(
         displayGameSwitch = displayGameSwitch,
         confirmOnClick = {
-            if (lgs.moves > 1) updateStats(lgs)
+            gameSwitchConfirmOnClick()
             menuSelectedGame = inProgressSelectedGame
             displayGameSwitch = false
         },
@@ -222,8 +226,8 @@ fun GamesInfo(
 fun GamesMenuPreview() {
     SolitairePreview {
         GamesMenu(
-            updateStats = { },
-            lgs = LastGameStats(false, 0, 0, 0),
+            gameSwitchConfirmOnClick = { },
+            gameInfoOnClickCheck = { true },
             selectedGame = Games.KLONDIKE_TURN_ONE,
             onBackPress = { }
         )
