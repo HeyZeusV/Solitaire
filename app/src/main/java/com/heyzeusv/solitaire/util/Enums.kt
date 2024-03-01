@@ -63,6 +63,22 @@ enum class Games(
         3,
         Game.GAME_KLONDIKETURNTHREE
     ),
+    CLASSIC_WESTCLIFF(
+        R.string.games_classic_westcliff,
+        R.string.games_family_klondike,
+        R.drawable.games_classic_westcliff,
+        NONE,
+        1,
+        Game.GAME_CLASSIC_WESTCLIFF
+    ),
+    EASTHAVEN(
+        R.string.games_easthaven,
+        R.string.games_family_klondike,
+        R.drawable.games_easthaven,
+        NONE,
+        0,
+        Game.GAME_EASTHAVEN
+    ),
     YUKON(
         R.string.games_yukon,
         R.string.games_family_yukon,
