@@ -35,7 +35,7 @@ abstract class GameViewModel (
 ) : ViewModel() {
 
     // holds all 52 playing Cards
-    private var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
+    protected open var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
     private var shuffledDeck = emptyList<Card>()
 
     protected open val baseRedealAmount: Int = 1000
@@ -50,7 +50,7 @@ abstract class GameViewModel (
     private val _stockWasteEmpty = MutableStateFlow(false)
     val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
-    private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
+    protected val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
     val foundation: List<Foundation> get() = _foundation
 
     protected abstract val _tableau: MutableList<Tableau>
@@ -76,7 +76,7 @@ abstract class GameViewModel (
      *  Goes through all the card piles in the game and resets them for either the same game or a
      *  new game depending on [resetOption].
      */
-    protected fun reset(resetOption: ResetOptions) {
+    protected open fun reset(resetOption: ResetOptions) {
         redealLeft = baseRedealAmount
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
@@ -252,7 +252,9 @@ abstract class GameViewModel (
                 }
             }
         }
-        _tableau.forEach { if (it.add(cards)) return MOVE }
+        // try to add to non-empty tableau first
+        _tableau.forEach { if (it.pile.isNotEmpty() && it.add(cards)) return MOVE  }
+        _tableau.forEach { if (it.pile.isEmpty() && it.add(cards)) return MOVE  }
         return ILLEGAL
     }
 
@@ -269,6 +271,7 @@ abstract class GameViewModel (
                 foundation = _foundation.map { Foundation(it.suit, it.pile) },
                 tableau = when (_tableau[0]) {
                     is KlondikeTableau -> _tableau.map { KlondikeTableau(it.pile) }
+                    is ClassicWestcliffTableau -> _tableau.map { ClassicWestcliffTableau(it.pile) }
                     is YukonTableau -> _tableau.map { YukonTableau(it.pile) }
                     is AustralianPatienceTableau -> _tableau.map { AustralianPatienceTableau(it.pile) }
                     is AlaskaTableau -> _tableau.map { AlaskaTableau(it.pile) }
@@ -337,7 +340,7 @@ abstract class GameViewModel (
      *  Cards 26-38 -> Hearts
      *  Cards 39-51 -> Spades
      */
-    private fun getSuit(i: Int) = when (i / 13) {
+    protected open fun getSuit(i: Int) = when (i / 13) {
         0 -> Suits.CLUBS
         1 -> Suits.DIAMONDS
         2 -> Suits.HEARTS

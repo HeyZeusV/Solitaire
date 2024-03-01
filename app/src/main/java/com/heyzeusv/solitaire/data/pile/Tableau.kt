@@ -20,6 +20,14 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
+    class ClassicWestcliffTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+        override val resetFaceUpAmount: Int = 1
+        override val anyCardEmptyPile: Boolean = true
+
+        override fun addCondition(cFirst: Card, pLast: Card): Boolean {
+            return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
+        }
+    }
     class YukonTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
         override val resetFaceUpAmount: Int = 5
 
@@ -61,6 +69,11 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
     abstract val resetFaceUpAmount: Int
 
     /**
+     *  Determines if an empty Tableau pile can be started by any card.
+     */
+    protected open val anyCardEmptyPile: Boolean = false
+
+    /**
      *  Each game has their own version to adding new [Card]s to [_pile]. This is used in [add] to
      *  determine if cads should be added.
      */
@@ -85,7 +98,8 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
                     return true
                 }
             // add cards if pile is empty and first card of given cards is the highest value (King)
-            } else if (cFirst.value == 12) {
+            // or if any card is allowed to start a new pile
+            } else if (cFirst.value == 12 || anyCardEmptyPile) {
                 addAll(cards)
                 return true
             }

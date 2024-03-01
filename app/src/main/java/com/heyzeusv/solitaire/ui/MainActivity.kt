@@ -24,6 +24,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.AlaskaViewModel
 import com.heyzeusv.solitaire.ui.game.AustralianPatienceViewModel
 import com.heyzeusv.solitaire.ui.game.CanberraViewModel
+import com.heyzeusv.solitaire.ui.game.ClassicWestcliffViewModel
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.game.KlondikeViewModel
 import com.heyzeusv.solitaire.ui.game.RussianViewModel
@@ -62,6 +63,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
         Games.CANBERRA -> hiltViewModel<CanberraViewModel>()
         Games.ALASKA -> hiltViewModel<AlaskaViewModel>()
         Games.RUSSIAN -> hiltViewModel<RussianViewModel>()
+        Games.CLASSIC_WESTCLIFF -> hiltViewModel<ClassicWestcliffViewModel>()
         else -> hiltViewModel<KlondikeViewModel>()
     }
 
