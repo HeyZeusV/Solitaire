@@ -112,7 +112,10 @@ fun StatsMenu(
                 selectedGame = selectedGame,
                 updateSelectedGame = { updateSelectedGame(it) }
             )
-            StatColumn(stats = stats)
+            StatColumn(
+                stats = stats,
+                game = selectedGame
+            )
         }
     }
 }
@@ -199,7 +202,10 @@ fun StatsDropDownMenu(
  *  extension functions.
  */
 @Composable
-fun StatColumn(stats: GameStats) {
+fun StatColumn(
+    stats: GameStats,
+    game: Games
+) {
     Column(
         modifier = Modifier.verticalScroll(rememberScrollState()),
         verticalArrangement = Arrangement.spacedBy(2.dp)
@@ -245,7 +251,8 @@ fun StatColumn(stats: GameStats) {
             statValue = stringResource(
                 R.string.stats_average_score_value,
                 stats.getAverageScore(),
-                stats.getScorePercentage()
+                game.maxScore.amount,
+                stats.getScorePercentage(game.maxScore)
             )
         )
         StatField(
