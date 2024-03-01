@@ -4,12 +4,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
@@ -22,15 +24,16 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.AlaskaViewModel
 import com.heyzeusv.solitaire.ui.game.AustralianPatienceViewModel
 import com.heyzeusv.solitaire.ui.game.CanberraViewModel
+import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.game.KlondikeViewModel
 import com.heyzeusv.solitaire.ui.game.RussianViewModel
 import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.game.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
+import com.heyzeusv.solitaire.ui.tools.MenuContainer
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.tools.MenuViewModel
-import com.heyzeusv.solitaire.ui.tools.SolitaireMenu
 import com.heyzeusv.solitaire.ui.tools.SolitaireTools
 import com.heyzeusv.solitaire.util.Games
 import dagger.hilt.android.AndroidEntryPoint
@@ -73,29 +76,54 @@ fun SolitaireApp(finishApp: () -> Unit) {
         onPauseOrDispose { sbVM.pauseTimer() }
     }
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxSize()
             .background(brush)
     ) {
+        SolitaireScreen(
+            sbVM = sbVM,
+            gameVM = gameVM,
+            menuVM = menuVM,
+            selectedGame = selectedGame
+        )
+        MenuContainer(
+            sbVM = sbVM,
+            gameVM = gameVM,
+            menuVM = menuVM,
+            modifier = Modifier.align(Alignment.BottomStart)
+        )
+    }
+    CloseGameAlertDialog(sbVM = sbVM, menuVM = menuVM, finishApp = finishApp)
+    GameWonAlertDialog(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
+}
+
+/**
+ *  Composable which displays Scoreboard, Board, and Tools.
+ */
+@Composable
+fun SolitaireScreen(
+    sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
+    menuVM: MenuViewModel,
+    selectedGame: Games
+) {
+    Column(Modifier.fillMaxSize()) {
         SolitaireScoreboard(
             sbVM = sbVM,
-            modifier = Modifier.weight(0.12f)
+            modifier = Modifier
         )
         SolitaireBoard(
             sbVM = sbVM,
             gameVM = gameVM,
             selectedGame = selectedGame,
-            modifier = Modifier.weight(0.78f)
+            modifier = Modifier.weight(1f)
         )
         SolitaireTools(
             sbVM = sbVM,
             gameVM = gameVM,
             menuVM = menuVM,
-            modifier = Modifier.weight(0.10f)
+            modifier = Modifier
         )
     }
-    SolitaireMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
-    CloseGameAlertDialog(sbVM = sbVM, menuVM = menuVM, finishApp = finishApp)
-    GameWonAlertDialog(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
 }

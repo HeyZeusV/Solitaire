@@ -1,14 +1,15 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.MainActivity
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnPileTT
 import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
+import com.heyzeusv.solitaire.util.switchGame
 import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import com.heyzeusv.solitaire.util.waitUntilTableauExists
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -33,7 +34,7 @@ class RussianTest {
 
     @Before
     fun setUp() {
-        switchToRussian()
+        composeRule.switchGame(Games.RUSSIAN)
     }
 
     /**
@@ -59,19 +60,6 @@ class RussianTest {
             clickOnTableauCard("Tableau #5", tc.card4CFU)
             waitUntilTableauExists("Tableau #3", tc.card5CFU, tc.card4CFU, tc.card11HFU, tc.card6HFU)
             onNodeWithTextId(R.string.scoreboard_stat_moves, 1).assertIsDisplayed()
-        }
-    }
-
-    /**
-     *  Switches game to Yukon.
-     */
-    private fun switchToRussian() {
-        composeRule.apply {
-            onNodeWithTextId(R.string.tools_button_menu).performClick()
-            onNodeWithTextId(R.string.games_russian).performClick()
-
-            // close by pressing back button
-            Espresso.pressBack()
         }
     }
 }

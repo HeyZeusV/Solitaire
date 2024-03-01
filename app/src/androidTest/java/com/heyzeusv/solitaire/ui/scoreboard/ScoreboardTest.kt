@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.scoreboard
 
 import androidx.activity.ComponentActivity
 import androidx.compose.foundation.layout.height
@@ -8,7 +8,6 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 import org.junit.Rule

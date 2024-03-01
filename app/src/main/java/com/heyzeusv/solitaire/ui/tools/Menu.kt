@@ -1,249 +1,323 @@
 package com.heyzeusv.solitaire.ui.tools
 
-import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.EaseInCubic
+import androidx.compose.animation.core.EaseOutCubic
+import androidx.compose.animation.core.FastOutSlowInEasing
+import androidx.compose.animation.core.animateDp
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.Card
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FilterChip
-import androidx.compose.material3.FilterChipDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.ripple.rememberRipple
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.heyzeusv.solitaire.GameStats
-import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
-import com.heyzeusv.solitaire.ui.SolitaireAlertDialog
+import com.heyzeusv.solitaire.ui.SolitaireButton
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
-import com.heyzeusv.solitaire.util.theme.BackgroundOverlay
-import com.heyzeusv.solitaire.util.theme.Pink80
-import com.heyzeusv.solitaire.util.theme.Purple40
-import com.heyzeusv.solitaire.util.Games
-import com.heyzeusv.solitaire.util.ResetOptions
+import com.heyzeusv.solitaire.util.MenuState
+import com.heyzeusv.solitaire.util.PreviewDevices
 import com.heyzeusv.solitaire.util.SolitairePreview
-import com.heyzeusv.solitaire.util.formatTimeStats
-import com.heyzeusv.solitaire.util.getAverageMoves
-import com.heyzeusv.solitaire.util.getAverageScore
-import com.heyzeusv.solitaire.util.getAverageTime
-import com.heyzeusv.solitaire.util.getScorePercentage
-import com.heyzeusv.solitaire.util.getStatsDefaultInstance
-import com.heyzeusv.solitaire.util.getWinPercentage
 
 /**
- *  Composable that displays Menu which allows user to switch games and view stats for selected game.
+ *  Composable that displays Menu options which transition into Menu screens.
  */
 @Composable
-fun SolitaireMenu(
+fun MenuContainer(
     sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
+    modifier: Modifier = Modifier
 ) {
-    val displayMenu by menuVM.displayMenu.collectAsState()
-    val selectedGame by menuVM.selectedGame.collectAsState()
-    val stats by menuVM.stats.collectAsState()
-    val currentGameStats =
-        stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
-
-    val lgs = sbVM.retrieveLastGameStats(false)
-    SolitaireMenu(
-        displayMenu = displayMenu,
-        updateDisplayMenu = menuVM::updateDisplayMenu,
-        updateStats = menuVM::updateStats,
-        lgs = lgs,
-        selectedGame = selectedGame,
-        updateSelectedGame = menuVM::updateSelectedGame,
-        reset = {
-            gameVM.resetAll(ResetOptions.NEW)
-            sbVM.reset()
-        },
-        stats = currentGameStats
-    )
+    val displayMenuButtons by menuVM.displayMenuButtons.collectAsState()
+    val menuState by menuVM.menuState.collectAsState()
+    Column(modifier = modifier) {
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
+            option = MenuState.GAMES,
+            content = { GamesMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
+        )
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
+            option = MenuState.STATS,
+            content = { StatsMenu(menuVM = menuVM) }
+        )
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
+            option = MenuState.ABOUT,
+            transformOrigin = TransformOrigin(0.5f, 0.20f),
+            content = { AboutMenu { menuVM.updateMenuState(MenuState.BUTTONS) } },
+            bottomPadding = 80.dp
+        )
+    }
 }
 
 /**
- *  Composable that displays Menu which allows user to switch games and view stats for selected game.
- *  All the data has been hoisted into above [SolitaireMenu] thus allowing for easier testing.
- *  Menu can be opened and closed by updating [displayMenu] value using [updateDisplayMenu]. [lgs]
- *  is used to check if a game has been started and the user is trying to switch game types causing
- *  a [SolitaireAlertDialog] to appear to confirm game change, as well as to [updateStats] if user
- *  confirms game switch with more than 1 move taken. [reset] is called when game change is
- *  confirmed causing game board to reset. [selectedGame] determines which stats to be displayed
- *  and which game to be shown when user close Menu and is updated by [updateSelectedGame].
- *  [stats] are to be displayed.
+ *  Composable that transitions from given [option] Button to [content] Screen. [displayMenuButtons]
+ *  determines if initial Button should be animated in/out. [menuState] determines which Composable
+ *  to Transition to, while [updateMenuState] changes that value. [bottomPadding] is needed due to
+ *  not being anchored to another Composable, as well as having to transition to full screen.
+ *  [transformOrigin] determines where Button scales in/out from.
  */
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun SolitaireMenu(
-    displayMenu: Boolean,
-    updateDisplayMenu: (Boolean) -> Unit,
-    updateStats: (LastGameStats) -> Unit,
-    lgs: LastGameStats,
-    selectedGame: Games,
-    updateSelectedGame: (Games) -> Unit,
-    reset: () -> Unit,
-    stats: GameStats
+fun MenuOptionTransition(
+    displayMenuButtons: Boolean,
+    menuState: MenuState,
+    updateMenuState: (MenuState) -> Unit,
+    option: MenuState,
+    content: @Composable () -> Unit,
+    bottomPadding: Dp = 8.dp,
+    transformOrigin: TransformOrigin = TransformOrigin.Center
 ) {
-    if (displayMenu) {
-        val scrollableState = rememberScrollState()
 
-        BackHandler { updateDisplayMenu(false) }
+    val transition = updateTransition(targetState = menuState, label = "Menu Transition")
+    val backgroundColor by transition.animateColor(
+        label = "Menu ${option.name} backgroundColor Transition"
+    ) { state ->
+        when (state) {
+            option -> MaterialTheme.colorScheme.surfaceVariant
+            else -> Color.Transparent
+        }
+    }
+    val cornerRadius by transition.animateDp(
+        label = "Menu ${option.name} cornerRadius Transition",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 500,
+                    easing = EaseOutCubic
+                )
+                else -> tween(
+                    durationMillis = 500,
+                    easing = EaseInCubic
+                )
+            }
+        }
+    ) { state ->
+        when (state) {
+            option -> 0.dp
+            else -> 20.dp
+        }
+    }
+    val borderWidth by transition.animateDp(
+        label = "Menu ${option.name} borderWidth Transition",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 500,
+                    easing = EaseOutCubic
+                )
+                else -> tween(
+                    durationMillis = 500,
+                    easing = EaseInCubic
+                )
+            }
+        }
+    ) { state ->
+        when (state) {
+            option -> 0.dp
+            else -> 2.dp
+        }
+    }
+    val borderColor by transition.animateColor(
+        label = "Menu ${option.name} borderColor Transition",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 500,
+                    easing = EaseOutCubic
+                )
+                else -> tween(
+                    durationMillis = 500,
+                    easing = EaseInCubic
+                )
+            }
+        }
+    ) { state ->
+        when (state) {
+            option -> Color.Transparent
+            else -> Color.White
+        }
+    }
+    val elevation by transition.animateDp(
+        label = "Menu ${option.name} elevation Transition",
+        transitionSpec = {
+            when (targetState) {
+                MenuState.BUTTONS -> tween(
+                    durationMillis = 500,
+                    easing = EaseOutCubic,
+                )else -> tween(
+                    durationMillis = 500,
+                    easing = EaseInCubic,
+                )
+            }
+        }
+    ) { state ->
+        when (state) {
+            option -> 0.dp
+            else -> 1.dp
+        }
+    }
+    val paddingStart by transition.animateDp(
+        label = "Menu ${option.name} paddingStart Transition"
+    ) { state ->
+        when (state) {
+            option -> 0.dp
+            else -> 12.dp
+        }
+    }
+    val paddingBottom by transition.animateDp(
+        label = "Menu ${option.name} paddingBottom Transition"
+    ) { state ->
+        when (state) {
+            MenuState.BUTTONS -> bottomPadding
+            else -> 0.dp
+        }
+    }
 
-        var displayGameSwitch by remember { mutableStateOf(false) }
-        var newlySelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_THREE) }
-
-        GameSwitchAlertDialog(
-            displayGameSwitch = displayGameSwitch,
-            confirmOnClick = {
-                if (lgs.moves > 1) updateStats(lgs)
-                updateSelectedGame(newlySelectedGame)
-                reset()
-                displayGameSwitch = false
-            },
-            dismissOnClick = { displayGameSwitch = false }
-        )
-        Surface(
+    AnimatedVisibility(
+        visible = displayMenuButtons,
+        enter = scaleIn(transformOrigin = transformOrigin),
+        exit = scaleOut(transformOrigin = transformOrigin)
+    ) {
+        transition.AnimatedContent(
             modifier = Modifier
-                .fillMaxSize()
-                .clickable { updateDisplayMenu(false) }
-                .testTag("Close Menu"),
-            color = BackgroundOverlay
-        ) {}
-        Card(
-            modifier = Modifier
-                .wrapContentHeight()
-                .fillMaxWidth()
-                .padding(all = 32.dp)
-                .testTag("Menu")
-        ) {
-            Column(
-                modifier = Modifier
-                    .padding(all = 24.dp)
-                    .scrollable(state = scrollableState, orientation = Orientation.Vertical),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.menu_header_games),
-                    textDecoration = TextDecoration.Underline,
-                    style = MaterialTheme.typography.headlineMedium
+                .padding(start = paddingStart, bottom = paddingBottom)
+                .shadow(
+                    elevation = elevation, shape = RoundedCornerShape(cornerRadius),
+                    ambientColor = Color.Transparent,
+                    spotColor = Color.Transparent
                 )
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    Games.entries.forEach {
-                        FilterChip(
-                            selected = it == selectedGame,
-                            onClick = {
-                                if (it != selectedGame) {
-                                    if (lgs.moves > 0) {
-                                        displayGameSwitch = true
-                                        newlySelectedGame = it
-                                    } else {
-                                        updateSelectedGame(it)
-                                        reset()
-                                    }
-                                }
-                            },
-                            label = { Text(text = stringResource(it.gameName)) },
-                            leadingIcon = {
-                                if (it == selectedGame) {
-                                    Icon(
-                                        imageVector = Icons.Default.Done,
-                                        contentDescription = stringResource(
-                                            R.string.menu_cdesc_chip,
-                                            stringResource(it.gameName)
-                                        ),
-                                        modifier = Modifier.size(FilterChipDefaults.IconSize)
-                                    )
-                                }
-                            },
-                            colors = FilterChipDefaults.filterChipColors(
-                                selectedContainerColor = Purple40
-                            )
-                        )
-                    }
-                }
-                Text(
-                    text = stringResource(R.string.menu_header_stats),
-                    textDecoration = TextDecoration.Underline,
-                    style = MaterialTheme.typography.headlineMedium
+                .border(
+                    border = BorderStroke(
+                        width = borderWidth,
+                        color = borderColor
+                    ),
+                    shape = RoundedCornerShape(cornerRadius)
                 )
-                Text(
-                    text = stringResource(
-                        R.string.menu_content_stats,
-                        stats.gamesPlayed,
-                        stats.gamesWon,
-                        stats.getWinPercentage(),
-                        stats.lowestMoves,
-                        stats.getAverageMoves(),
-                        stats.totalMoves,
-                        stats.fastestWin.formatTimeStats(),
-                        stats.getAverageTime().formatTimeStats(),
-                        stats.totalTime.formatTimeStats(),
-                        stats.getAverageScore(),
-                        stats.getScorePercentage(),
-                        stats.bestTotalScore
-                    )
+                .drawBehind { drawRect(backgroundColor) },
+            transitionSpec = {
+                (fadeIn(animationSpec = tween(durationMillis = 500)))
+                    .togetherWith(fadeOut(animationSpec = tween(durationMillis = 500)))
+                    .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ ->
+                        tween(durationMillis = 500, easing = FastOutSlowInEasing)
+                    }))
+            }
+        ) { state ->
+            when (state) {
+                option -> content()
+                MenuState.BUTTONS -> MenuOptionButton(
+                    option = option,
+                    onClick = { updateMenuState(option) }
                 )
-                Text(
-                    text = stringResource(R.string.menu_tip_totalscore),
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = stringResource(R.string.menu_header_credits),
-                    textDecoration = TextDecoration.Underline,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-                LinkifyText(
-                    text = stringResource(R.string.menu_content_credits),
-                    linkColor = Pink80
-                )
+                else -> {}
             }
         }
     }
 }
 
+/**
+ *  Copy of [SolitaireButton] Composable built from Box rather than Button in order for
+ *  [AnimatedContent] to work correctly. [option] contains the text/icon data to be displayed.
+ *  [onClick] is ran when pressed.
+ */
+@Composable
+fun MenuOptionButton(
+    option: MenuState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .height(40.dp)
+            .fillMaxWidth(0.3f)
+            .clickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = rememberRipple(color = Color.White),
+                onClick = onClick
+            ),
+        contentAlignment = Alignment.Center,
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 24.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                painter = painterResource(option.iconId),
+                contentDescription = stringResource(option.iconDescId),
+                modifier = Modifier.size(ButtonDefaults.IconSize),
+                tint = Color.White
+            )
+            Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
+            Text(
+                text = stringResource(option.nameId),
+                color = Color.White,
+                style = MaterialTheme.typography.labelLarge
+            )
+        }
+    }
+}
+
+@PreviewDevices
 @Preview
 @Composable
-fun SolitaireMenuPreview() {
+fun MenuOptionButtonPreview() {
     SolitairePreview {
-        SolitaireMenu(
-            displayMenu = true,
-            updateDisplayMenu = { },
-            updateStats = { },
-            lgs = LastGameStats(false, 0, 0, 0),
-            selectedGame = Games.KLONDIKE_TURN_ONE,
-            updateSelectedGame = { },
-            reset = { },
-            stats = GameStats.getDefaultInstance()
-        )
+        Box(modifier = Modifier
+            .padding(12.dp)
+            .fillMaxWidth()) {
+            MenuOptionButton(
+                option = MenuState.STATS,
+                onClick = { },
+                modifier = Modifier
+                    .fillMaxWidth(0.3f)
+                    .background(Color.Gray)
+            )
+        }
     }
 }

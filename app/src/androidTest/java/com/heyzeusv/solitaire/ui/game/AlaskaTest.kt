@@ -1,14 +1,15 @@
-package com.heyzeusv.solitaire.ui
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.performClick
-import androidx.test.espresso.Espresso
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.MainActivity
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnPileTT
 import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
+import com.heyzeusv.solitaire.util.switchGame
 import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import com.heyzeusv.solitaire.util.waitUntilTableauExists
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -33,7 +34,7 @@ class AlaskaTest {
 
     @Before
     fun setUp() {
-        switchToAlaska()
+        composeRule.switchGame(Games.ALASKA)
     }
 
     /**
@@ -79,19 +80,6 @@ class AlaskaTest {
             clickOnTableauCard("Tableau #3", tc.card4SFU)
             waitUntilTableauExists("Tableau #6", tc.card3SFU, tc.card4SFU, tc.card10DFU, tc.card10SFU)
             onNodeWithTextId(R.string.scoreboard_stat_moves, 1).assertIsDisplayed()
-        }
-    }
-
-    /**
-     *  Switches game to Yukon.
-     */
-    private fun switchToAlaska() {
-        composeRule.apply {
-            onNodeWithTextId(R.string.tools_button_menu).performClick()
-            onNodeWithTextId(R.string.games_alaska).performClick()
-
-            // close by pressing back button
-            Espresso.pressBack()
         }
     }
 }
