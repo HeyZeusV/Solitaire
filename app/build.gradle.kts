@@ -16,8 +16,8 @@ android {
         applicationId = "com.heyzeusv.solitaire"
         minSdk = 24
         targetSdk = 34
-        versionCode = 11
-        versionName = "1.7.0"
+        versionCode = 12
+        versionName = "2.0.0"
 
         testInstrumentationRunner = "com.heyzeusv.solitaire.util.CustomTestRunner"
         vectorDrawables {
