@@ -14,7 +14,7 @@ android {
     signingConfigs {
         create("release") {
             val props = Properties()
-            val fileInputStream = FileInputStream(file("../signing.properties"))
+            val fileInputStream = FileInputStream(file("../private/signing.properties"))
             props.load(fileInputStream)
             fileInputStream.close()
 
