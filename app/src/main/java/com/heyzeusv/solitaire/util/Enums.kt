@@ -7,6 +7,7 @@ import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.tools.GamesMenu
+import com.heyzeusv.solitaire.ui.tools.StatsMenu
 import com.heyzeusv.solitaire.util.Redeals.*
 
 /**
@@ -45,8 +46,9 @@ enum class Games(
     @DrawableRes val iconId: Int,
     val redeals: Redeals,
     val drawAmount: Int,
-    val dataStoreEnum: Game
-) {
+    val dataStoreEnum: Game,
+    val maxScore: MaxScore = MaxScore.ONE_DECK
+    ) {
     KLONDIKE_TURN_ONE(
         R.string.games_klondike_turn_one,
         R.string.games_family_klondike,
@@ -62,6 +64,23 @@ enum class Games(
         UNLIMITED,
         3,
         Game.GAME_KLONDIKETURNTHREE
+    ),
+    CLASSIC_WESTCLIFF(
+        R.string.games_classic_westcliff,
+        R.string.games_family_klondike,
+        R.drawable.games_classic_westcliff,
+        NONE,
+        1,
+        Game.GAME_CLASSIC_WESTCLIFF,
+        MaxScore.ONE_DECK_NO_ACES
+    ),
+    EASTHAVEN(
+        R.string.games_easthaven,
+        R.string.games_family_klondike,
+        R.drawable.games_easthaven,
+        NONE,
+        0,
+        Game.GAME_EASTHAVEN
     ),
     YUKON(
         R.string.games_yukon,
@@ -117,6 +136,15 @@ enum class Redeals(
     NONE(R.string.redeal_none, 0),
     ONCE(R.string.redeal_once, 1),
     UNLIMITED(R.string.redeal_unlimited, Int.MAX_VALUE)
+}
+
+/**
+ *  Enum class that holds the highest score a player can obtain in a [Games]. [amount] will be
+ *  displayed on [StatsMenu] and to calculate average score percentage.
+ */
+enum class MaxScore(val amount: Int) {
+    ONE_DECK(52),
+    ONE_DECK_NO_ACES(48)
 }
 
 /**

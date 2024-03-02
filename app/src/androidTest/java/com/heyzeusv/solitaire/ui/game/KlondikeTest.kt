@@ -34,12 +34,12 @@ class KlondikeTest {
     private val tc = TestCards
 
     @Test
-    fun app_startUp() {
+    fun klondike_startUp() {
         resetState()
     }
 
     @Test
-    fun app_onStockClick() {
+    fun klondike_onStockClick() {
         composeRule.apply {
             onNode(hasTestTag("Stock")).performClick()
 
@@ -50,7 +50,7 @@ class KlondikeTest {
     }
 
     @Test
-    fun app_onWasteClick() {
+    fun klondike_onWasteClick() {
         composeRule.apply {
             // draw 3 times from stock
             clickOnPileTT("Stock")
@@ -69,7 +69,7 @@ class KlondikeTest {
     }
 
     @Test
-    fun app_onFoundationClick() {
+    fun klondike_onFoundationClick() {
         composeRule.apply {
             onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
 
@@ -100,7 +100,7 @@ class KlondikeTest {
     }
 
     @Test
-    fun app_onTableauClick_moveOneCard() {
+    fun klondike_onTableauClick_moveOneCard() {
         composeRule.apply {
             // click on tableau and check that card ends in correct pile
             clickOnTableauCard("Tableau #3", tc.card3CFU)
@@ -110,7 +110,7 @@ class KlondikeTest {
     }
 
     @Test
-    fun app_onTableauClick_moveMultipleCards() {
+    fun klondike_onTableauClick_moveMultipleCards() {
         composeRule.apply {
             // draw from stock 3 times
             clickOnPileTT("Stock")
@@ -134,7 +134,7 @@ class KlondikeTest {
     }
 
     @Test
-    fun app_undo() {
+    fun klondike_undo() {
         composeRule.apply {
             onNodeWithTextId(R.string.scoreboard_stat_score, 0).assertIsDisplayed()
 
@@ -172,7 +172,7 @@ class KlondikeTest {
     }
 
     @Test
-    fun app_reset_restart() {
+    fun klondike_reset_restart() {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_reset).performClick()
 
@@ -194,7 +194,7 @@ class KlondikeTest {
     }
 
     @Test
-    fun app_reset_new() {
+    fun klondike_reset_new() {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_reset).performClick()
 

@@ -14,7 +14,7 @@ import javax.inject.Inject
  *  Data can survive configuration changes.
  */
 @HiltViewModel
-open class KlondikeViewModel @Inject constructor(
+class KlondikeViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : GameViewModel(ss) {
 

@@ -37,9 +37,9 @@ fun GameStats.getAverageTime(): Long = if (gamesPlayed == 0) 0L else (totalTime 
 
 fun GameStats.getAverageScore(): Int = if (gamesPlayed == 0) 0 else (totalScore / gamesPlayed)
 
-fun GameStats.getScorePercentage(): String {
+fun GameStats.getScorePercentage(maxScore: MaxScore): String {
     val df = DecimalFormat("#.##")
-    val scorePercent: Double = (getAverageScore().toDouble() / 52) * 100
+    val scorePercent: Double = (getAverageScore().toDouble() / maxScore.amount) * 100
     return df.format(scorePercent)
 }
 

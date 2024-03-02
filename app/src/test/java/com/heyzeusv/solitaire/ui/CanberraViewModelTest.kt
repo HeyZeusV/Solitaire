@@ -4,7 +4,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.game.CanberraViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
-import org.junit.Assert
+import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.util.Random
@@ -38,17 +38,17 @@ class CanberraAndScoreboardViewModelTest {
         // draw 24 Cards
         canVM.apply { for (i in 1..24) sbVM.handleMoveResult(onStockClick(1)) }
 
-        Assert.assertEquals(expectedStockBefore, canVM.stock.pile.toList())
-        Assert.assertEquals(expectedWastePileBefore, canVM.waste.pile.toList())
+        assertEquals(expectedStockBefore, canVM.stock.pile.toList())
+        assertEquals(expectedWastePileBefore, canVM.waste.pile.toList())
 
         sbVM.handleMoveResult(canVM.onStockClick(1))
 
-        Assert.assertEquals(expectedStockAfter, canVM.stock.pile.toList())
-        Assert.assertEquals(expectedWastePileAfter, canVM.waste.pile.toList())
-        Assert.assertEquals(expectedMoves, sbVM.moves.value)
-        Assert.assertEquals(expectedHistoryListSize, canVM.historyList.size)
-        Assert.assertEquals(expectedHistoryListSize, sbVM.historyList.size)
-        Assert.assertEquals(expectedUndoEnabled, canVM.undoEnabled.value)
-        Assert.assertEquals(expectedStockWasteEmpty, canVM.stockWasteEmpty.value)
+        assertEquals(expectedStockAfter, canVM.stock.pile.toList())
+        assertEquals(expectedWastePileAfter, canVM.waste.pile.toList())
+        assertEquals(expectedMoves, sbVM.moves.value)
+        assertEquals(expectedHistoryListSize, canVM.historyList.size)
+        assertEquals(expectedHistoryListSize, sbVM.historyList.size)
+        assertEquals(expectedUndoEnabled, canVM.undoEnabled.value)
+        assertEquals(expectedStockWasteEmpty, canVM.stockWasteEmpty.value)
     }
 }

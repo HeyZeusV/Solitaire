@@ -21,12 +21,7 @@ import androidx.compose.ui.res.imageResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.game.AlaskaViewModel
-import com.heyzeusv.solitaire.ui.game.AustralianPatienceViewModel
-import com.heyzeusv.solitaire.ui.game.CanberraViewModel
-import com.heyzeusv.solitaire.ui.game.GameViewModel
-import com.heyzeusv.solitaire.ui.game.KlondikeViewModel
-import com.heyzeusv.solitaire.ui.game.RussianViewModel
+import com.heyzeusv.solitaire.ui.game.*
 import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.game.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
@@ -62,7 +57,10 @@ fun SolitaireApp(finishApp: () -> Unit) {
         Games.CANBERRA -> hiltViewModel<CanberraViewModel>()
         Games.ALASKA -> hiltViewModel<AlaskaViewModel>()
         Games.RUSSIAN -> hiltViewModel<RussianViewModel>()
-        else -> hiltViewModel<KlondikeViewModel>()
+        Games.CLASSIC_WESTCLIFF -> hiltViewModel<ClassicWestcliffViewModel>()
+        Games.EASTHAVEN -> hiltViewModel<EasthavenViewModel>()
+        Games.KLONDIKE_TURN_ONE -> hiltViewModel<KlondikeViewModel>()
+        Games.KLONDIKE_TURN_THREE -> hiltViewModel<KlondikeViewModel>()
     }
 
     // background pattern that repeats

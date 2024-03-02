@@ -34,11 +34,13 @@
     <string name="tools_button_undo">Undo</string>
     <string name="games_klondike_turn_one">Klondike (Turn One)</string>
     <string name="games_klondike_turn_three">Klondike (Turn Three)</string>
+    <string name="games_classic_westcliff">Classic Westcliff</string>
+    <string name="games_easthaven">Easthaven</string>
     <string name="games_yukon">Yukon</string>
-    <string name="games_australian_patience">Australian Patience</string>
-    <string name="games_canberra">Canberra</string>
     <string name="games_alaska">Alaska</string>
     <string name="games_russian">Russian</string>
+    <string name="games_australian_patience">Australian Patience</string>
+    <string name="games_canberra">Canberra</string>
     <string name="games_family">Family: %1$s</string>
     <string name="games_family_klondike">Klondike</string>
     <string name="games_family_yukon">Yukon</string>
@@ -66,7 +68,7 @@
     <string name="stats_average_time">Average Time</string>
     <string name="stats_total_time">Total Time Played</string>
     <string name="stats_average_score">Average Score</string>
-    <string name="stats_average_score_value">%1$s of 52 (%2$s%%)</string>
+    <string name="stats_average_score_value">%1$s of %2$s (%3$s%%)</string>
     <string name="stats_best_score">Best Total Score</string>
     <string name="stats_best_score_tip">┗ Moves + Time + Score (Lower is better)</string>
     <string name="about_by_name">By Jesus E. Valdes</string>
@@ -78,7 +80,7 @@
     <string name="about_license">License</string>
     <string name="about_special_thanks">Special thanks to family, friends, and pets for all their support!</string>
     <string name="about_translation_warning">Google Translate was used for localization. Please let me know of any mistakes, thank you!</string>
-    <string name="about_version">v1.7.0</string>
+    <string name="about_version">v2.0.0</string>
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_privacy_policy_link">https://doc-hosting.flycricket.io/klondike-solitaire/b4a088cc-badf-42f7-b9eb-e196ca220b1b/privacy</string>
     <string name="about_icon_credit">Card Suits by Amethyst Studio (CC BY 3.0)</string>
