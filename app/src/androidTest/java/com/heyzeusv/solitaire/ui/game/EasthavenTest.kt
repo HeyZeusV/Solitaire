@@ -4,11 +4,14 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.performClick
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.MainActivity
 import com.heyzeusv.solitaire.util.Games
+import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 import com.heyzeusv.solitaire.util.switchGame
+import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -16,10 +19,10 @@ import org.junit.Rule
 import org.junit.Test
 
 /**
- *  Tests tied to Classic Westcliff.
+ *  Tests tied to Easthaven.
  */
 @HiltAndroidTest
-class ClassicWestcliffTest {
+class EasthavenTest {
 
     @get:Rule(order = 1)
     var hiltRule = HiltAndroidRule(this)
@@ -27,16 +30,32 @@ class ClassicWestcliffTest {
     @get:Rule(order = 2)
     val composeRule = createAndroidComposeRule<MainActivity>()
 
+    private val tc = TestCards
+
     @Before
     fun setUp() {
-        composeRule.switchGame(Games.CLASSIC_WESTCLIFF)
+        composeRule.switchGame(Games.EASTHAVEN)
     }
 
     @Test
-    fun classicWestcliff_reset() {
+    fun easthaven_reset() {
         resetState()
     }
 
+    @Test
+    fun easthaven_onStockClick() {
+        composeRule.apply {
+            onNode(hasTestTag("Stock")).performClick()
+
+            waitUntilPileCardExists("Tableau #0", tc.card5CFU)
+            waitUntilPileCardExists("Tableau #1", tc.card13CFU)
+            waitUntilPileCardExists("Tableau #2", tc.card12SFU)
+            waitUntilPileCardExists("Tableau #3", tc.card13HFU)
+            waitUntilPileCardExists("Tableau #4", tc.card6DFU)
+            waitUntilPileCardExists("Tableau #5", tc.card2CFU)
+            waitUntilPileCardExists("Tableau #6", tc.card12CFU)
+        }
+    }
     /**
      *  Checks that all piles are displayed and have the correct number of children on reset. Also
      *  checks that Scoreboard values are at zero and Undo button is disabled.
@@ -50,7 +69,7 @@ class ClassicWestcliffTest {
             assert(onNode(hasTestTag("Waste")).fetchSemanticsNode().children.isEmpty())
             for (i in 0..3) {
                 onNode(hasTestTag("Foundation #$i")).assertIsDisplayed()
-                assert(onNode(hasTestTag("Foundation #$i")).fetchSemanticsNode().children.size == 1)
+                assert(onNode(hasTestTag("Foundation #$i")).fetchSemanticsNode().children.isEmpty())
             }
             for (j in 0..6) {
                 onNode(hasTestTag("Tableau #$j")).assertIsDisplayed()

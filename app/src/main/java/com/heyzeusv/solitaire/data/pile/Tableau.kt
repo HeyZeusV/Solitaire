@@ -28,6 +28,18 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
+    class EasthavenTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+        override val resetFaceUpAmount: Int = 1
+        override val anyCardEmptyPile: Boolean = true
+
+        override fun addCondition(cFirst: Card, pLast: Card): Boolean {
+            return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
+        }
+
+        override fun addListCondition(cards: List<Card>): Boolean = notInOrderOrAltColor(cards)
+
+        fun addFromStock(cards: List<Card>) { _pile.addAll(cards.map { it.copy(faceUp = true) }) }
+    }
     class YukonTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
         override val resetFaceUpAmount: Int = 5
 
@@ -80,10 +92,16 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
     abstract fun addCondition(cFirst: Card, pLast: Card): Boolean
 
     /**
+     *  Some games have additional check for given [cards] before adding them.
+     */
+    protected open fun addListCondition(cards: List<Card>): Boolean = false
+
+    /**
      *  Attempts to add given [cards] to [_pile] depending on [addCondition].
      */
     override fun add(cards: List<Card>): Boolean {
         if (cards.isEmpty()) return false
+        if (addListCondition(cards)) return false
 
         val cFirst = cards.first()
         // can't add a card to its own pile
@@ -91,15 +109,13 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             if (contains(cFirst)) return false
             if (isNotEmpty()) {
                 val pLast = last()
-                // add cards if value of last card of pile is 1 more than first card of new cards
-                // and if they are different colors
                 if (addCondition(cFirst, pLast)) {
                     addAll(cards)
                     return true
                 }
             // add cards if pile is empty and first card of given cards is the highest value (King)
             // or if any card is allowed to start a new pile
-            } else if (cFirst.value == 12 || anyCardEmptyPile) {
+            } else if ((cFirst.value == 12 || anyCardEmptyPile)) {
                 addAll(cards)
                 return true
             }
@@ -167,7 +183,24 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
         while (true) {
             if (!it.hasNext()) return false
             val next = it.next()
-            if (current.value < next.value) return true
+            if (current.value - 1 != next.value) return true
+            current = next
+        }
+    }
+
+    /**
+     *  It is possible for pile to be different suits, but out of order or not alternating colors.
+     *  This checks if given [cards] is not in order descending and not alternating color, this way
+     *  autocomplete will not be stuck in an infinite loop.
+     */
+    fun notInOrderOrAltColor(cards: List<Card>): Boolean {
+        val it = cards.iterator()
+        if (!it.hasNext()) return false
+        var current = it.next()
+        while (true) {
+            if (!it.hasNext()) return false
+            val next = it.next()
+            if (current.value - 1 != next.value || current.suit.color == next.suit.color) return true
             current = next
         }
     }

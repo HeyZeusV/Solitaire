@@ -116,7 +116,7 @@ abstract class GameViewModel (
      *  adding Cards back from Waste. [drawAmount] will be used for testing and has default parameter
      *  that will be updated depending on game selected.
      */
-    fun onStockClick(drawAmount: Int): MoveResult {
+    open fun onStockClick(drawAmount: Int): MoveResult {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
             _waste.add(_stock.removeMany(drawAmount))
@@ -272,6 +272,7 @@ abstract class GameViewModel (
                 tableau = when (_tableau[0]) {
                     is KlondikeTableau -> _tableau.map { KlondikeTableau(it.pile) }
                     is ClassicWestcliffTableau -> _tableau.map { ClassicWestcliffTableau(it.pile) }
+                    is EasthavenTableau -> _tableau.map { EasthavenTableau(it.pile) }
                     is YukonTableau -> _tableau.map { YukonTableau(it.pile) }
                     is AustralianPatienceTableau -> _tableau.map { AustralianPatienceTableau(it.pile) }
                     is AlaskaTableau -> _tableau.map { AlaskaTableau(it.pile) }
@@ -286,7 +287,7 @@ abstract class GameViewModel (
      *  Adds [currentStep] to our [_historyList] list before overwriting [currentStep] using
      *  [recordHistory]. This should be call after every legal move.
      */
-    private fun appendHistory() {
+    protected fun appendHistory() {
         // limit number of undo steps to 15
         if (_historyList.size == 15) _historyList.removeFirst()
         _historyList.add(currentStep)
