@@ -1,4 +1,6 @@
 import com.google.protobuf.gradle.id
+import java.io.FileInputStream
+import java.util.Properties
 
 plugins {
     id("com.android.application")
@@ -9,6 +11,19 @@ plugins {
 }
 
 android {
+    signingConfigs {
+        create("release") {
+            val props = Properties()
+            val fileInputStream = FileInputStream(file("../signing.properties"))
+            props.load(fileInputStream)
+            fileInputStream.close()
+
+            storeFile = file(props["storeFilePath"] as String)
+            storePassword = props["storePassword"] as String
+            keyPassword = props["keyPassword"] as String
+            keyAlias = props["keyAlias"] as String
+        }
+    }
     namespace = "com.heyzeusv.solitaire"
     compileSdk = 34
 
@@ -27,7 +42,9 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
