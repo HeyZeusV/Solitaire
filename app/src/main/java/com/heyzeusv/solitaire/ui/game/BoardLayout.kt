@@ -7,7 +7,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.pile.Foundation
@@ -59,8 +61,15 @@ fun BoardLayout(
     onTableauClick: (Int, Int) -> MoveResult,
     modifier: Modifier = Modifier
 ) {
+    // gets device size in order to scale card
+    val config = LocalConfiguration.current
+    val sWidth = config.screenWidthDp.dp
+    // removed layout padding and space between cards
+    val cardW = (sWidth - 4.dp - 12.dp) / 7 // need to fit 7 piles wide on screen
+    val cardH = cardW.times(1.45f)
+
     Layout(
-        modifier = modifier.padding(2.dp),
+        modifier = modifier.padding(start = 1.dp, top = 2.dp, end = 0.dp, bottom = 2.dp),
         content = {
             Suits.entries.forEachIndexed { index, suit ->
                 SolitairePile(
@@ -70,7 +79,7 @@ fun BoardLayout(
                     pile = foundationList[index].pile,
                     emptyIconId = suit.emptyIcon,
                     onClick = { handleMoveResult(onFoundationClick(index)) },
-                    cardWidth = 300.dp
+                    cardWidth = cardW
                 )
             }
             SolitairePile(
@@ -81,7 +90,7 @@ fun BoardLayout(
                 emptyIconId = R.drawable.waste_empty,
                 onClick = { handleMoveResult(onWasteClick()) },
                 drawAmount = drawAmount,
-                cardWidth = 300.dp
+                cardWidth = cardW
             )
             SolitaireStock(
                 modifier = Modifier
@@ -90,8 +99,18 @@ fun BoardLayout(
                 pile = stock.pile,
                 stockWasteEmpty = stockWasteEmpty,
                 onClick = { handleMoveResult(onStockClick(drawAmount)) },
-                cardWidth = 300.dp
+                cardWidth = cardW
             )
+            tableauList.forEachIndexed { index, tableau ->
+                SolitaireTableau(
+                    modifier = Modifier,
+                    pile = tableau.pile,
+                    tableauIndex = index,
+                    cardHeight = cardH,
+                    onClick = onTableauClick,
+                    handleMoveResult = handleMoveResult
+                )
+            }
         }
     ) { measurables, constraints ->
 
@@ -108,19 +127,16 @@ fun BoardLayout(
             val cardSpacing = cardSpacingPx.toInt()
             val cardWidth = ((constraints.maxWidth - (cardSpacingPx * 6)) / 7).toInt()
             val cardHeight = (cardWidth * 1.45).toInt()
-            val cardConstraints = constraints.copy(
-                minWidth = cardWidth,
-                maxWidth = cardWidth,
-                minHeight = cardHeight,
-                maxHeight = cardHeight
-            )
+            val wasteWidth = cardWidth * 2 + cardSpacing
+            val cardConstraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
+            val wasteConstraints = Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
 
             clubsFoundation?.measure(cardConstraints)?.place(0, 0)
-            diamondsFoundation?.measure(cardConstraints)?.place(cardSpacing + cardWidth, 0)
-            heartsFoundation?.measure(cardConstraints)?.place((cardSpacing + cardWidth) * 2, 0)
-            spadesFoundation?.measure(cardConstraints)?.place((cardSpacing + cardWidth) * 3, 0)
-            wastePile?.measure(cardConstraints)?.place((cardSpacing + cardWidth) * 5, 0)
-            stockPile?.measure(cardConstraints)?.place((cardSpacing + cardWidth) * 6, 0)
+            diamondsFoundation?.measure(cardConstraints)?.place(cardWidth + cardSpacing, 0)
+            heartsFoundation?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 2, 0)
+            spadesFoundation?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 3, 0)
+            wastePile?.measure(wasteConstraints)?.place((cardWidth + cardSpacing) * 4, 0)
+            stockPile?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 6, 0)
         }
     }
 }

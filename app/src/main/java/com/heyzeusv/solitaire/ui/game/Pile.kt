@@ -37,7 +37,9 @@ fun SolitairePile(
 ) {
     if (pile.isEmpty()) {
         Image(
-            modifier = modifier.clickable { onClick() },
+            modifier = modifier
+                .width(cardWidth)
+                .clickable { onClick() },
             painter = painterResource(emptyIconId),
             contentDescription = stringResource(R.string.pile_cdesc_empty),
             contentScale = ContentScale.FillBounds
@@ -68,7 +70,7 @@ fun SolitairePile(
             }
             SolitaireCard(
                 modifier = Modifier
-                    .width(cardWidth - 2.dp)
+                    .width(cardWidth)
                     .fillMaxHeight()
                     .clickable { onClick() },
                 card = pile.last()
