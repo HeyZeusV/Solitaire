@@ -103,7 +103,7 @@ fun BoardLayout(
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
-                    modifier = Modifier,
+                    modifier = Modifier.layoutId("Tableau #$index"),
                     pile = tableau.pile,
                     tableauIndex = index,
                     cardHeight = cardH,
@@ -121,15 +121,29 @@ fun BoardLayout(
         val wastePile = measurables.firstOrNull { it.layoutId == "Waste" }
         val stockPile = measurables.firstOrNull { it.layoutId == "Stock" }
 
+        val tableauPile0 = measurables.firstOrNull { it.layoutId == "Tableau #0" }
+        val tableauPile1 = measurables.firstOrNull { it.layoutId == "Tableau #1" }
+        val tableauPile2 = measurables.firstOrNull { it.layoutId == "Tableau #2" }
+        val tableauPile3 = measurables.firstOrNull { it.layoutId == "Tableau #3" }
+        val tableauPile4 = measurables.firstOrNull { it.layoutId == "Tableau #4" }
+        val tableauPile5 = measurables.firstOrNull { it.layoutId == "Tableau #5" }
+        val tableauPile6 = measurables.firstOrNull { it.layoutId == "Tableau #6" }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
+            // space between cards
             val cardSpacingPx = 2.dp.toPx()
             val cardSpacing = cardSpacingPx.toInt()
+            // 7 cards wide
             val cardWidth = ((constraints.maxWidth - (cardSpacingPx * 6)) / 7).toInt()
             val cardHeight = (cardWidth * 1.45).toInt()
-            val wasteWidth = cardWidth * 2 + cardSpacing
             val cardConstraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
+            // waste is 2 card widths wide
+            val wasteWidth = cardWidth * 2 + cardSpacing
             val wasteConstraints = Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
+
+            val tableauY = cardHeight + (cardSpacing * 5)
+            val tableauHeight = constraints.maxHeight - tableauY
+            val tableauConstraints = Constraints(cardWidth, cardWidth, tableauHeight, tableauHeight)
 
             clubsFoundation?.measure(cardConstraints)?.place(0, 0)
             diamondsFoundation?.measure(cardConstraints)?.place(cardWidth + cardSpacing, 0)
@@ -137,6 +151,14 @@ fun BoardLayout(
             spadesFoundation?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 3, 0)
             wastePile?.measure(wasteConstraints)?.place((cardWidth + cardSpacing) * 4, 0)
             stockPile?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 6, 0)
+
+            tableauPile0?.measure(tableauConstraints)?.place(0, tableauY)
+            tableauPile1?.measure(tableauConstraints)?.place(cardWidth + cardSpacing, tableauY)
+            tableauPile2?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 2, tableauY)
+            tableauPile3?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 3, tableauY)
+            tableauPile4?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 4, tableauY)
+            tableauPile5?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 5, tableauY)
+            tableauPile6?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 6, tableauY)
         }
     }
 }
