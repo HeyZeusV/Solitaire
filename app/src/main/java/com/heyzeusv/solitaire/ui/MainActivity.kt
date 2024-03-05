@@ -22,7 +22,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.*
-import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.game.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
@@ -111,7 +110,7 @@ fun SolitaireScreen(
             sbVM = sbVM,
             modifier = Modifier
         )
-        SolitaireBoard(
+        BoardLayout(
             sbVM = sbVM,
             gameVM = gameVM,
             selectedGame = selectedGame,
