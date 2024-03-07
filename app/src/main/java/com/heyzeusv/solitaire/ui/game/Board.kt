@@ -171,10 +171,10 @@ fun SolitaireBoardPreview() {
             ),
             onFoundationClick = { _ -> MoveResult.ILLEGAL},
             tableauList = listOf(
-                KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)),
-                KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)),
-                KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)),
-                KlondikeTableau(listOf(bCard))
+                KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
+                KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
+                KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
+                KlondikeTableau(initialPile = listOf(bCard))
             ),
             onTableauClick = { _, _ -> MoveResult.ILLEGAL}
         )

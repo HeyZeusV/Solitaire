@@ -20,7 +20,7 @@ open class YukonViewModel @Inject constructor(
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { Tableau.YukonTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(Tableau.YukonTableau::class)
 
     /**
      *  Autocomplete requires all Tableau piles to be all face up and in order by value descending.

@@ -17,7 +17,7 @@ class AlaskaViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : GameViewModel(ss) {
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { Tableau.AlaskaTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(Tableau.AlaskaTableau::class)
 
     /**
      *  Autocomplete requires all Tableau piles to be all face up, single suit, and in order by

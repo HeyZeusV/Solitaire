@@ -22,7 +22,7 @@ class EasthavenViewModel @Inject constructor(
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { EasthavenTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(EasthavenTableau::class)
 
     override fun onStockClick(drawAmount: Int): MoveResult {
         if (_stock.pile.isNotEmpty()) {

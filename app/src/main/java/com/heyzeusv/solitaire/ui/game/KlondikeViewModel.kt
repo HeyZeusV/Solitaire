@@ -18,7 +18,7 @@ class KlondikeViewModel @Inject constructor(
     ss: ShuffleSeed
 ) : GameViewModel(ss) {
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { KlondikeTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(KlondikeTableau::class)
 
     /**
      *  Autocomplete requires all Tableau piles to be all face up.

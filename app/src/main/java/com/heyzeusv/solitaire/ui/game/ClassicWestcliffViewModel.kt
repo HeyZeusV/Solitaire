@@ -26,7 +26,7 @@ class ClassicWestcliffViewModel @Inject constructor(
     // 48 due to Aces starting in Foundation piles
     override var baseDeck: MutableList<Card> = MutableList(48) { Card((it % 12) + 1, getSuit(it)) }
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { ClassicWestcliffTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(ClassicWestcliffTableau::class)
 
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a

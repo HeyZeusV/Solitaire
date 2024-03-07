@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.data.pile
 
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
 
 /**
@@ -8,19 +9,19 @@ import com.heyzeusv.solitaire.util.Suits
  *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
  *  condition to add a new pile to the end of [_pile].
  */
-sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
+sealed class Tableau(gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPile) {
     /**
      *  KlondikeTableauTest contains test for most functions while each individual *TableauTest test
      *  reset() and add() only.
      */
-    class KlondikeTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class KlondikeTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 1
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
-    class ClassicWestcliffTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class ClassicWestcliffTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 1
         override val anyCardEmptyPile: Boolean = true
 
@@ -28,7 +29,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
-    class EasthavenTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class EasthavenTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 1
         override val anyCardEmptyPile: Boolean = true
 
@@ -40,14 +41,14 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
 
         fun addFromStock(cards: List<Card>) { _pile.addAll(cards.map { it.copy(faceUp = true) }) }
     }
-    class YukonTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class YukonTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
-    class AlaskaTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class AlaskaTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
@@ -55,7 +56,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
                     (cFirst.value == pLast.value - 1 || cFirst.value == pLast.value + 1)
         }
     }
-    class RussianTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class RussianTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
@@ -67,7 +68,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
      *
      *  Also used by Canberra
      */
-    class AustralianPatienceTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class AustralianPatienceTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 4
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {

@@ -22,7 +22,7 @@ open class AustralianPatienceViewModel @Inject constructor(
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { AustralianPatienceTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(AustralianPatienceTableau::class)
 
     /**
      *  Each pile starts with exactly 4 cards

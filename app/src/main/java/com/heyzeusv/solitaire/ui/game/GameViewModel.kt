@@ -11,6 +11,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.*
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.MOVE
 import com.heyzeusv.solitaire.util.MoveResult.MOVE_SCORE
@@ -23,6 +24,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlin.reflect.KClass
+import kotlin.reflect.full.primaryConstructor
 
 /**
  *  Data manager for game.
@@ -241,6 +244,13 @@ abstract class GameViewModel (
     }
 
     /**
+     * TODO: See if this can be updated to include destination
+     *  TODO: maybe something like
+     *  TODO: animateGroup(list: List<Card>, from: Pile, to: Pile)
+     *
+     *  TODO: Maybe add enum variable into [Pile]
+     */
+    /**
      *  Checks if move is possible by attempting to add [cards] to piles. Returns true if added.
      */
     private fun legalMove(cards: List<Card>): MoveResult {
@@ -265,19 +275,12 @@ abstract class GameViewModel (
      private fun recordHistory() {
         val currentSnapshot = Snapshot.takeMutableSnapshot()
         currentSnapshot.enter {
+            val tableauPiles = _tableau.map { it.pile }
             currentStep = PileHistory(
                 stock = Stock(_stock.pile),
                 waste = Waste(_waste.pile),
                 foundation = _foundation.map { Foundation(it.suit, it.pile) },
-                tableau = when (_tableau[0]) {
-                    is KlondikeTableau -> _tableau.map { KlondikeTableau(it.pile) }
-                    is ClassicWestcliffTableau -> _tableau.map { ClassicWestcliffTableau(it.pile) }
-                    is EasthavenTableau -> _tableau.map { EasthavenTableau(it.pile) }
-                    is YukonTableau -> _tableau.map { YukonTableau(it.pile) }
-                    is AustralianPatienceTableau -> _tableau.map { AustralianPatienceTableau(it.pile) }
-                    is AlaskaTableau -> _tableau.map { AlaskaTableau(it.pile) }
-                    is RussianTableau -> _tableau.map { RussianTableau(it.pile) }
-                }
+                tableau =  initializeTableau(_tableau[0]::class, tableauPiles)
             )
         }
         currentSnapshot.dispose()
@@ -346,5 +349,20 @@ abstract class GameViewModel (
         1 -> Suits.DIAMONDS
         2 -> Suits.HEARTS
         else -> Suits.SPADES
+    }
+
+    protected fun initializeTableau(
+        type: KClass<out Tableau>,
+        initialPiles: List<List<Card>> = List(7) { emptyList() }
+    ): MutableList<Tableau> {
+        return mutableListOf(
+            type.primaryConstructor!!.call(GamePiles.TableauZero, initialPiles[0]),
+            type.primaryConstructor!!.call(GamePiles.TableauOne, initialPiles[1]),
+            type.primaryConstructor!!.call(GamePiles.TableauTwo, initialPiles[2]),
+            type.primaryConstructor!!.call(GamePiles.TableauThree, initialPiles[3]),
+            type.primaryConstructor!!.call(GamePiles.TableauFour, initialPiles[4]),
+            type.primaryConstructor!!.call(GamePiles.TableauFive, initialPiles[5]),
+            type.primaryConstructor!!.call(GamePiles.TableauSix, initialPiles[6])
+        )
     }
 }
