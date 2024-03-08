@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.ui.game
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -9,16 +8,21 @@ import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.MoveResult
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Games
+import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 
 @Composable
@@ -28,6 +32,7 @@ fun BoardLayout(
     selectedGame: Games,
     modifier: Modifier = Modifier
 ) {
+    val animateVM = hiltViewModel<AnimateViewModel>()
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
 
     BoardLayout(
@@ -69,7 +74,7 @@ fun BoardLayout(
     val cardH = cardW.times(1.45f)
 
     Layout(
-        modifier = modifier.padding(start = 1.dp, top = 2.dp, end = 0.dp, bottom = 2.dp),
+        modifier = modifier,
         content = {
             Suits.entries.forEachIndexed { index, suit ->
                 SolitairePile(
@@ -160,5 +165,25 @@ fun BoardLayout(
             tableauPile5?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 5, tableauY)
             tableauPile6?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 6, tableauY)
         }
+    }
+}
+
+@Preview
+@Composable
+fun BoardLayoutPreview() {
+    SolitairePreview {
+        BoardLayout(
+            drawAmount = 1,
+            handleMoveResult = { },
+            stock = Stock(listOf(Card(10, Suits.CLUBS))),
+            onStockClick = { MoveResult.Move(GamePiles.Stock, GamePiles.Waste) },
+            waste = Waste(),
+            stockWasteEmpty = { false },
+            onWasteClick = { MoveResult.Move(GamePiles.Stock, GamePiles.Waste) },
+            foundationList = Suits.entries.map { Foundation(it) },
+            onFoundationClick = { MoveResult.Move(GamePiles.Stock, GamePiles.Waste) },
+            tableauList = List(7) { Tableau.KlondikeTableau() },
+            onTableauClick = { _, _ -> MoveResult.Move(GamePiles.Stock, GamePiles.Waste) }
+        )
     }
 }

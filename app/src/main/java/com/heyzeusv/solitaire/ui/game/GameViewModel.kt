@@ -10,7 +10,6 @@ import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
-import com.heyzeusv.solitaire.data.pile.Tableau.*
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.data.MoveResult
 import com.heyzeusv.solitaire.data.MoveResult.*
@@ -241,13 +240,6 @@ abstract class GameViewModel (
         return true
     }
 
-    /**
-     *  TODO: See if this can be updated to include destination
-     *  TODO: maybe something like
-     *  TODO: animateGroup(list: List<Card>, from: Pile, to: Pile)
-     *
-     *  TODO: Maybe add enum variable into [Pile]
-     */
     /**
      *  Checks if move is possible by attempting to add [cards] to piles. Returns true if added.
      */

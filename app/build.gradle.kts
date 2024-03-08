@@ -75,7 +75,7 @@ android {
 }
 
 dependencies {
-    val compose = "2024.02.01"
+    val compose = "2024.02.02"
     val hiltVersion = "2.50"
     val lifecycleVersion = "2.7.0"
 

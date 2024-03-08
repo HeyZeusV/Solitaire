@@ -5,6 +5,7 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.data.ScreenDetails
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
@@ -23,6 +24,12 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
+    @Provides
+    fun provideScreenDetails(@ApplicationContext context: Context): ScreenDetails {
+        val dm = context.resources.displayMetrics
+        return ScreenDetails(width = dm.widthPixels, height = dm.heightPixels)
+    }
 
     /**
      *  Provides [ShuffleSeed] obj containing [Random] without seed parameter ensuring that every
