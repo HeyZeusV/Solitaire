@@ -1,9 +1,10 @@
 package com.heyzeusv.solitaire.ui.game
 
+import com.heyzeusv.solitaire.data.MoveResult
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.EasthavenTableau
-import com.heyzeusv.solitaire.util.MoveResult
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.ResetOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -28,9 +29,9 @@ class EasthavenViewModel @Inject constructor(
         if (_stock.pile.isNotEmpty()) {
             _tableau.forEach { (it as EasthavenTableau).addFromStock(_stock.removeMany(1)) }
             appendHistory()
-            return MoveResult.MOVE
+            return MoveResult.Move(GamePiles.Stock, GamePiles.TableauOne)
         }
-        return MoveResult.ILLEGAL
+        return MoveResult.Illegal
     }
 
     /**

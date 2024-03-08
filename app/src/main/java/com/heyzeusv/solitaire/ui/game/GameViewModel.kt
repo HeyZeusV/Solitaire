@@ -12,11 +12,8 @@ import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.*
 import com.heyzeusv.solitaire.util.GamePiles
-import com.heyzeusv.solitaire.util.MoveResult
-import com.heyzeusv.solitaire.util.MoveResult.MOVE
-import com.heyzeusv.solitaire.util.MoveResult.MOVE_SCORE
-import com.heyzeusv.solitaire.util.MoveResult.ILLEGAL
-import com.heyzeusv.solitaire.util.MoveResult.MOVE_MINUS_SCORE
+import com.heyzeusv.solitaire.data.MoveResult
+import com.heyzeusv.solitaire.data.MoveResult.*
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.isNotEqual
@@ -129,16 +126,16 @@ abstract class GameViewModel (
             } else {
                 _waste.pile.size <= 1 && _stock.pile.isEmpty()
             }
-            return MOVE
+            return Move(GamePiles.Stock, GamePiles.Waste)
         } else if (_waste.pile.size > 1 && redealLeft != 0) {
             // add back all cards from waste to stock
             _stock.add(_waste.pile.toList())
             _waste.reset()
             appendHistory()
             redealLeft--
-            return MOVE
+            return Move(GamePiles.Waste, GamePiles.Stock)
         }
-        return ILLEGAL
+        return Illegal
     }
 
     /**
@@ -148,9 +145,9 @@ abstract class GameViewModel (
      fun onWasteClick(): MoveResult {
         _waste.let {
             if (it.pile.isNotEmpty()) {
-                val result = legalMove(listOf(it.pile.last()))
+                val result = legalMove(GamePiles.Waste, listOf(it.pile.last()))
                 // if any move is possible then remove card from waste
-                if (result != ILLEGAL) {
+                if (result != Illegal) {
                     it.remove()
                     appendHistory()
                     autoComplete()
@@ -163,7 +160,7 @@ abstract class GameViewModel (
                 }
             }
         }
-        return ILLEGAL
+        return Illegal
     }
 
     /**
@@ -173,17 +170,18 @@ abstract class GameViewModel (
     fun onFoundationClick(fIndex: Int): MoveResult {
         val foundation = _foundation[fIndex]
         if (foundation.pile.isNotEmpty()) {
-            val result = legalMove(listOf(foundation.pile.last()))
+            val result = legalMove(foundation.suit.gamePile, listOf(foundation.pile.last()))
             // if any move is possible then remove card from foundation
-            if (result != ILLEGAL) {
+            if (result != Illegal) {
                 foundation.remove()
                 appendHistory()
                 // legalMove() doesn't detect removal from Foundation which always results in losing
                 // score.
-                return MOVE_MINUS_SCORE
+                val move = result as Move
+                return MoveMinusScore(move.start, move.end)
             }
         }
-        return ILLEGAL
+        return Illegal
     }
 
     /**
@@ -194,16 +192,16 @@ abstract class GameViewModel (
         val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.pile
         if (tPile.isNotEmpty() && tPile[cardIndex].faceUp) {
-            val result = legalMove(tPile.subList(cardIndex, tPile.size))
+            val result = legalMove(tableauPile.gamePile, tPile.subList(cardIndex, tPile.size))
             // if card clicked is face up and move is possible then remove cards from tableau pile
-            if (result != ILLEGAL) {
+            if (result != Illegal) {
                 tableauPile.remove(cardIndex)
                 appendHistory()
                 autoComplete()
                 return result
             }
         }
-        return ILLEGAL
+        return Illegal
     }
 
     /**
@@ -244,7 +242,7 @@ abstract class GameViewModel (
     }
 
     /**
-     * TODO: See if this can be updated to include destination
+     *  TODO: See if this can be updated to include destination
      *  TODO: maybe something like
      *  TODO: animateGroup(list: List<Card>, from: Pile, to: Pile)
      *
@@ -253,19 +251,19 @@ abstract class GameViewModel (
     /**
      *  Checks if move is possible by attempting to add [cards] to piles. Returns true if added.
      */
-    private fun legalMove(cards: List<Card>): MoveResult {
+    private fun legalMove(start: GamePiles, cards: List<Card>): MoveResult {
         if (cards.size == 1) {
             _foundation.forEach {
                 if (it.add(cards)) {
                     _autoCompleteCorrection++
-                    return MOVE_SCORE
+                    return MoveScore(start, it.suit.gamePile)
                 }
             }
         }
         // try to add to non-empty tableau first
-        _tableau.forEach { if (it.pile.isNotEmpty() && it.add(cards)) return MOVE  }
-        _tableau.forEach { if (it.pile.isEmpty() && it.add(cards)) return MOVE  }
-        return ILLEGAL
+        _tableau.forEach { if (it.pile.isNotEmpty() && it.add(cards)) return Move(start, it.gamePile) }
+        _tableau.forEach { if (it.pile.isEmpty() && it.add(cards)) return Move(start, it.gamePile)  }
+        return Illegal
     }
 
     /**

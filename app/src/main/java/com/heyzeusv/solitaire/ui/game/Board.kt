@@ -19,6 +19,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.MoveResult
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Waste
@@ -26,7 +27,6 @@ import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.KlondikeTableau
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.Games
-import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 
@@ -159,24 +159,24 @@ fun SolitaireBoardPreview() {
             drawAmount = 1,
             handleMoveResult = { },
             stock = Stock(listOf(bCard, rCard, bCard)),
-            onStockClick = { MoveResult.ILLEGAL },
+            onStockClick = { MoveResult.Illegal },
             waste = Waste(listOf(bCard, rCard, bCard)),
             stockWasteEmpty = { true },
-            onWasteClick = { MoveResult.ILLEGAL },
+            onWasteClick = { MoveResult.Illegal },
             foundationList = listOf(
                 Foundation(Suits.CLUBS, listOf(bCard)),
                 Foundation(Suits.DIAMONDS, listOf(rCard)),
                 Foundation(Suits.HEARTS, listOf(rCard, bCard)),
                 Foundation(Suits.SPADES, emptyList())
             ),
-            onFoundationClick = { _ -> MoveResult.ILLEGAL},
+            onFoundationClick = { _ -> MoveResult.Illegal},
             tableauList = listOf(
                 KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
                 KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
                 KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
                 KlondikeTableau(initialPile = listOf(bCard))
             ),
-            onTableauClick = { _, _ -> MoveResult.ILLEGAL}
+            onTableauClick = { _, _ -> MoveResult.Illegal}
         )
     }
 }

@@ -12,13 +12,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.MoveResult
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.Games
-import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.Suits
 
 @Composable

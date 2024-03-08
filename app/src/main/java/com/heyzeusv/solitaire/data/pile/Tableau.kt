@@ -9,7 +9,7 @@ import com.heyzeusv.solitaire.util.Suits
  *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
  *  condition to add a new pile to the end of [_pile].
  */
-sealed class Tableau(gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPile) {
+sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPile) {
     /**
      *  KlondikeTableauTest contains test for most functions while each individual *TableauTest test
      *  reset() and add() only.

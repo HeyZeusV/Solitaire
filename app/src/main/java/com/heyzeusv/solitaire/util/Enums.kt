@@ -178,12 +178,12 @@ enum class MaxScore(val amount: Int) {
  *  [MOVE_MINUS_SCORE] increases moves but decreases score, and nothing
  *  will change when [ILLEGAL].
  */
-enum class MoveResult {
-    MOVE,
-    MOVE_SCORE,
-    MOVE_MINUS_SCORE,
-    ILLEGAL
-}
+//enum class MoveResult {
+//    MOVE,
+//    MOVE_SCORE,
+//    MOVE_MINUS_SCORE,
+//    ILLEGAL
+//}
 
 /**
  *  Enum class that represents the available options when user clicks on Menu button. Also to be
