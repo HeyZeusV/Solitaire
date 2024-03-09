@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.util
 
+import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.data.Card
 import java.text.DecimalFormat
@@ -48,3 +49,5 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
  *  so need to cast to List when comparing.
  */
 fun List<Card>.isNotEqual(list: List<Card>): Boolean = this.toList() != list.toList()
+
+fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)

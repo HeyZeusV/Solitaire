@@ -14,6 +14,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.LayoutInfo
+import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.MoveResult
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
@@ -36,6 +38,7 @@ fun BoardLayout(
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
 
     BoardLayout(
+        layInfo = animateVM.layoutInfo,
         drawAmount = selectedGame.drawAmount,
         handleMoveResult = sbVM::handleMoveResult,
         stock = gameVM.stock,
@@ -53,6 +56,7 @@ fun BoardLayout(
 
 @Composable
 fun BoardLayout(
+    layInfo: LayoutInfo,
     drawAmount: Int,
     handleMoveResult: (MoveResult) -> Unit,
     stock: Stock,
@@ -135,35 +139,27 @@ fun BoardLayout(
         val tableauPile6 = measurables.firstOrNull { it.layoutId == "Tableau #6" }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
-            // space between cards
-            val cardSpacingPx = 2.dp.toPx()
-            val cardSpacing = cardSpacingPx.toInt()
-            // 7 cards wide
-            val cardWidth = ((constraints.maxWidth - (cardSpacingPx * 6)) / 7).toInt()
-            val cardHeight = (cardWidth * 1.45).toInt()
-            val cardConstraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
-            // waste is 2 card widths wide
-            val wasteWidth = cardWidth * 2 + cardSpacing
-            val wasteConstraints = Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
-
-            val tableauY = cardHeight + (cardSpacing * 5)
-            val tableauHeight = constraints.maxHeight - tableauY
+            // card constraints
+            val cardWidth = layInfo.cardWidth
+            val cardConstraints = layInfo.cardConstraints
+            val wasteConstraints = layInfo.wasteConstraints
+            val tableauHeight = constraints.maxHeight - layInfo.tableauZero.y
             val tableauConstraints = Constraints(cardWidth, cardWidth, tableauHeight, tableauHeight)
 
-            clubsFoundation?.measure(cardConstraints)?.place(0, 0)
-            diamondsFoundation?.measure(cardConstraints)?.place(cardWidth + cardSpacing, 0)
-            heartsFoundation?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 2, 0)
-            spadesFoundation?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 3, 0)
-            wastePile?.measure(wasteConstraints)?.place((cardWidth + cardSpacing) * 4, 0)
-            stockPile?.measure(cardConstraints)?.place((cardWidth + cardSpacing) * 6, 0)
+            clubsFoundation?.measure(cardConstraints)?.place(layInfo.clubsFoundation)
+            diamondsFoundation?.measure(cardConstraints)?.place(layInfo.diamondsFoundation)
+            heartsFoundation?.measure(cardConstraints)?.place(layInfo.heartsFoundation)
+            spadesFoundation?.measure(cardConstraints)?.place(layInfo.spadesFoundation)
+            wastePile?.measure(wasteConstraints)?.place(layInfo.wastePile)
+            stockPile?.measure(cardConstraints)?.place(layInfo.stockPile)
 
-            tableauPile0?.measure(tableauConstraints)?.place(0, tableauY)
-            tableauPile1?.measure(tableauConstraints)?.place(cardWidth + cardSpacing, tableauY)
-            tableauPile2?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 2, tableauY)
-            tableauPile3?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 3, tableauY)
-            tableauPile4?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 4, tableauY)
-            tableauPile5?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 5, tableauY)
-            tableauPile6?.measure(tableauConstraints)?.place((cardWidth + cardSpacing) * 6, tableauY)
+            tableauPile0?.measure(tableauConstraints)?.place(layInfo.tableauZero)
+            tableauPile1?.measure(tableauConstraints)?.place(layInfo.tableauOne)
+            tableauPile2?.measure(tableauConstraints)?.place(layInfo.tableauTwo)
+            tableauPile3?.measure(tableauConstraints)?.place(layInfo.tableauThree)
+            tableauPile4?.measure(tableauConstraints)?.place(layInfo.tableauFour)
+            tableauPile5?.measure(tableauConstraints)?.place(layInfo.tableauFive)
+            tableauPile6?.measure(tableauConstraints)?.place(layInfo.tableauSix)
         }
     }
 }
@@ -173,6 +169,7 @@ fun BoardLayout(
 fun BoardLayoutPreview() {
     SolitairePreview {
         BoardLayout(
+            layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
             drawAmount = 1,
             handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),

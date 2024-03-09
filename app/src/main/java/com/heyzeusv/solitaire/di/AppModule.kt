@@ -1,11 +1,13 @@
 package com.heyzeusv.solitaire.di
 
 import android.content.Context
+import android.util.DisplayMetrics
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.StatPreferences
-import com.heyzeusv.solitaire.data.ScreenDetails
+import com.heyzeusv.solitaire.data.LayoutInfo
+import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
@@ -26,9 +28,22 @@ import javax.inject.Singleton
 class AppModule {
 
     @Provides
-    fun provideScreenDetails(@ApplicationContext context: Context): ScreenDetails {
-        val dm = context.resources.displayMetrics
-        return ScreenDetails(width = dm.widthPixels, height = dm.heightPixels)
+    fun provideDisplayMetrics(@ApplicationContext context: Context): DisplayMetrics =
+        context.resources.displayMetrics
+
+    @Provides
+    fun provideLayoutInfo(dm: DisplayMetrics): LayoutInfo {
+        val screenWidth = dm.widthPixels
+        val layoutPositions = when {
+            screenWidth >= 2160 -> LayoutPositions.Width2160
+            screenWidth >= 1440 -> LayoutPositions.Width1440
+            screenWidth >= 1080 -> LayoutPositions.Width1080
+            screenWidth >= 960 -> LayoutPositions.Width960
+            screenWidth >= 720 -> LayoutPositions.Width720
+            else -> LayoutPositions.Width480
+        }
+        val extraWidth = (screenWidth - layoutPositions.layoutWidth) / 2
+        return LayoutInfo(layoutPositions, extraWidth)
     }
 
     /**
