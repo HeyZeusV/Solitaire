@@ -224,7 +224,9 @@ fun BoardLayout(
             tableauPile5?.measure(tableauConstraints)?.place(layInfo.tableauFive)
             tableauPile6?.measure(tableauConstraints)?.place(layInfo.tableauSix)
 
-            animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY)
+            if (animatedPileX != 0 && animatedPileY != 0) {
+                animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY)
+            }
         }
     }
 }
