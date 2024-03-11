@@ -2,13 +2,14 @@ package com.heyzeusv.solitaire.data
 
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.plusX
 
 data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: Int) {
 //    val layoutWidth: Int = layPos.layoutWidth
 //    val layoutPadding: Int = layPos.layoutPadding
     val cardWidth: Int = layPos.cardWidth
-//    val cardHeight: Int = layPos.cardHeight
+    val cardHeight: Int = layPos.cardHeight
 //    val cardSpacing: Int = layPos.cardSpacing
     val clubsFoundation: IntOffset = layPos.clubsFoundation.plusX(xWidth)
     val diamondsFoundation: IntOffset = layPos.diamondsFoundation.plusX(xWidth)
@@ -26,6 +27,29 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
 
     val cardConstraints: Constraints = layPos.getCardConstraints()
     val wasteConstraints: Constraints = layPos.getWasteConstraints()
+
+    fun getPilePosition(gamePiles: GamePiles): IntOffset {
+        return when (gamePiles) {
+            GamePiles.Stock -> stockPile
+            GamePiles.Waste -> wastePile
+            GamePiles.ClubsFoundation -> clubsFoundation
+            GamePiles.DiamondsFoundation -> diamondsFoundation
+            GamePiles.HeartsFoundation -> heartsFoundation
+            GamePiles.SpadesFoundation -> spadesFoundation
+            GamePiles.TableauZero -> tableauZero
+            GamePiles.TableauOne -> tableauOne
+            GamePiles.TableauTwo -> tableauTwo
+            GamePiles.TableauThree -> tableauThree
+            GamePiles.TableauFour -> tableauFour
+            GamePiles.TableauFive -> tableauFive
+            GamePiles.TableauSix -> tableauSix
+        }
+    }
+
+    fun getCardsYOffset(index: Int): IntOffset {
+        return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
+//        return IntOffset(x = 0, y = 0)
+    }
 }
 
 enum class LayoutPositions(
@@ -52,7 +76,7 @@ enum class LayoutPositions(
         layoutWidth = 480,
 //        layoutPadding = 4,
         cardWidth = 64,
-        cardHeight = 90,
+        cardHeight = 92,
         cardSpacing = 4,
         clubsFoundation = IntOffset(4, 0),
         diamondsFoundation = IntOffset(72, 0),
@@ -72,7 +96,7 @@ enum class LayoutPositions(
         layoutWidth = 720,
 //        layoutPadding = 5,
         cardWidth = 98,
-        cardHeight = 137,
+        cardHeight = 140,
         cardSpacing = 4,
         clubsFoundation = IntOffset(5, 0),
         diamondsFoundation = IntOffset(107, 0),
@@ -92,7 +116,7 @@ enum class LayoutPositions(
         layoutWidth = 960,
 //        layoutPadding = 8,
         cardWidth = 128,
-        cardHeight = 179,
+        cardHeight = 180,
         cardSpacing = 8,
         clubsFoundation = IntOffset(8, 0),
         diamondsFoundation = IntOffset(144, 0),
@@ -112,7 +136,7 @@ enum class LayoutPositions(
         layoutWidth = 1080,
 //        layoutPadding = 7,
         cardWidth = 148,
-        cardHeight = 207,
+        cardHeight = 208,
         cardSpacing = 5,
         clubsFoundation = IntOffset(7, 0),
         diamondsFoundation = IntOffset(160, 0),
@@ -132,7 +156,7 @@ enum class LayoutPositions(
         layoutWidth = 1440,
 //        layoutPadding = 10,
         cardWidth = 196,
-        cardHeight = 274,
+        cardHeight = 276,
         cardSpacing = 8,
         clubsFoundation = IntOffset(10, 0),
         diamondsFoundation = IntOffset(214, 0),
@@ -152,7 +176,7 @@ enum class LayoutPositions(
         layoutWidth = 2160,
 //        layoutPadding = 14,
         cardWidth = 296,
-        cardHeight = 414,
+        cardHeight = 416,
         cardSpacing = 10,
         clubsFoundation = IntOffset(14, 0),
         diamondsFoundation = IntOffset(320, 0),

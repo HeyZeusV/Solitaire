@@ -1,5 +1,7 @@
 package com.heyzeusv.solitaire.util
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.data.Card
@@ -51,3 +53,6 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
 fun List<Card>.isNotEqual(list: List<Card>): Boolean = this.toList() != list.toList()
 
 fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)
+
+@Composable
+fun Int.toDp() = with(LocalDensity.current) { this@toDp.toDp() }

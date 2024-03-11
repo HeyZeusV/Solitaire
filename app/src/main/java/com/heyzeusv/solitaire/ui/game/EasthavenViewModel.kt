@@ -1,11 +1,15 @@
 package com.heyzeusv.solitaire.ui.game
 
-import com.heyzeusv.solitaire.data.MoveResult
+import com.heyzeusv.solitaire.data.AnimateInfo
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.EasthavenTableau
 import com.heyzeusv.solitaire.util.GamePiles
+import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.ResetOptions
+import com.heyzeusv.solitaire.util.Suits
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -17,8 +21,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class EasthavenViewModel @Inject constructor(
-    ss: ShuffleSeed
-) : GameViewModel(ss) {
+    ss: ShuffleSeed,
+    layoutInfo: LayoutInfo
+) : GameViewModel(ss, layoutInfo) {
 
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
@@ -29,7 +34,8 @@ class EasthavenViewModel @Inject constructor(
         if (_stock.pile.isNotEmpty()) {
             _tableau.forEach { (it as EasthavenTableau).addFromStock(_stock.removeMany(1)) }
             appendHistory()
-            return MoveResult.Move(GamePiles.Stock, GamePiles.TableauOne)
+            _animateInfo.value = AnimateInfo(GamePiles.Stock, GamePiles.TableauOne, listOf(Card(0, Suits.CLUBS, true)))
+            return MoveResult.Move
         }
         return MoveResult.Illegal
     }

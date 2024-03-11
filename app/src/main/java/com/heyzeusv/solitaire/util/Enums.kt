@@ -173,17 +173,17 @@ enum class MaxScore(val amount: Int) {
 }
 
 /**
- *  Enum class that will be used to determine Scoreboard action after user makes a move. [MOVE] will
- *  only increase moves value, [MOVE_SCORE] will increase both moves and score values,
- *  [MOVE_MINUS_SCORE] increases moves but decreases score, and nothing
- *  will change when [ILLEGAL].
+ *  Enum class that will be used to determine Scoreboard action after user makes a move. [Move] will
+ *  only increase moves value, [MoveScore] will increase both moves and score values,
+ *  [MoveMinusScore] increases moves but decreases score, and nothing
+ *  will change when [Illegal].
  */
-//enum class MoveResult {
-//    MOVE,
-//    MOVE_SCORE,
-//    MOVE_MINUS_SCORE,
-//    ILLEGAL
-//}
+enum class MoveResult {
+    Move,
+    MoveScore,
+    MoveMinusScore,
+    Illegal
+}
 
 /**
  *  Enum class that represents the available options when user clicks on Menu button. Also to be

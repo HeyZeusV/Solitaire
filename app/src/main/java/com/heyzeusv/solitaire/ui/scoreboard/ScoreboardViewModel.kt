@@ -4,9 +4,9 @@ import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.data.MoveResult
-import com.heyzeusv.solitaire.data.MoveResult.*
 import com.heyzeusv.solitaire.data.ScoreHistory
+import com.heyzeusv.solitaire.util.MoveResult
+import com.heyzeusv.solitaire.util.MoveResult.*
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -114,12 +114,12 @@ class ScoreboardViewModel @Inject constructor() : ViewModel() {
      */
     fun handleMoveResult(result: MoveResult) {
         when (result) {
-            is Move -> _moves.value++
-            is MoveScore -> {
+            Move -> _moves.value++
+            MoveScore -> {
                 _moves.value++
                 _score.value++
             }
-            is MoveMinusScore -> {
+            MoveMinusScore -> {
                 _moves.value++
                 _score.value--
             }

@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui.game
 
+import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.AustralianPatienceTableau
@@ -16,8 +17,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 open class AustralianPatienceViewModel @Inject constructor(
-    ss: ShuffleSeed
-) : GameViewModel(ss) {
+    ss: ShuffleSeed,
+    layoutInfo: LayoutInfo
+) : GameViewModel(ss, layoutInfo) {
 
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
@@ -55,8 +57,9 @@ open class AustralianPatienceViewModel @Inject constructor(
  */
 @HiltViewModel
 class CanberraViewModel @Inject constructor(
-    ss: ShuffleSeed
-) : AustralianPatienceViewModel(ss) {
+    ss: ShuffleSeed,
+    layoutInfo: LayoutInfo
+) : AustralianPatienceViewModel(ss, layoutInfo) {
 
     override val baseRedealAmount: Int = 1
     override var redealLeft: Int = 1

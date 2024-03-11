@@ -1,8 +1,18 @@
 package com.heyzeusv.solitaire.ui.game
 
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.animate
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.height
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
@@ -10,13 +20,13 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.LayoutPositions
-import com.heyzeusv.solitaire.data.MoveResult
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
@@ -24,8 +34,10 @@ import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Games
+import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.toDp
 
 @Composable
 fun BoardLayout(
@@ -34,17 +46,19 @@ fun BoardLayout(
     selectedGame: Games,
     modifier: Modifier = Modifier
 ) {
-    val animateVM = hiltViewModel<AnimateViewModel>()
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
+    val animateInfo by gameVM.animateInfo.collectAsState()
 
     BoardLayout(
-        layInfo = animateVM.layoutInfo,
+        layInfo = gameVM.layoutInfo,
+        animateInfo = animateInfo,
+        updateAnimateInfo = gameVM::updateAnimateInfo,
         drawAmount = selectedGame.drawAmount,
         handleMoveResult = sbVM::handleMoveResult,
         stock = gameVM.stock,
         onStockClick = gameVM::onStockClick,
         waste = gameVM.waste,
-        stockWasteEmpty = {  stockWasteEmpty },
+        stockWasteEmpty = { stockWasteEmpty },
         onWasteClick = gameVM::onWasteClick,
         foundationList = gameVM.foundation,
         onFoundationClick = gameVM::onFoundationClick,
@@ -57,6 +71,8 @@ fun BoardLayout(
 @Composable
 fun BoardLayout(
     layInfo: LayoutInfo,
+    animateInfo: AnimateInfo?,
+    updateAnimateInfo: (AnimateInfo?) -> Unit,
     drawAmount: Int,
     handleMoveResult: (MoveResult) -> Unit,
     stock: Stock,
@@ -75,7 +91,43 @@ fun BoardLayout(
     val sWidth = config.screenWidthDp.dp
     // removed layout padding and space between cards
     val cardW = (sWidth - 4.dp - 12.dp) / 7 // need to fit 7 piles wide on screen
-    val cardH = cardW.times(1.45f)
+
+    var offsetX by remember(animateInfo) { mutableFloatStateOf(0f) }
+    var offsetY by remember(animateInfo) { mutableFloatStateOf(0f) }
+    val animationSpec = tween<Float>(3000, easing = LinearEasing)
+
+    // TODO figure out quick flash of card at 0,0 at start of animation
+    LaunchedEffect(key1 = animateInfo) {
+        animateInfo?.let {
+            val offsetStart = layInfo.getPilePosition(it.start)
+            val offsetEnd = layInfo.getPilePosition(it.end)
+            offsetX = offsetStart.x.toFloat()
+            animate(
+                initialValue = offsetStart.x.toFloat(),
+                targetValue = offsetEnd.x.toFloat(),
+                animationSpec = animationSpec
+            ) { value, _ ->
+                offsetX = value
+            }
+        }
+    }
+    LaunchedEffect(key1 = animateInfo) {
+        animateInfo?.let {
+            val offsetStart =
+                layInfo.getPilePosition(it.start).plus(layInfo.getCardsYOffset(it.startIndex))
+            val offsetEnd =
+                layInfo.getPilePosition(it.end).plus(layInfo.getCardsYOffset(it.endIndex))
+            offsetY = offsetStart.y.toFloat()
+            animate(
+                initialValue = offsetStart.y.toFloat(),
+                targetValue = offsetEnd.y.toFloat(),
+                animationSpec = animationSpec
+            ) { value, _ ->
+                offsetY = value
+            }
+            updateAnimateInfo(null)
+        }
+    }
 
     Layout(
         modifier = modifier,
@@ -115,9 +167,15 @@ fun BoardLayout(
                     modifier = Modifier.layoutId("Tableau #$index"),
                     pile = tableau.pile,
                     tableauIndex = index,
-                    cardHeight = cardH,
+                    cardHeight = layInfo.cardHeight.toDp(),
                     onClick = onTableauClick,
                     handleMoveResult = handleMoveResult
+                )
+            }
+            animateInfo?.let {
+                VerticalCardPile(
+                    cardHeight = layInfo.cardHeight.toDp(),
+                    pile = it.cards
                 )
             }
         }
@@ -138,6 +196,8 @@ fun BoardLayout(
         val tableauPile5 = measurables.firstOrNull { it.layoutId == "Tableau #5" }
         val tableauPile6 = measurables.firstOrNull { it.layoutId == "Tableau #6" }
 
+        val animatedPile = measurables.firstOrNull { it.layoutId == "Animated Pile"}
+
         layout(constraints.maxWidth, constraints.maxHeight) {
             // card constraints
             val cardWidth = layInfo.cardWidth
@@ -145,6 +205,9 @@ fun BoardLayout(
             val wasteConstraints = layInfo.wasteConstraints
             val tableauHeight = constraints.maxHeight - layInfo.tableauZero.y
             val tableauConstraints = Constraints(cardWidth, cardWidth, tableauHeight, tableauHeight)
+
+            val animatedPileX = 0 + offsetX.toInt()
+            val animatedPileY = 0 + offsetY.toInt()
 
             clubsFoundation?.measure(cardConstraints)?.place(layInfo.clubsFoundation)
             diamondsFoundation?.measure(cardConstraints)?.place(layInfo.diamondsFoundation)
@@ -160,6 +223,26 @@ fun BoardLayout(
             tableauPile4?.measure(tableauConstraints)?.place(layInfo.tableauFour)
             tableauPile5?.measure(tableauConstraints)?.place(layInfo.tableauFive)
             tableauPile6?.measure(tableauConstraints)?.place(layInfo.tableauSix)
+
+            animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY)
+        }
+    }
+}
+
+@Composable
+fun VerticalCardPile(
+    cardHeight: Dp,
+    pile: List<Card> = emptyList(),
+) {
+    Column(
+        modifier = Modifier.layoutId("Animated Pile"),
+        verticalArrangement = Arrangement.spacedBy(space = -(cardHeight.times(0.75f)))
+    ) {
+        pile.forEach { card ->
+            SolitaireCard(
+                card = card,
+                modifier = Modifier.height(cardHeight)
+            )
         }
     }
 }
@@ -170,17 +253,19 @@ fun BoardLayoutPreview() {
     SolitairePreview {
         BoardLayout(
             layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
+            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
+            updateAnimateInfo = { },
             drawAmount = 1,
             handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            onStockClick = { MoveResult.Move(GamePiles.Stock, GamePiles.Waste) },
+            onStockClick = { MoveResult.Move },
             waste = Waste(),
             stockWasteEmpty = { false },
-            onWasteClick = { MoveResult.Move(GamePiles.Stock, GamePiles.Waste) },
+            onWasteClick = { MoveResult.Move },
             foundationList = Suits.entries.map { Foundation(it) },
-            onFoundationClick = { MoveResult.Move(GamePiles.Stock, GamePiles.Waste) },
+            onFoundationClick = { MoveResult.Move },
             tableauList = List(7) { Tableau.KlondikeTableau() },
-            onTableauClick = { _, _ -> MoveResult.Move(GamePiles.Stock, GamePiles.Waste) }
+            onTableauClick = { _, _ -> MoveResult.Move }
         )
     }
 }

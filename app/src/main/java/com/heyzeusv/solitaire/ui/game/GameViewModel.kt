@@ -3,7 +3,9 @@ package com.heyzeusv.solitaire.ui.game
 import androidx.compose.runtime.snapshots.Snapshot
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
@@ -11,8 +13,8 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.GamePiles
-import com.heyzeusv.solitaire.data.MoveResult
-import com.heyzeusv.solitaire.data.MoveResult.*
+import com.heyzeusv.solitaire.util.MoveResult
+import com.heyzeusv.solitaire.util.MoveResult.*
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.isNotEqual
@@ -30,7 +32,8 @@ import kotlin.reflect.full.primaryConstructor
  *  Data can survive configuration changes.
  */
 abstract class GameViewModel (
-    private val ss: ShuffleSeed
+    private val ss: ShuffleSeed,
+    val layoutInfo: LayoutInfo
 ) : ViewModel() {
 
     // holds all 52 playing Cards
@@ -71,6 +74,10 @@ abstract class GameViewModel (
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
 
+    protected val _animateInfo = MutableStateFlow<AnimateInfo?>(null)
+    val animateInfo: StateFlow<AnimateInfo?> get() = _animateInfo
+    fun updateAnimateInfo(newValue: AnimateInfo?) { _animateInfo.value = newValue }
+
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
      *  new game depending on [resetOption].
@@ -92,6 +99,7 @@ abstract class GameViewModel (
         _undoEnabled.value = false
         _gameWon.value = false
         _autoCompleteActive.value = false
+        _animateInfo.value = null
         _autoCompleteCorrection = 0
         _stockWasteEmpty.value = true
     }
@@ -118,21 +126,25 @@ abstract class GameViewModel (
     open fun onStockClick(drawAmount: Int): MoveResult {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
-            _waste.add(_stock.removeMany(drawAmount))
+            val cards = _stock.removeMany(drawAmount)
+            _animateInfo.value = AnimateInfo(GamePiles.Stock, GamePiles.Waste, cards)
+            _waste.add(cards)
             appendHistory()
             _stockWasteEmpty.value = if (redealLeft == 0) {
                 true
             } else {
                 _waste.pile.size <= 1 && _stock.pile.isEmpty()
             }
-            return Move(GamePiles.Stock, GamePiles.Waste)
+            return Move
         } else if (_waste.pile.size > 1 && redealLeft != 0) {
+            val cards = _waste.pile.toList()
+            _animateInfo.value = AnimateInfo(GamePiles.Waste, GamePiles.Stock, listOf(cards[0]))
             // add back all cards from waste to stock
-            _stock.add(_waste.pile.toList())
+            _stock.add(cards)
             _waste.reset()
             appendHistory()
             redealLeft--
-            return Move(GamePiles.Waste, GamePiles.Stock)
+            return Move
         }
         return Illegal
     }
@@ -176,8 +188,7 @@ abstract class GameViewModel (
                 appendHistory()
                 // legalMove() doesn't detect removal from Foundation which always results in losing
                 // score.
-                val move = result as Move
-                return MoveMinusScore(move.start, move.end)
+                return MoveMinusScore
             }
         }
         return Illegal
@@ -191,7 +202,8 @@ abstract class GameViewModel (
         val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.pile
         if (tPile.isNotEmpty() && tPile[cardIndex].faceUp) {
-            val result = legalMove(tableauPile.gamePile, tPile.subList(cardIndex, tPile.size))
+            val result =
+                legalMove(tableauPile.gamePile, tPile.subList(cardIndex, tPile.size), cardIndex)
             // if card clicked is face up and move is possible then remove cards from tableau pile
             if (result != Illegal) {
                 tableauPile.remove(cardIndex)
@@ -243,18 +255,32 @@ abstract class GameViewModel (
     /**
      *  Checks if move is possible by attempting to add [cards] to piles. Returns true if added.
      */
-    private fun legalMove(start: GamePiles, cards: List<Card>): MoveResult {
+    private fun legalMove(start: GamePiles, cards: List<Card>, startIndex: Int = 0): MoveResult {
         if (cards.size == 1) {
             _foundation.forEach {
                 if (it.add(cards)) {
                     _autoCompleteCorrection++
-                    return MoveScore(start, it.suit.gamePile)
+                    _animateInfo.value =
+                        AnimateInfo(start, it.suit.gamePile, cards.toList(), startIndex)
+                    return MoveScore
                 }
             }
         }
         // try to add to non-empty tableau first
-        _tableau.forEach { if (it.pile.isNotEmpty() && it.add(cards)) return Move(start, it.gamePile) }
-        _tableau.forEach { if (it.pile.isEmpty() && it.add(cards)) return Move(start, it.gamePile)  }
+        _tableau.forEach {
+            val endIndex = it.pile.size
+            if (it.pile.isNotEmpty() && it.add(cards)) {
+                _animateInfo.value =
+                    AnimateInfo(start, it.gamePile, cards.toList(), startIndex, endIndex)
+                return Move
+            }
+        }
+        _tableau.forEach {
+            if (it.pile.isEmpty() && it.add(cards)) {
+                _animateInfo.value = AnimateInfo(start, it.gamePile, cards.toList(), startIndex)
+                return Move
+            }
+        }
         return Illegal
     }
 
@@ -274,7 +300,7 @@ abstract class GameViewModel (
             )
         }
         currentSnapshot.dispose()
-     }
+    }
 
     /**
      *  Adds [currentStep] to our [_historyList] list before overwriting [currentStep] using
