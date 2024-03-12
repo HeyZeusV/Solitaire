@@ -94,13 +94,13 @@ fun BoardLayout(
 
     var offsetX by remember(animateInfo) { mutableFloatStateOf(0f) }
     var offsetY by remember(animateInfo) { mutableFloatStateOf(0f) }
-    val animationSpec = tween<Float>(3000, easing = LinearEasing)
+    val animationSpec = tween<Float>(300, easing = LinearEasing)
 
     // TODO figure out quick flash of card at 0,0 at start of animation
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
-            val offsetStart = layInfo.getPilePosition(it.start)
-            val offsetEnd = layInfo.getPilePosition(it.end)
+            val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
+            val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
             offsetX = offsetStart.x.toFloat()
             animate(
                 initialValue = offsetStart.x.toFloat(),
@@ -113,10 +113,10 @@ fun BoardLayout(
     }
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
-            val offsetStart =
-                layInfo.getPilePosition(it.start).plus(layInfo.getCardsYOffset(it.startIndex))
-            val offsetEnd =
-                layInfo.getPilePosition(it.end).plus(layInfo.getCardsYOffset(it.endIndex))
+            val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
+                .plus(layInfo.getCardsYOffset(it.startIndex))
+            val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
+                .plus(layInfo.getCardsYOffset(it.endIndex))
             offsetY = offsetStart.y.toFloat()
             animate(
                 initialValue = offsetStart.y.toFloat(),
@@ -224,7 +224,7 @@ fun BoardLayout(
             tableauPile5?.measure(tableauConstraints)?.place(layInfo.tableauFive)
             tableauPile6?.measure(tableauConstraints)?.place(layInfo.tableauSix)
 
-            if (animatedPileX != 0 && animatedPileY != 0) {
+            if (animatedPileX != 0 || animatedPileY != 0) {
                 animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY)
             }
         }

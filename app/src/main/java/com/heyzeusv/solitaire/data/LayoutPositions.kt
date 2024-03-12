@@ -28,10 +28,16 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
     val cardConstraints: Constraints = layPos.getCardConstraints()
     val wasteConstraints: Constraints = layPos.getWasteConstraints()
 
-    fun getPilePosition(gamePiles: GamePiles): IntOffset {
+    fun getPilePosition(gamePiles: GamePiles, drawAmount: Int): IntOffset {
         return when (gamePiles) {
             GamePiles.Stock -> stockPile
-            GamePiles.Waste -> wastePile
+            GamePiles.Waste -> {
+                if (drawAmount == 1) {
+                    wastePile.plusX(cardWidth + layPos.cardSpacing)
+                } else {
+                    wastePile
+                }
+            }
             GamePiles.ClubsFoundation -> clubsFoundation
             GamePiles.DiamondsFoundation -> diamondsFoundation
             GamePiles.HeartsFoundation -> heartsFoundation

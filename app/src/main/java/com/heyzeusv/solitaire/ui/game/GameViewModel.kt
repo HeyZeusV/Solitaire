@@ -128,8 +128,14 @@ abstract class GameViewModel (
         if (_stock.pile.isNotEmpty()) {
             val cards = _stock.removeMany(drawAmount)
             _animateInfo.value = AnimateInfo(GamePiles.Stock, GamePiles.Waste, cards)
-            _waste.add(cards)
-            appendHistory()
+            viewModelScope.launch {
+                _undoEnabled.value = false
+                delay(300)
+                _waste.add(cards)
+                appendHistory()
+            }
+//            _waste.add(cards)
+//            appendHistory()
             _stockWasteEmpty.value = if (redealLeft == 0) {
                 true
             } else {
