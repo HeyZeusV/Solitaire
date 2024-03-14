@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui.game
 
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -14,6 +15,7 @@ import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
@@ -25,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.FlipCard
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.pile.Foundation
@@ -94,13 +97,14 @@ fun BoardLayout(
 
     var offsetX by remember(animateInfo) { mutableFloatStateOf(0f) }
     var offsetY by remember(animateInfo) { mutableFloatStateOf(0f) }
-    val animationSpec = tween<Float>(250, easing = LinearEasing)
+    var flipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
+    val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
+    val animationSpecFlip = tween<Float>(250, easing = LinearEasing)
 
-     LaunchedEffect(key1 = animateInfo) {
+    LaunchedEffect(key1 = animateInfo) {
          animateInfo?.let {
              val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
              val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
-             offsetX = offsetStart.x.toFloat()
              animate(
                  initialValue = offsetStart.x.toFloat(),
                  targetValue = offsetEnd.x.toFloat(),
@@ -116,7 +120,6 @@ fun BoardLayout(
                 .plus(layInfo.getCardsYOffset(it.startIndex))
             val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
                 .plus(layInfo.getCardsYOffset(it.endIndex))
-            offsetY = offsetStart.y.toFloat()
             animate(
                 initialValue = offsetStart.y.toFloat(),
                 targetValue = offsetEnd.y.toFloat(),
@@ -127,15 +130,54 @@ fun BoardLayout(
             updateAnimateInfo(null)
         }
     }
+    LaunchedEffect(key1 = animateInfo) {
+        animateInfo?.let {
+            if (it.start == GamePiles.Stock) {
+                val flipCardUp = FlipCard.FaceUp()
+                animate(
+                    initialValue = flipCardUp.startRotationY,
+                    targetValue = flipCardUp.endRotationY,
+                    animationSpec = animationSpecFlip
+                ) { value, _ ->
+                    flipRotation = value
+                }
+            } else if (it.start == GamePiles.Waste && it.end == GamePiles.Stock) {
+                val flipCardDown = FlipCard.FaceDown()
+                animate(
+                    initialValue = flipCardDown.startRotationY,
+                    targetValue = flipCardDown.endRotationY,
+                    animationSpec = animationSpecFlip
+                ) { value, _ ->
+                    flipRotation = value
+                }
+            }
+        }
+    }
 
     Layout(
         modifier = modifier,
         content = {
             animateInfo?.let {
-                VerticalCardPile(
-                    cardHeight = layInfo.cardHeight.toDp(),
-                    pile = it.cards
-                )
+                if (it.start == GamePiles.Stock) {
+                    FlipCard(
+                        animateInfo = it,
+                        cardHeight = layInfo.cardHeight.toDp(),
+                        flipRotation = flipRotation,
+                        flipCard = FlipCard.FaceUp(flipRotation)
+                    )
+                } else if (it.start == GamePiles.Waste && it.end == GamePiles.Stock) {
+                    FlipCard(
+                        animateInfo = it,
+                        cardHeight = layInfo.cardHeight.toDp(),
+                        flipRotation = flipRotation,
+                        flipCard = FlipCard.FaceDown(flipRotation)
+                    )
+                } else {
+                    VerticalCardPile(
+                        cardHeight = layInfo.cardHeight.toDp(),
+                        pile = it.cards
+                    )
+                }
             }
             Suits.entries.forEachIndexed { index, suit ->
                 SolitairePile(
@@ -231,12 +273,46 @@ fun BoardLayout(
 }
 
 @Composable
+fun FlipCard(
+    animateInfo: AnimateInfo,
+    cardHeight: Dp,
+    flipRotation: Float,
+    flipCard: FlipCard
+) {
+    val animateModifier = Modifier.graphicsLayer {
+        rotationY = flipRotation
+        cameraDistance = 8 * density
+    }
+    if (flipCard.flipCondition) {
+        VerticalCardPile(
+            cardHeight = cardHeight,
+            modifier = animateModifier,
+            pile = animateInfo.cards
+        )
+    } else {
+        VerticalCardPile(
+            cardHeight = cardHeight,
+            modifier = animateModifier.graphicsLayer { rotationY = flipCard.endRotationY },
+            pile = animateInfo.cards.map { card ->
+                card.copy(
+                    faceUp = when (flipCard) {
+                        is FlipCard.FaceUp -> true
+                        is FlipCard.FaceDown -> false
+                    }
+                )
+            }
+        )
+    }
+}
+
+@Composable
 fun VerticalCardPile(
     cardHeight: Dp,
-    pile: List<Card> = emptyList(),
+    modifier: Modifier = Modifier,
+    pile: List<Card> = emptyList()
 ) {
     Column(
-        modifier = Modifier.layoutId("Animated Pile"),
+        modifier = modifier.layoutId("Animated Pile"),
         verticalArrangement = Arrangement.spacedBy(space = -(cardHeight.times(0.75f)))
     ) {
         pile.forEach { card ->
