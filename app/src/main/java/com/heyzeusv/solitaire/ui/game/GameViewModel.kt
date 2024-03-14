@@ -210,9 +210,14 @@ abstract class GameViewModel (
         val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.pile.toList()
         if (tPile.isNotEmpty() && tPile[cardIndex].faceUp) {
-            val lastTableauCardInfo = try {
+            val lastTableauCard = try {
+                tPile[cardIndex - 1]
+            } catch (e: IndexOutOfBoundsException) {
+                null
+            }
+            val lastTableauCardInfo = if (lastTableauCard != null && !lastTableauCard.faceUp) {
                 LastTableauCardInfo(tPile[cardIndex - 1], cardIndex - 1)
-            } catch (e: java.lang.IndexOutOfBoundsException) {
+            } else {
                 null
             }
             val result = checkLegalMove(
