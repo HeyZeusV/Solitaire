@@ -7,5 +7,6 @@ data class AnimateInfo(
     val end: GamePiles,
     val cards: List<Card>,
     val startIndex: Int = 0,
-    val endIndex: Int = 0
+    val endIndex: Int = 0,
+    val flipCard: FlipCard = FlipCard.NoFlip
 )

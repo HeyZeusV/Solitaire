@@ -158,25 +158,29 @@ fun BoardLayout(
         modifier = modifier,
         content = {
             animateInfo?.let {
-                if (it.start == GamePiles.Stock) {
-                    FlipCard(
-                        animateInfo = it,
-                        cardHeight = layInfo.cardHeight.toDp(),
-                        flipRotation = flipRotation,
-                        flipCard = FlipCard.FaceUp(flipRotation)
-                    )
-                } else if (it.start == GamePiles.Waste && it.end == GamePiles.Stock) {
-                    FlipCard(
-                        animateInfo = it,
-                        cardHeight = layInfo.cardHeight.toDp(),
-                        flipRotation = flipRotation,
-                        flipCard = FlipCard.FaceDown(flipRotation)
-                    )
-                } else {
-                    VerticalCardPile(
-                        cardHeight = layInfo.cardHeight.toDp(),
-                        pile = it.cards
-                    )
+                when (it.flipCard) {
+                    is FlipCard.FaceDown -> {
+                        FlipCard(
+                            animateInfo = it,
+                            cardHeight = layInfo.cardHeight.toDp(),
+                            flipRotation = flipRotation,
+                            flipCard = FlipCard.FaceDown()
+                        )
+                    }
+                    is FlipCard.FaceUp -> {
+                        FlipCard(
+                            animateInfo = it,
+                            cardHeight = layInfo.cardHeight.toDp(),
+                            flipRotation = flipRotation,
+                            flipCard = FlipCard.FaceUp()
+                        )
+                    }
+                    FlipCard.NoFlip -> {
+                        VerticalCardPile(
+                            cardHeight = layInfo.cardHeight.toDp(),
+                            pile = it.cards
+                        )
+                    }
                 }
             }
             Suits.entries.forEachIndexed { index, suit ->
@@ -283,7 +287,7 @@ fun FlipCard(
         rotationY = flipRotation
         cameraDistance = 8 * density
     }
-    if (flipCard.flipCondition) {
+    if (flipCard.flipCondition(flipRotation)) {
         VerticalCardPile(
             cardHeight = cardHeight,
             modifier = animateModifier,
@@ -298,6 +302,7 @@ fun FlipCard(
                     faceUp = when (flipCard) {
                         is FlipCard.FaceUp -> true
                         is FlipCard.FaceDown -> false
+                        is FlipCard.NoFlip -> false
                     }
                 )
             }

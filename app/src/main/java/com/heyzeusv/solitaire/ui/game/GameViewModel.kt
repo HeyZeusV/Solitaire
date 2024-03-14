@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.FlipCard
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
@@ -127,7 +128,8 @@ abstract class GameViewModel (
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
             val cards = _stock.getCards(drawAmount)
-            _animateInfo.value = AnimateInfo(GamePiles.Stock, GamePiles.Waste, cards)
+            _animateInfo.value =
+                AnimateInfo(GamePiles.Stock, GamePiles.Waste, cards, flipCard = FlipCard.FaceUp())
             actionBeforeAnimation { _stock.removeMany(drawAmount) }
             actionAfterAnimation { _waste.add(cards) }
             _stockWasteEmpty.value = if (redealLeft == 0) {
@@ -138,7 +140,12 @@ abstract class GameViewModel (
             return Move
         } else if (_waste.pile.size > 1 && redealLeft != 0) {
             val cards = _waste.pile.toList()
-            _animateInfo.value = AnimateInfo(GamePiles.Waste, GamePiles.Stock, listOf(cards.last()))
+            _animateInfo.value = AnimateInfo(
+                start = GamePiles.Waste,
+                end = GamePiles.Stock,
+                cards = listOf(cards.last()),
+                flipCard = FlipCard.FaceDown()
+            )
             actionBeforeAnimation { _waste.reset() }
             actionAfterAnimation { _stock.add(cards) }
             redealLeft--
