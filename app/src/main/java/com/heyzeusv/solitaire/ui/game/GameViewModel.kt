@@ -126,8 +126,9 @@ abstract class GameViewModel (
     open fun onStockClick(drawAmount: Int): MoveResult {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
-            val cards = _stock.removeMany(drawAmount)
+            val cards = _stock.getCards(drawAmount)
             _animateInfo.value = AnimateInfo(GamePiles.Stock, GamePiles.Waste, cards)
+            actionBeforeAnimation { _stock.removeMany(drawAmount) }
             actionAfterAnimation { _waste.add(cards) }
             _stockWasteEmpty.value = if (redealLeft == 0) {
                 true
@@ -137,8 +138,8 @@ abstract class GameViewModel (
             return Move
         } else if (_waste.pile.size > 1 && redealLeft != 0) {
             val cards = _waste.pile.toList()
-            _waste.reset()
             _animateInfo.value = AnimateInfo(GamePiles.Waste, GamePiles.Stock, listOf(cards.last()))
+            actionBeforeAnimation { _waste.reset() }
             actionAfterAnimation { _stock.add(cards) }
             redealLeft--
             return Move
@@ -256,7 +257,7 @@ abstract class GameViewModel (
                 if (it.canAdd(cards)) {
                     _animateInfo.value =
                         AnimateInfo(start, it.suit.gamePile, cards, startIndex)
-                    ifLegal()
+                    actionBeforeAnimation { ifLegal() }
                     actionAfterAnimation {
                         it.add(cards)
                         autoComplete()
@@ -270,9 +271,9 @@ abstract class GameViewModel (
         _tableau.forEach {
             val endIndex = it.pile.size
             if (it.pile.isNotEmpty() && it.canAdd(cards)) {
-                ifLegal()
                 _animateInfo.value =
                     AnimateInfo(start, it.gamePile, cards, startIndex, endIndex)
+                actionBeforeAnimation { ifLegal() }
                 actionAfterAnimation {
                     it.add(cards)
                     autoComplete()
@@ -282,8 +283,8 @@ abstract class GameViewModel (
         }
         _tableau.forEach {
             if (it.pile.isEmpty() && it.canAdd(cards)) {
-                ifLegal()
                 _animateInfo.value = AnimateInfo(start, it.gamePile, cards, startIndex)
+                actionBeforeAnimation { ifLegal() }
                 actionAfterAnimation {
                     it.add(cards)
                     autoComplete()
@@ -390,6 +391,13 @@ abstract class GameViewModel (
             type.primaryConstructor!!.call(GamePiles.TableauFive, initialPiles[5]),
             type.primaryConstructor!!.call(GamePiles.TableauSix, initialPiles[6])
         )
+    }
+
+    private fun actionBeforeAnimation(action: () -> Unit) {
+        viewModelScope.launch {
+            delay(15)
+            action()
+        }
     }
 
     private fun actionAfterAnimation(action: () -> Unit) {

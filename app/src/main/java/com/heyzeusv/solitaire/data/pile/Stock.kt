@@ -8,6 +8,18 @@ import com.heyzeusv.solitaire.data.Card
  */
 class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
+    fun getCards(amount: Int): List<Card> {
+        val list = mutableListOf<Card>()
+        for (i in 1..amount) {
+            try {
+                list.add(_pile[i - 1])
+            } catch (e: IndexOutOfBoundsException) {
+                return list
+            }
+        }
+        return list
+    }
+
     /**
      *  Removes [amount] given and returns them as a list.
      */
