@@ -132,23 +132,16 @@ fun BoardLayout(
     }
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
-            if (it.start == GamePiles.Stock) {
-                val flipCardUp = FlipCard.FaceUp()
-                animate(
-                    initialValue = flipCardUp.startRotationY,
-                    targetValue = flipCardUp.endRotationY,
-                    animationSpec = animationSpecFlip
-                ) { value, _ ->
-                    flipRotation = value
-                }
-            } else if (it.start == GamePiles.Waste && it.end == GamePiles.Stock) {
-                val flipCardDown = FlipCard.FaceDown()
-                animate(
-                    initialValue = flipCardDown.startRotationY,
-                    targetValue = flipCardDown.endRotationY,
-                    animationSpec = animationSpecFlip
-                ) { value, _ ->
-                    flipRotation = value
+            when (it.flipCard) {
+                FlipCard.NoFlip -> { }
+                else -> {
+                    animate(
+                        initialValue = it.flipCard.startRotationY,
+                        targetValue = it.flipCard.endRotationY,
+                        animationSpec = animationSpecFlip
+                    ) { value, _ ->
+                        flipRotation = value
+                    }
                 }
             }
         }
