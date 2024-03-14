@@ -101,6 +101,13 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
      *  Attempts to add given [cards] to [_pile] depending on [addCondition].
      */
     override fun add(cards: List<Card>): Boolean {
+        _pile.run {
+            addAll(cards)
+            return true
+        }
+    }
+
+    fun canAdd(cards:List<Card>): Boolean {
         if (cards.isEmpty()) return false
         if (addListCondition(cards)) return false
 
@@ -110,14 +117,10 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
             if (contains(cFirst)) return false
             if (isNotEmpty()) {
                 val pLast = last()
-                if (addCondition(cFirst, pLast)) {
-                    addAll(cards)
-                    return true
-                }
-            // add cards if pile is empty and first card of given cards is the highest value (King)
-            // or if any card is allowed to start a new pile
+                if (addCondition(cFirst, pLast)) return true
+                // add cards if pile is empty and first card of given cards is the highest value (King)
+                // or if any card is allowed to start a new pile
             } else if ((cFirst.value == 12 || anyCardEmptyPile)) {
-                addAll(cards)
                 return true
             }
             return false

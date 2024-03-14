@@ -128,14 +128,7 @@ abstract class GameViewModel (
         if (_stock.pile.isNotEmpty()) {
             val cards = _stock.removeMany(drawAmount)
             _animateInfo.value = AnimateInfo(GamePiles.Stock, GamePiles.Waste, cards)
-            viewModelScope.launch {
-                _undoEnabled.value = false
-                delay(300)
-                _waste.add(cards)
-                appendHistory()
-            }
-//            _waste.add(cards)
-//            appendHistory()
+            actionAfterAnimation { _waste.add(cards) }
             _stockWasteEmpty.value = if (redealLeft == 0) {
                 true
             } else {
@@ -144,11 +137,9 @@ abstract class GameViewModel (
             return Move
         } else if (_waste.pile.size > 1 && redealLeft != 0) {
             val cards = _waste.pile.toList()
-            _animateInfo.value = AnimateInfo(GamePiles.Waste, GamePiles.Stock, listOf(cards[0]))
-            // add back all cards from waste to stock
-            _stock.add(cards)
             _waste.reset()
-            appendHistory()
+            _animateInfo.value = AnimateInfo(GamePiles.Waste, GamePiles.Stock, listOf(cards.last()))
+            actionAfterAnimation { _stock.add(cards) }
             redealLeft--
             return Move
         }
@@ -162,12 +153,9 @@ abstract class GameViewModel (
      fun onWasteClick(): MoveResult {
         _waste.let {
             if (it.pile.isNotEmpty()) {
-                val result = legalMove(GamePiles.Waste, listOf(it.pile.last()))
+                val result = checkLegalMove(GamePiles.Waste, listOf(it.pile.last())) { it.remove() }
                 // if any move is possible then remove card from waste
                 if (result != Illegal) {
-                    it.remove()
-                    appendHistory()
-                    autoComplete()
                     _stockWasteEmpty.value = if (redealLeft == 0) {
                         true
                     } else {
@@ -187,11 +175,11 @@ abstract class GameViewModel (
     fun onFoundationClick(fIndex: Int): MoveResult {
         val foundation = _foundation[fIndex]
         if (foundation.pile.isNotEmpty()) {
-            val result = legalMove(foundation.suit.gamePile, listOf(foundation.pile.last()))
+            val result = checkLegalMove(foundation.suit.gamePile, listOf(foundation.pile.last())) {
+                foundation.remove()
+            }
             // if any move is possible then remove card from foundation
             if (result != Illegal) {
-                foundation.remove()
-                appendHistory()
                 // legalMove() doesn't detect removal from Foundation which always results in losing
                 // score.
                 return MoveMinusScore
@@ -206,17 +194,13 @@ abstract class GameViewModel (
      */
     fun onTableauClick(tableauIndex: Int, cardIndex: Int): MoveResult {
         val tableauPile = _tableau[tableauIndex]
-        val tPile = tableauPile.pile
+        val tPile = tableauPile.pile.toList()
         if (tPile.isNotEmpty() && tPile[cardIndex].faceUp) {
             val result =
-                legalMove(tableauPile.gamePile, tPile.subList(cardIndex, tPile.size), cardIndex)
-            // if card clicked is face up and move is possible then remove cards from tableau pile
-            if (result != Illegal) {
-                tableauPile.remove(cardIndex)
-                appendHistory()
-                autoComplete()
-                return result
-            }
+                checkLegalMove(tableauPile.gamePile, tPile.subList(cardIndex, tPile.size), cardIndex) {
+                    tableauPile.remove(cardIndex)
+                }
+            return result
         }
         return Illegal
     }
@@ -261,13 +245,23 @@ abstract class GameViewModel (
     /**
      *  Checks if move is possible by attempting to add [cards] to piles. Returns true if added.
      */
-    private fun legalMove(start: GamePiles, cards: List<Card>, startIndex: Int = 0): MoveResult {
+    private fun checkLegalMove(
+        start: GamePiles,
+        cards: List<Card>,
+        startIndex: Int = 0,
+        ifLegal: () -> Unit
+    ): MoveResult {
         if (cards.size == 1) {
             _foundation.forEach {
-                if (it.add(cards)) {
-                    _autoCompleteCorrection++
+                if (it.canAdd(cards)) {
                     _animateInfo.value =
-                        AnimateInfo(start, it.suit.gamePile, cards.toList(), startIndex)
+                        AnimateInfo(start, it.suit.gamePile, cards, startIndex)
+                    ifLegal()
+                    actionAfterAnimation {
+                        it.add(cards)
+                        autoComplete()
+                    }
+                    _autoCompleteCorrection++
                     return MoveScore
                 }
             }
@@ -275,15 +269,25 @@ abstract class GameViewModel (
         // try to add to non-empty tableau first
         _tableau.forEach {
             val endIndex = it.pile.size
-            if (it.pile.isNotEmpty() && it.add(cards)) {
+            if (it.pile.isNotEmpty() && it.canAdd(cards)) {
+                ifLegal()
                 _animateInfo.value =
-                    AnimateInfo(start, it.gamePile, cards.toList(), startIndex, endIndex)
+                    AnimateInfo(start, it.gamePile, cards, startIndex, endIndex)
+                actionAfterAnimation {
+                    it.add(cards)
+                    autoComplete()
+                }
                 return Move
             }
         }
         _tableau.forEach {
-            if (it.pile.isEmpty() && it.add(cards)) {
-                _animateInfo.value = AnimateInfo(start, it.gamePile, cards.toList(), startIndex)
+            if (it.pile.isEmpty() && it.canAdd(cards)) {
+                ifLegal()
+                _animateInfo.value = AnimateInfo(start, it.gamePile, cards, startIndex)
+                actionAfterAnimation {
+                    it.add(cards)
+                    autoComplete()
+                }
                 return Move
             }
         }
@@ -386,5 +390,14 @@ abstract class GameViewModel (
             type.primaryConstructor!!.call(GamePiles.TableauFive, initialPiles[5]),
             type.primaryConstructor!!.call(GamePiles.TableauSix, initialPiles[6])
         )
+    }
+
+    private fun actionAfterAnimation(action: () -> Unit) {
+        viewModelScope.launch {
+            _undoEnabled.value = false
+            delay(250)
+            action()
+            appendHistory()
+        }
     }
 }

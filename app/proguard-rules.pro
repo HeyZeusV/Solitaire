@@ -20,5 +20,7 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 -keepclassmembers class * extends com.google.protobuf.GeneratedMessageLite* {
-   <fields>;
+    <fields>;
 }
+-keep class kotlin.reflect.**{*;}
+-keep class com.heyzeusv.solitaire.data.pile.**{*;}

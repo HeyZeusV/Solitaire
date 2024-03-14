@@ -14,13 +14,14 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
      *  matches what is required next in the sequence. Returns true if added.
      */
     override fun add(cards: List<Card>): Boolean {
+        _pile.add(cards.first())
+        return true
+    }
+
+    fun canAdd(cards:List<Card>): Boolean {
         if (cards.isEmpty()) return false
         val card = cards[0]
-        if (card.suit == suit && card.value == pile.size) {
-            _pile.add(card)
-            return true
-        }
-        return false
+        return card.suit == suit && card.value == pile.size
     }
 
     /**

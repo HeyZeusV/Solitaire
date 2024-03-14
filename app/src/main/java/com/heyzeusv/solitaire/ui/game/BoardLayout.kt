@@ -94,22 +94,21 @@ fun BoardLayout(
 
     var offsetX by remember(animateInfo) { mutableFloatStateOf(0f) }
     var offsetY by remember(animateInfo) { mutableFloatStateOf(0f) }
-    val animationSpec = tween<Float>(300, easing = LinearEasing)
+    val animationSpec = tween<Float>(250, easing = LinearEasing)
 
-    // TODO figure out quick flash of card at 0,0 at start of animation
-    LaunchedEffect(key1 = animateInfo) {
-        animateInfo?.let {
-            val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
-            val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
-            offsetX = offsetStart.x.toFloat()
-            animate(
-                initialValue = offsetStart.x.toFloat(),
-                targetValue = offsetEnd.x.toFloat(),
-                animationSpec = animationSpec
-            ) { value, _ ->
-                offsetX = value
-            }
-        }
+     LaunchedEffect(key1 = animateInfo) {
+         animateInfo?.let {
+             val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
+             val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
+             offsetX = offsetStart.x.toFloat()
+             animate(
+                 initialValue = offsetStart.x.toFloat(),
+                 targetValue = offsetEnd.x.toFloat(),
+                 animationSpec = animationSpec
+             ) { value, _ ->
+                 offsetX = value
+             }
+         }
     }
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
@@ -132,6 +131,12 @@ fun BoardLayout(
     Layout(
         modifier = modifier,
         content = {
+            animateInfo?.let {
+                VerticalCardPile(
+                    cardHeight = layInfo.cardHeight.toDp(),
+                    pile = it.cards
+                )
+            }
             Suits.entries.forEachIndexed { index, suit ->
                 SolitairePile(
                     modifier = Modifier
@@ -172,12 +177,6 @@ fun BoardLayout(
                     handleMoveResult = handleMoveResult
                 )
             }
-            animateInfo?.let {
-                VerticalCardPile(
-                    cardHeight = layInfo.cardHeight.toDp(),
-                    pile = it.cards
-                )
-            }
         }
     ) { measurables, constraints ->
 
@@ -209,6 +208,10 @@ fun BoardLayout(
             val animatedPileX = 0 + offsetX.toInt()
             val animatedPileY = 0 + offsetY.toInt()
 
+            if (animatedPileX != 0 || animatedPileY != 0) {
+                animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY, 1f)
+            }
+
             clubsFoundation?.measure(cardConstraints)?.place(layInfo.clubsFoundation)
             diamondsFoundation?.measure(cardConstraints)?.place(layInfo.diamondsFoundation)
             heartsFoundation?.measure(cardConstraints)?.place(layInfo.heartsFoundation)
@@ -223,10 +226,6 @@ fun BoardLayout(
             tableauPile4?.measure(tableauConstraints)?.place(layInfo.tableauFour)
             tableauPile5?.measure(tableauConstraints)?.place(layInfo.tableauFive)
             tableauPile6?.measure(tableauConstraints)?.place(layInfo.tableauSix)
-
-            if (animatedPileX != 0 || animatedPileY != 0) {
-                animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY)
-            }
         }
     }
 }
