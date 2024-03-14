@@ -1,16 +1,16 @@
 package com.heyzeusv.solitaire.data
 
-sealed class FlipCard {
-    class FaceDown : FlipCard() {
+sealed class FlipCardInfo {
+    class FaceDown : FlipCardInfo() {
         override val endRotationY = 180f
         override fun flipCondition(flipRotation: Float): Boolean = flipRotation < 90f
     }
-    class FaceUp : FlipCard() {
+    class FaceUp : FlipCardInfo() {
         override val endRotationY = -180f
         override fun flipCondition(flipRotation: Float): Boolean = flipRotation > -90f
     }
-    data object NoFlip : FlipCard()
-    open val startRotationY: Float = 0f
+    data object NoFlip : FlipCardInfo()
+    val startRotationY: Float = 0f
     open val endRotationY: Float = 0f
     open fun flipCondition(flipRotation: Float): Boolean = false
 }

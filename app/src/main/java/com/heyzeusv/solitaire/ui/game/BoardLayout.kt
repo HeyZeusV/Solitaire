@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.FlipCard
+import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.pile.Foundation
@@ -98,6 +98,7 @@ fun BoardLayout(
     var offsetX by remember(animateInfo) { mutableFloatStateOf(0f) }
     var offsetY by remember(animateInfo) { mutableFloatStateOf(0f) }
     var flipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
+    var tableauFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
     val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
     val animationSpecFlip = tween<Float>(250, easing = LinearEasing)
 
@@ -117,9 +118,9 @@ fun BoardLayout(
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
             val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
-                .plus(layInfo.getCardsYOffset(it.startIndex))
+                .plus(layInfo.getCardsYOffset(it.startTableauIndex))
             val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
-                .plus(layInfo.getCardsYOffset(it.endIndex))
+                .plus(layInfo.getCardsYOffset(it.endTableauIndex))
             animate(
                 initialValue = offsetStart.y.toFloat(),
                 targetValue = offsetEnd.y.toFloat(),
@@ -132,12 +133,12 @@ fun BoardLayout(
     }
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
-            when (it.flipCard) {
-                FlipCard.NoFlip -> { }
+            when (it.flipAnimatedCards) {
+                FlipCardInfo.NoFlip -> { }
                 else -> {
                     animate(
-                        initialValue = it.flipCard.startRotationY,
-                        targetValue = it.flipCard.endRotationY,
+                        initialValue = it.flipAnimatedCards.startRotationY,
+                        targetValue = it.flipAnimatedCards.endRotationY,
                         animationSpec = animationSpecFlip
                     ) { value, _ ->
                         flipRotation = value
@@ -146,34 +147,57 @@ fun BoardLayout(
             }
         }
     }
+    LaunchedEffect(key1 = animateInfo) {
+        animateInfo?.lastTableauCardInfo?.let {
+            animate(
+                initialValue = FlipCardInfo.FaceUp().startRotationY,
+                targetValue = FlipCardInfo.FaceUp().endRotationY,
+                animationSpec = animationSpecFlip
+            ) { value, _ ->
+                tableauFlipRotation = value
+            }
+        }
+    }
 
     Layout(
         modifier = modifier,
         content = {
             animateInfo?.let {
-                when (it.flipCard) {
-                    is FlipCard.FaceDown -> {
+                when (it.flipAnimatedCards) {
+                    is FlipCardInfo.FaceDown -> {
                         FlipCard(
-                            animateInfo = it,
+                            cards = it.animatedCards,
                             cardHeight = layInfo.cardHeight.toDp(),
                             flipRotation = flipRotation,
-                            flipCard = FlipCard.FaceDown()
+                            flipCardInfo = FlipCardInfo.FaceDown(),
+                            modifier = Modifier.layoutId("Animated Pile")
                         )
                     }
-                    is FlipCard.FaceUp -> {
+                    is FlipCardInfo.FaceUp -> {
                         FlipCard(
-                            animateInfo = it,
+                            cards = it.animatedCards,
                             cardHeight = layInfo.cardHeight.toDp(),
                             flipRotation = flipRotation,
-                            flipCard = FlipCard.FaceUp()
+                            flipCardInfo = FlipCardInfo.FaceUp(),
+                            modifier = Modifier.layoutId("Animated Pile")
                         )
                     }
-                    FlipCard.NoFlip -> {
+                    FlipCardInfo.NoFlip -> {
                         VerticalCardPile(
                             cardHeight = layInfo.cardHeight.toDp(),
-                            pile = it.cards
+                            pile = it.animatedCards,
+                            modifier = Modifier.layoutId("Animated Pile")
                         )
                     }
+                }
+                it.lastTableauCardInfo?.let { info ->
+                    FlipCard(
+                        cards = listOf(info.card),
+                        cardHeight = layInfo.cardHeight.toDp(),
+                        flipRotation = tableauFlipRotation,
+                        flipCardInfo = FlipCardInfo.FaceUp(),
+                        modifier = Modifier.layoutId("Animated Tableau Card")
+                    )
                 }
             }
             Suits.entries.forEachIndexed { index, suit ->
@@ -235,6 +259,7 @@ fun BoardLayout(
         val tableauPile6 = measurables.firstOrNull { it.layoutId == "Tableau #6" }
 
         val animatedPile = measurables.firstOrNull { it.layoutId == "Animated Pile"}
+        val animatedTableauCard = measurables.firstOrNull { it.layoutId == "Animated Tableau Card" }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             // card constraints
@@ -248,7 +273,15 @@ fun BoardLayout(
             val animatedPileY = 0 + offsetY.toInt()
 
             if (animatedPileX != 0 || animatedPileY != 0) {
-                animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY, 1f)
+                animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY, 2f)
+            }
+            animateInfo?.let {
+                it.lastTableauCardInfo?.let { tableauCard ->
+                    val tableauCardPosition = layInfo.getPilePosition(it.start, drawAmount)
+                        .plus(layInfo.getCardsYOffset(tableauCard.cardIndex))
+
+                    animatedTableauCard?.measure(cardConstraints)?.place(tableauCardPosition, 1f)
+                }
             }
 
             clubsFoundation?.measure(cardConstraints)?.place(layInfo.clubsFoundation)
@@ -271,31 +304,32 @@ fun BoardLayout(
 
 @Composable
 fun FlipCard(
-    animateInfo: AnimateInfo,
+    cards: List<Card>,
     cardHeight: Dp,
     flipRotation: Float,
-    flipCard: FlipCard
+    flipCardInfo: FlipCardInfo,
+    modifier: Modifier
 ) {
-    val animateModifier = Modifier.graphicsLayer {
+    val animateModifier = modifier.graphicsLayer {
         rotationY = flipRotation
         cameraDistance = 8 * density
     }
-    if (flipCard.flipCondition(flipRotation)) {
+    if (flipCardInfo.flipCondition(flipRotation)) {
         VerticalCardPile(
             cardHeight = cardHeight,
             modifier = animateModifier,
-            pile = animateInfo.cards
+            pile = cards
         )
     } else {
         VerticalCardPile(
             cardHeight = cardHeight,
-            modifier = animateModifier.graphicsLayer { rotationY = flipCard.endRotationY },
-            pile = animateInfo.cards.map { card ->
+            modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY },
+            pile = cards.map { card ->
                 card.copy(
-                    faceUp = when (flipCard) {
-                        is FlipCard.FaceUp -> true
-                        is FlipCard.FaceDown -> false
-                        is FlipCard.NoFlip -> false
+                    faceUp = when (flipCardInfo) {
+                        is FlipCardInfo.FaceUp -> true
+                        is FlipCardInfo.FaceDown -> false
+                        is FlipCardInfo.NoFlip -> false
                     }
                 )
             }
@@ -306,11 +340,11 @@ fun FlipCard(
 @Composable
 fun VerticalCardPile(
     cardHeight: Dp,
-    modifier: Modifier = Modifier,
+    modifier: Modifier,
     pile: List<Card> = emptyList()
 ) {
     Column(
-        modifier = modifier.layoutId("Animated Pile"),
+        modifier = modifier,
         verticalArrangement = Arrangement.spacedBy(space = -(cardHeight.times(0.75f)))
     ) {
         pile.forEach { card ->

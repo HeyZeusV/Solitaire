@@ -5,7 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.FlipCard
+import com.heyzeusv.solitaire.data.FlipCardInfo
+import com.heyzeusv.solitaire.data.LastTableauCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.PileHistory
@@ -129,7 +130,12 @@ abstract class GameViewModel (
         if (_stock.pile.isNotEmpty()) {
             val cards = _stock.getCards(drawAmount)
             _animateInfo.value =
-                AnimateInfo(GamePiles.Stock, GamePiles.Waste, cards, flipCard = FlipCard.FaceUp())
+                AnimateInfo(
+                    start = GamePiles.Stock,
+                    end = GamePiles.Waste,
+                    animatedCards = cards,
+                    flipAnimatedCards = FlipCardInfo.FaceUp()
+                )
             actionBeforeAnimation { _stock.removeMany(drawAmount) }
             actionAfterAnimation { _waste.add(cards) }
             _stockWasteEmpty.value = if (redealLeft == 0) {
@@ -143,8 +149,8 @@ abstract class GameViewModel (
             _animateInfo.value = AnimateInfo(
                 start = GamePiles.Waste,
                 end = GamePiles.Stock,
-                cards = listOf(cards.last()),
-                flipCard = FlipCard.FaceDown()
+                animatedCards = listOf(cards.last()),
+                flipAnimatedCards = FlipCardInfo.FaceDown()
             )
             actionBeforeAnimation { _waste.reset() }
             actionAfterAnimation { _stock.add(cards) }
@@ -204,10 +210,19 @@ abstract class GameViewModel (
         val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.pile.toList()
         if (tPile.isNotEmpty() && tPile[cardIndex].faceUp) {
-            val result =
-                checkLegalMove(tableauPile.gamePile, tPile.subList(cardIndex, tPile.size), cardIndex) {
-                    tableauPile.remove(cardIndex)
-                }
+            val lastTableauCardInfo = try {
+                LastTableauCardInfo(tPile[cardIndex - 1], cardIndex - 1)
+            } catch (e: java.lang.IndexOutOfBoundsException) {
+                null
+            }
+            val result = checkLegalMove(
+                start = tableauPile.gamePile,
+                cards = tPile.subList(cardIndex, tPile.size),
+                startIndex = cardIndex,
+                lastTableauCardInfo = lastTableauCardInfo
+            ) {
+                tableauPile.remove(cardIndex)
+            }
             return result
         }
         return Illegal
@@ -257,6 +272,7 @@ abstract class GameViewModel (
         start: GamePiles,
         cards: List<Card>,
         startIndex: Int = 0,
+        lastTableauCardInfo: LastTableauCardInfo? = null,
         ifLegal: () -> Unit
     ): MoveResult {
         if (cards.size == 1) {
@@ -278,8 +294,14 @@ abstract class GameViewModel (
         _tableau.forEach {
             val endIndex = it.pile.size
             if (it.pile.isNotEmpty() && it.canAdd(cards)) {
-                _animateInfo.value =
-                    AnimateInfo(start, it.gamePile, cards, startIndex, endIndex)
+                _animateInfo.value = AnimateInfo(
+                    start = start,
+                    end = it.gamePile,
+                    animatedCards = cards,
+                    startTableauIndex = startIndex,
+                    endTableauIndex = endIndex,
+                    lastTableauCardInfo = lastTableauCardInfo
+                )
                 actionBeforeAnimation { ifLegal() }
                 actionAfterAnimation {
                     it.add(cards)
@@ -290,7 +312,13 @@ abstract class GameViewModel (
         }
         _tableau.forEach {
             if (it.pile.isEmpty() && it.canAdd(cards)) {
-                _animateInfo.value = AnimateInfo(start, it.gamePile, cards, startIndex)
+                _animateInfo.value = AnimateInfo(
+                    start = start,
+                    end = it.gamePile,
+                    animatedCards = cards,
+                    startTableauIndex = startIndex,
+                    lastTableauCardInfo = lastTableauCardInfo
+                )
                 actionBeforeAnimation { ifLegal() }
                 actionAfterAnimation {
                     it.add(cards)
