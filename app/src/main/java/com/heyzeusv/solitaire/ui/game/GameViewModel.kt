@@ -283,8 +283,13 @@ abstract class GameViewModel (
         if (cards.size == 1) {
             _foundation.forEach {
                 if (it.canAdd(cards)) {
-                    _animateInfo.value =
-                        AnimateInfo(start, it.suit.gamePile, cards, startIndex)
+                    _animateInfo.value = AnimateInfo(
+                        start = start,
+                        end = it.suit.gamePile,
+                        animatedCards = cards,
+                        startTableauIndex = startIndex,
+                        lastTableauCardInfo = lastTableauCardInfo
+                    )
                     actionBeforeAnimation { ifLegal() }
                     actionAfterAnimation {
                         it.add(cards)

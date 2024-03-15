@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -41,6 +42,7 @@ import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.toDp
+import kotlinx.coroutines.delay
 
 @Composable
 fun BoardLayout(
@@ -100,7 +102,6 @@ fun BoardLayout(
     var flipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
     var tableauFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
     val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
-    val animationSpecFlip = tween<Float>(250, easing = LinearEasing)
 
     LaunchedEffect(key1 = animateInfo) {
          animateInfo?.let {
@@ -139,7 +140,7 @@ fun BoardLayout(
                     animate(
                         initialValue = it.flipAnimatedCards.startRotationY,
                         targetValue = it.flipAnimatedCards.endRotationY,
-                        animationSpec = animationSpecFlip
+                        animationSpec = getFlipAnimationSpec(250)
                     ) { value, _ ->
                         flipRotation = value
                     }
@@ -149,10 +150,11 @@ fun BoardLayout(
     }
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.lastTableauCardInfo?.let {
+            delay(50)
             animate(
                 initialValue = FlipCardInfo.FaceUp().startRotationY,
                 targetValue = FlipCardInfo.FaceUp().endRotationY,
-                animationSpec = animationSpecFlip
+                animationSpec = getFlipAnimationSpec(200)
             ) { value, _ ->
                 tableauFlipRotation = value
             }
@@ -274,13 +276,13 @@ fun BoardLayout(
 
             if (animatedPileX != 0 || animatedPileY != 0) {
                 animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY, 2f)
-            }
-            animateInfo?.let {
-                it.lastTableauCardInfo?.let { tableauCard ->
-                    val tableauCardPosition = layInfo.getPilePosition(it.start, drawAmount)
-                        .plus(layInfo.getCardsYOffset(tableauCard.cardIndex))
+                animateInfo?.let {
+                    it.lastTableauCardInfo?.let { tableauCard ->
+                        val tableauCardPosition = layInfo.getPilePosition(it.start, drawAmount)
+                            .plus(layInfo.getCardsYOffset(tableauCard.cardIndex))
 
-                    animatedTableauCard?.measure(cardConstraints)?.place(tableauCardPosition, 1f)
+                        animatedTableauCard?.measure(cardConstraints)?.place(tableauCardPosition, 1f)
+                    }
                 }
             }
 
@@ -355,6 +357,9 @@ fun VerticalCardPile(
         }
     }
 }
+
+private fun getFlipAnimationSpec(duration: Int): TweenSpec<Float> =
+    tween(duration, easing = LinearEasing)
 
 @Preview
 @Composable
