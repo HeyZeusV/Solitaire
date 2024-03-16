@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.data.pile
 
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.TableauCardFlipInfo
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
@@ -179,6 +180,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
         return TableauCardFlipInfo(
             card = _pile[cardIndex - 1],
             cardIndex = cardIndex - 1,
+            flipCardInfo = FlipCardInfo.FaceUp(),
             remainingPile = _pile.toList().subList(0, cardIndex - 1)
         )
     }

@@ -153,8 +153,8 @@ fun BoardLayout(
         animateInfo?.tableauCardFlipInfo?.let {
             delay(50)
             animate(
-                initialValue = FlipCardInfo.FaceUp().startRotationY,
-                targetValue = FlipCardInfo.FaceUp().endRotationY,
+                initialValue = it.flipCardInfo.startRotationY,
+                targetValue = it.flipCardInfo.endRotationY,
                 animationSpec = getFlipAnimationSpec(200)
             ) { value, _ ->
                 tableauFlipRotation = value
@@ -203,7 +203,7 @@ fun BoardLayout(
                             card = info.card,
                             cardHeight = layInfo.cardHeight.toDp(),
                             flipRotation = tableauFlipRotation,
-                            flipCardInfo = FlipCardInfo.FaceUp()
+                            flipCardInfo = info.flipCardInfo
                         )
                     }
                 }
@@ -284,13 +284,13 @@ fun BoardLayout(
             if (animatedPileX != 0 || animatedPileY != 0) {
                 animatedPile?.measure(tableauConstraints)?.place(animatedPileX, animatedPileY, 2f)
                 animateInfo?.let {
-                    it.tableauCardFlipInfo?.let { _ ->
-                        val tableauCardFlipPosition = layInfo.getPilePosition(it.start, drawAmount)
-                        // TODO: add verticalPile to animateTableauCard, make original pile disappear
-                        // TODO: during animation
+                    it.tableauCardFlipInfo?.let { info ->
+                        val pile =
+                            if (info.flipCardInfo is FlipCardInfo.FaceDown) it.end else it.start
+                        val tableauCardFlipPosition = layInfo.getPilePosition(pile, drawAmount)
                         animatedTableauCard?.measure(tableauConstraints)
                             ?.place(tableauCardFlipPosition, 1f)
-                        when (it.start) {
+                        when (pile) {
                             GamePiles.TableauZero -> tableauPile0 = null
                             GamePiles.TableauOne -> tableauPile1 = null
                             GamePiles.TableauTwo -> tableauPile2 = null
@@ -359,7 +359,13 @@ fun FlipCard(
         }
     if (flipCardInfo.flipCondition(flipRotation)) {
         SolitaireCard(
-            card = card,
+            card = card.copy(
+                faceUp = when (flipCardInfo) {
+                    is FlipCardInfo.FaceUp -> false
+                    is FlipCardInfo.FaceDown -> true
+                    is FlipCardInfo.NoFlip -> false
+                }
+            ),
             modifier = animateModifier
         )
     } else {

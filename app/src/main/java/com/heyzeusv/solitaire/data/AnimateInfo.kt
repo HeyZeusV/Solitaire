@@ -17,8 +17,16 @@ data class AnimateInfo(
         animatedCards = animatedCards,
         startTableauIndex = endTableauIndex,
         endTableauIndex = startTableauIndex,
-        flipAnimatedCards = flipAnimatedCards.getUndoFlipCardInfo()
+        flipAnimatedCards = flipAnimatedCards.getUndoFlipCardInfo(),
+        tableauCardFlipInfo = tableauCardFlipInfo?.copy(
+            flipCardInfo = tableauCardFlipInfo.flipCardInfo.getUndoFlipCardInfo()
+        )
     )
 }
 
-data class TableauCardFlipInfo(val card: Card, val cardIndex: Int, val remainingPile: List<Card>)
+data class TableauCardFlipInfo(
+    val card: Card,
+    val cardIndex: Int,
+    val flipCardInfo: FlipCardInfo,
+    val remainingPile: List<Card>
+)
