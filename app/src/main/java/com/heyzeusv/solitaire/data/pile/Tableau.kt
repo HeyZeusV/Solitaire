@@ -161,7 +161,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     }
 
     override fun undo(cards: List<Card>) {
-       _pile.run {
+        _pile.run {
             clear()
             if (cards.isEmpty()) return
             addAll(cards)

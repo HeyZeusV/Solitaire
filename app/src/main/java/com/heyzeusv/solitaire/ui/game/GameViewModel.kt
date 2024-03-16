@@ -66,6 +66,9 @@ abstract class GameViewModel (
     private val _undoEnabled = MutableStateFlow(false)
     val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
 
+    private var _undoAnimateEnabled = true
+    val undoAnimateEnabled: Boolean get() = _undoAnimateEnabled
+
     private val _autoCompleteActive = MutableStateFlow(false)
     val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
 
@@ -98,6 +101,7 @@ abstract class GameViewModel (
         _waste.reset()
         _historyList.clear()
         _undoEnabled.value = false
+        _undoAnimateEnabled = true
         _gameWon.value = false
         _autoCompleteActive.value = false
         _animateInfo.value = null
@@ -464,9 +468,9 @@ abstract class GameViewModel (
 
     private fun actionAfterAnimation(action: () -> Unit) {
         viewModelScope.launch {
-            _undoEnabled.value = false
+            _undoAnimateEnabled = false
             delay(250)
-            _undoEnabled.value = true
+            _undoAnimateEnabled = true
             action()
         }
     }
