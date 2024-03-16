@@ -9,7 +9,7 @@ data class AnimateInfo(
     val startTableauIndex: Int = 0,
     val endTableauIndex: Int = 0,
     val flipAnimatedCards: FlipCardInfo = FlipCardInfo.NoFlip,
-    val lastTableauCardInfo: LastTableauCardInfo? = null
+    val tableauCardFlipInfo: TableauCardFlipInfo? = null
 )
 
-data class LastTableauCardInfo(val card: Card, val cardIndex: Int)
+data class TableauCardFlipInfo(val card: Card, val cardIndex: Int, val remainingPile: List<Card>)

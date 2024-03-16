@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.data.pile
 
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.TableauCardFlipInfo
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
 
@@ -164,6 +165,22 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
             if (cards.isEmpty()) return
             addAll(cards)
         }
+    }
+
+    fun getTableauCardFlipInfo(cardIndex: Int): TableauCardFlipInfo? {
+        val lastTableauCard: Card
+        try {
+            lastTableauCard = _pile[cardIndex - 1]
+        } catch (e: IndexOutOfBoundsException) {
+            return null
+        }
+        if (lastTableauCard.faceUp) return null
+
+        return TableauCardFlipInfo(
+            card = _pile[cardIndex - 1],
+            cardIndex = cardIndex - 1,
+            remainingPile = _pile.toList().subList(0, cardIndex - 1)
+        )
     }
 
     /**
