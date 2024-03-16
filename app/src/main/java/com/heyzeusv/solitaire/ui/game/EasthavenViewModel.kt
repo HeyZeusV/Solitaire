@@ -33,8 +33,9 @@ class EasthavenViewModel @Inject constructor(
     override fun onStockClick(drawAmount: Int): MoveResult {
         if (_stock.pile.isNotEmpty()) {
             _tableau.forEach { (it as EasthavenTableau).addFromStock(_stock.removeMany(1)) }
-            appendHistory()
-            _animateInfo.value = AnimateInfo(GamePiles.Stock, GamePiles.TableauOne, listOf(Card(0, Suits.CLUBS, true)))
+            val aniInfo = AnimateInfo(GamePiles.Stock, GamePiles.TableauOne, listOf(Card(0, Suits.CLUBS, true)))
+            appendHistory(aniInfo)
+            _animateInfo.value = aniInfo
             return MoveResult.Move
         }
         return MoveResult.Illegal

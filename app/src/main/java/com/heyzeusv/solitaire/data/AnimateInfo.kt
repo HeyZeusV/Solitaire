@@ -10,6 +10,15 @@ data class AnimateInfo(
     val endTableauIndex: Int = 0,
     val flipAnimatedCards: FlipCardInfo = FlipCardInfo.NoFlip,
     val tableauCardFlipInfo: TableauCardFlipInfo? = null
-)
+) {
+    fun getUndoAnimateInfo(): AnimateInfo = AnimateInfo(
+        start = end,
+        end = start,
+        animatedCards = animatedCards,
+        startTableauIndex = endTableauIndex,
+        endTableauIndex = startTableauIndex,
+        flipAnimatedCards = flipAnimatedCards.getUndoFlipCardInfo()
+    )
+}
 
 data class TableauCardFlipInfo(val card: Card, val cardIndex: Int, val remainingPile: List<Card>)

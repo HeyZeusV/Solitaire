@@ -13,4 +13,10 @@ sealed class FlipCardInfo {
     val startRotationY: Float = 0f
     open val endRotationY: Float = 0f
     open fun flipCondition(flipRotation: Float): Boolean = false
+
+    fun getUndoFlipCardInfo(): FlipCardInfo = when (this) {
+        is FaceDown -> FaceUp()
+        is FaceUp -> FaceDown()
+        NoFlip -> NoFlip
+    }
 }

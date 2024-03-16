@@ -19,7 +19,6 @@ import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.*
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
-import com.heyzeusv.solitaire.util.isNotEqual
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -129,15 +128,18 @@ abstract class GameViewModel (
         // add card to waste if stock is not empty and flip it face up
         if (_stock.pile.isNotEmpty()) {
             val cards = _stock.getCards(drawAmount)
-            _animateInfo.value =
-                AnimateInfo(
-                    start = GamePiles.Stock,
-                    end = GamePiles.Waste,
-                    animatedCards = cards,
-                    flipAnimatedCards = FlipCardInfo.FaceUp()
-                )
+            val aniInfo = AnimateInfo(
+                start = GamePiles.Stock,
+                end = GamePiles.Waste,
+                animatedCards = cards,
+                flipAnimatedCards = FlipCardInfo.FaceUp()
+            )
+            _animateInfo.value = aniInfo
             actionBeforeAnimation { _stock.removeMany(drawAmount) }
-            actionAfterAnimation { _waste.add(cards) }
+            actionAfterAnimation {
+                _waste.add(cards)
+                appendHistory(aniInfo.getUndoAnimateInfo())
+            }
             _stockWasteEmpty.value = if (redealLeft == 0) {
                 true
             } else {
@@ -146,14 +148,18 @@ abstract class GameViewModel (
             return Move
         } else if (_waste.pile.size > 1 && redealLeft != 0) {
             val cards = _waste.pile.toList()
-            _animateInfo.value = AnimateInfo(
+            val aniInfo = AnimateInfo(
                 start = GamePiles.Waste,
                 end = GamePiles.Stock,
                 animatedCards = listOf(cards.last()),
                 flipAnimatedCards = FlipCardInfo.FaceDown()
             )
+            _animateInfo.value = aniInfo
             actionBeforeAnimation { _waste.reset() }
-            actionAfterAnimation { _stock.add(cards) }
+            actionAfterAnimation {
+                _stock.add(cards)
+                appendHistory(aniInfo.getUndoAnimateInfo())
+            }
             redealLeft--
             return Move
         }
@@ -274,16 +280,18 @@ abstract class GameViewModel (
         if (cards.size == 1) {
             _foundation.forEach {
                 if (it.canAdd(cards)) {
-                    _animateInfo.value = AnimateInfo(
+                    val aniInfo = AnimateInfo(
                         start = start,
                         end = it.suit.gamePile,
                         animatedCards = cards,
                         startTableauIndex = startIndex,
                         tableauCardFlipInfo = tableauCardFlipInfo
                     )
+                    _animateInfo.value = aniInfo
                     actionBeforeAnimation { ifLegal() }
                     actionAfterAnimation {
                         it.add(cards)
+                        appendHistory(aniInfo.getUndoAnimateInfo())
                         autoComplete()
                     }
                     _autoCompleteCorrection++
@@ -295,7 +303,7 @@ abstract class GameViewModel (
         _tableau.forEach {
             val endIndex = it.pile.size
             if (it.pile.isNotEmpty() && it.canAdd(cards)) {
-                _animateInfo.value = AnimateInfo(
+                val aniInfo = AnimateInfo(
                     start = start,
                     end = it.gamePile,
                     animatedCards = cards,
@@ -303,9 +311,11 @@ abstract class GameViewModel (
                     endTableauIndex = endIndex,
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
+                _animateInfo.value = aniInfo
                 actionBeforeAnimation { ifLegal() }
                 actionAfterAnimation {
                     it.add(cards)
+                    appendHistory(aniInfo.getUndoAnimateInfo())
                     autoComplete()
                 }
                 return Move
@@ -313,16 +323,18 @@ abstract class GameViewModel (
         }
         _tableau.forEach {
             if (it.pile.isEmpty() && it.canAdd(cards)) {
-                _animateInfo.value = AnimateInfo(
+                val aniInfo = AnimateInfo(
                     start = start,
                     end = it.gamePile,
                     animatedCards = cards,
                     startTableauIndex = startIndex,
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
+                _animateInfo.value = aniInfo
                 actionBeforeAnimation { ifLegal() }
                 actionAfterAnimation {
                     it.add(cards)
+                    appendHistory(aniInfo.getUndoAnimateInfo())
                     autoComplete()
                 }
                 return Move
@@ -353,9 +365,10 @@ abstract class GameViewModel (
      *  Adds [currentStep] to our [_historyList] list before overwriting [currentStep] using
      *  [recordHistory]. This should be call after every legal move.
      */
-    protected fun appendHistory() {
+    protected fun appendHistory(undoAnimateInfo: AnimateInfo) {
         // limit number of undo steps to 15
         if (_historyList.size == 15) _historyList.removeFirst()
+        currentStep.undoAnimateInfo = undoAnimateInfo
         _historyList.add(currentStep)
         _undoEnabled.value = true
         recordHistory()
@@ -369,7 +382,21 @@ abstract class GameViewModel (
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
             if (_historyList.isEmpty()) _undoEnabled.value = false
-            if (_stock.pile.isNotEqual(step.stock.pile)) {
+            _animateInfo.value = step.undoAnimateInfo
+            actionBeforeAnimation {
+                undoAction(step, step.undoAnimateInfo.start)
+            }
+            actionAfterAnimation {
+                undoAction(step, step.undoAnimateInfo.end)
+                // called to ensure currentStep stays updated.
+                recordHistory()
+            }
+        }
+    }
+
+    private fun undoAction(step: PileHistory, gamePile: GamePiles) {
+        when (gamePile) {
+            GamePiles.Stock -> {
                 _stock.undo(step.stock.pile)
                 _stockWasteEmpty.value = if (redealLeft == 0) {
                     true
@@ -377,7 +404,7 @@ abstract class GameViewModel (
                     _waste.pile.size <= 1 && _stock.pile.isEmpty()
                 }
             }
-            if (_waste.pile.isNotEqual(step.waste.pile)) {
+            GamePiles.Waste -> {
                 _waste.undo(step.waste.pile)
                 _stockWasteEmpty.value = if (redealLeft == 0) {
                     true
@@ -385,18 +412,17 @@ abstract class GameViewModel (
                     _waste.pile.size <= 1 && _stock.pile.isEmpty()
                 }
             }
-            _foundation.forEachIndexed { i, foundation ->
-                if (foundation.pile.isNotEqual(step.foundation[i].pile)) {
-                    foundation.undo(step.foundation[i].pile)
-                }
-            }
-            _tableau.forEachIndexed { i, tableau ->
-                if (tableau.pile.isNotEqual(step.tableau[i].pile)) {
-                    tableau.undo(step.tableau[i].pile)
-                }
-            }
-            // called to ensure currentStep stays updated.
-            recordHistory()
+            GamePiles.ClubsFoundation -> _foundation[0].undo(step.foundation[0].pile)
+            GamePiles.DiamondsFoundation -> _foundation[1].undo(step.foundation[1].pile)
+            GamePiles.HeartsFoundation -> _foundation[2].undo(step.foundation[2].pile)
+            GamePiles.SpadesFoundation -> _foundation[3].undo(step.foundation[3].pile)
+            GamePiles.TableauZero -> _tableau[0].undo(step.tableau[0].pile)
+            GamePiles.TableauOne -> _tableau[1].undo(step.tableau[1].pile)
+            GamePiles.TableauTwo -> _tableau[2].undo(step.tableau[2].pile)
+            GamePiles.TableauThree -> _tableau[3].undo(step.tableau[3].pile)
+            GamePiles.TableauFour -> _tableau[4].undo(step.tableau[4].pile)
+            GamePiles.TableauFive -> _tableau[5].undo(step.tableau[5].pile)
+            GamePiles.TableauSix -> _tableau[6].undo(step.tableau[6].pile)
         }
     }
 
@@ -440,8 +466,8 @@ abstract class GameViewModel (
         viewModelScope.launch {
             _undoEnabled.value = false
             delay(250)
+            _undoEnabled.value = true
             action()
-            appendHistory()
         }
     }
 }

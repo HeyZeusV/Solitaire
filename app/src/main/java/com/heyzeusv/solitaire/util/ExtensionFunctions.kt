@@ -46,12 +46,6 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
     return df.format(scorePercent)
 }
 
-/**
- *  Used to compare Pile lists which are SnapshotStateList internally but displayed as Lists,
- *  so need to cast to List when comparing.
- */
-fun List<Card>.isNotEqual(list: List<Card>): Boolean = this.toList() != list.toList()
-
 fun List<Card>.firstCard(): Card = try {
     this.first()
 } catch (e: NoSuchElementException) {
