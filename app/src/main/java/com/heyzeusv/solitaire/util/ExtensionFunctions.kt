@@ -52,6 +52,12 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
  */
 fun List<Card>.isNotEqual(list: List<Card>): Boolean = this.toList() != list.toList()
 
+fun List<Card>.firstCard(): Card = try {
+    this.first()
+} catch (e: NoSuchElementException) {
+    Card(0, Suits.CLUBS)
+}
+
 fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)
 
 @Composable

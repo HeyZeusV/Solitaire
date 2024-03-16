@@ -41,6 +41,7 @@ import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.firstCard
 import com.heyzeusv.solitaire.util.toDp
 import kotlinx.coroutines.delay
 
@@ -168,7 +169,7 @@ fun BoardLayout(
                 when (it.flipAnimatedCards) {
                     is FlipCardInfo.FaceDown -> {
                         FlipCard(
-                            cards = it.animatedCards,
+                            card = it.animatedCards.firstCard(),
                             cardHeight = layInfo.cardHeight.toDp(),
                             flipRotation = flipRotation,
                             flipCardInfo = FlipCardInfo.FaceDown(),
@@ -177,7 +178,7 @@ fun BoardLayout(
                     }
                     is FlipCardInfo.FaceUp -> {
                         FlipCard(
-                            cards = it.animatedCards,
+                            card = it.animatedCards.firstCard(),
                             cardHeight = layInfo.cardHeight.toDp(),
                             flipRotation = flipRotation,
                             flipCardInfo = FlipCardInfo.FaceUp(),
@@ -194,7 +195,7 @@ fun BoardLayout(
                 }
                 it.lastTableauCardInfo?.let { info ->
                     FlipCard(
-                        cards = listOf(info.card),
+                        card = info.card,
                         cardHeight = layInfo.cardHeight.toDp(),
                         flipRotation = tableauFlipRotation,
                         flipCardInfo = FlipCardInfo.FaceUp(),
@@ -266,10 +267,11 @@ fun BoardLayout(
         layout(constraints.maxWidth, constraints.maxHeight) {
             // card constraints
             val cardWidth = layInfo.cardWidth
+            val cardHeight = layInfo.cardHeight
             val cardConstraints = layInfo.cardConstraints
             val wasteConstraints = layInfo.wasteConstraints
             val tableauHeight = constraints.maxHeight - layInfo.tableauZero.y
-            val tableauConstraints = Constraints(cardWidth, cardWidth, tableauHeight, tableauHeight)
+            val tableauConstraints = Constraints(cardWidth, cardWidth, cardHeight, tableauHeight)
 
             val animatedPileX = 0 + offsetX.toInt()
             val animatedPileY = 0 + offsetY.toInt()
@@ -280,7 +282,8 @@ fun BoardLayout(
                     it.lastTableauCardInfo?.let { tableauCard ->
                         val tableauCardPosition = layInfo.getPilePosition(it.start, drawAmount)
                             .plus(layInfo.getCardsYOffset(tableauCard.cardIndex))
-
+                        // TODO: add verticalPile to animateTableauCard, make original pile disappear
+                        // TODO: during animation
                         animatedTableauCard?.measure(cardConstraints)?.place(tableauCardPosition, 1f)
                     }
                 }
@@ -306,35 +309,33 @@ fun BoardLayout(
 
 @Composable
 fun FlipCard(
-    cards: List<Card>,
+    card: Card,
     cardHeight: Dp,
     flipRotation: Float,
     flipCardInfo: FlipCardInfo,
     modifier: Modifier
 ) {
-    val animateModifier = modifier.graphicsLayer {
-        rotationY = flipRotation
-        cameraDistance = 8 * density
-    }
+    val animateModifier = modifier
+        .height(cardHeight)
+        .graphicsLayer {
+            rotationY = flipRotation
+            cameraDistance = 8 * density
+        }
     if (flipCardInfo.flipCondition(flipRotation)) {
-        VerticalCardPile(
-            cardHeight = cardHeight,
-            modifier = animateModifier,
-            pile = cards
+        SolitaireCard(
+            card = card,
+            modifier = animateModifier
         )
     } else {
-        VerticalCardPile(
-            cardHeight = cardHeight,
-            modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY },
-            pile = cards.map { card ->
-                card.copy(
-                    faceUp = when (flipCardInfo) {
-                        is FlipCardInfo.FaceUp -> true
-                        is FlipCardInfo.FaceDown -> false
-                        is FlipCardInfo.NoFlip -> false
-                    }
-                )
-            }
+        SolitaireCard(
+            card = card.copy(
+                faceUp = when (flipCardInfo) {
+                    is FlipCardInfo.FaceUp -> true
+                    is FlipCardInfo.FaceDown -> false
+                    is FlipCardInfo.NoFlip -> false
+                }
+            ),
+            modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY }
         )
     }
 }
