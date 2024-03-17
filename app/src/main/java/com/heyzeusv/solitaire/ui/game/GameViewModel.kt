@@ -65,9 +65,7 @@ abstract class GameViewModel (
 
     private val _undoEnabled = MutableStateFlow(false)
     val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
-
-    private var _undoAnimateEnabled = true
-    val undoAnimateEnabled: Boolean get() = _undoAnimateEnabled
+    fun updateUndoEnabled(newValue: Boolean) { _undoEnabled.value = newValue }
 
     private val _autoCompleteActive = MutableStateFlow(false)
     val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
@@ -101,7 +99,6 @@ abstract class GameViewModel (
         _waste.reset()
         _historyList.clear()
         _undoEnabled.value = false
-        _undoAnimateEnabled = true
         _gameWon.value = false
         _autoCompleteActive.value = false
         _animateInfo.value = null
@@ -138,12 +135,12 @@ abstract class GameViewModel (
                 animatedCards = cards,
                 flipAnimatedCards = FlipCardInfo.FaceUp()
             )
-            _animateInfo.value = aniInfo
-            actionBeforeAnimation { _stock.removeMany(drawAmount) }
-            actionAfterAnimation {
+            aniInfo.actionBeforeAnimation = { _stock.removeMany(drawAmount) }
+            aniInfo.actionAfterAnimation = {
                 _waste.add(cards)
                 appendHistory(aniInfo.getUndoAnimateInfo())
             }
+            _animateInfo.value = aniInfo
             _stockWasteEmpty.value = if (redealLeft == 0) {
                 true
             } else {
@@ -158,12 +155,12 @@ abstract class GameViewModel (
                 animatedCards = listOf(cards.last()),
                 flipAnimatedCards = FlipCardInfo.FaceDown()
             )
-            _animateInfo.value = aniInfo
-            actionBeforeAnimation { _waste.reset() }
-            actionAfterAnimation {
+            aniInfo.actionBeforeAnimation = { _waste.reset() }
+            aniInfo.actionAfterAnimation = {
                 _stock.add(cards)
                 appendHistory(aniInfo.getUndoAnimateInfo())
             }
+            _animateInfo.value = aniInfo
             redealLeft--
             return Move
         }
@@ -291,13 +288,13 @@ abstract class GameViewModel (
                         startTableauIndex = startIndex,
                         tableauCardFlipInfo = tableauCardFlipInfo
                     )
-                    _animateInfo.value = aniInfo
-                    actionBeforeAnimation { ifLegal() }
-                    actionAfterAnimation {
+                    aniInfo.actionBeforeAnimation = { ifLegal() }
+                    aniInfo.actionAfterAnimation = {
                         it.add(cards)
                         appendHistory(aniInfo.getUndoAnimateInfo())
                         autoComplete()
                     }
+                    _animateInfo.value = aniInfo
                     _autoCompleteCorrection++
                     return MoveScore
                 }
@@ -315,13 +312,13 @@ abstract class GameViewModel (
                     endTableauIndex = endIndex,
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
-                _animateInfo.value = aniInfo
-                actionBeforeAnimation { ifLegal() }
-                actionAfterAnimation {
+                aniInfo.actionBeforeAnimation = { ifLegal() }
+                aniInfo.actionAfterAnimation = {
                     it.add(cards)
                     appendHistory(aniInfo.getUndoAnimateInfo())
                     autoComplete()
                 }
+                _animateInfo.value = aniInfo
                 return Move
             }
         }
@@ -334,13 +331,13 @@ abstract class GameViewModel (
                     startTableauIndex = startIndex,
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
-                _animateInfo.value = aniInfo
-                actionBeforeAnimation { ifLegal() }
-                actionAfterAnimation {
+                aniInfo.actionBeforeAnimation = { ifLegal() }
+                aniInfo.actionAfterAnimation = {
                     it.add(cards)
                     appendHistory(aniInfo.getUndoAnimateInfo())
                     autoComplete()
                 }
+                _animateInfo.value = aniInfo
                 return Move
             }
         }
@@ -385,16 +382,16 @@ abstract class GameViewModel (
     fun undo() {
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
-            if (_historyList.isEmpty()) _undoEnabled.value = false
-            _animateInfo.value = step.undoAnimateInfo
-            actionBeforeAnimation {
+            step.undoAnimateInfo.actionBeforeAnimation = {
                 undoAction(step, step.undoAnimateInfo.start)
             }
-            actionAfterAnimation {
+            step.undoAnimateInfo.actionAfterAnimation = {
                 undoAction(step, step.undoAnimateInfo.end)
                 // called to ensure currentStep stays updated.
                 recordHistory()
+                _undoEnabled.value = _historyList.isNotEmpty()
             }
+            _animateInfo.value = step.undoAnimateInfo
         }
     }
 
@@ -457,21 +454,5 @@ abstract class GameViewModel (
             type.primaryConstructor!!.call(GamePiles.TableauFive, initialPiles[5]),
             type.primaryConstructor!!.call(GamePiles.TableauSix, initialPiles[6])
         )
-    }
-
-    private fun actionBeforeAnimation(action: () -> Unit) {
-        viewModelScope.launch {
-            delay(15)
-            action()
-        }
-    }
-
-    private fun actionAfterAnimation(action: () -> Unit) {
-        viewModelScope.launch {
-            _undoAnimateEnabled = false
-            delay(250)
-            _undoAnimateEnabled = true
-            action()
-        }
     }
 }

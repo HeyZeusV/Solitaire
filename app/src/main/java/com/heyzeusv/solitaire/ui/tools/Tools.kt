@@ -55,10 +55,8 @@ fun SolitaireTools(
         },
         undoEnabled = undoEnabled,
         undoOnClick = {
-            if (gameVM.undoAnimateEnabled) {
-                gameVM.undo()
-                sbVM.undo()
-            }
+            gameVM.undo()
+            sbVM.undo()
         },
         autoCompleteActive = autoCompleteActive,
         modifier = modifier

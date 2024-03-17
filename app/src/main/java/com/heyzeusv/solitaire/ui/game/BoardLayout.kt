@@ -59,6 +59,7 @@ fun BoardLayout(
         layInfo = gameVM.layoutInfo,
         animateInfo = animateInfo,
         updateAnimateInfo = gameVM::updateAnimateInfo,
+        updateUndoEnabled = gameVM::updateUndoEnabled,
         drawAmount = selectedGame.drawAmount,
         handleMoveResult = sbVM::handleMoveResult,
         stock = gameVM.stock,
@@ -79,6 +80,7 @@ fun BoardLayout(
     layInfo: LayoutInfo,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit,
+    updateUndoEnabled: (Boolean) -> Unit,
     drawAmount: Int,
     handleMoveResult: (MoveResult) -> Unit,
     stock: Stock,
@@ -105,17 +107,33 @@ fun BoardLayout(
     val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
 
     LaunchedEffect(key1 = animateInfo) {
-         animateInfo?.let {
-             val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
-             val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
-             animate(
-                 initialValue = offsetStart.x.toFloat(),
-                 targetValue = offsetEnd.x.toFloat(),
-                 animationSpec = animationSpec
-             ) { value, _ ->
-                 offsetX = value
-             }
-         }
+        animateInfo?.let {
+            try {
+                delay(15)
+                it.actionBeforeAnimation()
+            } catch (e: Exception) {
+                it.actionBeforeAnimation()
+            }
+        }
+    }
+    LaunchedEffect(key1 = animateInfo) {
+        animateInfo?.let {
+            try {
+                updateUndoEnabled(false)
+                val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
+                val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
+                animate(
+                    initialValue = offsetStart.x.toFloat(),
+                    targetValue = offsetEnd.x.toFloat(),
+                    animationSpec = animationSpec
+                ) { value, _ ->
+                    offsetX = value
+                }
+                it.actionAfterAnimation()
+            } catch (e: Exception) {
+                it.actionAfterAnimation()
+            }
+        }
     }
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
@@ -393,6 +411,7 @@ fun BoardLayoutPreview() {
             layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
+            updateUndoEnabled = { },
             drawAmount = 1,
             handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),

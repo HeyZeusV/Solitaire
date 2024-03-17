@@ -11,6 +11,9 @@ data class AnimateInfo(
     val flipAnimatedCards: FlipCardInfo = FlipCardInfo.NoFlip,
     val tableauCardFlipInfo: TableauCardFlipInfo? = null
 ) {
+    var actionBeforeAnimation: () -> Unit = { }
+    var actionAfterAnimation: () -> Unit = { }
+
     fun getUndoAnimateInfo(): AnimateInfo = AnimateInfo(
         start = end,
         end = start,
