@@ -42,6 +42,7 @@ import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.firstCard
+import com.heyzeusv.solitaire.util.gesturesDisabled
 import com.heyzeusv.solitaire.util.toDp
 import kotlinx.coroutines.delay
 
@@ -54,12 +55,15 @@ fun BoardLayout(
 ) {
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
+    val undoAnimation by gameVM.undoAnimation.collectAsState()
 
     BoardLayout(
         layInfo = gameVM.layoutInfo,
         animateInfo = animateInfo,
         updateAnimateInfo = gameVM::updateAnimateInfo,
         updateUndoEnabled = gameVM::updateUndoEnabled,
+        undoAnimation = undoAnimation,
+        updateUndoAnimation = gameVM::updateUndoAnimation,
         drawAmount = selectedGame.drawAmount,
         handleMoveResult = sbVM::handleMoveResult,
         stock = gameVM.stock,
@@ -81,6 +85,8 @@ fun BoardLayout(
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit,
     updateUndoEnabled: (Boolean) -> Unit,
+    undoAnimation: Boolean,
+    updateUndoAnimation: (Boolean) -> Unit,
     drawAmount: Int,
     handleMoveResult: (MoveResult) -> Unit,
     stock: Stock,
@@ -120,6 +126,7 @@ fun BoardLayout(
         animateInfo?.let {
             try {
                 updateUndoEnabled(false)
+                if (it.undoAnimation) updateUndoAnimation(true)
                 val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
                 val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
                 animate(
@@ -130,8 +137,10 @@ fun BoardLayout(
                     offsetX = value
                 }
                 it.actionAfterAnimation()
+                if (it.undoAnimation) updateUndoAnimation(false)
             } catch (e: Exception) {
                 it.actionAfterAnimation()
+                if (it.undoAnimation) updateUndoAnimation(false)
             }
         }
     }
@@ -181,7 +190,7 @@ fun BoardLayout(
     }
 
     Layout(
-        modifier = modifier,
+        modifier = modifier.gesturesDisabled(undoAnimation),
         content = {
             animateInfo?.let {
                 when (it.flipAnimatedCards) {
@@ -412,6 +421,8 @@ fun BoardLayoutPreview() {
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
             updateUndoEnabled = { },
+            undoAnimation = false,
+            updateUndoAnimation = { },
             drawAmount = 1,
             handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),

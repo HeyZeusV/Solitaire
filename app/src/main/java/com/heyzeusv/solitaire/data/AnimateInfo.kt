@@ -9,7 +9,8 @@ data class AnimateInfo(
     val startTableauIndex: Int = 0,
     val endTableauIndex: Int = 0,
     val flipAnimatedCards: FlipCardInfo = FlipCardInfo.NoFlip,
-    val tableauCardFlipInfo: TableauCardFlipInfo? = null
+    val tableauCardFlipInfo: TableauCardFlipInfo? = null,
+    val undoAnimation: Boolean = false
 ) {
     var actionBeforeAnimation: () -> Unit = { }
     var actionAfterAnimation: () -> Unit = { }
@@ -23,7 +24,8 @@ data class AnimateInfo(
         flipAnimatedCards = flipAnimatedCards.getUndoFlipCardInfo(),
         tableauCardFlipInfo = tableauCardFlipInfo?.copy(
             flipCardInfo = tableauCardFlipInfo.flipCardInfo.getUndoFlipCardInfo()
-        )
+        ),
+        undoAnimation = true
     )
 }
 

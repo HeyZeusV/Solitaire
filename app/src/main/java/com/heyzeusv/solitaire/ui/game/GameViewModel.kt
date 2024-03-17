@@ -67,6 +67,10 @@ abstract class GameViewModel (
     val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
     fun updateUndoEnabled(newValue: Boolean) { _undoEnabled.value = newValue }
 
+    private val _undoAnimation = MutableStateFlow(false)
+    val undoAnimation: StateFlow<Boolean> get() = _undoAnimation
+    fun updateUndoAnimation(newValue: Boolean) { _undoAnimation.value = newValue }
+
     private val _autoCompleteActive = MutableStateFlow(false)
     val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
 
