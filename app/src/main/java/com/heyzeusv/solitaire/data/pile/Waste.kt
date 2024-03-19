@@ -11,11 +11,10 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     /**
      *  Adds given [cards] to [_truePile].
      */
-    override fun add(cards: List<Card>): Boolean {
-        val success = _truePile.addAll(cards.map { it.copy(faceUp = true) })
+    override fun add(cards: List<Card>) {
+        _truePile.addAll(cards.map { it.copy(faceUp = true) })
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
-        return success
     }
 
     /**
@@ -30,7 +29,6 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
     fun removeAll() {
         _truePile.clear()
-        _displayPile.clear()
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }

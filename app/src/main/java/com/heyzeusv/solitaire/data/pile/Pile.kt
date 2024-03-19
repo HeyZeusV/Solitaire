@@ -19,7 +19,7 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
     private val historyList: MutableList<List<Card>> = mutableListOf()
     protected var currentStep: List<Card> = emptyList()
 
-    abstract fun add(cards: List<Card>): Boolean
+    abstract fun add(cards: List<Card>)
     abstract fun remove(tappedIndex: Int = 1): Card
     abstract fun reset(cards: List<Card> = emptyList())
     abstract fun undo()

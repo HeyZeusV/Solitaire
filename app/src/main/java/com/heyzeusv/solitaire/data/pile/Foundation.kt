@@ -13,11 +13,10 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
      *  Adds first card of given [cards] if it matches this [Foundation]'s [suit] and its value
      *  matches what is required next in the sequence. Returns true if added.
      */
-    override fun add(cards: List<Card>): Boolean {
+    override fun add(cards: List<Card>) {
         _truePile.add(cards.first())
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
-        return true
     }
 
     fun canAdd(cards:List<Card>): Boolean {

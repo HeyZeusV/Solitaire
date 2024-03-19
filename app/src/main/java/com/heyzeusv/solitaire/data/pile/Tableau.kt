@@ -102,11 +102,10 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     /**
      *  Attempts to add given [cards] to [_truePile] depending on [addCondition].
      */
-    override fun add(cards: List<Card>): Boolean {
+    override fun add(cards: List<Card>) {
         _truePile.addAll(cards)
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
-        return true
     }
 
     fun canAdd(cards:List<Card>): Boolean {

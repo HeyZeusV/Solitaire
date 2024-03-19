@@ -40,17 +40,21 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     /**
      *  Add given [cards] to [_truePile].
      */
-    override fun add(cards: List<Card>): Boolean {
-        val success = _truePile.addAll(cards.map { it.copy(faceUp = false) })
+    override fun add(cards: List<Card>) {
+        _truePile.addAll(cards.map { it.copy(faceUp = false) })
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
-        return success
     }
 
     /**
      *  Remove the first [Card] in [_truePile] and return it.
      */
-    override fun remove(tappedIndex: Int): Card = _truePile.removeFirst()
+    override fun remove(tappedIndex: Int): Card {
+        val removedCard = _truePile.removeFirst()
+        _displayPile.clear()
+        _displayPile.addAll(_truePile.toList())
+        return removedCard
+    }
 
     /**
      *  Reset [_truePile] using given [cards].
@@ -59,7 +63,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         animatedPiles.clear()
         resetHistory()
         _truePile.clear()
-        add(cards)
+        _truePile.addAll(cards)
         _displayPile.clear()
         _displayPile.addAll(_truePile.toList())
     }
