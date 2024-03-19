@@ -45,10 +45,10 @@ class KlondikeAndScoreboardViewModelTest {
         var actualDeck = mutableListOf<Card>()
 
         // add all the cards into single list
-        actualDeck.addAll(kdVM.stock.pile)
-        actualDeck.addAll(kdVM.waste.pile)
-        kdVM.foundation.forEach { actualDeck.addAll(it.pile) }
-        kdVM.tableau.forEach { actualDeck.addAll(it.pile) }
+        actualDeck.addAll(kdVM.stock.truePile)
+        actualDeck.addAll(kdVM.waste.truePile)
+        kdVM.foundation.forEach { actualDeck.addAll(it.truePile) }
+        kdVM.tableau.forEach { actualDeck.addAll(it.truePile) }
         // make sure that are face down
         actualDeck = actualDeck.map { it.copy(faceUp = false) }.toMutableList()
         // sort
@@ -62,7 +62,7 @@ class KlondikeAndScoreboardViewModelTest {
         val expectedTimer = 0L
         val expectedMoves = 0
         val expectedScore = 0
-        val expectedStock = kdVM.stock.pile.toList()
+        val expectedStock = kdVM.stock.truePile.toList()
         val expectedFoundation = emptyList<Card>()
         val expectedWaste = emptyList<Card>()
         val expectedHistoryList = emptyList<PileHistory>()
@@ -76,15 +76,15 @@ class KlondikeAndScoreboardViewModelTest {
         assertEquals(expectedTimer, sbVM.time.value)
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedScore, sbVM.score.value)
-        assertEquals(expectedStock, kdVM.stock.pile)
+        assertEquals(expectedStock, kdVM.stock.truePile)
         kdVM.foundation.forEach {
-            assertEquals(expectedFoundation, it.pile)
+            assertEquals(expectedFoundation, it.truePile)
         }
         kdVM.tableau.forEachIndexed { i, tableau ->
             val expectedTableauSize = i + 1
-            assertEquals(expectedTableauSize, tableau.pile.size)
+            assertEquals(expectedTableauSize, tableau.truePile.size)
         }
-        assertEquals(expectedWaste, kdVM.waste.pile)
+        assertEquals(expectedWaste, kdVM.waste.truePile)
         assertEquals(expectedHistoryList, kdVM.historyList)
         assertEquals(expectedUndoEnabled, kdVM.undoEnabled.value)
         assertEquals(expectedGameWon, kdVM.gameWon.value)
@@ -93,12 +93,12 @@ class KlondikeAndScoreboardViewModelTest {
 
         // reset/restart options do nothing to rest of values, only to game deck order
         kdVM.resetAll(ResetOptions.NEW)
-        assertNotEquals(expectedStock, kdVM.stock.pile)
+        assertNotEquals(expectedStock, kdVM.stock.truePile)
     }
 
     @Test
     fun kdSbVmOnStockClickStockNotEmpty() {
-        val expectedStock = kdVM.stock.pile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
+        val expectedStock = kdVM.stock.truePile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
         val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU, tc.card2DFU)
         val expectedMoves = 3
         val expectedHistoryListSize = 3
@@ -112,8 +112,8 @@ class KlondikeAndScoreboardViewModelTest {
             handleMoveResult(kdVM.onStockClick(1))
         }
 
-        assertEquals(expectedStock, kdVM.stock.pile.toList())
-        assertEquals(expectedWastePile, kdVM.waste.pile.toList())
+        assertEquals(expectedStock, kdVM.stock.truePile.toList())
+        assertEquals(expectedWastePile, kdVM.waste.truePile.toList())
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedHistoryListSize, kdVM.historyList.size)
         assertEquals(expectedHistoryListSize, sbVM.historyList.size)
@@ -124,8 +124,8 @@ class KlondikeAndScoreboardViewModelTest {
     @Test
     fun kdSbVmOnStockClickStockEmpty() {
         val expectedStockBefore = emptyList<Card>()
-        val expectedStockAfter = kdVM.stock.pile.toList()
-        val expectedWastePileBefore = kdVM.stock.pile.map { it.copy(faceUp = true) }
+        val expectedStockAfter = kdVM.stock.truePile.toList()
+        val expectedWastePileBefore = kdVM.stock.truePile.map { it.copy(faceUp = true) }
         val expectedWastePileAfter = emptyList<Card>()
         val expectedMoves = 25
         val expectedHistoryListSize = 15
@@ -135,13 +135,13 @@ class KlondikeAndScoreboardViewModelTest {
         // draw 24 Cards
         kdVM.apply { for (i in 1..24) sbVM.handleMoveResult(onStockClick(1)) }
 
-        assertEquals(expectedStockBefore, kdVM.stock.pile.toList())
-        assertEquals(expectedWastePileBefore, kdVM.waste.pile.toList())
+        assertEquals(expectedStockBefore, kdVM.stock.truePile.toList())
+        assertEquals(expectedWastePileBefore, kdVM.waste.truePile.toList())
 
         sbVM.handleMoveResult(kdVM.onStockClick(1))
 
-        assertEquals(expectedStockAfter, kdVM.stock.pile.toList())
-        assertEquals(expectedWastePileAfter, kdVM.waste.pile.toList())
+        assertEquals(expectedStockAfter, kdVM.stock.truePile.toList())
+        assertEquals(expectedWastePileAfter, kdVM.waste.truePile.toList())
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedHistoryListSize, kdVM.historyList.size)
         assertEquals(expectedHistoryListSize, sbVM.historyList.size)
@@ -160,8 +160,8 @@ class KlondikeAndScoreboardViewModelTest {
         // this should remove top card from Waste and move it to Tableau pile #4
         kdVM.onWasteClick()
 
-        assertEquals(expectedWastePile, kdVM.waste.pile.toList())
-        assertEquals(expectedTableauPile, kdVM.tableau[3].pile.toList())
+        assertEquals(expectedWastePile, kdVM.waste.truePile.toList())
+        assertEquals(expectedTableauPile, kdVM.tableau[3].truePile.toList())
         assertEquals(expectedStockWasteEmpty, kdVM.stockWasteEmpty.value)
     }
 
@@ -186,14 +186,14 @@ class KlondikeAndScoreboardViewModelTest {
         sbVM.handleMoveResult(kdVM.onStockClick(1))
         sbVM.handleMoveResult(kdVM.onWasteClick())
 
-        assertEquals(expectedFoundationPile, kdVM.foundation[0].pile.toList())
+        assertEquals(expectedFoundationPile, kdVM.foundation[0].truePile.toList())
         assertEquals(expectedScoreBefore, sbVM.score.value)
 
         // move card from Foundation Clubs pile to Tableau pile $4
         sbVM.handleMoveResult(kdVM.onFoundationClick(0))
 
-        assertEquals(expectedWastePile, kdVM.waste.pile.toList())
-        assertEquals(expectedTableauPile, kdVM.tableau[3].pile.toList())
+        assertEquals(expectedWastePile, kdVM.waste.truePile.toList())
+        assertEquals(expectedTableauPile, kdVM.tableau[3].truePile.toList())
         assertEquals(expectedScoreAfter, sbVM.score.value)
         assertEquals(expectedMoves, sbVM.moves.value)
     }
@@ -214,8 +214,8 @@ class KlondikeAndScoreboardViewModelTest {
         kdVM.onStockClick(1)
 
         assertEquals(expectedStockWasteEmptyAfter, kdVM.stockWasteEmpty.value)
-        assertEquals(expectedStockAfter, kdVM.stock.pile.toList())
-        assertEquals(expectedWasteAfter, kdVM.waste.pile.toList())
+        assertEquals(expectedStockAfter, kdVM.stock.truePile.toList())
+        assertEquals(expectedWasteAfter, kdVM.waste.truePile.toList())
     }
 
     @Test
@@ -233,7 +233,7 @@ class KlondikeAndScoreboardViewModelTest {
         kdVM.onWasteClick()
 
         assertEquals(expectedStockWasteEmptyAfter, kdVM.stockWasteEmpty.value)
-        assertEquals(expectedWasteAfter, kdVM.waste.pile.toList())
+        assertEquals(expectedWasteAfter, kdVM.waste.truePile.toList())
     }
 
     @Test
@@ -248,20 +248,20 @@ class KlondikeAndScoreboardViewModelTest {
         // this should remove top card from Waste and move it to Tableau pile #4
         kdVM.onWasteClick()
 
-        assertEquals(expectedTableauPile2Before, kdVM.tableau[1].pile.toList())
-        assertEquals(expectedTableauPile4Before, kdVM.tableau[3].pile.toList())
+        assertEquals(expectedTableauPile2Before, kdVM.tableau[1].truePile.toList())
+        assertEquals(expectedTableauPile4Before, kdVM.tableau[3].truePile.toList())
 
         // move 2 Cards from Tableau pile 4 to Tableau pile 2
         kdVM.onTableauClick(3, 3)
 
-        assertEquals(expectedTableauPile2After, kdVM.tableau[1].pile.toList())
-        assertEquals(expectedTableauPile4After, kdVM.tableau[3].pile.toList())
+        assertEquals(expectedTableauPile2After, kdVM.tableau[1].truePile.toList())
+        assertEquals(expectedTableauPile4After, kdVM.tableau[3].truePile.toList())
     }
 
     @Test
     fun kdSbVmUndo() {
-        val expectedStock = kdVM.stock.pile.toMutableList().apply { removeFirst() }
-        val expectedWaste = listOf(kdVM.stock.pile[0].copy(faceUp = true))
+        val expectedStock = kdVM.stock.truePile.toMutableList().apply { removeFirst() }
+        val expectedWaste = listOf(kdVM.stock.truePile[0].copy(faceUp = true))
         val expectedMoves = 3
         val expectedHistoryListSize = 1
         val expectedUndoEnabled = true
@@ -271,8 +271,8 @@ class KlondikeAndScoreboardViewModelTest {
         kdVM.undo()
         sbVM.undo()
 
-        assertEquals(expectedStock, kdVM.stock.pile)
-        assertEquals(expectedWaste, kdVM.waste.pile)
+        assertEquals(expectedStock, kdVM.stock.truePile)
+        assertEquals(expectedWaste, kdVM.waste.truePile)
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedHistoryListSize, kdVM.historyList.size)
         assertEquals(expectedHistoryListSize, sbVM.historyList.size)
@@ -324,10 +324,10 @@ class KlondikeAndScoreboardViewModelTest {
 
         val lgs = sbVM.retrieveLastGameStats(true, kdVM.autoCompleteCorrection)
 
-        assertEquals(expectedClubs, kdVM.foundation[0].pile.toList())
-        assertEquals(expectedDiamonds, kdVM.foundation[1].pile.toList())
-        assertEquals(expectedHearts, kdVM.foundation[2].pile.toList())
-        assertEquals(expectedSpades, kdVM.foundation[3].pile.toList())
+        assertEquals(expectedClubs, kdVM.foundation[0].truePile.toList())
+        assertEquals(expectedDiamonds, kdVM.foundation[1].truePile.toList())
+        assertEquals(expectedHearts, kdVM.foundation[2].truePile.toList())
+        assertEquals(expectedSpades, kdVM.foundation[3].truePile.toList())
         assertEquals(expectedSbvmMoves, sbVM.moves.value)
         assertEquals(expectedSbvmScore, sbVM.score.value)
         assertEquals(expectedFinalMoves, lgs.moves)

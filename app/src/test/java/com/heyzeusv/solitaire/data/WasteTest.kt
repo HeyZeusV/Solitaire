@@ -16,7 +16,7 @@ class WasteTest {
 
         waste.add(listOf(tc.card1C, tc.card1H, tc.card12C))
 
-        assertEquals(expectedPile, waste.pile)
+        assertEquals(expectedPile, waste.truePile)
     }
 
     @Test
@@ -26,7 +26,7 @@ class WasteTest {
 
         waste.undo(listOf(tc.card1C, tc.card1H, tc.card12C))
 
-        assertEquals(expectedPile, waste.pile)
+        assertEquals(expectedPile, waste.truePile)
     }
     @Test
     fun wasteUndoEmptyCards() {
@@ -35,6 +35,6 @@ class WasteTest {
 
         waste.undo(emptyList())
 
-        assertEquals(expectedPile, waste.pile)
+        assertEquals(expectedPile, waste.truePile)
     }
 }

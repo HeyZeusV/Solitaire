@@ -45,10 +45,10 @@ class AustralianPatienceAndScoreboardViewModelTest {
         var actualDeck = mutableListOf<Card>()
 
         // add all the cards into single list
-        actualDeck.addAll(apVM.stock.pile)
-        actualDeck.addAll(apVM.waste.pile)
-        apVM.foundation.forEach { actualDeck.addAll(it.pile) }
-        apVM.tableau.forEach { actualDeck.addAll(it.pile) }
+        actualDeck.addAll(apVM.stock.truePile)
+        actualDeck.addAll(apVM.waste.truePile)
+        apVM.foundation.forEach { actualDeck.addAll(it.truePile) }
+        apVM.tableau.forEach { actualDeck.addAll(it.truePile) }
         // make sure that are face down
         actualDeck = actualDeck.map { it.copy(faceUp = false) }.toMutableList()
         // sort
@@ -62,7 +62,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
         val expectedTimer = 0L
         val expectedMoves = 0
         val expectedScore = 0
-        val expectedStock = apVM.stock.pile.toList()
+        val expectedStock = apVM.stock.truePile.toList()
         val expectedFoundation = emptyList<Card>()
         val expectedWaste = emptyList<Card>()
         val expectedHistoryList = emptyList<PileHistory>()
@@ -76,15 +76,15 @@ class AustralianPatienceAndScoreboardViewModelTest {
         assertEquals(expectedTimer, sbVM.time.value)
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedScore, sbVM.score.value)
-        assertEquals(expectedStock, apVM.stock.pile)
+        assertEquals(expectedStock, apVM.stock.truePile)
         apVM.foundation.forEach {
-            assertEquals(expectedFoundation, it.pile)
+            assertEquals(expectedFoundation, it.truePile)
         }
         apVM.tableau.forEach{ tableau ->
             val expectedTableauSize = 4
-            assertEquals(expectedTableauSize, tableau.pile.size)
+            assertEquals(expectedTableauSize, tableau.truePile.size)
         }
-        assertEquals(expectedWaste, apVM.waste.pile)
+        assertEquals(expectedWaste, apVM.waste.truePile)
         assertEquals(expectedHistoryList, apVM.historyList)
         assertEquals(expectedUndoEnabled, apVM.undoEnabled.value)
         assertEquals(expectedGameWon, apVM.gameWon.value)
@@ -93,12 +93,12 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
         // reset/restart options do nothing to rest of values, only to game deck order
         apVM.resetAll(ResetOptions.NEW)
-        assertNotEquals(expectedStock, apVM.stock.pile)
+        assertNotEquals(expectedStock, apVM.stock.truePile)
     }
 
     @Test
     fun apSbVmOnStockClickStockNotEmpty() {
-        val expectedStock = apVM.stock.pile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
+        val expectedStock = apVM.stock.truePile.toMutableList().apply { removeFirst() ; removeFirst() ; removeFirst() }
         val expectedWastePile = listOf(tc.card2SFU, tc.card3DFU, tc.card2DFU)
         val expectedMoves = 3
         val expectedHistoryListSize = 3
@@ -112,8 +112,8 @@ class AustralianPatienceAndScoreboardViewModelTest {
             handleMoveResult(apVM.onStockClick(1))
         }
 
-        assertEquals(expectedStock, apVM.stock.pile.toList())
-        assertEquals(expectedWastePile, apVM.waste.pile.toList())
+        assertEquals(expectedStock, apVM.stock.truePile.toList())
+        assertEquals(expectedWastePile, apVM.waste.truePile.toList())
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedHistoryListSize, apVM.historyList.size)
         assertEquals(expectedHistoryListSize, sbVM.historyList.size)
@@ -124,7 +124,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
     @Test
     fun apSbVmOnStockClickStockEmpty() {
         val expectedStockBefore = emptyList<Card>()
-        val expectedWastePileBefore = apVM.stock.pile.map { it.copy(faceUp = true) }
+        val expectedWastePileBefore = apVM.stock.truePile.map { it.copy(faceUp = true) }
         val expectedMoves = 24
         val expectedHistoryListSize = 15
         val expectedUndoEnabled = true
@@ -133,8 +133,8 @@ class AustralianPatienceAndScoreboardViewModelTest {
         // draw 24 Cards
         apVM.apply { for (i in 1..24) sbVM.handleMoveResult(onStockClick(1)) }
 
-        assertEquals(expectedStockBefore, apVM.stock.pile.toList())
-        assertEquals(expectedWastePileBefore, apVM.waste.pile.toList())
+        assertEquals(expectedStockBefore, apVM.stock.truePile.toList())
+        assertEquals(expectedWastePileBefore, apVM.waste.truePile.toList())
 
         sbVM.handleMoveResult(apVM.onStockClick(1))
 
@@ -161,8 +161,8 @@ class AustralianPatienceAndScoreboardViewModelTest {
         // this should remove top card from Waste and move it to Tableau pile #4
         sbVM.handleMoveResult(apVM.onWasteClick())
 
-        assertEquals(expectedWastePile, apVM.waste.pile.toList())
-        assertEquals(expectedTableauPile, apVM.tableau[3].pile.toList())
+        assertEquals(expectedWastePile, apVM.waste.truePile.toList())
+        assertEquals(expectedTableauPile, apVM.tableau[3].truePile.toList())
         assertEquals(expectedStockWasteEmpty, apVM.stockWasteEmpty.value)
         assertEquals(expectedMoves, sbVM.moves.value)
     }
@@ -195,14 +195,14 @@ class AustralianPatienceAndScoreboardViewModelTest {
         // moves A of Hearts to Foundation
         sbVM.handleMoveResult(apVM.onTableauClick(1, 2))
 
-        assertEquals(expectedFoundationPile, apVM.foundation[2].pile.toList())
+        assertEquals(expectedFoundationPile, apVM.foundation[2].truePile.toList())
         assertEquals(expectedScoreBefore, sbVM.score.value)
 
         // move card from Foundation Hearts pile to Tableau pile $7
         sbVM.handleMoveResult(apVM.onFoundationClick(2))
 
-        assertEquals(expectedWastePile, apVM.waste.pile.toList())
-        assertEquals(expectedTableauPile, apVM.tableau[6].pile.toList())
+        assertEquals(expectedWastePile, apVM.waste.truePile.toList())
+        assertEquals(expectedTableauPile, apVM.tableau[6].truePile.toList())
         assertEquals(expectedScoreAfter, sbVM.score.value)
         assertEquals(expectedMoves, sbVM.moves.value)
     }
@@ -223,8 +223,8 @@ class AustralianPatienceAndScoreboardViewModelTest {
         apVM.onStockClick(1)
 
         assertEquals(expectedStockWasteEmptyAfter, apVM.stockWasteEmpty.value)
-        assertEquals(expectedStockAfter, apVM.stock.pile.toList())
-        assertEquals(expectedWasteAfter, apVM.waste.pile.toList())
+        assertEquals(expectedStockAfter, apVM.stock.truePile.toList())
+        assertEquals(expectedWasteAfter, apVM.waste.truePile.toList())
     }
 
     @Test
@@ -242,7 +242,7 @@ class AustralianPatienceAndScoreboardViewModelTest {
         apVM.onWasteClick()
 
         assertEquals(expectedStockWasteEmptyAfter, apVM.stockWasteEmpty.value)
-        assertEquals(expectedWasteAfter, apVM.waste.pile.toList())
+        assertEquals(expectedWasteAfter, apVM.waste.truePile.toList())
     }
 
     @Test
@@ -256,21 +256,21 @@ class AustralianPatienceAndScoreboardViewModelTest {
         val expectedTableauPile4After = emptyList<Card>()
         val expectedMoves = 1
 
-        assertEquals(expectedTableauPile2Before, apVM.tableau[1].pile.toList())
-        assertEquals(expectedTableauPile4Before, apVM.tableau[3].pile.toList())
+        assertEquals(expectedTableauPile2Before, apVM.tableau[1].truePile.toList())
+        assertEquals(expectedTableauPile4Before, apVM.tableau[3].truePile.toList())
 
         // move 2 Cards from Tableau pile 4 to Tableau pile 2
         sbVM.handleMoveResult(apVM.onTableauClick(3, 0))
 
-        assertEquals(expectedTableauPile2After, apVM.tableau[1].pile.toList())
-        assertEquals(expectedTableauPile4After, apVM.tableau[3].pile.toList())
+        assertEquals(expectedTableauPile2After, apVM.tableau[1].truePile.toList())
+        assertEquals(expectedTableauPile4After, apVM.tableau[3].truePile.toList())
         assertEquals(expectedMoves, sbVM.moves.value)
     }
 
     @Test
     fun apSbVmUndo() {
-        val expectedStock = apVM.stock.pile.toMutableList().apply { removeFirst() }
-        val expectedWaste = listOf(apVM.stock.pile[0].copy(faceUp = true))
+        val expectedStock = apVM.stock.truePile.toMutableList().apply { removeFirst() }
+        val expectedWaste = listOf(apVM.stock.truePile[0].copy(faceUp = true))
         val expectedMoves = 3
         val expectedHistoryListSize = 1
         val expectedUndoEnabled = true
@@ -280,8 +280,8 @@ class AustralianPatienceAndScoreboardViewModelTest {
         apVM.undo()
         sbVM.undo()
 
-        assertEquals(expectedStock, apVM.stock.pile)
-        assertEquals(expectedWaste, apVM.waste.pile)
+        assertEquals(expectedStock, apVM.stock.truePile)
+        assertEquals(expectedWaste, apVM.waste.truePile)
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedHistoryListSize, apVM.historyList.size)
         assertEquals(expectedHistoryListSize, sbVM.historyList.size)
@@ -334,10 +334,10 @@ class AustralianPatienceAndScoreboardViewModelTest {
 
         val lgs = sbVM.retrieveLastGameStats(true, apVM.autoCompleteCorrection)
 
-        assertEquals(expectedClubs, apVM.foundation[0].pile.toList())
-        assertEquals(expectedDiamonds, apVM.foundation[1].pile.toList())
-        assertEquals(expectedHearts, apVM.foundation[2].pile.toList())
-        assertEquals(expectedSpades, apVM.foundation[3].pile.toList())
+        assertEquals(expectedClubs, apVM.foundation[0].truePile.toList())
+        assertEquals(expectedDiamonds, apVM.foundation[1].truePile.toList())
+        assertEquals(expectedHearts, apVM.foundation[2].truePile.toList())
+        assertEquals(expectedSpades, apVM.foundation[3].truePile.toList())
         assertEquals(expectedSbvmMoves, sbVM.moves.value)
         assertEquals(expectedSbvmScore, sbVM.score.value)
         assertEquals(expectedFinalMoves, lgs.moves)

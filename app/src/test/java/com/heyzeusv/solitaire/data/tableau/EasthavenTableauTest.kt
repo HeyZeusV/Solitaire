@@ -23,7 +23,7 @@ class EasthavenTableauTest {
         tableau.reset(listOf(tc.card7CFU, tc.card6DFU))
         tableau.add(listOf(tc.card5CFU, tc.card4HFU, tc.card3SFU))
 
-        assertEquals(expectedList, tableau.pile.toList())
+        assertEquals(expectedList, tableau.truePile.toList())
     }
 
     @Test
@@ -33,7 +33,7 @@ class EasthavenTableauTest {
         tableau.reset(listOf(tc.card7CFU, tc.card6DFU))
         tableau.add(listOf(tc.card4SFU, tc.card3DFU, tc.card5CFU))
 
-        assertEquals(expectedList, tableau.pile.toList())
+        assertEquals(expectedList, tableau.truePile.toList())
     }
 
     @Test
@@ -43,7 +43,7 @@ class EasthavenTableauTest {
         tableau.reset(listOf(tc.card7CFU, tc.card6DFU))
         tableau.add(listOf(tc.card5HFU, tc.card4CFU, tc.card3DFU))
 
-        assertEquals(expectedList, tableau.pile.toList())
+        assertEquals(expectedList, tableau.truePile.toList())
     }
 
     @Test
@@ -53,6 +53,6 @@ class EasthavenTableauTest {
         tableau.reset(listOf(tc.card7CFU, tc.card6DFU))
         tableau.addFromStock(listOf(tc.card13DFU))
 
-        assertEquals(expectedList, tableau.pile.toList())
+        assertEquals(expectedList, tableau.truePile.toList())
     }
 }

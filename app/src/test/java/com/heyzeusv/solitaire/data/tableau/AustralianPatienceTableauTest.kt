@@ -31,13 +31,13 @@ class AustralianPatienceTableauTest {
         emptyKingTableau.add(listOf(tc.card13DFU))
         emptyKingTableau.add(listOf(tc.card12DFU))
         emptyKingTableau.add(listOf(tc.card11DFU, tc.card10DFU))
-        assertEquals(expectedKingPile, emptyKingTableau.pile)
+        assertEquals(expectedKingPile, emptyKingTableau.truePile)
         assertEquals(expectedKingMultiSuit, emptyKingTableau.isMultiSuit())
 
         // add cards without king
         val emptyTableau = AustralianPatienceTableau()
         emptyTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
-        assertEquals(expectedEmptyPile, emptyTableau.pile)
+        assertEquals(expectedEmptyPile, emptyTableau.truePile)
         assertEquals(expectedEmptyMultiSuit, emptyTableau.isMultiSuit())
 
         // add cards to Tableau with existing cards
@@ -45,7 +45,7 @@ class AustralianPatienceTableauTest {
             listOf(tc.card1HFU, tc.card12CFU, tc.card6DFU)
         )
         mixedTableau.add(listOf(tc.card5DFU, tc.card4DFU))
-        assertEquals(expectedMixedPile, mixedTableau.pile.toList())
+        assertEquals(expectedMixedPile, mixedTableau.truePile.toList())
         assertEquals(expectedMixedMultiSuit, mixedTableau.isMultiSuit())
     }
 
@@ -56,7 +56,7 @@ class AustralianPatienceTableauTest {
 
         tableau.reset(listOf(tc.card12C, tc.card6D, tc.card5C, tc.card4H))
 
-        assertEquals(expectedPile, tableau.pile.toList())
+        assertEquals(expectedPile, tableau.truePile.toList())
         assertEquals(expectedMultiSuit, tableau.isMultiSuit())
     }
 
@@ -67,7 +67,7 @@ class AustralianPatienceTableauTest {
 
         tableau.undo(emptyList())
 
-        assertEquals(expectedPile, tableau.pile.toList())
+        assertEquals(expectedPile, tableau.truePile.toList())
         assertEquals(expectedMultiSuit, tableau.isMultiSuit())
     }
 
@@ -78,7 +78,7 @@ class AustralianPatienceTableauTest {
 
         tableau.undo(listOf(tc.card1HFU))
 
-        assertEquals(expectedPile, tableau.pile.toList())
+        assertEquals(expectedPile, tableau.truePile.toList())
         assertEquals(expectedMultiSuit, tableau.isMultiSuit())
     }
 
@@ -89,7 +89,7 @@ class AustralianPatienceTableauTest {
 
         tableau.undo(listOf(tc.card1HFU, tc.card12CFU, tc.card6DFU, tc.card5CFU, tc.card4HFU))
 
-        assertEquals(expectedPile, tableau.pile.toList())
+        assertEquals(expectedPile, tableau.truePile.toList())
         assertEquals(expectedMultiSuit, tableau.isMultiSuit())
     }
 

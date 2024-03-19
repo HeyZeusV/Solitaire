@@ -16,14 +16,14 @@ class StockTest {
 
         stock.add(expectedStock)
 
-        assertEquals(expectedStock, stock.pile.toList())
+        assertEquals(expectedStock, stock.truePile.toList())
     }
 
     @Test
     fun stockRemove() {
         // stock is filled when reset is called
         stock.reset(tc.deck)
-        val expectedCard = stock.pile[0]
+        val expectedCard = stock.truePile[0]
 
         val actualCard = stock.remove()
 
@@ -33,7 +33,7 @@ class StockTest {
     @Test
     fun stockRemoveMany() {
         stock.reset(tc.deck)
-        val expectedCards = stock.pile.subList(0, 3).toList()
+        val expectedCards = stock.truePile.subList(0, 3).toList()
 
         val actualCards = stock.removeMany(3)
 
@@ -47,7 +47,7 @@ class StockTest {
 
         stock.reset(tc.deck)
 
-        assertEquals(expectedStock, stock.pile.toList())
+        assertEquals(expectedStock, stock.truePile.toList())
     }
 
     @Test
@@ -57,7 +57,7 @@ class StockTest {
 
         stock.undo(expectedStock)
 
-        assertEquals(expectedStock, stock.pile)
+        assertEquals(expectedStock, stock.truePile)
     }
 
     @Test
@@ -66,6 +66,6 @@ class StockTest {
 
         stock.undo(emptyList())
 
-        assert(stock.pile.isEmpty())
+        assert(stock.truePile.isEmpty())
     }
 }

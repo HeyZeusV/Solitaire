@@ -21,26 +21,26 @@ class AlaskaTableauTest {
         val emptyKingTableau = AlaskaTableau()
         emptyKingTableau.add(listOf(tc.card13DFU))
         emptyKingTableau.add(listOf(tc.card12DFU, tc.card11DFU, tc.card10DFU))
-        assertEquals(expectedKingPile, emptyKingTableau.pile.toList())
+        assertEquals(expectedKingPile, emptyKingTableau.truePile.toList())
 
         // add cards without king
         val emptyTableau = AlaskaTableau()
         emptyTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
-        assertEquals(expectedEmptyPile, emptyTableau.pile)
+        assertEquals(expectedEmptyPile, emptyTableau.truePile)
 
         // add cards to Tableau with existing cards desc
         val mixedTableau = AlaskaTableau()
         // reset is used to fill Tableau with existing cards
         mixedTableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D))
         mixedTableau.add(listOf(tc.card5DFU, tc.card4DFU))
-        assertEquals(expectedMixedPile, mixedTableau.pile.toList())
+        assertEquals(expectedMixedPile, mixedTableau.truePile.toList())
 
         // add cards to Tableau with existing cards asc
         val reverseMixedTableau = AlaskaTableau()
         // reset is used to fill Tableau with existing cards
         reverseMixedTableau.reset(listOf(tc.card3C))
         reverseMixedTableau.add(listOf(tc.card4CFU, tc.card8HFU, tc.card12SFU))
-        assertEquals(expectedReversedMixedPile, reverseMixedTableau.pile.toList())
+        assertEquals(expectedReversedMixedPile, reverseMixedTableau.truePile.toList())
     }
 
     /**

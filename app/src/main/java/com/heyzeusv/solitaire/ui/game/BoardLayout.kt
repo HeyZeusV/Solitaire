@@ -125,8 +125,7 @@ fun BoardLayout(
     LaunchedEffect(key1 = animateInfo) {
         animateInfo?.let {
             try {
-                updateUndoEnabled(false)
-                if (it.undoAnimation) updateUndoAnimation(true)
+                if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
                 val offsetStart = layInfo.getPilePosition(it.start, drawAmount)
                 val offsetEnd = layInfo.getPilePosition(it.end, drawAmount)
                 animate(
@@ -240,7 +239,7 @@ fun BoardLayout(
                     modifier = Modifier
                         .layoutId("${suit.name} Foundation")
                         .testTag("Foundation #$index"),
-                    pile = foundationList[index].pile,
+                    pile = foundationList[index].displayPile,
                     emptyIconId = suit.emptyIcon,
                     onClick = { handleMoveResult(onFoundationClick(index)) },
                     cardWidth = cardW
@@ -250,7 +249,7 @@ fun BoardLayout(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
-                pile = waste.pile,
+                pile = waste.displayPile,
                 emptyIconId = R.drawable.waste_empty,
                 onClick = { handleMoveResult(onWasteClick()) },
                 drawAmount = drawAmount,
@@ -260,7 +259,7 @@ fun BoardLayout(
                 modifier = Modifier
                     .layoutId("Stock")
                     .testTag("Stock"),
-                pile = stock.pile,
+                pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
                 onClick = { handleMoveResult(onStockClick(drawAmount)) },
                 cardWidth = cardW
@@ -268,7 +267,7 @@ fun BoardLayout(
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
-                    pile = tableau.pile,
+                    pile = tableau.displayPile,
                     tableauIndex = index,
                     cardHeight = layInfo.cardHeight.toDp(),
                     onClick = onTableauClick,

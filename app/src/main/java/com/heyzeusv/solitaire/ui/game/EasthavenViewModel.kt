@@ -31,7 +31,7 @@ class EasthavenViewModel @Inject constructor(
     override val _tableau: MutableList<Tableau> = initializeTableau(EasthavenTableau::class)
 
     override fun onStockClick(drawAmount: Int): MoveResult {
-        if (_stock.pile.isNotEmpty()) {
+        if (_stock.truePile.isNotEmpty()) {
             _tableau.forEach { (it as EasthavenTableau).addFromStock(_stock.removeMany(1)) }
             val aniInfo = AnimateInfo(GamePiles.Stock, GamePiles.TableauOne, listOf(Card(0, Suits.CLUBS, true)))
             appendHistory(aniInfo)
@@ -46,7 +46,7 @@ class EasthavenViewModel @Inject constructor(
      */
     override fun autoCompleteTableauCheck(): Boolean {
         _tableau.forEach {
-            if (it.faceDownExists() || it.notInOrderOrAltColor(it.pile.toList())) return false
+            if (it.faceDownExists() || it.notInOrderOrAltColor(it.truePile.toList())) return false
         }
         return true
     }

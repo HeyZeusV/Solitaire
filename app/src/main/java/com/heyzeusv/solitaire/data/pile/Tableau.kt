@@ -9,7 +9,7 @@ import com.heyzeusv.solitaire.util.Suits
 /**
  *  Sealed class containing all possible options of [Tableau] piles. Each game has its own set of
  *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
- *  condition to add a new pile to the end of [_pile].
+ *  condition to add a new pile to the end of [_truePile].
  */
 sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPile) {
     /**
@@ -41,7 +41,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
 
         override fun addListCondition(cards: List<Card>): Boolean = notInOrderOrAltColor(cards)
 
-        fun addFromStock(cards: List<Card>) { _pile.addAll(cards.map { it.copy(faceUp = true) }) }
+        fun addFromStock(cards: List<Card>) { _truePile.addAll(cards.map { it.copy(faceUp = true) }) }
     }
     class YukonTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
@@ -89,7 +89,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     protected open val anyCardEmptyPile: Boolean = false
 
     /**
-     *  Each game has their own version to adding new [Card]s to [_pile]. This is used in [add] to
+     *  Each game has their own version to adding new [Card]s to [_truePile]. This is used in [add] to
      *  determine if cads should be added.
      */
     abstract fun addCondition(cFirst: Card, pLast: Card): Boolean
@@ -100,13 +100,13 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     protected open fun addListCondition(cards: List<Card>): Boolean = false
 
     /**
-     *  Attempts to add given [cards] to [_pile] depending on [addCondition].
+     *  Attempts to add given [cards] to [_truePile] depending on [addCondition].
      */
     override fun add(cards: List<Card>): Boolean {
-        _pile.run {
-            addAll(cards)
-            return true
-        }
+        _truePile.addAll(cards)
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
+        return true
     }
 
     fun canAdd(cards:List<Card>): Boolean {
@@ -115,7 +115,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
 
         val cFirst = cards.first()
         // can't add a card to its own pile
-        _pile.run {
+        _truePile.run {
             if (contains(cFirst)) return false
             if (isNotEmpty()) {
                 val pLast = last()
@@ -130,24 +130,28 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     }
 
     /**
-     *  Removes all cards from [_pile] starting from [tappedIndex] to the end of [_pile] and flips
-     *  the last card if any.
+     *  Removes all cards from [_truePile] starting from [tappedIndex] to the end of [_truePile] and
+     *  flips the last card if any.
      */
     override fun remove(tappedIndex: Int): Card {
-        _pile.run {
+        _truePile.run {
             subList(tappedIndex, size).clear()
             // flip last card up
             if (isNotEmpty() && !last().faceUp) this[size - 1] = last().copy(faceUp = true)
         }
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
         // return value isn't used
         return Card(0, Suits.SPADES, false)
     }
 
     /**
-     *  Reset [_pile] to initial game state.
+     *  Reset [_truePile] to initial game state.
      */
     override fun reset(cards: List<Card>) {
-        _pile.run {
+        animatedPiles.clear()
+        resetHistory()
+        _truePile.run {
             clear()
             addAll(cards)
             for (i in cards.size.downTo(cards.size - resetFaceUpAmount + 1)) {
@@ -157,50 +161,53 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
                     break
                 }
             }
+            _displayPile.clear()
+            _displayPile.addAll(_truePile.toList())
+            currentStep = this.toList()
         }
     }
 
-    override fun undo(cards: List<Card>) {
-        _pile.run {
-            clear()
-            if (cards.isEmpty()) return
-            addAll(cards)
-        }
+    override fun undo() {
+        _truePile.clear()
+        val history = retrieveHistory()
+        _truePile.addAll(history)
+        animatedPiles.add(_truePile.toList())
+        currentStep = _truePile.toList()
     }
 
     fun getTableauCardFlipInfo(cardIndex: Int): TableauCardFlipInfo? {
         val lastTableauCard: Card
         try {
-            lastTableauCard = _pile[cardIndex - 1]
+            lastTableauCard = _truePile[cardIndex - 1]
         } catch (e: IndexOutOfBoundsException) {
             return null
         }
         if (lastTableauCard.faceUp) return null
 
         return TableauCardFlipInfo(
-            card = _pile[cardIndex - 1],
+            card = _truePile[cardIndex - 1],
             cardIndex = cardIndex - 1,
             flipCardInfo = FlipCardInfo.FaceUp(),
-            remainingPile = _pile.toList().subList(0, cardIndex - 1)
+            remainingPile = _truePile.toList().subList(0, cardIndex - 1)
         )
     }
 
     /**
      *  Used to determine if game could be auto completed by having all face up cards
      */
-    fun faceDownExists(): Boolean = _pile.any { !it.faceUp }
+    fun faceDownExists(): Boolean = _truePile.any { !it.faceUp }
 
     /**
      *  Used to determine if pile contains more than 1 [Suits] type.
      */
-    fun isMultiSuit(): Boolean = _pile.map { it.suit }.distinct().size > 1
+    fun isMultiSuit(): Boolean = _truePile.map { it.suit }.distinct().size > 1
 
     /**
      *  It is possible for pile to be same suit, but out of order. This checks if pile is not in
      *  order descending, this way autocomplete will not be stuck in an infinite loop.
      */
     fun notInOrder(): Boolean {
-        val it = _pile.iterator()
+        val it = _truePile.iterator()
         if (!it.hasNext()) return false
         var current = it.next()
         while (true) {
