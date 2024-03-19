@@ -232,14 +232,15 @@ abstract class GameViewModel (
     fun onTableauClick(tableauIndex: Int, cardIndex: Int): MoveResult {
         val tableauPile = _tableau[tableauIndex]
         val tPile = tableauPile.truePile.toList()
-        if (tPile.isNotEmpty() && tPile[cardIndex].faceUp) {
-            val tableauCardFlipInfo = tableauPile.getTableauCardFlipInfo(cardIndex)
+        val fixedCardIndex = cardIndex.coerceAtMost(tPile.size - 1)
+        if (tPile.isNotEmpty() && tPile[fixedCardIndex].faceUp) {
+            val tableauCardFlipInfo = tableauPile.getTableauCardFlipInfo(fixedCardIndex)
             return checkLegalMove(
                 start = tableauPile.gamePile,
-                cards = tPile.subList(cardIndex, tPile.size),
-                startIndex = cardIndex,
+                cards = tPile.subList(fixedCardIndex, tPile.size),
+                startIndex = fixedCardIndex,
                 tableauCardFlipInfo = tableauCardFlipInfo,
-                ifLegal = { tableauPile.remove(cardIndex) },
+                ifLegal = { tableauPile.remove(fixedCardIndex) },
                 actionBeforeAnimation = { tableauPile.updateDisplayPile() }
             )
         }
@@ -265,7 +266,7 @@ abstract class GameViewModel (
                     _tableau.forEachIndexed { i, tableau ->
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
                         onTableauClick(i, tableau.truePile.size - 1)
-                        delay(100)
+                        delay(310)
                     }
                 }
             }
@@ -277,7 +278,7 @@ abstract class GameViewModel (
      *  after one of those clicks and if each foundation pile has exactly 13 Cards.
      */
     private fun gameWon(): Boolean {
-        foundation.forEach { if (it.truePile.size != 13) return false }
+        foundation.forEach { if (it.displayPile.size != 13) return false }
         _autoCompleteActive.value = false
         _gameWon.value = true
         return true
@@ -352,10 +353,10 @@ abstract class GameViewModel (
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
                 ifLegal()
-                it.updateDisplayPile()
+                it.add(cards)
                 aniInfo.actionBeforeAnimation = actionBeforeAnimation
                 aniInfo.actionAfterAnimation = {
-                    it.add(cards)
+                    it.updateDisplayPile()
                     appendHistory(aniInfo.getUndoAnimateInfo())
                     autoComplete()
                 }
