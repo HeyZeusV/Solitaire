@@ -29,9 +29,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
             try {
                 list.add(remove())
             } catch (e: NoSuchElementException) {
-                animatedPiles.add(_truePile.toList())
-                appendHistory(_truePile.toList())
-                return list
+                break
             }
         }
         animatedPiles.add(_truePile.toList())

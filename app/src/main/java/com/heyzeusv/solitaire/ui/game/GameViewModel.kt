@@ -149,11 +149,7 @@ abstract class GameViewModel (
                 appendHistory(aniInfo.getUndoAnimateInfo())
             }
             _animateInfo.value = aniInfo
-            _stockWasteEmpty.value = if (redealLeft == 0) {
-                true
-            } else {
-                _waste.truePile.size <= 1 && _stock.truePile.isEmpty()
-            }
+            checkStockWasteEmpty()
             return Move
         } else if (_waste.truePile.size > 1 && redealLeft != 0) {
             val cards = _waste.truePile.toList()
@@ -193,11 +189,7 @@ abstract class GameViewModel (
                 )
                 // if any move is possible then remove card from waste
                 if (result != Illegal) {
-                    _stockWasteEmpty.value = if (redealLeft == 0) {
-                        true
-                    } else {
-                        _waste.truePile.size <= 1 && _stock.truePile.isEmpty()
-                    }
+                    checkStockWasteEmpty()
                     return result
                 }
             }
@@ -407,19 +399,11 @@ abstract class GameViewModel (
     private fun undoAction(gamePile: GamePiles): Pile {
         when (gamePile) {
             GamePiles.Stock -> {
-                _stockWasteEmpty.value = if (redealLeft == 0) {
-                    true
-                } else {
-                    _waste.truePile.size <= 1 && _stock.truePile.isEmpty()
-                }
+                checkStockWasteEmpty()
                 return _stock
             }
             GamePiles.Waste -> {
-                _stockWasteEmpty.value = if (redealLeft == 0) {
-                    true
-                } else {
-                    _waste.truePile.size <= 1 && _stock.truePile.isEmpty()
-                }
+                checkStockWasteEmpty()
                 return _waste
             }
             GamePiles.ClubsFoundation -> return _foundation[0]
@@ -463,5 +447,13 @@ abstract class GameViewModel (
             type.primaryConstructor!!.call(GamePiles.TableauFive, initialPiles[5]),
             type.primaryConstructor!!.call(GamePiles.TableauSix, initialPiles[6])
         )
+    }
+
+    private fun checkStockWasteEmpty() {
+        _stockWasteEmpty.value = if (redealLeft == 0) {
+            true
+        } else {
+            _waste.truePile.size <= 1 && _stock.truePile.isEmpty()
+        }
     }
 }

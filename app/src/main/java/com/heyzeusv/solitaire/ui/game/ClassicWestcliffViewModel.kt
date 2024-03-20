@@ -37,7 +37,7 @@ class ClassicWestcliffViewModel @Inject constructor(
     override fun reset(resetOption: ResetOptions) {
         super.reset(resetOption)
 
-        _foundation.forEach { it.add(listOf(Card(0, it.suit, faceUp = true))) }
+        _foundation.forEach { it.reset(listOf(Card(0, it.suit, faceUp = true))) }
     }
 
     /**

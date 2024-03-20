@@ -42,8 +42,10 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
         animatedPiles.clear()
         resetHistory()
         _truePile.clear()
+        _truePile.addAll(cards)
         _displayPile.clear()
-        currentStep = emptyList()
+        _displayPile.addAll(cards)
+        currentStep = cards
     }
 
     /**
