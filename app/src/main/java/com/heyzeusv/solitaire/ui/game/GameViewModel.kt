@@ -137,7 +137,8 @@ abstract class GameViewModel (
                 start = GamePiles.Stock,
                 end = GamePiles.Waste,
                 animatedCards = cards,
-                flipAnimatedCards = FlipCardInfo.FaceUp()
+                flipAnimatedCards = FlipCardInfo.FaceUp(),
+                stockWasteMove = true
             )
             _stock.removeMany(drawAmount)
             _waste.add(cards)
@@ -159,7 +160,8 @@ abstract class GameViewModel (
                 start = GamePiles.Waste,
                 end = GamePiles.Stock,
                 animatedCards = listOf(cards.last()),
-                flipAnimatedCards = FlipCardInfo.FaceDown()
+                flipAnimatedCards = FlipCardInfo.FaceDown(),
+                stockWasteMove = true
             )
             _waste.removeAll()
             _stock.add(cards)

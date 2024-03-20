@@ -48,7 +48,7 @@ fun SolitairePile(
         Row(
             modifier = modifier,
             horizontalArrangement = Arrangement.spacedBy(
-                space = -(cardWidth.times(0.6f)),
+                space = -(cardWidth.times(0.5f)),
                 alignment = Alignment.End
             )
         ) {

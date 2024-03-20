@@ -10,7 +10,7 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
 //    val layoutPadding: Int = layPos.layoutPadding
     val cardWidth: Int = layPos.cardWidth
     val cardHeight: Int = layPos.cardHeight
-//    val cardSpacing: Int = layPos.cardSpacing
+    private val cardSpacing: Int = layPos.cardSpacing
     val clubsFoundation: IntOffset = layPos.clubsFoundation.plusX(xWidth)
     val diamondsFoundation: IntOffset = layPos.diamondsFoundation.plusX(xWidth)
     val heartsFoundation: IntOffset = layPos.heartsFoundation.plusX(xWidth)
@@ -25,18 +25,21 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
     val tableauFive: IntOffset = layPos.tableauFive.plusX(xWidth)
     val tableauSix: IntOffset = layPos.tableauSix.plusX(xWidth)
 
-    val cardConstraints: Constraints = layPos.getCardConstraints()
-    val wasteConstraints: Constraints = layPos.getWasteConstraints()
+    val cardConstraints: Constraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
+    private val wasteWidth: Int = (cardWidth * 2) + cardSpacing
+    val wasteConstraints: Constraints = Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
 
-    fun getPilePosition(gamePiles: GamePiles, drawAmount: Int): IntOffset {
+    val leftCardXOffset: Float = cardSpacing.toFloat()
+    val middleCardXOffset: Float = (cardWidth.div(2) + cardSpacing).toFloat()
+    val rightCardXOffset: Float = (cardWidth + cardSpacing).toFloat()
+
+    fun getPilePosition(gamePiles: GamePiles, stockWasteMove: Boolean = false): IntOffset {
         return when (gamePiles) {
             GamePiles.Stock -> stockPile
-            GamePiles.Waste -> {
-                if (drawAmount == 1) {
-                    wastePile.plusX(cardWidth + layPos.cardSpacing)
-                } else {
-                    wastePile
-                }
+            GamePiles.Waste -> if (stockWasteMove) {
+                wastePile
+            } else {
+                wastePile.plusX(cardWidth + layPos.cardSpacing)
             }
             GamePiles.ClubsFoundation -> clubsFoundation
             GamePiles.DiamondsFoundation -> diamondsFoundation
@@ -54,7 +57,6 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
 
     fun getCardsYOffset(index: Int): IntOffset {
         return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
-//        return IntOffset(x = 0, y = 0)
     }
 }
 
@@ -197,12 +199,5 @@ enum class LayoutPositions(
         tableauFour = IntOffset(1238, 424),
         tableauFive = IntOffset(1544, 424),
         tableauSix = IntOffset(1850, 424)
-    );
-
-    fun getCardConstraints(): Constraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
-
-    fun getWasteConstraints(): Constraints {
-        val wasteWidth = (cardWidth * 2) + cardSpacing
-        return Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
-    }
+    )
 }

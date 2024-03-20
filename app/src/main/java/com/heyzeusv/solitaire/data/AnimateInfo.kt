@@ -9,6 +9,7 @@ data class AnimateInfo(
     val startTableauIndex: Int = 0,
     val endTableauIndex: Int = 0,
     val flipAnimatedCards: FlipCardInfo = FlipCardInfo.NoFlip,
+    val stockWasteMove: Boolean = false,
     val tableauCardFlipInfo: TableauCardFlipInfo? = null,
     val undoAnimation: Boolean = false
 ) {
@@ -22,6 +23,7 @@ data class AnimateInfo(
         startTableauIndex = endTableauIndex,
         endTableauIndex = startTableauIndex,
         flipAnimatedCards = flipAnimatedCards.getUndoFlipCardInfo(),
+        stockWasteMove = stockWasteMove,
         tableauCardFlipInfo = tableauCardFlipInfo?.copy(
             flipCardInfo = tableauCardFlipInfo.flipCardInfo.getUndoFlipCardInfo()
         ),

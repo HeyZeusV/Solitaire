@@ -8,7 +8,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
-import com.heyzeusv.solitaire.data.Card
 import java.text.DecimalFormat
 
 fun Long.formatTimeDisplay(): String {
@@ -48,12 +47,6 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
     val df = DecimalFormat("#.##")
     val scorePercent: Double = (getAverageScore().toDouble() / maxScore.amount) * 100
     return df.format(scorePercent)
-}
-
-fun List<Card>.firstCard(): Card = try {
-    this.first()
-} catch (e: NoSuchElementException) {
-    Card(0, Suits.CLUBS)
 }
 
 fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)
