@@ -103,6 +103,7 @@ abstract class GameViewModel (
         _waste.reset()
         _historyList.clear()
         _undoEnabled.value = false
+        _undoAnimation.value = false
         _gameWon.value = false
         _autoCompleteActive.value = false
         _animateInfo.value = null
@@ -262,13 +263,14 @@ abstract class GameViewModel (
         if (_stock.truePile.isEmpty() && _waste.truePile.isEmpty()) {
             if (!autoCompleteTableauCheck()) return
             viewModelScope.launch {
+                _undoAnimation.value = true
                 _autoCompleteActive.value = true
                 _autoCompleteCorrection = 0
                 while (!gameWon()) {
                     _tableau.forEachIndexed { i, tableau ->
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
+                        delay(250)
                         onTableauClick(i, tableau.truePile.size - 1)
-                        delay(310)
                     }
                 }
             }
@@ -280,7 +282,7 @@ abstract class GameViewModel (
      *  after one of those clicks and if each foundation pile has exactly 13 Cards.
      */
     private fun gameWon(): Boolean {
-        foundation.forEach { if (it.displayPile.size != 13) return false }
+        foundation.forEach { if (it.truePile.size != 13) return false }
         _autoCompleteActive.value = false
         _gameWon.value = true
         return true
