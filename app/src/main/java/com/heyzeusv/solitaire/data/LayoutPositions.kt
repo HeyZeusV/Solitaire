@@ -33,31 +33,40 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
     val middleCardXOffset: Float = (cardWidth.div(2) + cardSpacing).toFloat()
     val rightCardXOffset: Float = (cardWidth + cardSpacing).toFloat()
 
-    fun getPilePosition(gamePiles: GamePiles, stockWasteMove: Boolean = false): List<IntOffset> {
+    val multiPileLayoutIds: List<String> = listOf(
+        "Tableau Zero Card",
+        "Tableau One Card",
+        "Tableau Two Card",
+        "Tableau Three Card",
+        "Tableau Four Card",
+        "Tableau Five Card",
+        "Tableau Six Card"
+    )
+
+    fun getPilePosition(
+        gamePiles: GamePiles,
+        stockWasteMove: Boolean = false,
+        tableauAllPile: GamePiles = GamePiles.TableauZero
+    ): IntOffset {
         return when (gamePiles) {
-            GamePiles.Stock -> listOf(stockPile)
-            GamePiles.Waste -> listOf(
-                if (stockWasteMove) {
-                    wastePile
-                } else {
-                    wastePile.plusX(cardWidth + layPos.cardSpacing)
-                }
-            )
-            GamePiles.ClubsFoundation -> listOf(clubsFoundation)
-            GamePiles.DiamondsFoundation -> listOf(diamondsFoundation)
-            GamePiles.HeartsFoundation -> listOf(heartsFoundation)
-            GamePiles.SpadesFoundation -> listOf(spadesFoundation)
-            GamePiles.TableauZero -> listOf(tableauZero)
-            GamePiles.TableauOne -> listOf(tableauOne)
-            GamePiles.TableauTwo -> listOf(tableauTwo)
-            GamePiles.TableauThree -> listOf(tableauThree)
-            GamePiles.TableauFour -> listOf(tableauFour)
-            GamePiles.TableauFive -> listOf(tableauFive)
-            GamePiles.TableauSix -> listOf(tableauSix)
-            GamePiles.TableauAll -> listOf(
-                tableauZero, tableauOne, tableauTwo, tableauThree,
-                tableauFour, tableauFive, tableauSix
-            )
+            GamePiles.Stock -> stockPile
+            GamePiles.Waste -> if (stockWasteMove) {
+                wastePile
+            } else {
+                wastePile.plusX(cardWidth + layPos.cardSpacing)
+            }
+            GamePiles.ClubsFoundation -> clubsFoundation
+            GamePiles.DiamondsFoundation -> diamondsFoundation
+            GamePiles.HeartsFoundation -> heartsFoundation
+            GamePiles.SpadesFoundation -> spadesFoundation
+            GamePiles.TableauZero -> tableauZero
+            GamePiles.TableauOne -> tableauOne
+            GamePiles.TableauTwo -> tableauTwo
+            GamePiles.TableauThree -> tableauThree
+            GamePiles.TableauFour -> tableauFour
+            GamePiles.TableauFive -> tableauFive
+            GamePiles.TableauSix -> tableauSix
+            GamePiles.TableauAll -> getPilePosition(tableauAllPile)
         }
     }
 

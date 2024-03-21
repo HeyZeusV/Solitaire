@@ -298,7 +298,7 @@ abstract class GameViewModel (
                         start = start,
                         end = it.suit.gamePile,
                         animatedCards = cards,
-                        startTableauIndex = startIndex,
+                        startTableauIndices = listOf(startIndex),
                         tableauCardFlipInfo = tableauCardFlipInfo
                     )
                     ifLegal()
@@ -323,8 +323,8 @@ abstract class GameViewModel (
                     start = start,
                     end = it.gamePile,
                     animatedCards = cards,
-                    startTableauIndex = startIndex,
-                    endTableauIndex = endIndex,
+                    startTableauIndices = listOf(startIndex),
+                    endTableauIndices = listOf(endIndex),
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
                 ifLegal()
@@ -345,7 +345,7 @@ abstract class GameViewModel (
                     start = start,
                     end = it.gamePile,
                     animatedCards = cards,
-                    startTableauIndex = startIndex,
+                    startTableauIndices = listOf(startIndex),
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
                 ifLegal()

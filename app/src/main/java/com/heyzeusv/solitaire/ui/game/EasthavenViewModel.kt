@@ -33,14 +33,10 @@ class EasthavenViewModel @Inject constructor(
     override fun onStockClick(drawAmount: Int): MoveResult {
         if (_stock.truePile.isNotEmpty()) {
             val stockCards = _stock.getCards(7)
-            val aniInfo = AnimateInfo(
-                start = GamePiles.Stock,
-                end = GamePiles.TableauAll,
-                animatedCards = stockCards,
-                flipAnimatedCards = FlipCardInfo.FaceUp.MultiPile
-            )
+            val tableauIndices = mutableListOf<Int>()
             _stock.removeMany(stockCards.size)
             _tableau.forEachIndexed { index, tableau ->
+                tableauIndices.add(tableau.truePile.size)
                 val stockCard: List<Card> = try {
                     listOf(stockCards[index])
                 } catch (e: IndexOutOfBoundsException) {
@@ -48,6 +44,13 @@ class EasthavenViewModel @Inject constructor(
                 }
                 (tableau as EasthavenTableau).addFromStock(stockCard)
             }
+            val aniInfo = AnimateInfo(
+                start = GamePiles.Stock,
+                end = GamePiles.TableauAll,
+                endTableauIndices = tableauIndices,
+                animatedCards = stockCards,
+                flipAnimatedCards = FlipCardInfo.FaceUp.MultiPile
+            )
             aniInfo.actionBeforeAnimation = { _stock.updateDisplayPile() }
             aniInfo.actionAfterAnimation = {
                 _tableau.forEach { it.updateDisplayPile() }

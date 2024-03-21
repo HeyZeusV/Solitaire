@@ -6,8 +6,8 @@ data class AnimateInfo(
     val start: GamePiles,
     val end: GamePiles,
     val animatedCards: List<Card>,
-    val startTableauIndex: Int = 0,
-    val endTableauIndex: Int = 0,
+    val startTableauIndices: List<Int> = List(7) { 0 },
+    val endTableauIndices: List<Int> = List(7) { 0 },
     val flipAnimatedCards: FlipCardInfo = FlipCardInfo.NoFlip,
     val stockWasteMove: Boolean = false,
     val tableauCardFlipInfo: TableauCardFlipInfo? = null,
@@ -20,8 +20,8 @@ data class AnimateInfo(
         start = end,
         end = start,
         animatedCards = animatedCards,
-        startTableauIndex = endTableauIndex,
-        endTableauIndex = startTableauIndex,
+        startTableauIndices = endTableauIndices,
+        endTableauIndices = startTableauIndices,
         flipAnimatedCards = flipAnimatedCards.getUndoFlipCardInfo(),
         stockWasteMove = stockWasteMove,
         tableauCardFlipInfo = tableauCardFlipInfo?.copy(
@@ -29,6 +29,8 @@ data class AnimateInfo(
         ),
         undoAnimation = true
     )
+
+    fun isNotMultiPile(): Boolean = start != GamePiles.TableauAll && end != GamePiles.TableauAll
 }
 
 data class TableauCardFlipInfo(
