@@ -37,7 +37,7 @@ class EasthavenViewModel @Inject constructor(
                 start = GamePiles.Stock,
                 end = GamePiles.TableauAll,
                 animatedCards = stockCards,
-                flipAnimatedCards = FlipCardInfo.FaceUp()
+                flipAnimatedCards = FlipCardInfo.FaceUp.MultiPile
             )
             _stock.removeMany(stockCards.size)
             _tableau.forEachIndexed { index, tableau ->

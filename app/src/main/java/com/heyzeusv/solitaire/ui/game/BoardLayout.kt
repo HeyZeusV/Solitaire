@@ -121,6 +121,15 @@ fun BoardLayout(
                 it.actionBeforeAnimation()
             }
         }
+        // Action After Animation
+        LaunchedEffect(key1 = it) {
+            try {
+                delay(240)
+                it.actionAfterAnimation()
+            } catch (e: Exception) {
+                it.actionAfterAnimation()
+            }
+        }
         // Cards X Animation
         LaunchedEffect(key1 = it) {
             try {
@@ -134,10 +143,8 @@ fun BoardLayout(
                 ) { value, _ ->
                     offsetX = value
                 }
-                it.actionAfterAnimation()
                 if (it.undoAnimation) updateUndoAnimation(false)
             } catch (e: Exception) {
-                it.actionAfterAnimation()
                 if (it.undoAnimation) updateUndoAnimation(false)
             }
         }
@@ -191,8 +198,8 @@ fun BoardLayout(
         content = {
             animateInfo?.let {
                 when (it.flipAnimatedCards) {
-                    is FlipCardInfo.FaceDown -> {
-                        HorizontalCardFlipPile(
+                    FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
+                        HorizontalCardPileWithFlip(
                             layInfo = layInfo,
                             pile = it.animatedCards,
                             flipRotation = flipRotation,
@@ -200,17 +207,9 @@ fun BoardLayout(
                             modifier = Modifier.layoutId("Animated Horizontal Pile")
                         )
                     }
-                    is FlipCardInfo.FaceUp -> {
-                        HorizontalCardFlipPile(
-                            layInfo = layInfo,
-                            pile = it.animatedCards,
-                            flipRotation = flipRotation,
-                            flipCardInfo = it.flipAnimatedCards,
-                            modifier = Modifier.layoutId("Animated Horizontal Pile")
-                        )
-                    }
+                    FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> { }
                     FlipCardInfo.NoFlip -> {
-                        VerticalCardPile(
+                        VerticalCardPileCanFlip(
                             cardHeight = layInfo.cardHeight.toDp(),
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Vertical Pile")
@@ -218,7 +217,7 @@ fun BoardLayout(
                     }
                 }
                 it.tableauCardFlipInfo?.let { info ->
-                    VerticalCardPile(
+                    VerticalCardPileCanFlip(
                         cardHeight = layInfo.cardHeight.toDp(),
                         pile = info.remainingPile,
                         modifier = Modifier.layoutId("Animated Tableau Card")
@@ -354,7 +353,7 @@ fun BoardLayout(
 }
 
 @Composable
-fun VerticalCardPile(
+fun VerticalCardPileCanFlip(
     cardHeight: Dp,
     modifier: Modifier,
     pile: List<Card> = emptyList(),
@@ -375,7 +374,7 @@ fun VerticalCardPile(
 }
 
 @Composable
-fun HorizontalCardFlipPile(
+fun HorizontalCardPileWithFlip(
     layInfo: LayoutInfo,
     pile: List<Card>,
     flipRotation: Float,
@@ -485,8 +484,8 @@ fun HorizontalCardFlipPile(
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             leftCard?.measure(layInfo.cardConstraints)?.place(leftCardXOffset.toInt(), 0)
-            middleCard?.measure(layInfo.cardConstraints)?.place(middleCardXOffset.toInt(), 0)
-            rightCard?.measure(layInfo.cardConstraints)?.place(rightCardXOffset.toInt(), 0)
+            middleCard?.measure(layInfo.cardConstraints)?.place(middleCardXOffset.toInt(), 0, 1f)
+            rightCard?.measure(layInfo.cardConstraints)?.place(rightCardXOffset.toInt(), 0, 2f)
         }
     }
 }
