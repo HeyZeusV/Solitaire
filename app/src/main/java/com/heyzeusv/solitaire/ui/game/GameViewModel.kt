@@ -381,42 +381,41 @@ abstract class GameViewModel (
     fun undo() {
         if (_historyList.isNotEmpty()) {
             val step = _historyList.removeLast()
-            val startPile = undoAction(step.start)
-            val endPile = undoAction(step.end)
-            startPile.undo()
-            endPile.undo()
-            step.actionBeforeAnimation = {
-                startPile.updateDisplayPile()
-            }
+            val startPiles = undoAction(step.start)
+            val endPiles = undoAction(step.end)
+            startPiles.forEach { it.undo() }
+            endPiles.forEach { it.undo() }
+            step.actionBeforeAnimation = { startPiles.forEach { it.updateDisplayPile() } }
             step.actionAfterAnimation = {
-                endPile.updateDisplayPile()
+                endPiles.forEach { it.updateDisplayPile() }
                 _undoEnabled.value = _historyList.isNotEmpty()
             }
             _animateInfo.value = step
         }
     }
 
-    private fun undoAction(gamePile: GamePiles): Pile {
+    private fun undoAction(gamePile: GamePiles): List<Pile> {
         when (gamePile) {
             GamePiles.Stock -> {
                 checkStockWasteEmpty()
-                return _stock
+                return listOf(_stock)
             }
             GamePiles.Waste -> {
                 checkStockWasteEmpty()
-                return _waste
+                return listOf(_waste)
             }
-            GamePiles.ClubsFoundation -> return _foundation[0]
-            GamePiles.DiamondsFoundation -> return _foundation[1]
-            GamePiles.HeartsFoundation -> return _foundation[2]
-            GamePiles.SpadesFoundation -> return _foundation[3]
-            GamePiles.TableauZero -> return _tableau[0]
-            GamePiles.TableauOne -> return _tableau[1]
-            GamePiles.TableauTwo -> return _tableau[2]
-            GamePiles.TableauThree -> return _tableau[3]
-            GamePiles.TableauFour -> return _tableau[4]
-            GamePiles.TableauFive -> return _tableau[5]
-            GamePiles.TableauSix -> return _tableau[6]
+            GamePiles.ClubsFoundation -> return listOf(_foundation[0])
+            GamePiles.DiamondsFoundation -> return listOf(_foundation[1])
+            GamePiles.HeartsFoundation -> return listOf(_foundation[2])
+            GamePiles.SpadesFoundation -> return listOf(_foundation[3])
+            GamePiles.TableauZero -> return listOf(_tableau[0])
+            GamePiles.TableauOne -> return listOf(_tableau[1])
+            GamePiles.TableauTwo -> return listOf(_tableau[2])
+            GamePiles.TableauThree -> return listOf(_tableau[3])
+            GamePiles.TableauFour -> return listOf(_tableau[4])
+            GamePiles.TableauFive -> return listOf(_tableau[5])
+            GamePiles.TableauSix -> return listOf(_tableau[6])
+            GamePiles.TableauAll -> return _tableau
         }
     }
 

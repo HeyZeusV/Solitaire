@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.ui.game
 
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Tableau
@@ -9,7 +10,6 @@ import com.heyzeusv.solitaire.data.pile.Tableau.EasthavenTableau
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.ResetOptions
-import com.heyzeusv.solitaire.util.Suits
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -32,9 +32,27 @@ class EasthavenViewModel @Inject constructor(
 
     override fun onStockClick(drawAmount: Int): MoveResult {
         if (_stock.truePile.isNotEmpty()) {
-            _tableau.forEach { (it as EasthavenTableau).addFromStock(_stock.removeMany(1)) }
-            val aniInfo = AnimateInfo(GamePiles.Stock, GamePiles.TableauOne, listOf(Card(0, Suits.CLUBS, true)))
-            appendHistory(aniInfo)
+            val stockCards = _stock.getCards(7)
+            val aniInfo = AnimateInfo(
+                start = GamePiles.Stock,
+                end = GamePiles.TableauAll,
+                animatedCards = stockCards,
+                flipAnimatedCards = FlipCardInfo.FaceUp()
+            )
+            _stock.removeMany(stockCards.size)
+            _tableau.forEachIndexed { index, tableau ->
+                val stockCard: List<Card> = try {
+                    listOf(stockCards[index])
+                } catch (e: IndexOutOfBoundsException) {
+                    emptyList()
+                }
+                (tableau as EasthavenTableau).addFromStock(stockCard)
+            }
+            aniInfo.actionBeforeAnimation = { _stock.updateDisplayPile() }
+            aniInfo.actionAfterAnimation = {
+                _tableau.forEach { it.updateDisplayPile() }
+                appendHistory(aniInfo.getUndoAnimateInfo())
+            }
             _animateInfo.value = aniInfo
             return MoveResult.Move
         }

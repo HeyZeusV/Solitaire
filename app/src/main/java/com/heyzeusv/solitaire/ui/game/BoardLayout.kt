@@ -111,8 +111,9 @@ fun BoardLayout(
     var tableauFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
     val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
 
-    LaunchedEffect(key1 = animateInfo) {
-        animateInfo?.let {
+    animateInfo?.let {
+        // Action Before Animation
+        LaunchedEffect(key1 = it) {
             try {
                 delay(15)
                 it.actionBeforeAnimation()
@@ -120,13 +121,12 @@ fun BoardLayout(
                 it.actionBeforeAnimation()
             }
         }
-    }
-    LaunchedEffect(key1 = animateInfo) {
-        animateInfo?.let {
+        // Cards X Animation
+        LaunchedEffect(key1 = it) {
             try {
                 if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
-                val offsetStart = layInfo.getPilePosition(it.start, it.stockWasteMove)
-                val offsetEnd = layInfo.getPilePosition(it.end, it.stockWasteMove)
+                val offsetStart = layInfo.getPilePosition(it.start, it.stockWasteMove).first()
+                val offsetEnd = layInfo.getPilePosition(it.end, it.stockWasteMove).first()
                 animate(
                     initialValue = offsetStart.x.toFloat(),
                     targetValue = offsetEnd.x.toFloat(),
@@ -141,12 +141,11 @@ fun BoardLayout(
                 if (it.undoAnimation) updateUndoAnimation(false)
             }
         }
-    }
-    LaunchedEffect(key1 = animateInfo) {
-        animateInfo?.let {
-            val offsetStart = layInfo.getPilePosition(it.start)
+        // Cards Y Animation
+        LaunchedEffect(key1 = it) {
+            val offsetStart = layInfo.getPilePosition(it.start).first()
                 .plus(layInfo.getCardsYOffset(it.startTableauIndex))
-            val offsetEnd = layInfo.getPilePosition(it.end)
+            val offsetEnd = layInfo.getPilePosition(it.end).first()
                 .plus(layInfo.getCardsYOffset(it.endTableauIndex))
             animate(
                 initialValue = offsetStart.y.toFloat(),
@@ -157,11 +156,10 @@ fun BoardLayout(
             }
             updateAnimateInfo(null)
         }
-    }
-    LaunchedEffect(key1 = animateInfo) {
-        animateInfo?.let {
+        // Cards Flip Animation
+        LaunchedEffect(key1 = it) {
             when (it.flipAnimatedCards) {
-                FlipCardInfo.NoFlip -> { }
+                FlipCardInfo.NoFlip -> {}
                 else -> {
                     animate(
                         initialValue = it.flipAnimatedCards.startRotationY,
@@ -173,16 +171,17 @@ fun BoardLayout(
                 }
             }
         }
-    }
-    LaunchedEffect(key1 = animateInfo) {
-        animateInfo?.tableauCardFlipInfo?.let {
-            delay(50)
-            animate(
-                initialValue = it.flipCardInfo.startRotationY,
-                targetValue = it.flipCardInfo.endRotationY,
-                animationSpec = getFlipAnimationSpec(200)
-            ) { value, _ ->
-                tableauFlipRotation = value
+        it.tableauCardFlipInfo?.let { flipInfo ->
+            // Tableau Card Flip Animation
+            LaunchedEffect(key1 = it) {
+                delay(50)
+                animate(
+                    initialValue = flipInfo.flipCardInfo.startRotationY,
+                    targetValue = flipInfo.flipCardInfo.endRotationY,
+                    animationSpec = getFlipAnimationSpec(200)
+                ) { value, _ ->
+                    tableauFlipRotation = value
+                }
             }
         }
     }
@@ -319,7 +318,7 @@ fun BoardLayout(
                     it.tableauCardFlipInfo?.let { info ->
                         val pile =
                             if (info.flipCardInfo is FlipCardInfo.FaceDown) it.end else it.start
-                        val tableauCardFlipPosition = layInfo.getPilePosition(pile)
+                        val tableauCardFlipPosition = layInfo.getPilePosition(pile).first()
                         animatedTableauCard?.measure(tableauConstraints)
                             ?.place(tableauCardFlipPosition, 1f)
                         when (pile) {

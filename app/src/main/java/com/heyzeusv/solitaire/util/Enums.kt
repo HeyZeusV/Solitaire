@@ -213,6 +213,7 @@ enum class GamePiles {
     TableauThree,
     TableauFour,
     TableauFive,
-    TableauSix
+    TableauSix,
+    TableauAll
 }
 

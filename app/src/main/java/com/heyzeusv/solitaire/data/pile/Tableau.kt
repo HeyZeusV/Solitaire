@@ -41,7 +41,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
 
         override fun addListCondition(cards: List<Card>): Boolean = notInOrderOrAltColor(cards)
 
-        fun addFromStock(cards: List<Card>) { _truePile.addAll(cards.map { it.copy(faceUp = true) }) }
+        fun addFromStock(cards: List<Card>) { add(cards.map { it.copy(faceUp = true) }) }
     }
     class YukonTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
