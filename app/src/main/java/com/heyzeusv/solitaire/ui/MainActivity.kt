@@ -108,6 +108,7 @@ fun SolitaireScreen(
     Column(Modifier.fillMaxSize()) {
         SolitaireScoreboard(
             sbVM = sbVM,
+            gameVM = gameVM,
             modifier = Modifier
         )
         BoardLayout(

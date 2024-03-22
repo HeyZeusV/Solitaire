@@ -261,8 +261,12 @@ abstract class GameViewModel (
                 while (!gameWon()) {
                     _tableau.forEachIndexed { i, tableau ->
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
-                        delay(250)
-                        onTableauClick(i, tableau.truePile.size - 1)
+                        _foundation.forEach { foundation ->
+                            if (foundation.canAdd(tableau.truePile.takeLast(1))) {
+                                delay(250)
+                                onTableauClick(i, tableau.truePile.size - 1)
+                            }
+                        }
                     }
                 }
             }

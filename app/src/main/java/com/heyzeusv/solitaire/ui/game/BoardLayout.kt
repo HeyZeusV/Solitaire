@@ -128,8 +128,6 @@ fun BoardLayout(
             try {
                 delay(240)
                 it.actionAfterAnimation()
-                delay(10)
-                updateAnimateInfo(null)
             } catch (e: Exception) {
                 it.actionAfterAnimation()
             }
@@ -149,6 +147,7 @@ fun BoardLayout(
                         offsetX = value
                     }
                     if (it.undoAnimation) updateUndoAnimation(false)
+                    updateAnimateInfo(null)
                 } catch (e: Exception) {
                     if (it.undoAnimation) updateUndoAnimation(false)
                 }

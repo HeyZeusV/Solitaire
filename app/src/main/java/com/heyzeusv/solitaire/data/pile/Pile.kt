@@ -24,6 +24,7 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
     abstract fun reset(cards: List<Card> = emptyList())
     abstract fun undo()
 
+    // TODO go back to removing from animatedPiles, but if animatedPiles is empty, read from truePile instead
     fun updateDisplayPile() {
         _displayPile.clear()
         val aniPile = animatedPiles.last()
