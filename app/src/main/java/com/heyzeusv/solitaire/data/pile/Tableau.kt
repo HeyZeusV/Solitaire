@@ -104,7 +104,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
      */
     override fun add(cards: List<Card>) {
         _truePile.addAll(cards)
-        animatedPiles.add(_truePile.toList())
+        updateAnimatedPiles(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
@@ -138,7 +138,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
             // flip last card up
             if (isNotEmpty() && !last().faceUp) this[size - 1] = last().copy(faceUp = true)
         }
-        animatedPiles.add(_truePile.toList())
+        updateAnimatedPiles(_truePile.toList())
         appendHistory(_truePile.toList())
         // return value isn't used
         return Card(0, Suits.SPADES, false)
@@ -170,7 +170,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
         _truePile.clear()
         val history = retrieveHistory()
         _truePile.addAll(history)
-        animatedPiles.add(_truePile.toList())
+        updateAnimatedPiles(_truePile.toList())
         currentStep = _truePile.toList()
     }
 

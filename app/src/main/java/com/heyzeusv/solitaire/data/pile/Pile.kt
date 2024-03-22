@@ -26,8 +26,13 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
 
     fun updateDisplayPile() {
         _displayPile.clear()
-        val aniPile = animatedPiles.removeFirst()
+        val aniPile = animatedPiles.last()
         _displayPile.addAll(aniPile)
+    }
+
+    protected fun updateAnimatedPiles(cards: List<Card>) {
+        if (animatedPiles.size == 15) animatedPiles.removeFirst()
+        animatedPiles.add(cards)
     }
 
     protected fun appendHistory(cards: List<Card>) {

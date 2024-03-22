@@ -113,7 +113,6 @@ fun BoardLayout(
     var tableauFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
     val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
 
-    // TODO: Starting new animation during one cancels both, but piles do update correctly
     animateInfo?.let {
         // Action Before Animation
         LaunchedEffect(key1 = it) {
@@ -129,10 +128,10 @@ fun BoardLayout(
             try {
                 delay(240)
                 it.actionAfterAnimation()
+                delay(10)
                 updateAnimateInfo(null)
             } catch (e: Exception) {
                 it.actionAfterAnimation()
-                updateAnimateInfo(null)
             }
         }
         // Cards X Animation

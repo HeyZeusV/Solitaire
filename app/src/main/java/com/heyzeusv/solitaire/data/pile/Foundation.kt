@@ -15,7 +15,7 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
      */
     override fun add(cards: List<Card>) {
         _truePile.add(cards.first())
-        animatedPiles.add(_truePile.toList())
+        updateAnimatedPiles(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
@@ -30,7 +30,7 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
      */
     override fun remove(tappedIndex: Int): Card {
         val removedCard = _truePile.removeLast()
-        animatedPiles.add(_truePile.toList())
+        updateAnimatedPiles(_truePile.toList())
         appendHistory(_truePile.toList())
         return removedCard
     }
@@ -55,7 +55,7 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
         _truePile.clear()
         val history = retrieveHistory()
         _truePile.addAll(history)
-        animatedPiles.add(_truePile.toList())
+        updateAnimatedPiles(_truePile.toList())
         currentStep = _truePile.toList()
     }
 
