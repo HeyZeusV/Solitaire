@@ -13,7 +13,7 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
      */
     override fun add(cards: List<Card>) {
         _truePile.addAll(cards.map { it.copy(faceUp = true) })
-        updateAnimatedPiles(_truePile.toList())
+        animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
@@ -22,14 +22,14 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
      */
     override fun remove(tappedIndex: Int): Card {
         val removedCard = _truePile.removeLast()
-        updateAnimatedPiles(_truePile.toList())
+        animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
         return removedCard
     }
 
     fun removeAll() {
         _truePile.clear()
-        updateAnimatedPiles(_truePile.toList())
+        animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
@@ -53,7 +53,7 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         // makes sure all cards are face up
         history.map { it.copy(faceUp = true) }
         _truePile.addAll(history)
-        updateAnimatedPiles(_truePile.toList())
+        animatedPiles.add(_truePile.toList())
         currentStep = _truePile.toList()
     }
 }

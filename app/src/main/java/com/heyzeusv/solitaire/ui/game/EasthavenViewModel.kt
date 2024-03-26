@@ -11,6 +11,7 @@ import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.ResetOptions
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.sync.withLock
 import javax.inject.Inject
 
 /**
@@ -34,16 +35,7 @@ class EasthavenViewModel @Inject constructor(
         if (_stock.truePile.isNotEmpty()) {
             val stockCards = _stock.getCards(7)
             val tableauIndices = mutableListOf<Int>()
-            _stock.removeMany(stockCards.size)
-            _tableau.forEachIndexed { index, tableau ->
-                tableauIndices.add(tableau.truePile.size)
-                val stockCard: List<Card> = try {
-                    listOf(stockCards[index])
-                } catch (e: IndexOutOfBoundsException) {
-                    emptyList()
-                }
-                (tableau as EasthavenTableau).addFromStock(stockCard)
-            }
+            _tableau.forEach { tableau -> tableauIndices.add(tableau.truePile.size) }
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
                 end = GamePiles.TableauAll,
@@ -51,10 +43,25 @@ class EasthavenViewModel @Inject constructor(
                 animatedCards = stockCards,
                 flipAnimatedCards = FlipCardInfo.FaceUp.MultiPile
             )
-            aniInfo.actionBeforeAnimation = { _stock.updateDisplayPile() }
+            aniInfo.actionBeforeAnimation = {
+                mutex.withLock {
+                    _stock.removeMany(stockCards.size)
+                    _tableau.forEachIndexed { index, tableau ->
+                        val stockCard: List<Card> = try {
+                            listOf(stockCards[index])
+                        } catch (e: IndexOutOfBoundsException) {
+                            emptyList()
+                        }
+                        (tableau as EasthavenTableau).addFromStock(stockCard)
+                    }
+                    _stock.updateDisplayPile()
+                }
+            }
             aniInfo.actionAfterAnimation = {
-                _tableau.forEach { it.updateDisplayPile() }
-                appendHistory(aniInfo.getUndoAnimateInfo())
+                mutex.withLock {
+                    _tableau.forEach { it.updateDisplayPile() }
+                    appendHistory(aniInfo.getUndoAnimateInfo())
+                }
             }
             _animateInfo.value = aniInfo
             return MoveResult.Move

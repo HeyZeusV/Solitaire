@@ -24,16 +24,10 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
     abstract fun reset(cards: List<Card> = emptyList())
     abstract fun undo()
 
-    // TODO go back to removing from animatedPiles, but if animatedPiles is empty, read from truePile instead
     fun updateDisplayPile() {
+        val aniPile = animatedPiles.removeFirst()
         _displayPile.clear()
-        val aniPile = animatedPiles.last()
         _displayPile.addAll(aniPile)
-    }
-
-    protected fun updateAnimatedPiles(cards: List<Card>) {
-        if (animatedPiles.size == 15) animatedPiles.removeFirst()
-        animatedPiles.add(cards)
     }
 
     protected fun appendHistory(cards: List<Card>) {

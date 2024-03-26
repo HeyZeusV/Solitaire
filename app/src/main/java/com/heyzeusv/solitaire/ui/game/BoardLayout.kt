@@ -114,12 +114,21 @@ fun BoardLayout(
     val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
 
     animateInfo?.let {
+        // Updating AnimateInfo to null if animation is fully completed
+        LaunchedEffect(key1 = it) {
+            try {
+                if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                delay(250)
+                updateAnimateInfo(null)
+            } finally {
+                if (it.undoAnimation) updateUndoAnimation(false)
+            }
+        }
         // Action Before Animation
         LaunchedEffect(key1 = it) {
             try {
                 delay(15)
-                it.actionBeforeAnimation()
-            } catch (e: Exception) {
+            } finally {
                 it.actionBeforeAnimation()
             }
         }
@@ -127,29 +136,21 @@ fun BoardLayout(
         LaunchedEffect(key1 = it) {
             try {
                 delay(240)
-                it.actionAfterAnimation()
-            } catch (e: Exception) {
+            } finally {
                 it.actionAfterAnimation()
             }
         }
         // Cards X Animation
         LaunchedEffect(key1 = it) {
             if (it.isNotMultiPile()) {
-                try {
-                    if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
-                    val offsetStart = layInfo.getPilePosition(it.start, it.stockWasteMove)
-                    val offsetEnd = layInfo.getPilePosition(it.end, it.stockWasteMove)
-                    animate(
-                        initialValue = offsetStart.x.toFloat(),
-                        targetValue = offsetEnd.x.toFloat(),
-                        animationSpec = animationSpec
-                    ) { value, _ ->
-                        offsetX = value
-                    }
-                    if (it.undoAnimation) updateUndoAnimation(false)
-                    updateAnimateInfo(null)
-                } catch (e: Exception) {
-                    if (it.undoAnimation) updateUndoAnimation(false)
+                val offsetStart = layInfo.getPilePosition(it.start, it.stockWasteMove)
+                val offsetEnd = layInfo.getPilePosition(it.end, it.stockWasteMove)
+                animate(
+                    initialValue = offsetStart.x.toFloat(),
+                    targetValue = offsetEnd.x.toFloat(),
+                    animationSpec = animationSpec
+                ) { value, _ ->
+                    offsetX = value
                 }
             }
         }

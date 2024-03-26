@@ -23,6 +23,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlin.reflect.KClass
 import kotlin.reflect.full.primaryConstructor
 
@@ -36,6 +38,8 @@ abstract class GameViewModel (
     private val ss: ShuffleSeed,
     val layoutInfo: LayoutInfo
 ) : ViewModel() {
+
+    protected val mutex = Mutex()
 
     // holds all 52 playing Cards
     protected open var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
@@ -141,12 +145,18 @@ abstract class GameViewModel (
                 flipAnimatedCards = FlipCardInfo.FaceUp.SinglePile,
                 stockWasteMove = true
             )
-            _stock.removeMany(drawAmount)
-            _waste.add(cards)
-            aniInfo.actionBeforeAnimation = { _stock.updateDisplayPile() }
+            aniInfo.actionBeforeAnimation = {
+                mutex.withLock {
+                    _stock.removeMany(drawAmount)
+                    _waste.add(cards)
+                    _stock.updateDisplayPile()
+                }
+            }
             aniInfo.actionAfterAnimation = {
-                _waste.updateDisplayPile()
-                appendHistory(aniInfo.getUndoAnimateInfo())
+                mutex.withLock {
+                    _waste.updateDisplayPile()
+                    appendHistory(aniInfo.getUndoAnimateInfo())
+                }
             }
             _animateInfo.value = aniInfo
             checkStockWasteEmpty()
@@ -160,12 +170,18 @@ abstract class GameViewModel (
                 flipAnimatedCards = FlipCardInfo.FaceDown.SinglePile,
                 stockWasteMove = true
             )
-            _waste.removeAll()
-            _stock.add(cards)
-            aniInfo.actionBeforeAnimation = { _waste.updateDisplayPile() }
+            aniInfo.actionBeforeAnimation = {
+                mutex.withLock {
+                    _waste.removeAll()
+                    _stock.add(cards)
+                    _waste.updateDisplayPile()
+                }
+            }
             aniInfo.actionAfterAnimation = {
-                _stock.updateDisplayPile()
-                appendHistory(aniInfo.getUndoAnimateInfo())
+                mutex.withLock {
+                    _stock.updateDisplayPile()
+                    appendHistory(aniInfo.getUndoAnimateInfo())
+                }
             }
             _animateInfo.value = aniInfo
             redealLeft--
@@ -263,7 +279,7 @@ abstract class GameViewModel (
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
                         _foundation.forEach { foundation ->
                             if (foundation.canAdd(tableau.truePile.takeLast(1))) {
-                                delay(250)
+                                delay(300)
                                 onTableauClick(i, tableau.truePile.size - 1)
                             }
                         }
@@ -305,13 +321,19 @@ abstract class GameViewModel (
                         startTableauIndices = listOf(startIndex),
                         tableauCardFlipInfo = tableauCardFlipInfo
                     )
-                    ifLegal()
-                    it.add(cards)
-                    aniInfo.actionBeforeAnimation = actionBeforeAnimation
+                    aniInfo.actionBeforeAnimation = {
+                        mutex.withLock {
+                            ifLegal()
+                            it.add(cards)
+                            actionBeforeAnimation()
+                        }
+                    }
                     aniInfo.actionAfterAnimation = {
-                        it.updateDisplayPile()
-                        appendHistory(aniInfo.getUndoAnimateInfo())
-                        autoComplete()
+                        mutex.withLock {
+                            it.updateDisplayPile()
+                            appendHistory(aniInfo.getUndoAnimateInfo())
+                            autoComplete()
+                        }
                     }
                     _animateInfo.value = aniInfo
                     _autoCompleteCorrection++
@@ -331,13 +353,19 @@ abstract class GameViewModel (
                     endTableauIndices = listOf(endIndex),
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
-                ifLegal()
-                it.add(cards)
-                aniInfo.actionBeforeAnimation = actionBeforeAnimation
+                aniInfo.actionBeforeAnimation = {
+                    mutex.withLock {
+                        ifLegal()
+                        it.add(cards)
+                        actionBeforeAnimation()
+                    }
+                }
                 aniInfo.actionAfterAnimation = {
-                    it.updateDisplayPile()
-                    appendHistory(aniInfo.getUndoAnimateInfo())
-                    autoComplete()
+                    mutex.withLock {
+                        it.updateDisplayPile()
+                        appendHistory(aniInfo.getUndoAnimateInfo())
+                        autoComplete()
+                    }
                 }
                 _animateInfo.value = aniInfo
                 return Move
@@ -352,13 +380,19 @@ abstract class GameViewModel (
                     startTableauIndices = listOf(startIndex),
                     tableauCardFlipInfo = tableauCardFlipInfo
                 )
-                ifLegal()
-                it.add(cards)
-                aniInfo.actionBeforeAnimation = actionBeforeAnimation
+                aniInfo.actionBeforeAnimation = {
+                    mutex.withLock {
+                        ifLegal()
+                        it.add(cards)
+                        actionBeforeAnimation()
+                    }
+                }
                 aniInfo.actionAfterAnimation = {
-                    it.updateDisplayPile()
-                    appendHistory(aniInfo.getUndoAnimateInfo())
-                    autoComplete()
+                    mutex.withLock {
+                        it.updateDisplayPile()
+                        appendHistory(aniInfo.getUndoAnimateInfo())
+                        autoComplete()
+                    }
                 }
                 _animateInfo.value = aniInfo
                 return Move
@@ -387,12 +421,15 @@ abstract class GameViewModel (
             val step = _historyList.removeLast()
             val startPiles = undoAction(step.start)
             val endPiles = undoAction(step.end)
-            startPiles.forEach { it.undo() }
-            endPiles.forEach { it.undo() }
-            step.actionBeforeAnimation = { startPiles.forEach { it.updateDisplayPile() } }
+            step.actionBeforeAnimation = {
+                mutex.withLock {
+                    startPiles.forEach { it.undo() }
+                    endPiles.forEach { it.undo() }
+                    startPiles.forEach { it.updateDisplayPile() }
+                }
+            }
             step.actionAfterAnimation = {
-                endPiles.forEach { it.updateDisplayPile() }
-                _undoEnabled.value = _historyList.isNotEmpty()
+                mutex.withLock { endPiles.forEach { it.updateDisplayPile() } }
             }
             _animateInfo.value = step
         }

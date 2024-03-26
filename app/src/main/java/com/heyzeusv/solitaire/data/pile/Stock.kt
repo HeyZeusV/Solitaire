@@ -32,7 +32,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
                 break
             }
         }
-        updateAnimatedPiles(_truePile.toList())
+        animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
         return list
     }
@@ -42,7 +42,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
      */
     override fun add(cards: List<Card>) {
         _truePile.addAll(cards.map { it.copy(faceUp = false) })
-        updateAnimatedPiles(_truePile.toList())
+        animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
@@ -77,7 +77,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         // only last card is shown to user, this makes sure it is not visible
         if (history.isNotEmpty()) history[history.size - 1] = history.last().copy(faceUp = false)
         _truePile.addAll(history)
-        updateAnimatedPiles(_truePile.toList())
+        animatedPiles.add(_truePile.toList())
         currentStep = _truePile.toList()
     }
 
