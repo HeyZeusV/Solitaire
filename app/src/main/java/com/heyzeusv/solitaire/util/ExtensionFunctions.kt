@@ -54,7 +54,10 @@ fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)
 @Composable
 fun Int.toDp() = with(LocalDensity.current) { this@toDp.toDp() }
 
-// https://stackoverflow.com/a/69146178
+/**
+ *  Disables all clicks on children if [disabled] is true.
+ *  Found here: https://stackoverflow.com/a/69146178
+ */
 fun Modifier.gesturesDisabled(disabled: Boolean = true) =
     if (disabled) {
         pointerInput(Unit) {

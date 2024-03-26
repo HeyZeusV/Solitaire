@@ -4,7 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,6 +32,7 @@ import com.heyzeusv.solitaire.util.Suits
 fun SolitaireTableau(
     modifier: Modifier = Modifier,
     cardHeight: Dp,
+    cardWidth: Dp,
     tableauIndex: Int = 0,
     pile: List<Card> = emptyList(),
     onClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal},
@@ -43,7 +44,7 @@ fun SolitaireTableau(
     ) {
         if (pile.isEmpty()) {
             Image(
-                modifier = Modifier.height(cardHeight),
+                modifier = Modifier.size(width = cardWidth, height = cardHeight),
                 painter = painterResource(R.drawable.tableau_empty),
                 contentDescription = stringResource(R.string.pile_cdesc_empty),
                 contentScale = ContentScale.FillBounds
@@ -52,7 +53,7 @@ fun SolitaireTableau(
             pile.forEachIndexed { cardIndex, card ->
                 SolitaireCard(
                     modifier = Modifier
-                        .height(cardHeight)
+                        .size(width = cardWidth, height = cardHeight)
                         .clip(RoundedCornerShape(4.dp)) // makes click surface have round edges
                         .clickable { handleMoveResult(onClick(tableauIndex, cardIndex)) },
                     card = card
@@ -72,7 +73,10 @@ fun SolitaireTableauEmptyPreview() {
         val cardWidth = sWidth / 7 // need to fit 7 piles wide on screen
         val cardHeight = cardWidth.times(1.4f)
 
-        SolitaireTableau(cardHeight = cardHeight)
+        SolitaireTableau(
+            cardHeight = cardHeight,
+            cardWidth = cardWidth
+        )
     }
 }
 
@@ -88,6 +92,7 @@ fun SolitaireTableauPreview() {
 
         SolitaireTableau(
             cardHeight = cardHeight,
+            cardWidth = cardWidth,
             pile = listOf(
                 Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES),
                 Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES)

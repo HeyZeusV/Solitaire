@@ -140,6 +140,7 @@ fun SolitaireBoard(
                         pile = tableau.truePile,
                         tableauIndex = index,
                         cardHeight = cardHeight,
+                        cardWidth = cardWidth,
                         onClick = onTableauClick,
                         handleMoveResult = handleMoveResult
                     )

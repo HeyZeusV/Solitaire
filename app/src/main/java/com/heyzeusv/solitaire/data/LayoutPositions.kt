@@ -10,6 +10,7 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
 //    val layoutPadding: Int = layPos.layoutPadding
     val cardWidth: Int = layPos.cardWidth
     val cardHeight: Int = layPos.cardHeight
+    val cardDimens: CardDimens = CardDimens(layPos.cardWidth, layPos.cardHeight)
     private val cardSpacing: Int = layPos.cardSpacing
     val clubsFoundation: IntOffset = layPos.clubsFoundation.plusX(xWidth)
     val diamondsFoundation: IntOffset = layPos.diamondsFoundation.plusX(xWidth)
@@ -74,6 +75,8 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
         return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
     }
 }
+
+data class CardDimens(val width: Int, val height: Int)
 
 enum class LayoutPositions(
     val layoutWidth: Int,

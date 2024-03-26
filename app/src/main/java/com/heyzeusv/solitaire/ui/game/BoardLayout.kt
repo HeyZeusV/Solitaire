@@ -2,7 +2,6 @@ package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
-import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -20,7 +19,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
@@ -38,6 +36,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
@@ -60,6 +59,7 @@ fun BoardLayout(
 
     BoardLayout(
         layInfo = gameVM.layoutInfo,
+        ad = AnimationDurations.TwoHundredFifty,
         animateInfo = animateInfo,
         updateAnimateInfo = gameVM::updateAnimateInfo,
         updateUndoEnabled = gameVM::updateUndoEnabled,
@@ -83,6 +83,7 @@ fun BoardLayout(
 @Composable
 fun BoardLayout(
     layInfo: LayoutInfo,
+    ad: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit,
     updateUndoEnabled: (Boolean) -> Unit,
@@ -101,24 +102,18 @@ fun BoardLayout(
     onTableauClick: (Int, Int) -> MoveResult,
     modifier: Modifier = Modifier
 ) {
-    // gets device size in order to scale card
-    val config = LocalConfiguration.current
-    val sWidth = config.screenWidthDp.dp
-    // removed layout padding and space between cards
-    val cardW = (sWidth - 4.dp - 12.dp) / 7 // need to fit 7 piles wide on screen
-
     var offsetX by remember(animateInfo) { mutableFloatStateOf(0f) }
     var offsetY by remember(animateInfo) { mutableFloatStateOf(0f) }
     var flipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
-    var tableauFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
-    val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
+    var tableauCardFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
+    val animationSpec = tween<Float>(ad.fullInt)
 
     animateInfo?.let {
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
                 if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
-                delay(250)
+                delay(ad.full)
                 updateAnimateInfo(null)
             } finally {
                 if (it.undoAnimation) updateUndoAnimation(false)
@@ -127,7 +122,7 @@ fun BoardLayout(
         // Action Before Animation
         LaunchedEffect(key1 = it) {
             try {
-                delay(15)
+                delay(ad.beforeAction)
             } finally {
                 it.actionBeforeAnimation()
             }
@@ -135,7 +130,7 @@ fun BoardLayout(
         // Action After Animation
         LaunchedEffect(key1 = it) {
             try {
-                delay(240)
+                delay(ad.afterAction)
             } finally {
                 it.actionAfterAnimation()
             }
@@ -178,7 +173,7 @@ fun BoardLayout(
                     animate(
                         initialValue = it.flipAnimatedCards.startRotationY,
                         targetValue = it.flipAnimatedCards.endRotationY,
-                        animationSpec = getFlipAnimationSpec(250)
+                        animationSpec = tween(ad.fullInt, easing = LinearEasing)
                     ) { value, _ ->
                         flipRotation = value
                     }
@@ -192,9 +187,9 @@ fun BoardLayout(
                 animate(
                     initialValue = flipInfo.flipCardInfo.startRotationY,
                     targetValue = flipInfo.flipCardInfo.endRotationY,
-                    animationSpec = getFlipAnimationSpec(200)
+                    animationSpec = tween(ad.tableauCardFlip, easing = LinearEasing)
                 ) { value, _ ->
-                    tableauFlipRotation = value
+                    tableauCardFlipRotation = value
                 }
             }
         }
@@ -241,7 +236,7 @@ fun BoardLayout(
                         FlipCard(
                             card = info.card,
                             cardHeight = layInfo.cardHeight.toDp(),
-                            flipRotation = tableauFlipRotation,
+                            flipRotation = tableauCardFlipRotation,
                             flipCardInfo = info.flipCardInfo
                         )
                     }
@@ -255,7 +250,7 @@ fun BoardLayout(
                     pile = foundationList[index].displayPile,
                     emptyIconId = suit.emptyIcon,
                     onClick = { handleMoveResult(onFoundationClick(index)) },
-                    cardWidth = cardW
+                    cardWidth = layInfo.cardWidth.dp
                 )
             }
             SolitairePile(
@@ -266,7 +261,7 @@ fun BoardLayout(
                 emptyIconId = R.drawable.waste_empty,
                 onClick = { handleMoveResult(onWasteClick()) },
                 drawAmount = drawAmount,
-                cardWidth = cardW
+                cardWidth = layInfo.cardWidth.toDp()
             )
             SolitaireStock(
                 modifier = Modifier
@@ -275,7 +270,7 @@ fun BoardLayout(
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
                 onClick = { handleMoveResult(onStockClick(drawAmount)) },
-                cardWidth = cardW
+                cardWidth = layInfo.cardWidth.dp
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
@@ -283,6 +278,7 @@ fun BoardLayout(
                     pile = tableau.displayPile,
                     tableauIndex = index,
                     cardHeight = layInfo.cardHeight.toDp(),
+                    cardWidth = layInfo.cardWidth.dp,
                     onClick = onTableauClick,
                     handleMoveResult = handleMoveResult
                 )
@@ -722,15 +718,121 @@ fun AnimateOffset(
     }
 }
 
-private fun getFlipAnimationSpec(duration: Int): TweenSpec<Float> =
-    tween(duration, easing = LinearEasing)
+@Preview(device = "id:Nexus One")
+@Composable
+fun BoardLayout480Preview() {
+    SolitairePreview {
+        BoardLayout(
+            layInfo = LayoutInfo(LayoutPositions.Width480, 0),
+            ad = AnimationDurations.TwoHundredFifty,
+            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
+            updateAnimateInfo = { },
+            updateUndoEnabled = { },
+            undoAnimation = false,
+            updateUndoAnimation = { },
+            drawAmount = 1,
+            handleMoveResult = { },
+            stock = Stock(listOf(Card(10, Suits.CLUBS))),
+            onStockClick = { MoveResult.Move },
+            waste = Waste(),
+            stockWasteEmpty = { false },
+            onWasteClick = { MoveResult.Move },
+            foundationList = Suits.entries.map { Foundation(it) },
+            onFoundationClick = { MoveResult.Move },
+            tableauList = List(7) { Tableau.KlondikeTableau() },
+            onTableauClick = { _, _ -> MoveResult.Move }
+        )
+    }
+}
+
+@Preview(device = "id:Nexus 4")
+@Composable
+fun BoardLayout720Preview() {
+    SolitairePreview {
+        BoardLayout(
+            layInfo = LayoutInfo(LayoutPositions.Width720, 24),
+            ad = AnimationDurations.TwoHundredFifty,
+            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
+            updateAnimateInfo = { },
+            updateUndoEnabled = { },
+            undoAnimation = false,
+            updateUndoAnimation = { },
+            drawAmount = 1,
+            handleMoveResult = { },
+            stock = Stock(listOf(Card(10, Suits.CLUBS))),
+            onStockClick = { MoveResult.Move },
+            waste = Waste(),
+            stockWasteEmpty = { false },
+            onWasteClick = { MoveResult.Move },
+            foundationList = Suits.entries.map { Foundation(it) },
+            onFoundationClick = { MoveResult.Move },
+            tableauList = List(7) { Tableau.KlondikeTableau() },
+            onTableauClick = { _, _ -> MoveResult.Move }
+        )
+    }
+}
 
 @Preview
 @Composable
-fun BoardLayoutPreview() {
+fun BoardLayout1080Preview() {
     SolitairePreview {
         BoardLayout(
             layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
+            ad = AnimationDurations.TwoHundredFifty,
+            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
+            updateAnimateInfo = { },
+            updateUndoEnabled = { },
+            undoAnimation = false,
+            updateUndoAnimation = { },
+            drawAmount = 1,
+            handleMoveResult = { },
+            stock = Stock(listOf(Card(10, Suits.CLUBS))),
+            onStockClick = { MoveResult.Move },
+            waste = Waste(),
+            stockWasteEmpty = { false },
+            onWasteClick = { MoveResult.Move },
+            foundationList = Suits.entries.map { Foundation(it) },
+            onFoundationClick = { MoveResult.Move },
+            tableauList = List(7) { Tableau.KlondikeTableau() },
+            onTableauClick = { _, _ -> MoveResult.Move }
+        )
+    }
+}
+
+@Preview(device = "id:pixel_xl")
+@Composable
+fun BoardLayout1440Preview() {
+    SolitairePreview {
+        BoardLayout(
+            layInfo = LayoutInfo(LayoutPositions.Width1440, 0),
+            ad = AnimationDurations.TwoHundredFifty,
+            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
+            updateAnimateInfo = { },
+            updateUndoEnabled = { },
+            undoAnimation = false,
+            updateUndoAnimation = { },
+            drawAmount = 1,
+            handleMoveResult = { },
+            stock = Stock(listOf(Card(10, Suits.CLUBS))),
+            onStockClick = { MoveResult.Move },
+            waste = Waste(),
+            stockWasteEmpty = { false },
+            onWasteClick = { MoveResult.Move },
+            foundationList = Suits.entries.map { Foundation(it) },
+            onFoundationClick = { MoveResult.Move },
+            tableauList = List(7) { Tableau.KlondikeTableau() },
+            onTableauClick = { _, _ -> MoveResult.Move }
+        )
+    }
+}
+
+@Preview(device = "spec:width=2160px,height=3840px,dpi=640")
+@Composable
+fun BoardLayout2160Preview() {
+    SolitairePreview {
+        BoardLayout(
+            layInfo = LayoutInfo(LayoutPositions.Width2160, 0),
+            ad = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
             updateUndoEnabled = { },
