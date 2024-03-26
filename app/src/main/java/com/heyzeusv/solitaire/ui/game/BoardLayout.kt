@@ -59,7 +59,7 @@ fun BoardLayout(
 
     BoardLayout(
         layInfo = gameVM.layoutInfo,
-        ad = AnimationDurations.TwoHundredFifty,
+        animationDurations = AnimationDurations.TwoHundredFifty,
         animateInfo = animateInfo,
         updateAnimateInfo = gameVM::updateAnimateInfo,
         updateUndoEnabled = gameVM::updateUndoEnabled,
@@ -83,7 +83,7 @@ fun BoardLayout(
 @Composable
 fun BoardLayout(
     layInfo: LayoutInfo,
-    ad: AnimationDurations,
+    animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit,
     updateUndoEnabled: (Boolean) -> Unit,
@@ -102,18 +102,16 @@ fun BoardLayout(
     onTableauClick: (Int, Int) -> MoveResult,
     modifier: Modifier = Modifier
 ) {
-    var offsetX by remember(animateInfo) { mutableFloatStateOf(0f) }
-    var offsetY by remember(animateInfo) { mutableFloatStateOf(0f) }
+    var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
     var flipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
     var tableauCardFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
-    val animationSpec = tween<Float>(ad.fullInt)
 
     animateInfo?.let {
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
                 if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
-                delay(ad.full)
+                delay(animationDurations.fullDelay)
                 updateAnimateInfo(null)
             } finally {
                 if (it.undoAnimation) updateUndoAnimation(false)
@@ -122,7 +120,7 @@ fun BoardLayout(
         // Action Before Animation
         LaunchedEffect(key1 = it) {
             try {
-                delay(ad.beforeAction)
+                delay(animationDurations.beforeActionDelay)
             } finally {
                 it.actionBeforeAnimation()
             }
@@ -130,40 +128,22 @@ fun BoardLayout(
         // Action After Animation
         LaunchedEffect(key1 = it) {
             try {
-                delay(ad.afterAction)
+                delay(animationDurations.afterActionDelay)
             } finally {
                 it.actionAfterAnimation()
             }
         }
-        // Cards X Animation
-        LaunchedEffect(key1 = it) {
-            if (it.isNotMultiPile()) {
-                val offsetStart = layInfo.getPilePosition(it.start, it.stockWasteMove)
-                val offsetEnd = layInfo.getPilePosition(it.end, it.stockWasteMove)
-                animate(
-                    initialValue = offsetStart.x.toFloat(),
-                    targetValue = offsetEnd.x.toFloat(),
-                    animationSpec = animationSpec
-                ) { value, _ ->
-                    offsetX = value
-                }
-            }
-        }
-        // Cards Y Animation
-        LaunchedEffect(key1 = it) {
-            if (it.isNotMultiPile()) {
-                val offsetStart = layInfo.getPilePosition(it.start)
-                    .plus(layInfo.getCardsYOffset(it.startTableauIndices.first()))
-                val offsetEnd = layInfo.getPilePosition(it.end)
-                    .plus(layInfo.getCardsYOffset(it.endTableauIndices.first()))
-                animate(
-                    initialValue = offsetStart.y.toFloat(),
-                    targetValue = offsetEnd.y.toFloat(),
-                    animationSpec = animationSpec
-                ) { value, _ ->
-                    offsetY = value
-                }
-            }
+        if (it.isNotMultiPile()) {
+            AnimateOffset(
+                animateInfo = it,
+                animationDurations = animationDurations,
+                startOffset = layInfo.getPilePosition(it.start, it.stockWasteMove)
+                    .plus(layInfo.getCardsYOffset(it.startTableauIndices.first())),
+                endOffset = layInfo.getPilePosition(it.end, it.stockWasteMove)
+                    .plus(layInfo.getCardsYOffset(it.endTableauIndices.first())),
+                updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
+                updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
+            )
         }
         // Cards Flip Animation
         LaunchedEffect(key1 = it) {
@@ -173,7 +153,7 @@ fun BoardLayout(
                     animate(
                         initialValue = it.flipAnimatedCards.startRotationY,
                         targetValue = it.flipAnimatedCards.endRotationY,
-                        animationSpec = tween(ad.fullInt, easing = LinearEasing)
+                        animationSpec = tween(animationDurations.fullAniSpec, easing = LinearEasing)
                     ) { value, _ ->
                         flipRotation = value
                     }
@@ -183,11 +163,14 @@ fun BoardLayout(
         it.tableauCardFlipInfo?.let { flipInfo ->
             // Tableau Card Flip Animation
             LaunchedEffect(key1 = it) {
-                delay(50)
                 animate(
                     initialValue = flipInfo.flipCardInfo.startRotationY,
                     targetValue = flipInfo.flipCardInfo.endRotationY,
-                    animationSpec = tween(ad.tableauCardFlip, easing = LinearEasing)
+                    animationSpec = tween(
+                        durationMillis = animationDurations.tableauCardFlipAniSpec,
+                        delayMillis = animationDurations.tableauCardFlipDelayAniSpec,
+                        easing = LinearEasing
+                    )
                 ) { value, _ ->
                     tableauCardFlipRotation = value
                 }
@@ -213,6 +196,7 @@ fun BoardLayout(
                         MultiPileCardWithFlip(
                             layInfo = layInfo,
                             animateInfo = it,
+                            animationDurations = animationDurations,
                             pile = it.animatedCards,
                             flipRotation = flipRotation,
                             flipCardInfo = it.flipAnimatedCards,
@@ -318,14 +302,9 @@ fun BoardLayout(
             val tableauHeight = constraints.maxHeight - layInfo.tableauZero.y
             val tableauConstraints = Constraints(cardWidth, cardWidth, cardHeight, tableauHeight)
 
-            val animatedPileX = 0 + offsetX.toInt()
-            val animatedPileY = 0 + offsetY.toInt()
-
-            if (animatedPileX != 0 || animatedPileY != 0) {
-                animatedVerticalPile?.measure(tableauConstraints)
-                    ?.place(animatedPileX, animatedPileY, 2f)
-                animatedHorizontalPile?.measure(wasteConstraints)
-                    ?.place(animatedPileX, animatedPileY, 2f)
+            if (animatedOffset != IntOffset.Zero) {
+                animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
+                animatedHorizontalPile?.measure(wasteConstraints)?.place(animatedOffset, 2f)
                 animateInfo?.let {
                     it.tableauCardFlipInfo?.let { info ->
                         val pile =
@@ -508,6 +487,7 @@ fun HorizontalCardPileWithFlip(
 fun MultiPileCardWithFlip(
     layInfo: LayoutInfo,
     animateInfo: AnimateInfo,
+    animationDurations: AnimationDurations,
     pile: List<Card>,
     flipRotation: Float,
     flipCardInfo: FlipCardInfo,
@@ -523,68 +503,75 @@ fun MultiPileCardWithFlip(
 
     animateInfo.let {
         AnimateOffset(
-            pile = pile,
-            updateXOffset = { value -> tZeroCardOffset = tZeroCardOffset.copy(x = value) },
-            updateYOffset = { value -> tZeroCardOffset = tZeroCardOffset.copy(y = value) },
+            animateInfo = it,
+            animationDurations = animationDurations,
             startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauZero)
-                .plus(layInfo.getCardsYOffset(animateInfo.startTableauIndices[0])),
+                .plus(layInfo.getCardsYOffset(it.startTableauIndices[0])),
             endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauZero)
-                .plus(layInfo.getCardsYOffset(animateInfo.endTableauIndices[0]))
+                .plus(layInfo.getCardsYOffset(it.endTableauIndices[0])),
+            updateXOffset = { value -> tZeroCardOffset = tZeroCardOffset.copy(x = value) },
+            updateYOffset = { value -> tZeroCardOffset = tZeroCardOffset.copy(y = value) }
         )
         AnimateOffset(
-            pile = pile,
-            updateXOffset = { value -> tOneCardOffset = tOneCardOffset.copy(x = value) },
-            updateYOffset = { value -> tOneCardOffset = tOneCardOffset.copy(y = value) },
+            animateInfo = it,
+            animationDurations = animationDurations,
             startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauOne)
-                .plus(layInfo.getCardsYOffset(animateInfo.startTableauIndices[1])),
+                .plus(layInfo.getCardsYOffset(it.startTableauIndices[1])),
             endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauOne)
-                .plus(layInfo.getCardsYOffset(animateInfo.endTableauIndices[1]))
+                .plus(layInfo.getCardsYOffset(it.endTableauIndices[1])),
+            updateXOffset = { value -> tOneCardOffset = tOneCardOffset.copy(x = value) },
+            updateYOffset = { value -> tOneCardOffset = tOneCardOffset.copy(y = value) }
         )
         AnimateOffset(
-            pile = pile,
-            updateXOffset = { value -> tTwoCardOffset = tTwoCardOffset.copy(x = value) },
-            updateYOffset = { value -> tTwoCardOffset = tTwoCardOffset.copy(y = value) },
+            animateInfo = it,
+            animationDurations = animationDurations,
             startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauTwo)
-                .plus(layInfo.getCardsYOffset(animateInfo.startTableauIndices[2])),
+                .plus(layInfo.getCardsYOffset(it.startTableauIndices[2])),
             endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauTwo)
-                .plus(layInfo.getCardsYOffset(animateInfo.endTableauIndices[2]))
+                .plus(layInfo.getCardsYOffset(it.endTableauIndices[2])),
+            updateXOffset = { value -> tTwoCardOffset = tTwoCardOffset.copy(x = value) },
+            updateYOffset = { value -> tTwoCardOffset = tTwoCardOffset.copy(y = value) }
         )
         if (pile.size == 7) {
             AnimateOffset(
-                pile = pile,
-                updateXOffset = { value -> tThreeCardOffset = tThreeCardOffset.copy(x = value) },
-                updateYOffset = { value -> tThreeCardOffset = tThreeCardOffset.copy(y = value) },
+                animateInfo = it,
+                animationDurations = animationDurations,
                 startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauThree)
-                    .plus(layInfo.getCardsYOffset(animateInfo.startTableauIndices[3])),
+                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[3])),
                 endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauThree)
-                    .plus(layInfo.getCardsYOffset(animateInfo.endTableauIndices[3]))
+                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[3])),
+                updateXOffset = { value -> tThreeCardOffset = tThreeCardOffset.copy(x = value) },
+                updateYOffset = { value -> tThreeCardOffset = tThreeCardOffset.copy(y = value) }
             )
             AnimateOffset(
-                pile = pile,
-                updateXOffset = { value -> tFourCardOffset = tFourCardOffset.copy(x = value) },
-                updateYOffset = { value -> tFourCardOffset = tFourCardOffset.copy(y = value) },
+                animateInfo = it,
+                animationDurations = animationDurations,
                 startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauFour)
-                    .plus(layInfo.getCardsYOffset(animateInfo.startTableauIndices[4])),
+                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[4])),
                 endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauFour)
-                    .plus(layInfo.getCardsYOffset(animateInfo.endTableauIndices[4]))
+                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[4])),
+                updateXOffset = { value -> tFourCardOffset = tFourCardOffset.copy(x = value) },
+                updateYOffset = { value -> tFourCardOffset = tFourCardOffset.copy(y = value) }
             )
             AnimateOffset(
-                pile = pile,
-                updateXOffset = { value -> tFiveCardOffset = tFiveCardOffset.copy(x = value) },
-                updateYOffset = { value -> tFiveCardOffset = tFiveCardOffset.copy(y = value) },
+                animateInfo = it,
+                animationDurations = animationDurations,
                 startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauFive)
-                    .plus(layInfo.getCardsYOffset(animateInfo.startTableauIndices[5])),
+                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[5])),
                 endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauFive)
-                    .plus(layInfo.getCardsYOffset(animateInfo.endTableauIndices[5]))
+                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[5])),
+                updateXOffset = { value -> tFiveCardOffset = tFiveCardOffset.copy(x = value) },
+                updateYOffset = { value -> tFiveCardOffset = tFiveCardOffset.copy(y = value) }
             )
             AnimateOffset(
-                pile = pile,
-                updateXOffset = { value -> tSixCardOffset = tSixCardOffset.copy(x = value) },
-                updateYOffset = { value -> tSixCardOffset = tSixCardOffset.copy(y = value) },
+                animateInfo = it,
+                animationDurations = animationDurations,
                 startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauSix)
-                    .plus(layInfo.getCardsYOffset(animateInfo.startTableauIndices[6])),
+                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[6])),
                 endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauSix)
-                    .plus(layInfo.getCardsYOffset(animateInfo.endTableauIndices[6]))
+                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[6])),
+                updateXOffset = { value -> tSixCardOffset = tSixCardOffset.copy(x = value) },
+                updateYOffset = { value -> tSixCardOffset = tSixCardOffset.copy(y = value) }
             )
         }
     }
@@ -690,15 +677,16 @@ fun FlipCard(
 
 @Composable
 fun AnimateOffset(
-    pile: List<Card>,
-    updateXOffset: (Int) -> Unit,
-    updateYOffset: (Int) -> Unit,
+    animateInfo: AnimateInfo,
+    animationDurations: AnimationDurations,
     startOffset: IntOffset,
-    endOffset: IntOffset
+    endOffset: IntOffset,
+    updateXOffset: (Int) -> Unit,
+    updateYOffset: (Int) -> Unit
 ) {
-    val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
+    val animationSpec = tween<Float>(animationDurations.fullAniSpec)
 
-    LaunchedEffect(key1 = pile) {
+    LaunchedEffect(key1 = animateInfo) {
         animate(
             initialValue = startOffset.x.toFloat(),
             targetValue = endOffset.x.toFloat(),
@@ -707,7 +695,7 @@ fun AnimateOffset(
             updateXOffset(value.toInt())
         }
     }
-    LaunchedEffect(key1 = pile) {
+    LaunchedEffect(key1 = animateInfo) {
         animate(
             initialValue = startOffset.y.toFloat(),
             targetValue = endOffset.y.toFloat(),
@@ -724,7 +712,7 @@ fun BoardLayout480Preview() {
     SolitairePreview {
         BoardLayout(
             layInfo = LayoutInfo(LayoutPositions.Width480, 0),
-            ad = AnimationDurations.TwoHundredFifty,
+            animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
             updateUndoEnabled = { },
@@ -751,7 +739,7 @@ fun BoardLayout720Preview() {
     SolitairePreview {
         BoardLayout(
             layInfo = LayoutInfo(LayoutPositions.Width720, 24),
-            ad = AnimationDurations.TwoHundredFifty,
+            animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
             updateUndoEnabled = { },
@@ -778,7 +766,7 @@ fun BoardLayout1080Preview() {
     SolitairePreview {
         BoardLayout(
             layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
-            ad = AnimationDurations.TwoHundredFifty,
+            animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
             updateUndoEnabled = { },
@@ -805,7 +793,7 @@ fun BoardLayout1440Preview() {
     SolitairePreview {
         BoardLayout(
             layInfo = LayoutInfo(LayoutPositions.Width1440, 0),
-            ad = AnimationDurations.TwoHundredFifty,
+            animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
             updateUndoEnabled = { },
@@ -832,7 +820,7 @@ fun BoardLayout2160Preview() {
     SolitairePreview {
         BoardLayout(
             layInfo = LayoutInfo(LayoutPositions.Width2160, 0),
-            ad = AnimationDurations.TwoHundredFifty,
+            animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
             updateAnimateInfo = { },
             updateUndoEnabled = { },
