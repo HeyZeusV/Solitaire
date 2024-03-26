@@ -1,3 +1,8 @@
+v3.0.0
+-New: Card animations!!
+-Enhancement: Autocomplete no longer does useless moves.
+-Enhancement: Timer stops once autocomplete activates.
+
 v2.0.0
 -New: Game selection has its own screen now with some info on each game as well as a preview image.
 -New: Stats has its own screen now and any game stats can be viewed without changing game.
