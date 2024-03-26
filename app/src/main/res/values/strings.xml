@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">World Of Solitaire</string>
+    <string name="app_name">World of Solitaire</string>
     <string name="win_ad_confirm">New Game</string>
     <string name="win_ad_title">You Won!</string>
     <string name="win_ad_msg">Congratulations! Here are your stats…\nMoves: %1$s\nTime: %2$s\nScore: %3$s\nTotal Score: %4$s\n┗ Moves + Time + Score (Lower is better)\n\n*Moves and Score aren\'t updated live on scoreboard during autocomplete, but they are updated in this dialog!</string>
@@ -74,13 +74,13 @@
     <string name="about_by_name">By Jesus E. Valdes</string>
     <string name="about_changelog">Changelog</string>
     <string name="about_contact_me">Questions, comments, or concerns? \nFeel free to email me at</string>
-    <string name="about_email_link">mailto:heyzeusvapps@gmail.com?subject=Plutus\' Wallet</string>
+    <string name="about_email_link">mailto:heyzeusvapps@gmail.com?subject=World of Solitaire</string>
     <string name="about_email">heyzeusvapps@gmail.com</string>
     <string name="about_external_icons">External Icons Used</string>
     <string name="about_license">License</string>
     <string name="about_special_thanks">Special thanks to family, friends, and pets for all their support!</string>
     <string name="about_translation_warning">Google Translate was used for localization. Please let me know of any mistakes, thank you!</string>
-    <string name="about_version">v2.0.0</string>
+    <string name="about_version">v3.0.0</string>
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_privacy_policy_link">https://doc-hosting.flycricket.io/klondike-solitaire/b4a088cc-badf-42f7-b9eb-e196ca220b1b/privacy</string>
     <string name="about_icon_credit">Card Suits by Amethyst Studio (CC BY 3.0)</string>

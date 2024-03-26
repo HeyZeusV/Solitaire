@@ -8,6 +8,18 @@ import com.heyzeusv.solitaire.data.Card
  */
 class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
+    fun getCards(amount: Int): List<Card> {
+        val list = mutableListOf<Card>()
+        for (i in 1..amount) {
+            try {
+                list.add(_truePile[i - 1])
+            } catch (e: IndexOutOfBoundsException) {
+                return list
+            }
+        }
+        return list
+    }
+
     /**
      *  Removes [amount] given and returns them as a list.
      */
@@ -17,41 +29,57 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
             try {
                 list.add(remove())
             } catch (e: NoSuchElementException) {
-                return list
+                break
             }
         }
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
         return list
     }
 
     /**
-     *  Add given [cards] to [_pile].
+     *  Add given [cards] to [_truePile].
      */
-    override fun add(cards: List<Card>): Boolean {
-        return _pile.addAll(cards.map { it.copy(faceUp = false) })
+    override fun add(cards: List<Card>) {
+        _truePile.addAll(cards.map { it.copy(faceUp = false) })
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
     }
 
     /**
-     *  Remove the first [Card] in [_pile] and return it.
+     *  Remove the first [Card] in [_truePile] and return it.
      */
-    override fun remove(tappedIndex: Int): Card = _pile.removeFirst()
+    override fun remove(tappedIndex: Int): Card {
+        val removedCard = _truePile.removeFirst()
+        _displayPile.clear()
+        _displayPile.addAll(_truePile.toList())
+        return removedCard
+    }
 
     /**
-     *  Reset [_pile] using given [cards].
+     *  Reset [_truePile] using given [cards].
      */
     override fun reset(cards: List<Card>) {
-        _pile.clear()
-        add(cards)
+        animatedPiles.clear()
+        resetHistory()
+        _truePile.clear()
+        _truePile.addAll(cards)
+        _displayPile.clear()
+        _displayPile.addAll(_truePile.toList())
     }
 
     /**
-     *  Used to return [_pile] to a previous state of given [cards].
+     *  Used to return [_truePile] to a previous state.
      */
-    override fun undo(cards: List<Card>) {
-        _pile.clear()
-        if (cards.isEmpty()) return
+    override fun undo() {
+        _truePile.clear()
+        val history = retrieveHistory()
         // only last card is shown to user, this makes sure it is not visible
-        val mutableCards = cards.toMutableList()
-        mutableCards[mutableCards.size - 1] = mutableCards.last().copy(faceUp = false)
-        _pile.addAll(mutableCards)
+        if (history.isNotEmpty()) history[history.size - 1] = history.last().copy(faceUp = false)
+        _truePile.addAll(history)
+        animatedPiles.add(_truePile.toList())
+        currentStep = _truePile.toList()
     }
+
+    fun recordHistory() { currentStep = _truePile.toList() }
 }

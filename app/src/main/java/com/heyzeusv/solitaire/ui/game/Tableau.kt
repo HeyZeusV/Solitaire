@@ -34,7 +34,7 @@ fun SolitaireTableau(
     cardHeight: Dp,
     tableauIndex: Int = 0,
     pile: List<Card> = emptyList(),
-    onClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.ILLEGAL},
+    onClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal},
     handleMoveResult: (MoveResult) -> Unit = { }
 ) {
     Column(

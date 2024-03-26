@@ -56,19 +56,19 @@ class YukonViewModelTest {
         assertEquals(expectedTimer, sbVM.time.value)
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedScore, sbVM.score.value)
-        assertEquals(expectedStock, ykVM.stock.pile)
+        assertEquals(expectedStock, ykVM.stock.truePile)
         ykVM.foundation.forEach {
-            assertEquals(expectedFoundation, it.pile)
+            assertEquals(expectedFoundation, it.truePile)
         }
         ykVM.tableau.forEachIndexed { i, tableau ->
             if (i > 0) {
                 val expectedTableauSize = i + 5
-                assertEquals(expectedTableauSize, tableau.pile.size)
+                assertEquals(expectedTableauSize, tableau.truePile.size)
             } else {
-                assertEquals(1, tableau.pile.size)
+                assertEquals(1, tableau.truePile.size)
             }
         }
-        assertEquals(expectedWaste, ykVM.waste.pile)
+        assertEquals(expectedWaste, ykVM.waste.truePile)
         assertEquals(expectedHistoryList, ykVM.historyList)
         assertEquals(expectedUndoEnabled, ykVM.undoEnabled.value)
         assertEquals(expectedGameWon, ykVM.gameWon.value)
@@ -102,10 +102,10 @@ class YukonViewModelTest {
 
         val lgs = sbVM.retrieveLastGameStats(true, ykVM.autoCompleteCorrection)
 
-        assertEquals(expectedClubs, ykVM.foundation[0].pile.toList())
-        assertEquals(expectedDiamonds, ykVM.foundation[1].pile.toList())
-        assertEquals(expectedHearts, ykVM.foundation[2].pile.toList())
-        assertEquals(expectedSpades, ykVM.foundation[3].pile.toList())
+        assertEquals(expectedClubs, ykVM.foundation[0].truePile.toList())
+        assertEquals(expectedDiamonds, ykVM.foundation[1].truePile.toList())
+        assertEquals(expectedHearts, ykVM.foundation[2].truePile.toList())
+        assertEquals(expectedSpades, ykVM.foundation[3].truePile.toList())
         assertEquals(expectedSbvmMoves, sbVM.moves.value)
         assertEquals(expectedSbvmScore, sbVM.score.value)
         assertEquals(expectedFinalMoves, lgs.moves)

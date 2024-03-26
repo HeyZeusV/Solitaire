@@ -16,7 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ShapeDefaults
 import androidx.compose.material3.Text
@@ -243,7 +243,7 @@ fun GamesInfoPreview() {
                 game = Games.KLONDIKE_TURN_ONE,
                 true
             ) { }
-            Divider()
+            HorizontalDivider()
             GamesInfo(
                 game = Games.YUKON,
                 false

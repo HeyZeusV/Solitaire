@@ -65,10 +65,10 @@ class RussianViewModelTest {
 
         val lgs = sbVM.retrieveLastGameStats(true, ruVM.autoCompleteCorrection)
 
-        assertEquals(expectedClubs, ruVM.foundation[0].pile.toList())
-        assertEquals(expectedDiamonds, ruVM.foundation[1].pile.toList())
-        assertEquals(expectedHearts, ruVM.foundation[2].pile.toList())
-        assertEquals(expectedSpades, ruVM.foundation[3].pile.toList())
+        assertEquals(expectedClubs, ruVM.foundation[0].truePile.toList())
+        assertEquals(expectedDiamonds, ruVM.foundation[1].truePile.toList())
+        assertEquals(expectedHearts, ruVM.foundation[2].truePile.toList())
+        assertEquals(expectedSpades, ruVM.foundation[3].truePile.toList())
         assertEquals(expectedSbvmMoves, sbVM.moves.value)
         assertEquals(expectedSbvmScore, sbVM.score.value)
         assertEquals(expectedFinalMoves, lgs.moves)

@@ -28,7 +28,7 @@ class FoundationTest {
         // card of wrong suit and value
         foundation.add(listOf(tc.card2H))
 
-        assertEquals(expectedFoundation, foundation.pile)
+        assertEquals(expectedFoundation, foundation.truePile)
     }
 
     @Test
@@ -42,7 +42,7 @@ class FoundationTest {
 
         foundation.remove()
 
-        assertEquals(expectedFoundation, foundation.pile)
+        assertEquals(expectedFoundation, foundation.truePile)
     }
 
     @Test
@@ -56,7 +56,7 @@ class FoundationTest {
 
         foundation.reset()
 
-        assertEquals(expectedFoundation, foundation.pile)
+        assertEquals(expectedFoundation, foundation.truePile)
     }
 
     @Test
@@ -65,7 +65,7 @@ class FoundationTest {
 
         foundation.undo(listOf(tc.card1D, tc.card2D, tc.card3D))
 
-        assertEquals(expectedFoundation, foundation.pile)
+        assertEquals(expectedFoundation, foundation.truePile)
     }
 
     @Test
@@ -76,6 +76,6 @@ class FoundationTest {
 
         foundation.undo(emptyList())
 
-        assertEquals(expectedFoundation, foundation.pile)
+        assertEquals(expectedFoundation, foundation.truePile)
     }
 }

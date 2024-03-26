@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui.game
 
+import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.ResetOptions
@@ -14,10 +15,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class RussianViewModel @Inject constructor(
-    ss: ShuffleSeed
-) : GameViewModel(ss) {
+    ss: ShuffleSeed,
+    layoutInfo: LayoutInfo
+) : GameViewModel(ss, layoutInfo) {
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { Tableau.RussianTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(Tableau.RussianTableau::class)
 
     /**
      *  Autocomplete requires all Tableau piles to be all face up, single suit, and in order by

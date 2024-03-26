@@ -40,7 +40,7 @@ class EasthavenViewModelTest {
         val expectedTimer = 0L
         val expectedMoves = 0
         val expectedScore = 0
-        val expectedStock = ehVM.stock.pile.toList()
+        val expectedStock = ehVM.stock.truePile.toList()
         val expectedFoundation = emptyList<Card>()
         val expectedWaste = emptyList<Card>()
         val expectedHistoryList = emptyList<PileHistory>()
@@ -55,14 +55,14 @@ class EasthavenViewModelTest {
         assertEquals(expectedTimer, sbVM.time.value)
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedScore, sbVM.score.value)
-        assertEquals(expectedStock, ehVM.stock.pile)
+        assertEquals(expectedStock, ehVM.stock.truePile)
         ehVM.foundation.forEach {
-            assertEquals(expectedFoundation, it.pile)
+            assertEquals(expectedFoundation, it.truePile)
         }
         ehVM.tableau.forEach { tableau ->
-            assertEquals(expectedTableauSize, tableau.pile.size)
+            assertEquals(expectedTableauSize, tableau.truePile.size)
         }
-        assertEquals(expectedWaste, ehVM.waste.pile)
+        assertEquals(expectedWaste, ehVM.waste.truePile)
         assertEquals(expectedHistoryList, ehVM.historyList)
         assertEquals(expectedUndoEnabled, ehVM.undoEnabled.value)
         assertEquals(expectedGameWon, ehVM.gameWon.value)
@@ -71,7 +71,7 @@ class EasthavenViewModelTest {
 
         // reset/restart options do nothing to rest of values, only to game deck order
         ehVM.resetAll(ResetOptions.NEW)
-        Assert.assertNotEquals(expectedStock, ehVM.stock.pile)
+        Assert.assertNotEquals(expectedStock, ehVM.stock.truePile)
     }
 
     @Test
@@ -92,7 +92,7 @@ class EasthavenViewModelTest {
         sbVM.handleMoveResult(ehVM.onStockClick(1))
 
         ehVM.tableau.forEachIndexed { i, tableau ->
-            assertEquals(expectedTableau[i], tableau.pile.toList())
+            assertEquals(expectedTableau[i], tableau.truePile.toList())
         }
         assertEquals(expectedMoves, sbVM.moves.value)
     }

@@ -19,12 +19,37 @@ enum class Suits(
     @StringRes val suit: Int,
     val color: Color,
     @DrawableRes val icon: Int,
-    @DrawableRes val emptyIcon: Int
+    @DrawableRes val emptyIcon: Int,
+    val gamePile: GamePiles
 ) {
-    CLUBS(R.string.suits_clubs, Color.Black, R.drawable.suit_club, R.drawable.foundation_club_empty),
-    DIAMONDS(R.string.suits_diamonds, Color.Red, R.drawable.suit_diamond, R.drawable.foundation_diamond_empty),
-    HEARTS(R.string.suits_hearts, Color.Red, R.drawable.suit_heart, R.drawable.foundation_heart_empty),
-    SPADES(R.string.suits_spades, Color.Black, R.drawable.suit_spade, R.drawable.foundation_spade_empty)
+    CLUBS(
+        R.string.suits_clubs,
+        Color.Black,
+        R.drawable.suit_club,
+        R.drawable.foundation_club_empty,
+        GamePiles.ClubsFoundation
+    ),
+    DIAMONDS(
+        R.string.suits_diamonds,
+        Color.Red,
+        R.drawable.suit_diamond,
+        R.drawable.foundation_diamond_empty,
+        GamePiles.DiamondsFoundation
+    ),
+    HEARTS(
+        R.string.suits_hearts,
+        Color.Red,
+        R.drawable.suit_heart,
+        R.drawable.foundation_heart_empty,
+        GamePiles.HeartsFoundation
+    ),
+    SPADES(
+        R.string.suits_spades,
+        Color.Black,
+        R.drawable.suit_spade,
+        R.drawable.foundation_spade_empty,
+        GamePiles.SpadesFoundation
+    )
 }
 
 /**
@@ -148,16 +173,16 @@ enum class MaxScore(val amount: Int) {
 }
 
 /**
- *  Enum class that will be used to determine Scoreboard action after user makes a move. [MOVE] will
- *  only increase moves value, [MOVE_SCORE] will increase both moves and score values,
- *  [MOVE_MINUS_SCORE] increases moves but decreases score, and nothing
- *  will change when [ILLEGAL].
+ *  Enum class that will be used to determine Scoreboard action after user makes a move. [Move] will
+ *  only increase moves value, [MoveScore] will increase both moves and score values,
+ *  [MoveMinusScore] increases moves but decreases score, and nothing
+ *  will change when [Illegal].
  */
 enum class MoveResult {
-    MOVE,
-    MOVE_SCORE,
-    MOVE_MINUS_SCORE,
-    ILLEGAL
+    Move,
+    MoveScore,
+    MoveMinusScore,
+    Illegal
 }
 
 /**
@@ -174,3 +199,21 @@ enum class MenuState(
     STATS(R.string.menu_button_stats, R.drawable.button_menu_stats, R.string.menu_cdesc_stats),
     ABOUT(R.string.menu_button_about, R.drawable.button_menu_about, R.string.menu_cdesc_about)
 }
+
+enum class GamePiles {
+    Stock,
+    Waste,
+    ClubsFoundation,
+    DiamondsFoundation,
+    HeartsFoundation,
+    SpadesFoundation,
+    TableauZero,
+    TableauOne,
+    TableauTwo,
+    TableauThree,
+    TableauFour,
+    TableauFive,
+    TableauSix,
+    TableauAll
+}
+

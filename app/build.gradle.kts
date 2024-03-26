@@ -31,8 +31,8 @@ android {
         applicationId = "com.heyzeusv.solitaire"
         minSdk = 24
         targetSdk = 34
-        versionCode = 12
-        versionName = "2.0.0"
+        versionCode = 13
+        versionName = "3.0.0"
 
         testInstrumentationRunner = "com.heyzeusv.solitaire.util.CustomTestRunner"
         vectorDrawables {
@@ -75,9 +75,11 @@ android {
 }
 
 dependencies {
-    val compose = "2024.02.01"
+    val compose = "2024.02.02"
     val hiltVersion = "2.50"
     val lifecycleVersion = "2.7.0"
+
+    implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.20")
 
     implementation("androidx.core:core-ktx:1.12.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")

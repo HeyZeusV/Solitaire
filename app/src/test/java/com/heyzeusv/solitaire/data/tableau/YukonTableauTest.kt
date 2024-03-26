@@ -33,7 +33,7 @@ class YukonTableauTest {
             tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4H
         ))
 
-        assertEquals(expectedPile, tableau.pile)
+        assertEquals(expectedPile, tableau.truePile)
         assertEquals(expectedFaceDownExists, tableau.faceDownExists())
     }
 
@@ -44,7 +44,7 @@ class YukonTableauTest {
 
         tableau.reset(listOf(tc.card4H))
 
-        assertEquals(expectedPile, tableau.pile)
+        assertEquals(expectedPile, tableau.truePile)
         assertEquals(expectedFaceDownExists, tableau.faceDownExists())
     }
 }

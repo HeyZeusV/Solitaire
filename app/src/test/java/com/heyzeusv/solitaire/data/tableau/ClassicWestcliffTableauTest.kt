@@ -22,6 +22,6 @@ class ClassicWestcliffTableauTest {
 
         tableau.add(expectedPile)
 
-        assertEquals(expectedPile, tableau.pile.toList())
+        assertEquals(expectedPile, tableau.truePile.toList())
     }
 }

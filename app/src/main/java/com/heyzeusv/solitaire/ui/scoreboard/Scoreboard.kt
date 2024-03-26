@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -17,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.formatTimeDisplay
 import com.heyzeusv.solitaire.util.theme.scoreboardText
@@ -27,6 +29,7 @@ import com.heyzeusv.solitaire.util.theme.scoreboardText
 @Composable
 fun SolitaireScoreboard(
     sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
     modifier: Modifier = Modifier
 ) {
     // stats
@@ -34,8 +37,11 @@ fun SolitaireScoreboard(
     val timer by sbVM.time.collectAsState()
     val score by sbVM.score.collectAsState()
 
+    val autoCompleteActive by gameVM.autoCompleteActive.collectAsState()
+
     // start timer once user makes a move
     if (moves == 1 && sbVM.jobIsCancelled()) sbVM.startTimer()
+    LaunchedEffect(key1 = autoCompleteActive) { if (autoCompleteActive) sbVM.pauseTimer() }
 
     SolitaireScoreboard(
         modifier = modifier,

@@ -27,8 +27,8 @@ class CanberraAndScoreboardViewModelTest {
     @Test
     fun canSbVmOnStockClickStockEmpty() {
         val expectedStockBefore = emptyList<Card>()
-        val expectedStockAfter = canVM.stock.pile.toList()
-        val expectedWastePileBefore = canVM.stock.pile.map { it.copy(faceUp = true) }
+        val expectedStockAfter = canVM.stock.truePile.toList()
+        val expectedWastePileBefore = canVM.stock.truePile.map { it.copy(faceUp = true) }
         val expectedWastePileAfter = emptyList<Card>()
         val expectedMoves = 25
         val expectedHistoryListSize = 15
@@ -38,13 +38,13 @@ class CanberraAndScoreboardViewModelTest {
         // draw 24 Cards
         canVM.apply { for (i in 1..24) sbVM.handleMoveResult(onStockClick(1)) }
 
-        assertEquals(expectedStockBefore, canVM.stock.pile.toList())
-        assertEquals(expectedWastePileBefore, canVM.waste.pile.toList())
+        assertEquals(expectedStockBefore, canVM.stock.truePile.toList())
+        assertEquals(expectedWastePileBefore, canVM.waste.truePile.toList())
 
         sbVM.handleMoveResult(canVM.onStockClick(1))
 
-        assertEquals(expectedStockAfter, canVM.stock.pile.toList())
-        assertEquals(expectedWastePileAfter, canVM.waste.pile.toList())
+        assertEquals(expectedStockAfter, canVM.stock.truePile.toList())
+        assertEquals(expectedWastePileAfter, canVM.waste.truePile.toList())
         assertEquals(expectedMoves, sbVM.moves.value)
         assertEquals(expectedHistoryListSize, canVM.historyList.size)
         assertEquals(expectedHistoryListSize, sbVM.historyList.size)

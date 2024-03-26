@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.ui.game
 
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.ClassicWestcliffTableau
@@ -17,8 +18,9 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ClassicWestcliffViewModel @Inject constructor(
-    ss: ShuffleSeed
-) : GameViewModel(ss) {
+    ss: ShuffleSeed,
+    layoutInfo: LayoutInfo
+) : GameViewModel(ss, layoutInfo) {
 
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
@@ -26,7 +28,7 @@ class ClassicWestcliffViewModel @Inject constructor(
     // 48 due to Aces starting in Foundation piles
     override var baseDeck: MutableList<Card> = MutableList(48) { Card((it % 12) + 1, getSuit(it)) }
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { ClassicWestcliffTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(ClassicWestcliffTableau::class)
 
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
@@ -35,7 +37,7 @@ class ClassicWestcliffViewModel @Inject constructor(
     override fun reset(resetOption: ResetOptions) {
         super.reset(resetOption)
 
-        _foundation.forEach { it.add(listOf(Card(0, it.suit, faceUp = true))) }
+        _foundation.forEach { it.reset(listOf(Card(0, it.suit, faceUp = true))) }
     }
 
     /**

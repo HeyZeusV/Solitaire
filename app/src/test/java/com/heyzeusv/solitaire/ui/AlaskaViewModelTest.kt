@@ -65,10 +65,10 @@ class AlaskaViewModelTest {
 
         val lgs = sbVM.retrieveLastGameStats(true, akVM.autoCompleteCorrection)
 
-        assertEquals(expectedClubs, akVM.foundation[0].pile.toList())
-        assertEquals(expectedDiamonds, akVM.foundation[1].pile.toList())
-        assertEquals(expectedHearts, akVM.foundation[2].pile.toList())
-        assertEquals(expectedSpades, akVM.foundation[3].pile.toList())
+        assertEquals(expectedClubs, akVM.foundation[0].truePile.toList())
+        assertEquals(expectedDiamonds, akVM.foundation[1].truePile.toList())
+        assertEquals(expectedHearts, akVM.foundation[2].truePile.toList())
+        assertEquals(expectedSpades, akVM.foundation[3].truePile.toList())
         assertEquals(expectedSbvmMoves, sbVM.moves.value)
         assertEquals(expectedSbvmScore, sbVM.score.value)
         assertEquals(expectedFinalMoves, lgs.moves)

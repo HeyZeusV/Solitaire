@@ -1,7 +1,13 @@
 package com.heyzeusv.solitaire.util
 
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.PointerEventPass
+import androidx.compose.ui.input.pointer.PointerInputChange
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
-import com.heyzeusv.solitaire.data.Card
 import java.text.DecimalFormat
 
 fun Long.formatTimeDisplay(): String {
@@ -43,8 +49,24 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
     return df.format(scorePercent)
 }
 
-/**
- *  Used to compare Pile lists which are SnapshotStateList internally but displayed as Lists,
- *  so need to cast to List when comparing.
- */
-fun List<Card>.isNotEqual(list: List<Card>): Boolean = this.toList() != list.toList()
+fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)
+
+@Composable
+fun Int.toDp() = with(LocalDensity.current) { this@toDp.toDp() }
+
+// https://stackoverflow.com/a/69146178
+fun Modifier.gesturesDisabled(disabled: Boolean = true) =
+    if (disabled) {
+        pointerInput(Unit) {
+            awaitPointerEventScope {
+                // we should wait for all new pointer events
+                while (true) {
+                    awaitPointerEvent(pass = PointerEventPass.Initial)
+                        .changes
+                        .forEach(PointerInputChange::consume)
+                }
+            }
+        }
+    } else {
+        this
+    }

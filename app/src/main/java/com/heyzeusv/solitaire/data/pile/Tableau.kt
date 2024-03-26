@@ -1,26 +1,29 @@
 package com.heyzeusv.solitaire.data.pile
 
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.FlipCardInfo
+import com.heyzeusv.solitaire.data.TableauCardFlipInfo
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
 
 /**
  *  Sealed class containing all possible options of [Tableau] piles. Each game has its own set of
  *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
- *  condition to add a new pile to the end of [_pile].
+ *  condition to add a new pile to the end of [_truePile].
  */
-sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
+sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPile) {
     /**
      *  KlondikeTableauTest contains test for most functions while each individual *TableauTest test
      *  reset() and add() only.
      */
-    class KlondikeTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class KlondikeTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 1
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
-    class ClassicWestcliffTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class ClassicWestcliffTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 1
         override val anyCardEmptyPile: Boolean = true
 
@@ -28,7 +31,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
-    class EasthavenTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class EasthavenTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 1
         override val anyCardEmptyPile: Boolean = true
 
@@ -38,16 +41,16 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
 
         override fun addListCondition(cards: List<Card>): Boolean = notInOrderOrAltColor(cards)
 
-        fun addFromStock(cards: List<Card>) { _pile.addAll(cards.map { it.copy(faceUp = true) }) }
+        fun addFromStock(cards: List<Card>) { add(cards.map { it.copy(faceUp = true) }) }
     }
-    class YukonTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class YukonTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
             return cFirst.suit.color != pLast.suit.color && cFirst.value == pLast.value - 1
         }
     }
-    class AlaskaTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class AlaskaTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
@@ -55,7 +58,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
                     (cFirst.value == pLast.value - 1 || cFirst.value == pLast.value + 1)
         }
     }
-    class RussianTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class RussianTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 5
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
@@ -67,7 +70,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
      *
      *  Also used by Canberra
      */
-    class AustralianPatienceTableau(initialPile: List<Card> = emptyList()): Tableau(initialPile) {
+    class AustralianPatienceTableau(gamePile: GamePiles = GamePiles.Stock, initialPile: List<Card> = emptyList()): Tableau(gamePile, initialPile) {
         override val resetFaceUpAmount: Int = 4
 
         override fun addCondition(cFirst: Card, pLast: Card): Boolean {
@@ -86,7 +89,7 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
     protected open val anyCardEmptyPile: Boolean = false
 
     /**
-     *  Each game has their own version to adding new [Card]s to [_pile]. This is used in [add] to
+     *  Each game has their own version to adding new [Card]s to [_truePile]. This is used in [add] to
      *  determine if cads should be added.
      */
     abstract fun addCondition(cFirst: Card, pLast: Card): Boolean
@@ -97,26 +100,28 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
     protected open fun addListCondition(cards: List<Card>): Boolean = false
 
     /**
-     *  Attempts to add given [cards] to [_pile] depending on [addCondition].
+     *  Attempts to add given [cards] to [_truePile] depending on [addCondition].
      */
-    override fun add(cards: List<Card>): Boolean {
+    override fun add(cards: List<Card>) {
+        _truePile.addAll(cards)
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
+    }
+
+    fun canAdd(cards:List<Card>): Boolean {
         if (cards.isEmpty()) return false
         if (addListCondition(cards)) return false
 
         val cFirst = cards.first()
         // can't add a card to its own pile
-        _pile.run {
+        _truePile.run {
             if (contains(cFirst)) return false
             if (isNotEmpty()) {
                 val pLast = last()
-                if (addCondition(cFirst, pLast)) {
-                    addAll(cards)
-                    return true
-                }
-            // add cards if pile is empty and first card of given cards is the highest value (King)
-            // or if any card is allowed to start a new pile
+                if (addCondition(cFirst, pLast)) return true
+                // add cards if pile is empty and first card of given cards is the highest value (King)
+                // or if any card is allowed to start a new pile
             } else if ((cFirst.value == 12 || anyCardEmptyPile)) {
-                addAll(cards)
                 return true
             }
             return false
@@ -124,24 +129,28 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
     }
 
     /**
-     *  Removes all cards from [_pile] starting from [tappedIndex] to the end of [_pile] and flips
-     *  the last card if any.
+     *  Removes all cards from [_truePile] starting from [tappedIndex] to the end of [_truePile] and
+     *  flips the last card if any.
      */
     override fun remove(tappedIndex: Int): Card {
-        _pile.run {
+        _truePile.run {
             subList(tappedIndex, size).clear()
             // flip last card up
             if (isNotEmpty() && !last().faceUp) this[size - 1] = last().copy(faceUp = true)
         }
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
         // return value isn't used
         return Card(0, Suits.SPADES, false)
     }
 
     /**
-     *  Reset [_pile] to initial game state.
+     *  Reset [_truePile] to initial game state.
      */
     override fun reset(cards: List<Card>) {
-        _pile.run {
+        animatedPiles.clear()
+        resetHistory()
+        _truePile.run {
             clear()
             addAll(cards)
             for (i in cards.size.downTo(cards.size - resetFaceUpAmount + 1)) {
@@ -151,33 +160,53 @@ sealed class Tableau(initialPile: List<Card>) : Pile(initialPile) {
                     break
                 }
             }
+            _displayPile.clear()
+            _displayPile.addAll(_truePile.toList())
+            currentStep = this.toList()
         }
     }
 
-    override fun undo(cards: List<Card>) {
-       _pile.run {
-            clear()
-            if (cards.isEmpty()) return
-            addAll(cards)
+    override fun undo() {
+        _truePile.clear()
+        val history = retrieveHistory()
+        _truePile.addAll(history)
+        animatedPiles.add(_truePile.toList())
+        currentStep = _truePile.toList()
+    }
+
+    fun getTableauCardFlipInfo(cardIndex: Int): TableauCardFlipInfo? {
+        val lastTableauCard: Card
+        try {
+            lastTableauCard = _truePile[cardIndex - 1]
+        } catch (e: IndexOutOfBoundsException) {
+            return null
         }
+        if (lastTableauCard.faceUp) return null
+
+        return TableauCardFlipInfo(
+            card = _truePile[cardIndex - 1],
+            cardIndex = cardIndex - 1,
+            flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
+            remainingPile = _truePile.toList().subList(0, cardIndex - 1)
+        )
     }
 
     /**
      *  Used to determine if game could be auto completed by having all face up cards
      */
-    fun faceDownExists(): Boolean = _pile.any { !it.faceUp }
+    fun faceDownExists(): Boolean = _truePile.any { !it.faceUp }
 
     /**
      *  Used to determine if pile contains more than 1 [Suits] type.
      */
-    fun isMultiSuit(): Boolean = _pile.map { it.suit }.distinct().size > 1
+    fun isMultiSuit(): Boolean = _truePile.map { it.suit }.distinct().size > 1
 
     /**
      *  It is possible for pile to be same suit, but out of order. This checks if pile is not in
      *  order descending, this way autocomplete will not be stuck in an infinite loop.
      */
     fun notInOrder(): Boolean {
-        val it = _pile.iterator()
+        val it = _truePile.iterator()
         if (!it.hasNext()) return false
         var current = it.next()
         while (true) {

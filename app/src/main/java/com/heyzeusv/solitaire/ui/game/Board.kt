@@ -102,7 +102,7 @@ fun SolitaireBoard(
                 Suits.entries.forEachIndexed { index, suit ->
                     SolitairePile(
                         modifier = rowModifier.testTag("Foundation #$index"),
-                        pile = foundationList[index].pile,
+                        pile = foundationList[index].truePile,
                         emptyIconId = suit.emptyIcon,
                         onClick = { handleMoveResult(onFoundationClick(index)) },
                         cardWidth = cardWidth
@@ -114,7 +114,7 @@ fun SolitaireBoard(
                         .weight(if (drawAmount == 1) 1f else 2.04f)
                         .height(cardHeight)
                         .testTag("Waste"),
-                    pile = waste.pile,
+                    pile = waste.truePile,
                     emptyIconId = R.drawable.waste_empty,
                     onClick = { handleMoveResult(onWasteClick()) },
                     drawAmount = drawAmount,
@@ -122,7 +122,7 @@ fun SolitaireBoard(
                 )
                 SolitaireStock(
                     modifier = rowModifier.testTag("Stock"),
-                    pile = stock.pile,
+                    pile = stock.truePile,
                     stockWasteEmpty = stockWasteEmpty,
                     onClick = { handleMoveResult(onStockClick(drawAmount)) },
                     cardWidth = cardWidth
@@ -137,7 +137,7 @@ fun SolitaireBoard(
                 tableauList.forEachIndexed { index, tableau ->
                     SolitaireTableau(
                         modifier = Modifier.weight(1f),
-                        pile = tableau.pile,
+                        pile = tableau.truePile,
                         tableauIndex = index,
                         cardHeight = cardHeight,
                         onClick = onTableauClick,
@@ -159,24 +159,24 @@ fun SolitaireBoardPreview() {
             drawAmount = 1,
             handleMoveResult = { },
             stock = Stock(listOf(bCard, rCard, bCard)),
-            onStockClick = { MoveResult.ILLEGAL },
+            onStockClick = { MoveResult.Illegal },
             waste = Waste(listOf(bCard, rCard, bCard)),
             stockWasteEmpty = { true },
-            onWasteClick = { MoveResult.ILLEGAL },
+            onWasteClick = { MoveResult.Illegal },
             foundationList = listOf(
                 Foundation(Suits.CLUBS, listOf(bCard)),
                 Foundation(Suits.DIAMONDS, listOf(rCard)),
                 Foundation(Suits.HEARTS, listOf(rCard, bCard)),
                 Foundation(Suits.SPADES, emptyList())
             ),
-            onFoundationClick = { _ -> MoveResult.ILLEGAL},
+            onFoundationClick = { _ -> MoveResult.Illegal},
             tableauList = listOf(
-                KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)),
-                KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)),
-                KlondikeTableau(listOf(bCard)), KlondikeTableau(listOf(rCard)),
-                KlondikeTableau(listOf(bCard))
+                KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
+                KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
+                KlondikeTableau(initialPile = listOf(bCard)), KlondikeTableau(initialPile = listOf(rCard)),
+                KlondikeTableau(initialPile = listOf(bCard))
             ),
-            onTableauClick = { _, _ -> MoveResult.ILLEGAL}
+            onTableauClick = { _, _ -> MoveResult.Illegal}
         )
     }
 }

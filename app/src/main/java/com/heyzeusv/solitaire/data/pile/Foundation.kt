@@ -13,34 +13,51 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
      *  Adds first card of given [cards] if it matches this [Foundation]'s [suit] and its value
      *  matches what is required next in the sequence. Returns true if added.
      */
-    override fun add(cards: List<Card>): Boolean {
+    override fun add(cards: List<Card>) {
+        _truePile.add(cards.first())
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
+    }
+
+    fun canAdd(cards:List<Card>): Boolean {
         if (cards.isEmpty()) return false
         val card = cards[0]
-        if (card.suit == suit && card.value == pile.size) {
-            _pile.add(card)
-            return true
-        }
-        return false
+        return card.suit == suit && card.value == truePile.size
     }
 
     /**
-     *  Removes the last [Card] in [_pile] which would refer to the top showing card and return it.
+     *  Removes the last [Card] in [_truePile] which would refer to the top showing card and return it.
      */
-    override fun remove(tappedIndex: Int): Card = _pile.removeLast()
-
-    /**
-     *  Reset [_pile] using given [cards].
-     */
-    override fun reset(cards: List<Card>) = _pile.clear()
-
-    /**
-     *  Used to return [_pile] to a previous state of given [cards].
-     */
-    override fun undo(cards: List<Card>) {
-        _pile.clear()
-        if (cards.isEmpty()) return
-        _pile.addAll(cards)
+    override fun remove(tappedIndex: Int): Card {
+        val removedCard = _truePile.removeLast()
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
+        return removedCard
     }
 
-    override fun toString(): String = "${suit.name}: ${pile.toList()}"
+    /**
+     *  Reset [_truePile] using given [cards].
+     */
+    override fun reset(cards: List<Card>) {
+        animatedPiles.clear()
+        resetHistory()
+        _truePile.clear()
+        _truePile.addAll(cards)
+        _displayPile.clear()
+        _displayPile.addAll(cards)
+        currentStep = cards
+    }
+
+    /**
+     *  Used to return [_truePile] to a previous state.
+     */
+    override fun undo() {
+        _truePile.clear()
+        val history = retrieveHistory()
+        _truePile.addAll(history)
+        animatedPiles.add(_truePile.toList())
+        currentStep = _truePile.toList()
+    }
+
+    override fun toString(): String = "${suit.name}: ${truePile.toList()}"
 }

@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui.game
 
+import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.ResetOptions
@@ -14,13 +15,14 @@ import javax.inject.Inject
  */
 @HiltViewModel
 open class YukonViewModel @Inject constructor(
-    ss: ShuffleSeed
-) : GameViewModel(ss) {
+    ss: ShuffleSeed,
+    layoutInfo: LayoutInfo
+) : GameViewModel(ss, layoutInfo) {
 
     override val baseRedealAmount: Int = 0
     override var redealLeft: Int = 0
 
-    override val _tableau: MutableList<Tableau> = MutableList(7) { Tableau.YukonTableau() }
+    override val _tableau: MutableList<Tableau> = initializeTableau(Tableau.YukonTableau::class)
 
     /**
      *  Autocomplete requires all Tableau piles to be all face up and in order by value descending.
