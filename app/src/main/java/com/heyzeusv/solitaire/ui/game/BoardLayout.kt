@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
-import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
@@ -42,7 +41,6 @@ import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
-import com.heyzeusv.solitaire.util.toDp
 import kotlinx.coroutines.delay
 
 @Composable
@@ -228,38 +226,37 @@ fun BoardLayout(
                     modifier = Modifier
                         .layoutId("${suit.name} Foundation")
                         .testTag("Foundation #$index"),
+                    cardDpSize = layInfo.getCardDpSize(),
                     pile = foundationList[index].displayPile,
                     emptyIconId = suit.emptyIcon,
-                    onClick = { handleMoveResult(onFoundationClick(index)) },
-                    cardWidth = layInfo.cardWidth.dp
+                    onClick = { handleMoveResult(onFoundationClick(index)) }
                 )
             }
             SolitairePile(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
+                cardDpSize = layInfo.getCardDpSize(),
                 pile = waste.displayPile,
                 emptyIconId = R.drawable.waste_empty,
                 onClick = { handleMoveResult(onWasteClick()) },
-                drawAmount = drawAmount,
-                cardWidth = layInfo.cardWidth.toDp()
+                drawAmount = drawAmount
             )
             SolitaireStock(
                 modifier = Modifier
                     .layoutId("Stock")
                     .testTag("Stock"),
+                cardDpSize = layInfo.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { handleMoveResult(onStockClick(drawAmount)) },
-                cardWidth = layInfo.cardWidth.dp
+                onClick = { handleMoveResult(onStockClick(drawAmount)) }
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
+                    cardDpSize = layInfo.getCardDpSize(),
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    cardHeight = layInfo.cardHeight.toDp(),
-                    cardWidth = layInfo.cardWidth.dp,
                     onClick = onTableauClick,
                     handleMoveResult = handleMoveResult
                 )
