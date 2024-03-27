@@ -142,7 +142,7 @@ abstract class GameViewModel (
                 start = GamePiles.Stock,
                 end = GamePiles.Waste,
                 animatedCards = cards,
-                flipAnimatedCards = FlipCardInfo.FaceUp.SinglePile,
+                flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
                 stockWasteMove = true
             )
             aniInfo.actionBeforeAnimation = {
@@ -167,7 +167,7 @@ abstract class GameViewModel (
                 start = GamePiles.Waste,
                 end = GamePiles.Stock,
                 animatedCards = listOf(cards.last()),
-                flipAnimatedCards = FlipCardInfo.FaceDown.SinglePile,
+                flipCardInfo = FlipCardInfo.FaceDown.SinglePile,
                 stockWasteMove = true
             )
             aniInfo.actionBeforeAnimation = {

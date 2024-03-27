@@ -8,7 +8,7 @@ data class AnimateInfo(
     val animatedCards: List<Card>,
     val startTableauIndices: List<Int> = List(7) { 0 },
     val endTableauIndices: List<Int> = List(7) { 0 },
-    val flipAnimatedCards: FlipCardInfo = FlipCardInfo.NoFlip,
+    val flipCardInfo: FlipCardInfo = FlipCardInfo.NoFlip,
     val stockWasteMove: Boolean = false,
     val tableauCardFlipInfo: TableauCardFlipInfo? = null,
     val undoAnimation: Boolean = false
@@ -22,7 +22,7 @@ data class AnimateInfo(
         animatedCards = animatedCards,
         startTableauIndices = endTableauIndices,
         endTableauIndices = startTableauIndices,
-        flipAnimatedCards = flipAnimatedCards.getUndoFlipCardInfo(),
+        flipCardInfo = flipCardInfo.getUndoFlipCardInfo(),
         stockWasteMove = stockWasteMove,
         tableauCardFlipInfo = tableauCardFlipInfo?.copy(
             flipCardInfo = tableauCardFlipInfo.flipCardInfo.getUndoFlipCardInfo()
@@ -34,8 +34,8 @@ data class AnimateInfo(
 }
 
 data class TableauCardFlipInfo(
-    val card: Card,
-    val cardIndex: Int,
+    val flipCard: Card,
+    val flipCardIndex: Int,
     val flipCardInfo: FlipCardInfo,
     val remainingPile: List<Card>
 )

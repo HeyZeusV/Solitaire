@@ -41,7 +41,7 @@ class EasthavenViewModel @Inject constructor(
                 end = GamePiles.TableauAll,
                 endTableauIndices = tableauIndices,
                 animatedCards = stockCards,
-                flipAnimatedCards = FlipCardInfo.FaceUp.MultiPile
+                flipCardInfo = FlipCardInfo.FaceUp.MultiPile
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {

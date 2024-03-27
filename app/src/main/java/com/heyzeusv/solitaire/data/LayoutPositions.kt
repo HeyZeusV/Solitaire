@@ -1,16 +1,18 @@
 package com.heyzeusv.solitaire.data
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.plusX
+import com.heyzeusv.solitaire.util.toDp
 
 data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: Int) {
 //    val layoutWidth: Int = layPos.layoutWidth
 //    val layoutPadding: Int = layPos.layoutPadding
     val cardWidth: Int = layPos.cardWidth
     val cardHeight: Int = layPos.cardHeight
-    val cardDimens: CardDimens = CardDimens(layPos.cardWidth, layPos.cardHeight)
     private val cardSpacing: Int = layPos.cardSpacing
     val clubsFoundation: IntOffset = layPos.clubsFoundation.plusX(xWidth)
     val diamondsFoundation: IntOffset = layPos.diamondsFoundation.plusX(xWidth)
@@ -96,9 +98,10 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
             )
         }
     }
-}
 
-data class CardDimens(val width: Int, val height: Int)
+    @Composable
+    fun getCardDpSize(): DpSize = DpSize(cardWidth.toDp(), cardHeight.toDp())
+}
 
 data class HorizontalCardOffsets(
     val leftCardStartOffset: IntOffset,

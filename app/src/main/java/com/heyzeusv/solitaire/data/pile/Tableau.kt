@@ -184,8 +184,8 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
         if (lastTableauCard.faceUp) return null
 
         return TableauCardFlipInfo(
-            card = _truePile[cardIndex - 1],
-            cardIndex = cardIndex - 1,
+            flipCard = _truePile[cardIndex - 1],
+            flipCardIndex = cardIndex - 1,
             flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
             remainingPile = _truePile.toList().subList(0, cardIndex - 1)
         )
