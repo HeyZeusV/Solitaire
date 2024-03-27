@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.ui.game
 
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -186,9 +185,9 @@ fun BoardLayout(
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
                         HorizontalCardPileWithFlip(
                             layInfo = layInfo,
-                            pile = it.animatedCards,
+                            animateInfo = it,
+                            animateDurations = animationDurations,
                             flipRotation = flipRotation,
-                            flipCardInfo = it.flipAnimatedCards,
                             modifier = Modifier.layoutId("Animated Horizontal Pile")
                         )
                     }
@@ -269,7 +268,6 @@ fun BoardLayout(
             }
         }
     ) { measurables, constraints ->
-
         val clubsFoundation = measurables.firstOrNull { it.layoutId == "CLUBS Foundation" }
         val diamondsFoundation = measurables.firstOrNull { it.layoutId == "DIAMONDS Foundation" }
         val heartsFoundation = measurables.firstOrNull { it.layoutId == "HEARTS Foundation" }
@@ -369,116 +367,90 @@ fun VerticalCardPileCanFlip(
 @Composable
 fun HorizontalCardPileWithFlip(
     layInfo: LayoutInfo,
-    pile: List<Card>,
+    animateInfo: AnimateInfo,
+    animateDurations: AnimationDurations,
     flipRotation: Float,
-    flipCardInfo: FlipCardInfo,
     modifier: Modifier
 ) {
-    var leftCardXOffset by remember { mutableFloatStateOf(0f) }
-    var middleCardXOffset by remember { mutableFloatStateOf(0f) }
-    var rightCardXOffset by remember { mutableFloatStateOf(0f) }
-    val animationSpec = tween<Float>(250, easing = FastOutSlowInEasing)
+    animateInfo.let {
+        var leftCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var middleCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var rightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        val offsets = layInfo.getHorizontalCardOffsets(it.flipAnimatedCards)
 
-    if (pile.size >= 3) {
-        LaunchedEffect(key1 = pile) {
-            val initialValue: Float
-            val targetValue: Float
-            if (flipCardInfo is FlipCardInfo.FaceDown) {
-                initialValue = layInfo.leftCardXOffset
-                targetValue = 0f
-            } else {
-                initialValue = 0f
-                targetValue = layInfo.leftCardXOffset
-            }
-            animate(
-                initialValue = initialValue,
-                targetValue = targetValue,
-                animationSpec = animationSpec
-            ) { value, _ ->
-                leftCardXOffset = value
-            }
-        }
-    }
-    if (pile.size >= 2) {
-        val initialValue: Float
-        val targetValue: Float
-        if (flipCardInfo is FlipCardInfo.FaceDown) {
-            initialValue = layInfo.middleCardXOffset
-            targetValue = 0f
-        } else {
-            initialValue = 0f
-            targetValue = layInfo.middleCardXOffset
-        }
-        LaunchedEffect(key1 = pile) {
-            animate(
-                initialValue = initialValue,
-                targetValue = targetValue,
-                animationSpec = animationSpec
-            ) { value, _ ->
-                middleCardXOffset = value
-            }
-        }
-    }
-    if (pile.isNotEmpty()) {
-        LaunchedEffect(key1 = pile) {
-            val initialValue: Float
-            val targetValue: Float
-            if (flipCardInfo is FlipCardInfo.FaceDown) {
-                initialValue = layInfo.rightCardXOffset
-                targetValue = 0f
-            } else {
-                initialValue = 0f
-                targetValue = layInfo.rightCardXOffset
-            }
-            animate(
-                initialValue = initialValue,
-                targetValue = targetValue,
-                animationSpec = animationSpec
-            ) { value, _ ->
-                rightCardXOffset = value
-            }
-        }
-    }
-
-    Layout(
-        modifier = modifier,
-        content = {
-            if (pile.size >= 3) {
-                FlipCard(
-                    card = pile[pile.size - 3],
-                    cardHeight = layInfo.cardHeight.toDp(),
-                    flipRotation = flipRotation,
-                    flipCardInfo = flipCardInfo,
-                    modifier = Modifier.layoutId("Left Card")
-                )
-            }
-            if (pile.size >= 2) {
-                FlipCard(
-                    card = pile[pile.size - 2],
-                    cardHeight = layInfo.cardHeight.toDp(),
-                    flipRotation = flipRotation,
-                    flipCardInfo = flipCardInfo,
-                    modifier = Modifier.layoutId("Middle Card")
-                )
-            }
-            FlipCard(
-                card = pile.last(),
-                cardHeight = layInfo.cardHeight.toDp(),
-                flipRotation = flipRotation,
-                flipCardInfo = flipCardInfo,
-                modifier = Modifier.layoutId("Right Card")
+        if (it.animatedCards.size >= 3) {
+            AnimateOffset(
+                animateInfo = it,
+                animationDurations = animateDurations,
+                startOffset = offsets.leftCardStartOffset,
+                endOffset = offsets.leftCardEndOffset,
+                updateXOffset = { value -> leftCardOffset = leftCardOffset.copy(x = value) },
+                updateYOffset = { }
             )
         }
-    ) { measurables, constraints ->
+        if (it.animatedCards.size >= 2) {
+            AnimateOffset(
+                animateInfo = it,
+                animationDurations = animateDurations,
+                startOffset = offsets.middleCardStartOffset,
+                endOffset = offsets.middleCardEndOffset,
+                updateXOffset = { value -> middleCardOffset = middleCardOffset.copy(x = value) },
+                updateYOffset = { }
+            )
+        }
+        if (it.animatedCards.isNotEmpty()) {
+            AnimateOffset(
+                animateInfo = it,
+                animationDurations = animateDurations,
+                startOffset = offsets.rightCardStartOffset,
+                endOffset = offsets.rightCardEndOffset,
+                updateXOffset = { value -> rightCardOffset = rightCardOffset.copy(x = value) },
+                updateYOffset = { }
+            )
+        }
 
-        val leftCard = measurables.firstOrNull { it.layoutId == "Left Card" }
-        val middleCard = measurables.firstOrNull { it.layoutId == "Middle Card" }
-        val rightCard = measurables.firstOrNull { it.layoutId == "Right Card" }
+        Layout(
+            modifier = modifier,
+            content = {
+                it.animatedCards.let { cards ->
+                    if (cards.size >= 3) {
+                        FlipCard(
+                            card = cards[cards.size - 3],
+                            cardHeight = layInfo.cardHeight.toDp(),
+                            flipRotation = flipRotation,
+                            flipCardInfo = it.flipAnimatedCards,
+                            modifier = Modifier.layoutId("Left Card")
+                        )
+                    }
+                    if (cards.size >= 2) {
+                        FlipCard(
+                            card = cards[cards.size - 2],
+                            cardHeight = layInfo.cardHeight.toDp(),
+                            flipRotation = flipRotation,
+                            flipCardInfo = it.flipAnimatedCards,
+                            modifier = Modifier.layoutId("Middle Card")
+                        )
+                    }
+                    FlipCard(
+                        card = cards.last(),
+                        cardHeight = layInfo.cardHeight.toDp(),
+                        flipRotation = flipRotation,
+                        flipCardInfo = it.flipAnimatedCards,
+                        modifier = Modifier.layoutId("Right Card")
+                    )
+                }
+            }
+        ) { measurables, constraints ->
+            val leftCard = measurables.firstOrNull { meas -> meas.layoutId == "Left Card" }
+            val middleCard = measurables.firstOrNull { meas -> meas.layoutId == "Middle Card" }
+            val rightCard = measurables.firstOrNull { meas -> meas.layoutId == "Right Card" }
 
-        layout(constraints.maxWidth, constraints.maxHeight) {
-            leftCard?.measure(layInfo.cardConstraints)?.place(leftCardXOffset.toInt(), 0)
-            middleCard?.measure(layInfo.cardConstraints)?.place(middleCardXOffset.toInt(), 0, 1f)
-            rightCard?.measure(layInfo.cardConstraints)?.place(rightCardXOffset.toInt(), 0, 2f)
+            layout(constraints.maxWidth, constraints.maxHeight) {
+                leftCard?.measure(layInfo.cardConstraints)?.place(leftCardOffset)
+                middleCard?.measure(layInfo.cardConstraints)
+                    ?.place(middleCardOffset, 1f)
+                rightCard?.measure(layInfo.cardConstraints)?.place(rightCardOffset, 2f)
+            }
         }
     }
 }

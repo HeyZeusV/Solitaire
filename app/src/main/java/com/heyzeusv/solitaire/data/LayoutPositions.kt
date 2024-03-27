@@ -30,9 +30,9 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
     private val wasteWidth: Int = (cardWidth * 2) + cardSpacing
     val wasteConstraints: Constraints = Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
 
-    val leftCardXOffset: Float = cardSpacing.toFloat()
-    val middleCardXOffset: Float = (cardWidth.div(2) + cardSpacing).toFloat()
-    val rightCardXOffset: Float = (cardWidth + cardSpacing).toFloat()
+    private val leftCardXOffset: Int = cardSpacing
+    private val middleCardXOffset: Int = cardWidth.div(2) + cardSpacing
+    private val rightCardXOffset: Int = cardWidth + cardSpacing
 
     val multiPileLayoutIds: List<String> = listOf(
         "Tableau Zero Card",
@@ -74,9 +74,40 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
     fun getCardsYOffset(index: Int): IntOffset {
         return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
     }
+
+    fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets {
+        return if (flipCardInfo is FlipCardInfo.FaceDown) {
+            HorizontalCardOffsets(
+                leftCardStartOffset = IntOffset(leftCardXOffset, 0),
+                leftCardEndOffset = IntOffset.Zero,
+                middleCardStartOffset = IntOffset(middleCardXOffset, 0),
+                middleCardEndOffset = IntOffset.Zero,
+                rightCardStartOffset = IntOffset(rightCardXOffset, 0),
+                rightCardEndOffset = IntOffset.Zero
+            )
+        } else {
+            HorizontalCardOffsets(
+                leftCardStartOffset = IntOffset.Zero,
+                leftCardEndOffset = IntOffset(leftCardXOffset, 0),
+                middleCardStartOffset = IntOffset.Zero,
+                middleCardEndOffset = IntOffset(middleCardXOffset, 0),
+                rightCardStartOffset = IntOffset.Zero,
+                rightCardEndOffset = IntOffset(rightCardXOffset, 0)
+            )
+        }
+    }
 }
 
 data class CardDimens(val width: Int, val height: Int)
+
+data class HorizontalCardOffsets(
+    val leftCardStartOffset: IntOffset,
+    val leftCardEndOffset: IntOffset,
+    val middleCardStartOffset: IntOffset,
+    val middleCardEndOffset: IntOffset,
+    val rightCardStartOffset: IntOffset,
+    val rightCardEndOffset: IntOffset
+)
 
 enum class LayoutPositions(
     val layoutWidth: Int,
