@@ -49,7 +49,7 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
     fun getPilePosition(
         gamePiles: GamePiles,
         stockWasteMove: Boolean = false,
-        tableauAllPile: GamePiles = GamePiles.TableauZero
+        tAllPile: GamePiles = GamePiles.TableauZero
     ): IntOffset {
         return when (gamePiles) {
             GamePiles.Stock -> stockPile
@@ -69,7 +69,7 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
             GamePiles.TableauFour -> tableauFour
             GamePiles.TableauFive -> tableauFive
             GamePiles.TableauSix -> tableauSix
-            GamePiles.TableauAll -> getPilePosition(tableauAllPile)
+            GamePiles.TableauAll -> getPilePosition(tAllPile)
         }
     }
 

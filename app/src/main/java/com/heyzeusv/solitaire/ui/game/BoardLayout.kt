@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.ui.game
 
-import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -100,7 +99,6 @@ fun BoardLayout(
     modifier: Modifier = Modifier
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
-    var flipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
 
     animateInfo?.let {
         // Updating AnimateInfo to null if animation is fully completed
@@ -141,21 +139,6 @@ fun BoardLayout(
                 updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
             )
         }
-        // Cards Flip Animation
-        LaunchedEffect(key1 = it) {
-            when (it.flipCardInfo) {
-                FlipCardInfo.NoFlip -> {}
-                else -> {
-                    animate(
-                        initialValue = it.flipCardInfo.startRotationY,
-                        targetValue = it.flipCardInfo.endRotationY,
-                        animationSpec = tween(animationDurations.fullAniSpec, easing = LinearEasing)
-                    ) { value, _ ->
-                        flipRotation = value
-                    }
-                }
-            }
-        }
     }
 
     Layout(
@@ -167,7 +150,7 @@ fun BoardLayout(
                         HorizontalCardPileWithFlip(
                             layInfo = layInfo,
                             animateInfo = it,
-                            animateDurations = animationDurations,
+                            animationDurations = animationDurations,
                             modifier = Modifier.layoutId("Animated Horizontal Pile")
                         )
                     }
@@ -176,7 +159,6 @@ fun BoardLayout(
                             layInfo = layInfo,
                             animateInfo = it,
                             animationDurations = animationDurations,
-                            flipRotation = flipRotation,
                             modifier = Modifier.layoutId("Animated Multi Pile")
                         )
                     }
@@ -192,7 +174,7 @@ fun BoardLayout(
                     TableauPileWithFlip(
                         cardDpSize = layInfo.getCardDpSize(),
                         animateInfo = it,
-                        animateDurations = animationDurations,
+                        animationDurations = animationDurations,
                         modifier = Modifier.layoutId("Animated Tableau Card")
                     )
                 }
@@ -339,14 +321,14 @@ fun VerticalCardPile(
 /**
  *  Composable that displays a Tableau pile with the bottom most card having a flip animation.
  *  [cardDpSize] is used to size each [SolitaireCard] and determine their vertical spacing.
- *  [animateInfo] contains the cards to be displayed and rotation details. [animateDurations] is
+ *  [animateInfo] contains the cards to be displayed and rotation details. [animationDurations] is
  *  used to determine length of animation.
  */
 @Composable
 fun TableauPileWithFlip(
     cardDpSize: DpSize,
     animateInfo: AnimateInfo,
-    animateDurations: AnimationDurations,
+    animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
 ) {
     animateInfo.tableauCardFlipInfo?.let {
@@ -354,8 +336,8 @@ fun TableauPileWithFlip(
 
         AnimateFlip(
             animateInfo = animateInfo,
-            flipDuration = animateDurations.tableauCardFlipAniSpec,
-            flipDelay = animateDurations.tableauCardFlipDelayAniSpec,
+            flipDuration = animationDurations.tableauCardFlipAniSpec,
+            flipDelay = animationDurations.tableauCardFlipDelayAniSpec,
             flipCardInfo = it.flipCardInfo,
             updateRotation = { value -> tableauCardFlipRotation = value }
         )
@@ -383,13 +365,13 @@ fun TableauPileWithFlip(
 /**
  *  Composable that displays up to 3 [FlipCard] overlapping horizontally. [layInfo] provides
  *  animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be displayed
- *  and their flip animation info. [animateDurations] is used to determine length of animations.
+ *  and their flip animation info. [animationDurations] is used to determine length of animations.
  */
 @Composable
 fun HorizontalCardPileWithFlip(
     layInfo: LayoutInfo,
     animateInfo: AnimateInfo,
-    animateDurations: AnimationDurations,
+    animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
 ) {
     animateInfo.let {
@@ -402,7 +384,7 @@ fun HorizontalCardPileWithFlip(
         if (it.animatedCards.size >= 3) {
             AnimateOffset(
                 animateInfo = it,
-                animationDurations = animateDurations,
+                animationDurations = animationDurations,
                 startOffset = offsets.leftCardStartOffset,
                 endOffset = offsets.leftCardEndOffset,
                 updateXOffset = { value -> leftCardOffset = leftCardOffset.copy(x = value) },
@@ -412,7 +394,7 @@ fun HorizontalCardPileWithFlip(
         if (it.animatedCards.size >= 2) {
             AnimateOffset(
                 animateInfo = it,
-                animationDurations = animateDurations,
+                animationDurations = animationDurations,
                 startOffset = offsets.middleCardStartOffset,
                 endOffset = offsets.middleCardEndOffset,
                 updateXOffset = { value -> middleCardOffset = middleCardOffset.copy(x = value) },
@@ -422,7 +404,7 @@ fun HorizontalCardPileWithFlip(
         if (it.animatedCards.isNotEmpty()) {
             AnimateOffset(
                 animateInfo = it,
-                animationDurations = animateDurations,
+                animationDurations = animationDurations,
                 startOffset = offsets.rightCardStartOffset,
                 endOffset = offsets.rightCardEndOffset,
                 updateXOffset = { value -> rightCardOffset = rightCardOffset.copy(x = value) },
@@ -431,8 +413,8 @@ fun HorizontalCardPileWithFlip(
         }
         AnimateFlip(
             animateInfo = it,
-            flipDuration = animateDurations.fullAniSpec,
-            flipDelay = animateDurations.noAnimation,
+            flipDuration = animationDurations.fullAniSpec,
+            flipDelay = animationDurations.noAnimation,
             flipCardInfo = it.flipCardInfo,
             updateRotation = { value -> flipRotation = value }
         )
@@ -484,12 +466,16 @@ fun HorizontalCardPileWithFlip(
     }
 }
 
+/**
+ *  Composable that displays up to 7 [FlipCard] each animated differently. [layInfo] provides
+ *  animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be displayed
+ *  and their flip animation info. [animationDurations] is used to determine length of animations.
+ */
 @Composable
 fun MultiPileCardWithFlip(
     layInfo: LayoutInfo,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
-    flipRotation: Float,
     modifier: Modifier
 ) {
     animateInfo.let {
@@ -500,79 +486,47 @@ fun MultiPileCardWithFlip(
         var tFourCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var tFiveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var tSixCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var flipRotation by remember { mutableFloatStateOf(0f) }
 
-        AnimateOffset(
-            animateInfo = it,
-            animationDurations = animationDurations,
-            startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauZero)
-                .plus(layInfo.getCardsYOffset(it.startTableauIndices[0])),
-            endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauZero)
-                .plus(layInfo.getCardsYOffset(it.endTableauIndices[0])),
-            updateXOffset = { value -> tZeroCardOffset = tZeroCardOffset.copy(x = value) },
-            updateYOffset = { value -> tZeroCardOffset = tZeroCardOffset.copy(y = value) }
-        )
-        AnimateOffset(
-            animateInfo = it,
-            animationDurations = animationDurations,
-            startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauOne)
-                .plus(layInfo.getCardsYOffset(it.startTableauIndices[1])),
-            endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauOne)
-                .plus(layInfo.getCardsYOffset(it.endTableauIndices[1])),
-            updateXOffset = { value -> tOneCardOffset = tOneCardOffset.copy(x = value) },
-            updateYOffset = { value -> tOneCardOffset = tOneCardOffset.copy(y = value) }
-        )
-        AnimateOffset(
-            animateInfo = it,
-            animationDurations = animationDurations,
-            startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauTwo)
-                .plus(layInfo.getCardsYOffset(it.startTableauIndices[2])),
-            endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauTwo)
-                .plus(layInfo.getCardsYOffset(it.endTableauIndices[2])),
-            updateXOffset = { value -> tTwoCardOffset = tTwoCardOffset.copy(x = value) },
-            updateYOffset = { value -> tTwoCardOffset = tTwoCardOffset.copy(y = value) }
-        )
-        if (it.animatedCards.size == 7) {
+        for (i in 0 until it.animatedCards.size) {
             AnimateOffset(
                 animateInfo = it,
                 animationDurations = animationDurations,
-                startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauThree)
-                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[3])),
-                endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauThree)
-                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[3])),
-                updateXOffset = { value -> tThreeCardOffset = tThreeCardOffset.copy(x = value) },
-                updateYOffset = { value -> tThreeCardOffset = tThreeCardOffset.copy(y = value) }
-            )
-            AnimateOffset(
-                animateInfo = it,
-                animationDurations = animationDurations,
-                startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauFour)
-                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[4])),
-                endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauFour)
-                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[4])),
-                updateXOffset = { value -> tFourCardOffset = tFourCardOffset.copy(x = value) },
-                updateYOffset = { value -> tFourCardOffset = tFourCardOffset.copy(y = value) }
-            )
-            AnimateOffset(
-                animateInfo = it,
-                animationDurations = animationDurations,
-                startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauFive)
-                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[5])),
-                endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauFive)
-                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[5])),
-                updateXOffset = { value -> tFiveCardOffset = tFiveCardOffset.copy(x = value) },
-                updateYOffset = { value -> tFiveCardOffset = tFiveCardOffset.copy(y = value) }
-            )
-            AnimateOffset(
-                animateInfo = it,
-                animationDurations = animationDurations,
-                startOffset = layInfo.getPilePosition(it.start, tableauAllPile = GamePiles.TableauSix)
-                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[6])),
-                endOffset = layInfo.getPilePosition(it.end, tableauAllPile = GamePiles.TableauSix)
-                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[6])),
-                updateXOffset = { value -> tSixCardOffset = tSixCardOffset.copy(x = value) },
-                updateYOffset = { value -> tSixCardOffset = tSixCardOffset.copy(y = value) }
+                startOffset = layInfo.getPilePosition(it.start, tAllPile = GamePiles.entries[i + 6])
+                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[i])),
+                endOffset = layInfo.getPilePosition(it.end, tAllPile = GamePiles.entries[i + 6])
+                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[i])),
+                updateXOffset = { value ->
+                    when (i) {
+                        0 -> tZeroCardOffset = tZeroCardOffset.copy(x = value)
+                        1 -> tOneCardOffset = tOneCardOffset.copy(x = value)
+                        2 -> tTwoCardOffset = tTwoCardOffset.copy(x = value)
+                        3 -> tThreeCardOffset = tThreeCardOffset.copy(x = value)
+                        4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
+                        5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
+                        6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
+                    }
+                },
+                updateYOffset = { value ->
+                    when (i) {
+                        0 -> tZeroCardOffset = tZeroCardOffset.copy(y = value)
+                        1 -> tOneCardOffset = tOneCardOffset.copy(y = value)
+                        2 -> tTwoCardOffset = tTwoCardOffset.copy(y = value)
+                        3 -> tThreeCardOffset = tThreeCardOffset.copy(y = value)
+                        4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
+                        5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
+                        6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
+                    }
+                }
             )
         }
+        AnimateFlip(
+            animateInfo = it,
+            flipDuration = animationDurations.fullAniSpec,
+            flipDelay = animationDurations.noAnimation,
+            flipCardInfo = it.flipCardInfo,
+            updateRotation = { value -> flipRotation = value}
+        )
 
         Layout(
             modifier = modifier,
@@ -616,22 +570,22 @@ fun MultiPileCardWithFlip(
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 if (tZeroCardOffset != IntOffset.Zero) {
-                    tZeroCard?.measure(layInfo.cardConstraints)?.place(tZeroCardOffset)
+                    tZeroCard?.measure(layInfo.cardConstraints)?.place(tZeroCardOffset, 6f)
                 }
                 if (tOneCardOffset != IntOffset.Zero) {
-                    tOneCard?.measure(layInfo.cardConstraints)?.place(tOneCardOffset)
+                    tOneCard?.measure(layInfo.cardConstraints)?.place(tOneCardOffset, 5f)
                 }
                 if (tTwoCardOffset != IntOffset.Zero) {
-                    tTwoCard?.measure(layInfo.cardConstraints)?.place(tTwoCardOffset)
+                    tTwoCard?.measure(layInfo.cardConstraints)?.place(tTwoCardOffset, 4f)
                 }
                 if (tThreeCardOffset != IntOffset.Zero) {
-                    tThreeCard?.measure(layInfo.cardConstraints)?.place(tThreeCardOffset)
+                    tThreeCard?.measure(layInfo.cardConstraints)?.place(tThreeCardOffset, 3f)
                 }
                 if (tFourCardOffset != IntOffset.Zero) {
-                    tFourCard?.measure(layInfo.cardConstraints)?.place(tFourCardOffset)
+                    tFourCard?.measure(layInfo.cardConstraints)?.place(tFourCardOffset, 2f)
                 }
                 if (tFiveCardOffset != IntOffset.Zero) {
-                    tFiveCard?.measure(layInfo.cardConstraints)?.place(tFiveCardOffset)
+                    tFiveCard?.measure(layInfo.cardConstraints)?.place(tFiveCardOffset, 1f)
                 }
                 if (tSixCardOffset != IntOffset.Zero) {
                     tSixCard?.measure(layInfo.cardConstraints)?.place(tSixCardOffset)
