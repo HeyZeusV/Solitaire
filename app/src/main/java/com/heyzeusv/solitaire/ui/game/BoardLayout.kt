@@ -54,6 +54,7 @@ fun BoardLayout(
     val undoAnimation by gameVM.undoAnimation.collectAsState()
 
     BoardLayout(
+        modifier = modifier,
         layInfo = gameVM.layoutInfo,
         animationDurations = AnimationDurations.TwoHundredFifty,
         animateInfo = animateInfo,
@@ -71,32 +72,31 @@ fun BoardLayout(
         foundationList = gameVM.foundation,
         onFoundationClick = gameVM::onFoundationClick,
         tableauList = gameVM.tableau,
-        onTableauClick = gameVM::onTableauClick,
-        modifier = modifier
+        onTableauClick = gameVM::onTableauClick
     )
 }
 
 @Composable
 fun BoardLayout(
+    modifier: Modifier = Modifier,
     layInfo: LayoutInfo,
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
-    updateAnimateInfo: (AnimateInfo?) -> Unit,
-    updateUndoEnabled: (Boolean) -> Unit,
+    updateAnimateInfo: (AnimateInfo?) -> Unit = { },
+    updateUndoEnabled: (Boolean) -> Unit = { },
     undoAnimation: Boolean,
-    updateUndoAnimation: (Boolean) -> Unit,
+    updateUndoAnimation: (Boolean) -> Unit = { },
     drawAmount: Int,
-    handleMoveResult: (MoveResult) -> Unit,
+    handleMoveResult: (MoveResult) -> Unit = { },
     stock: Stock,
-    onStockClick: (Int) -> MoveResult,
+    onStockClick: (Int) -> MoveResult = { MoveResult.Illegal },
     waste: Waste,
-    stockWasteEmpty: () -> Boolean,
-    onWasteClick: () -> MoveResult,
+    stockWasteEmpty: () -> Boolean = { true },
+    onWasteClick: () -> MoveResult = { MoveResult.Illegal },
     foundationList: List<Foundation>,
-    onFoundationClick: (Int) -> MoveResult,
+    onFoundationClick: (Int) -> MoveResult = { MoveResult.Illegal },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> MoveResult,
-    modifier: Modifier = Modifier
+    onTableauClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal }
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
 
@@ -564,6 +564,11 @@ fun MultiPileCardWithFlip(
     }
 }
 
+/**
+ *  Composable that displays [flipCard] flipping. [cardDpSize] is used to size [SolitaireCard].
+ *  [flipRotation] determines [flipCard]'s current rotation value. [flipCardInfo] is used to
+ *  determine if [flipCard] should be displayed as face up or down depending on [flipRotation].
+ */
 @Composable
 fun FlipCard(
     flipCard: Card,
@@ -580,29 +585,24 @@ fun FlipCard(
         }
     if (flipCardInfo.flipCondition(flipRotation)) {
         SolitaireCard(
-            card = flipCard.copy(
-                faceUp = when (flipCardInfo) {
-                    is FlipCardInfo.FaceUp -> false
-                    is FlipCardInfo.FaceDown -> true
-                    is FlipCardInfo.NoFlip -> false
-                }
-            ),
+            card = flipCard.copy(faceUp = flipCardInfo !is FlipCardInfo.FaceUp),
             modifier = animateModifier
         )
     } else {
         SolitaireCard(
-            card = flipCard.copy(
-                faceUp = when (flipCardInfo) {
-                    is FlipCardInfo.FaceUp -> true
-                    is FlipCardInfo.FaceDown -> false
-                    is FlipCardInfo.NoFlip -> false
-                }
-            ),
+            card = flipCard.copy(faceUp = flipCardInfo is FlipCardInfo.FaceUp),
             modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY }
         )
     }
 }
 
+/**
+ *  Uses two [LaunchedEffect] in order to animate XY movement. [animateInfo] is used as
+ *  LaunchedEffect key to determine when to start/restart animation. [animationDurations] is used to
+ *  determine length of animation. [startOffset] is start position. [endOffset] is end position.
+ *  [updateXOffset] and [updateYOffset] are used to update [IntOffset] from where this function is
+ *  called.
+ */
 @Composable
 fun AnimateOffset(
     animateInfo: AnimateInfo,
@@ -634,6 +634,12 @@ fun AnimateOffset(
     }
 }
 
+/**
+ *  Uses two [LaunchedEffect] in order to animate XY movement. [animateInfo] is used as
+ *  LaunchedEffect key to determine when to start/restart animation. [flipDuration] is the duration
+ *  of flip animation, while [flipDelay] is the time before animation begins. [flipCardInfo] is used
+ *  to determine start/end rotation values.
+ */
 @Composable
 fun AnimateFlip(
     animateInfo: AnimateInfo,
@@ -661,21 +667,13 @@ fun BoardLayout480Preview() {
             layInfo = LayoutInfo(LayoutPositions.Width480, 0),
             animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            updateAnimateInfo = { },
-            updateUndoEnabled = { },
             undoAnimation = false,
-            updateUndoAnimation = { },
             drawAmount = 1,
             handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            onStockClick = { MoveResult.Move },
             waste = Waste(),
-            stockWasteEmpty = { false },
-            onWasteClick = { MoveResult.Move },
             foundationList = Suits.entries.map { Foundation(it) },
-            onFoundationClick = { MoveResult.Move },
             tableauList = List(7) { Tableau.KlondikeTableau() },
-            onTableauClick = { _, _ -> MoveResult.Move }
         )
     }
 }
@@ -688,21 +686,12 @@ fun BoardLayout720Preview() {
             layInfo = LayoutInfo(LayoutPositions.Width720, 24),
             animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            updateAnimateInfo = { },
-            updateUndoEnabled = { },
             undoAnimation = false,
-            updateUndoAnimation = { },
             drawAmount = 1,
-            handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            onStockClick = { MoveResult.Move },
             waste = Waste(),
-            stockWasteEmpty = { false },
-            onWasteClick = { MoveResult.Move },
             foundationList = Suits.entries.map { Foundation(it) },
-            onFoundationClick = { MoveResult.Move },
             tableauList = List(7) { Tableau.KlondikeTableau() },
-            onTableauClick = { _, _ -> MoveResult.Move }
         )
     }
 }
@@ -715,21 +704,12 @@ fun BoardLayout1080Preview() {
             layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
             animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            updateAnimateInfo = { },
-            updateUndoEnabled = { },
             undoAnimation = false,
-            updateUndoAnimation = { },
             drawAmount = 1,
-            handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            onStockClick = { MoveResult.Move },
             waste = Waste(),
-            stockWasteEmpty = { false },
-            onWasteClick = { MoveResult.Move },
             foundationList = Suits.entries.map { Foundation(it) },
-            onFoundationClick = { MoveResult.Move },
             tableauList = List(7) { Tableau.KlondikeTableau() },
-            onTableauClick = { _, _ -> MoveResult.Move }
         )
     }
 }
@@ -742,21 +722,12 @@ fun BoardLayout1440Preview() {
             layInfo = LayoutInfo(LayoutPositions.Width1440, 0),
             animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            updateAnimateInfo = { },
-            updateUndoEnabled = { },
             undoAnimation = false,
-            updateUndoAnimation = { },
             drawAmount = 1,
-            handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            onStockClick = { MoveResult.Move },
             waste = Waste(),
-            stockWasteEmpty = { false },
-            onWasteClick = { MoveResult.Move },
             foundationList = Suits.entries.map { Foundation(it) },
-            onFoundationClick = { MoveResult.Move },
             tableauList = List(7) { Tableau.KlondikeTableau() },
-            onTableauClick = { _, _ -> MoveResult.Move }
         )
     }
 }
@@ -769,21 +740,12 @@ fun BoardLayout2160Preview() {
             layInfo = LayoutInfo(LayoutPositions.Width2160, 0),
             animationDurations = AnimationDurations.TwoHundredFifty,
             animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            updateAnimateInfo = { },
-            updateUndoEnabled = { },
             undoAnimation = false,
-            updateUndoAnimation = { },
             drawAmount = 1,
-            handleMoveResult = { },
             stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            onStockClick = { MoveResult.Move },
             waste = Waste(),
-            stockWasteEmpty = { false },
-            onWasteClick = { MoveResult.Move },
             foundationList = Suits.entries.map { Foundation(it) },
-            onFoundationClick = { MoveResult.Move },
             tableauList = List(7) { Tableau.KlondikeTableau() },
-            onTableauClick = { _, _ -> MoveResult.Move }
         )
     }
 }
