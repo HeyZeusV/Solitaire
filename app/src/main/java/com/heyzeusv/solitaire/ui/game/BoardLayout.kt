@@ -375,39 +375,25 @@ fun HorizontalCardPileWithFlip(
     modifier: Modifier = Modifier
 ) {
     animateInfo.let {
-        var leftCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var middleCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var rightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var middleCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var leftCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         val offsets = layInfo.getHorizontalCardOffsets(it.flipCardInfo)
         var flipRotation by remember { mutableFloatStateOf(0f) }
 
-        if (it.animatedCards.size >= 3) {
+        for (i in 0 until it.animatedCards.size) {
             AnimateOffset(
                 animateInfo = it,
                 animationDurations = animationDurations,
-                startOffset = offsets.leftCardStartOffset,
-                endOffset = offsets.leftCardEndOffset,
-                updateXOffset = { value -> leftCardOffset = leftCardOffset.copy(x = value) },
-                updateYOffset = { }
-            )
-        }
-        if (it.animatedCards.size >= 2) {
-            AnimateOffset(
-                animateInfo = it,
-                animationDurations = animationDurations,
-                startOffset = offsets.middleCardStartOffset,
-                endOffset = offsets.middleCardEndOffset,
-                updateXOffset = { value -> middleCardOffset = middleCardOffset.copy(x = value) },
-                updateYOffset = { }
-            )
-        }
-        if (it.animatedCards.isNotEmpty()) {
-            AnimateOffset(
-                animateInfo = it,
-                animationDurations = animationDurations,
-                startOffset = offsets.rightCardStartOffset,
-                endOffset = offsets.rightCardEndOffset,
-                updateXOffset = { value -> rightCardOffset = rightCardOffset.copy(x = value) },
+                startOffset = offsets.startOffsets[i],
+                endOffset = offsets.endOffsets[i],
+                updateXOffset = { value ->
+                    when (i) {
+                        0 -> rightCardOffset = rightCardOffset.copy(x = value)
+                        1 -> middleCardOffset = middleCardOffset.copy(x = value)
+                        2 -> leftCardOffset = leftCardOffset.copy(x = value)
+                    }
+                },
                 updateYOffset = { }
             )
         }
@@ -423,53 +409,36 @@ fun HorizontalCardPileWithFlip(
             modifier = modifier,
             content = {
                 it.animatedCards.let { cards ->
-                    if (cards.size >= 3) {
+                    cards.reversed().forEachIndexed { i, card ->
                         FlipCard(
-                            flipCard = cards[cards.size - 3],
+                            flipCard = card,
                             cardDpSize = layInfo.getCardDpSize(),
                             flipRotation = flipRotation,
                             flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId("Left Card")
-                        )
-                    }
-                    if (cards.size >= 2) {
-                        FlipCard(
-                            flipCard = cards[cards.size - 2],
-                            cardDpSize = layInfo.getCardDpSize(),
-                            flipRotation = flipRotation,
-                            flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId("Middle Card")
-                        )
-                    }
-                    if (cards.isNotEmpty()) {
-                        FlipCard(
-                            flipCard = cards.last(),
-                            cardDpSize = layInfo.getCardDpSize(),
-                            flipRotation = flipRotation,
-                            flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId("Right Card")
+                            modifier = Modifier.layoutId(layInfo.horizontalPileLayoutIds[i])
                         )
                     }
                 }
             }
         ) { measurables, constraints ->
-            val leftCard = measurables.firstOrNull { meas -> meas.layoutId == "Left Card" }
-            val middleCard = measurables.firstOrNull { meas -> meas.layoutId == "Middle Card" }
             val rightCard = measurables.firstOrNull { meas -> meas.layoutId == "Right Card" }
+            val middleCard = measurables.firstOrNull { meas -> meas.layoutId == "Middle Card" }
+            val leftCard = measurables.firstOrNull { meas -> meas.layoutId == "Left Card" }
 
             layout(constraints.maxWidth, constraints.maxHeight) {
-                leftCard?.measure(layInfo.cardConstraints)?.place(leftCardOffset)
-                middleCard?.measure(layInfo.cardConstraints)?.place(middleCardOffset, 1f)
                 rightCard?.measure(layInfo.cardConstraints)?.place(rightCardOffset, 2f)
+                middleCard?.measure(layInfo.cardConstraints)?.place(middleCardOffset, 1f)
+                leftCard?.measure(layInfo.cardConstraints)?.place(leftCardOffset)
             }
         }
     }
 }
 
 /**
- *  Composable that displays up to 7 [FlipCard] each animated differently. [layInfo] provides
- *  animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be displayed
- *  and their flip animation info. [animationDurations] is used to determine length of animations.
+ *  Composable that displays up to 7 [FlipCard] each animated to/from different piles. [layInfo]
+ *  provides animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be
+ *  displayed and their flip animation info. [animationDurations] is used to determine length of
+ *  animations.
  */
 @Composable
 fun MultiPileCardWithFlip(
