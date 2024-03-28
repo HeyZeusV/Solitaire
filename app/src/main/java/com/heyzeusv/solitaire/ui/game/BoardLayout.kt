@@ -29,6 +29,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.LayoutPositions
+import com.heyzeusv.solitaire.data.TableauCardFlipInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
@@ -101,7 +102,6 @@ fun BoardLayout(
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
     var flipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
-    var tableauCardFlipRotation by remember(animateInfo) { mutableFloatStateOf(0f) }
 
     animateInfo?.let {
         // Updating AnimateInfo to null if animation is fully completed
@@ -157,22 +157,6 @@ fun BoardLayout(
                 }
             }
         }
-        it.tableauCardFlipInfo?.let { flipInfo ->
-            // Tableau Card Flip Animation
-            LaunchedEffect(key1 = it) {
-                animate(
-                    initialValue = flipInfo.flipCardInfo.startRotationY,
-                    targetValue = flipInfo.flipCardInfo.endRotationY,
-                    animationSpec = tween(
-                        durationMillis = animationDurations.tableauCardFlipAniSpec,
-                        delayMillis = animationDurations.tableauCardFlipDelayAniSpec,
-                        easing = LinearEasing
-                    )
-                ) { value, _ ->
-                    tableauCardFlipRotation = value
-                }
-            }
-        }
     }
 
     Layout(
@@ -185,7 +169,6 @@ fun BoardLayout(
                             layInfo = layInfo,
                             animateInfo = it,
                             animateDurations = animationDurations,
-                            flipRotation = flipRotation,
                             modifier = Modifier.layoutId("Animated Horizontal Pile")
                         )
                     }
@@ -199,26 +182,20 @@ fun BoardLayout(
                         )
                     }
                     FlipCardInfo.NoFlip -> {
-                        VerticalCardPileCanFlip(
+                        VerticalCardPile(
                             cardDpSize = layInfo.getCardDpSize(),
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Vertical Pile")
                         )
                     }
                 }
-                it.tableauCardFlipInfo?.let { info ->
-                    VerticalCardPileCanFlip(
+                it.tableauCardFlipInfo?.let { flipInfo ->
+                    TableauPileWithFlip(
                         cardDpSize = layInfo.getCardDpSize(),
-                        pile = info.remainingPile,
+                        flipInfo = flipInfo,
+                        animateDurations = animationDurations,
                         modifier = Modifier.layoutId("Animated Tableau Card")
-                    ) {
-                        FlipCard(
-                            flipCard = info.flipCard,
-                            cardDpSize = layInfo.getCardDpSize(),
-                            flipRotation = tableauCardFlipRotation,
-                            flipCardInfo = info.flipCardInfo
-                        )
-                    }
+                    )
                 }
             }
             Suits.entries.forEachIndexed { index, suit ->
@@ -283,7 +260,6 @@ fun BoardLayout(
         val animatedVerticalPile =
             measurables.firstOrNull { it.layoutId == "Animated Vertical Pile" }
         val animatedMultiPile = measurables.firstOrNull { it.layoutId == "Animated Multi Pile" }
-
         val animatedTableauCard = measurables.firstOrNull { it.layoutId == "Animated Tableau Card" }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
@@ -338,12 +314,15 @@ fun BoardLayout(
     }
 }
 
+/**
+ *  Composable that displays given [pile] in vertical orientation. [cardDpSize] is used to size each
+ *  [SolitaireCard] and determine their vertical spacing.
+ */
 @Composable
-fun VerticalCardPileCanFlip(
+fun VerticalCardPile(
     cardDpSize: DpSize,
-    modifier: Modifier,
-    pile: List<Card> = emptyList(),
-    flipCard: @Composable () -> Unit = { }
+    pile: List<Card>,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
@@ -355,23 +334,69 @@ fun VerticalCardPileCanFlip(
                 modifier = Modifier.size(cardDpSize)
             )
         }
-        flipCard()
     }
 }
 
+/**
+ *  Composable that displays a Tableau pile with the bottom most card having a flip animation.
+ *  [cardDpSize] is used to size each [SolitaireCard] and determine their vertical spacing.
+ *  [flipInfo] contains the cards to be displayed and rotation details. [animateDurations] is used
+ *  to determine length of animation.
+ */
+@Composable
+fun TableauPileWithFlip(
+    cardDpSize: DpSize,
+    flipInfo: TableauCardFlipInfo,
+    animateDurations: AnimationDurations,
+    modifier: Modifier = Modifier
+) {
+    var tableauCardFlipRotation by remember { mutableFloatStateOf(0f) }
+
+    AnimateFlip(
+        flipDuration = animateDurations.tableauCardFlipAniSpec,
+        flipDelay = animateDurations.tableauCardFlipDelayAniSpec,
+        startRotationY = flipInfo.flipCardInfo.startRotationY,
+        endRotationY = flipInfo.flipCardInfo.endRotationY,
+        updateRotation = { value -> tableauCardFlipRotation = value }
+    )
+
+    Column(
+        modifier = modifier,
+        verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
+    ) {
+        flipInfo.remainingPile.forEach { card ->
+            SolitaireCard(
+                card = card,
+                modifier = Modifier.size(cardDpSize)
+            )
+        }
+        FlipCard(
+            flipCard = flipInfo.flipCard,
+            cardDpSize = cardDpSize,
+            flipRotation = tableauCardFlipRotation,
+            flipCardInfo = flipInfo.flipCardInfo
+        )
+    }
+}
+
+/**
+ *  Composable that displays up to 3 [FlipCard] overlapping horizontally. [layInfo] provides
+ *  animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be displayed
+ *  and their flip animation info. [animateDurations] is used to determine length of animations.
+ */
 @Composable
 fun HorizontalCardPileWithFlip(
     layInfo: LayoutInfo,
     animateInfo: AnimateInfo,
     animateDurations: AnimationDurations,
-    flipRotation: Float,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     animateInfo.let {
         var leftCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var middleCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var rightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         val offsets = layInfo.getHorizontalCardOffsets(it.flipCardInfo)
+        var flipRotation by remember { mutableFloatStateOf(0f) }
 
         if (it.animatedCards.size >= 3) {
             AnimateOffset(
@@ -403,6 +428,13 @@ fun HorizontalCardPileWithFlip(
                 updateYOffset = { }
             )
         }
+        AnimateFlip(
+            flipDuration = animateDurations.fullAniSpec,
+            flipDelay = animateDurations.noAnimation,
+            startRotationY = it.flipCardInfo.startRotationY,
+            endRotationY = it.flipCardInfo.endRotationY,
+            updateRotation = { value -> flipRotation = value }
+        )
 
         Layout(
             modifier = modifier,
@@ -426,13 +458,15 @@ fun HorizontalCardPileWithFlip(
                             modifier = Modifier.layoutId("Middle Card")
                         )
                     }
-                    FlipCard(
-                        flipCard = cards.last(),
-                        cardDpSize = layInfo.getCardDpSize(),
-                        flipRotation = flipRotation,
-                        flipCardInfo = it.flipCardInfo,
-                        modifier = Modifier.layoutId("Right Card")
-                    )
+                    if (cards.isNotEmpty()) {
+                        FlipCard(
+                            flipCard = cards.last(),
+                            cardDpSize = layInfo.getCardDpSize(),
+                            flipRotation = flipRotation,
+                            flipCardInfo = it.flipCardInfo,
+                            modifier = Modifier.layoutId("Right Card")
+                        )
+                    }
                 }
             }
         ) { measurables, constraints ->
@@ -442,8 +476,7 @@ fun HorizontalCardPileWithFlip(
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 leftCard?.measure(layInfo.cardConstraints)?.place(leftCardOffset)
-                middleCard?.measure(layInfo.cardConstraints)
-                    ?.place(middleCardOffset, 1f)
+                middleCard?.measure(layInfo.cardConstraints)?.place(middleCardOffset, 1f)
                 rightCard?.measure(layInfo.cardConstraints)?.place(rightCardOffset, 2f)
             }
         }
@@ -673,6 +706,27 @@ fun AnimateOffset(
             animationSpec = animationSpec
         ) { value, _ ->
             updateYOffset(value.toInt())
+        }
+    }
+}
+
+@Composable
+fun AnimateFlip(
+    flipDuration: Int,
+    flipDelay: Int,
+    startRotationY: Float,
+    endRotationY: Float,
+    updateRotation: (Float) -> Unit
+) {
+    LaunchedEffect(key1 = Unit) {
+        animate(
+            initialValue = startRotationY,
+            targetValue = endRotationY,
+            animationSpec = tween(
+                durationMillis = flipDuration, delayMillis = flipDelay, easing = LinearEasing
+            )
+        ) { value, _ ->
+            updateRotation(value)
         }
     }
 }

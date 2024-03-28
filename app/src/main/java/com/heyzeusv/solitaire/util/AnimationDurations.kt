@@ -29,4 +29,5 @@ enum class AnimationDurations(
     );
 
     val fullDelay: Long = fullAniSpec.toLong()
+    val noAnimation: Int = 0
 }
