@@ -29,7 +29,6 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.LayoutPositions
-import com.heyzeusv.solitaire.data.TableauCardFlipInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
@@ -189,10 +188,10 @@ fun BoardLayout(
                         )
                     }
                 }
-                it.tableauCardFlipInfo?.let { flipInfo ->
+                it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
                         cardDpSize = layInfo.getCardDpSize(),
-                        flipInfo = flipInfo,
+                        animateInfo = it,
                         animateDurations = animationDurations,
                         modifier = Modifier.layoutId("Animated Tableau Card")
                     )
@@ -340,42 +339,44 @@ fun VerticalCardPile(
 /**
  *  Composable that displays a Tableau pile with the bottom most card having a flip animation.
  *  [cardDpSize] is used to size each [SolitaireCard] and determine their vertical spacing.
- *  [flipInfo] contains the cards to be displayed and rotation details. [animateDurations] is used
- *  to determine length of animation.
+ *  [animateInfo] contains the cards to be displayed and rotation details. [animateDurations] is
+ *  used to determine length of animation.
  */
 @Composable
 fun TableauPileWithFlip(
     cardDpSize: DpSize,
-    flipInfo: TableauCardFlipInfo,
+    animateInfo: AnimateInfo,
     animateDurations: AnimationDurations,
     modifier: Modifier = Modifier
 ) {
-    var tableauCardFlipRotation by remember { mutableFloatStateOf(0f) }
+    animateInfo.tableauCardFlipInfo?.let {
+        var tableauCardFlipRotation by remember { mutableFloatStateOf(0f) }
 
-    AnimateFlip(
-        flipDuration = animateDurations.tableauCardFlipAniSpec,
-        flipDelay = animateDurations.tableauCardFlipDelayAniSpec,
-        startRotationY = flipInfo.flipCardInfo.startRotationY,
-        endRotationY = flipInfo.flipCardInfo.endRotationY,
-        updateRotation = { value -> tableauCardFlipRotation = value }
-    )
+        AnimateFlip(
+            animateInfo = animateInfo,
+            flipDuration = animateDurations.tableauCardFlipAniSpec,
+            flipDelay = animateDurations.tableauCardFlipDelayAniSpec,
+            flipCardInfo = it.flipCardInfo,
+            updateRotation = { value -> tableauCardFlipRotation = value }
+        )
 
-    Column(
-        modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
-    ) {
-        flipInfo.remainingPile.forEach { card ->
-            SolitaireCard(
-                card = card,
-                modifier = Modifier.size(cardDpSize)
+        Column(
+            modifier = modifier,
+            verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
+        ) {
+            it.remainingPile.forEach { card ->
+                SolitaireCard(
+                    card = card,
+                    modifier = Modifier.size(cardDpSize)
+                )
+            }
+            FlipCard(
+                flipCard = it.flipCard,
+                cardDpSize = cardDpSize,
+                flipRotation = tableauCardFlipRotation,
+                flipCardInfo = it.flipCardInfo
             )
         }
-        FlipCard(
-            flipCard = flipInfo.flipCard,
-            cardDpSize = cardDpSize,
-            flipRotation = tableauCardFlipRotation,
-            flipCardInfo = flipInfo.flipCardInfo
-        )
     }
 }
 
@@ -429,10 +430,10 @@ fun HorizontalCardPileWithFlip(
             )
         }
         AnimateFlip(
+            animateInfo = it,
             flipDuration = animateDurations.fullAniSpec,
             flipDelay = animateDurations.noAnimation,
-            startRotationY = it.flipCardInfo.startRotationY,
-            endRotationY = it.flipCardInfo.endRotationY,
+            flipCardInfo = it.flipCardInfo,
             updateRotation = { value -> flipRotation = value }
         )
 
@@ -712,19 +713,17 @@ fun AnimateOffset(
 
 @Composable
 fun AnimateFlip(
+    animateInfo: AnimateInfo,
     flipDuration: Int,
     flipDelay: Int,
-    startRotationY: Float,
-    endRotationY: Float,
+    flipCardInfo: FlipCardInfo,
     updateRotation: (Float) -> Unit
 ) {
-    LaunchedEffect(key1 = Unit) {
+    LaunchedEffect(key1 = animateInfo) {
         animate(
-            initialValue = startRotationY,
-            targetValue = endRotationY,
-            animationSpec = tween(
-                durationMillis = flipDuration, delayMillis = flipDelay, easing = LinearEasing
-            )
+            initialValue = flipCardInfo.startRotationY,
+            targetValue = flipCardInfo.endRotationY,
+            animationSpec = tween(durationMillis = flipDuration, delayMillis = flipDelay)
         ) { value, _ ->
             updateRotation(value)
         }
