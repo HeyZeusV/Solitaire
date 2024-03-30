@@ -5,6 +5,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Tableau.EasthavenTableau
 import com.heyzeusv.solitaire.util.GamePiles
@@ -31,6 +32,11 @@ class EasthavenViewModel @Inject constructor(
 
     override val _tableau: MutableList<Tableau> = initializeTableau(EasthavenTableau::class)
 
+    /**
+     *  Custom onStockClick due to [Card]s being move directly from [Stock] to [Tableau]. Each
+     *  click on [Stock] attempts to move 1 [Card] to each [Tableau] pile. If there isn't enough
+     *  for all 7 [Tableau] piles, it adds from left to right until it runs out.
+     */
     override fun onStockClick(drawAmount: Int): MoveResult {
         if (_stock.truePile.isNotEmpty()) {
             val stockCards = _stock.getCards(7)
@@ -41,7 +47,7 @@ class EasthavenViewModel @Inject constructor(
                 end = GamePiles.TableauAll,
                 endTableauIndices = tableauIndices,
                 animatedCards = stockCards,
-                flipAnimatedCards = FlipCardInfo.FaceUp.MultiPile
+                flipCardInfo = FlipCardInfo.FaceUp.MultiPile
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {

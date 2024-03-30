@@ -8,11 +8,15 @@ import com.heyzeusv.solitaire.data.Card
  */
 class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
+    /**
+     *  Returns a list of first [amount] of cards in [truePile]. Returns smaller list if [amount]
+     *  is greater than [truePile] size.
+     */
     fun getCards(amount: Int): List<Card> {
         val list = mutableListOf<Card>()
-        for (i in 1..amount) {
+        for (i in 0 until amount) {
             try {
-                list.add(_truePile[i - 1])
+                list.add(_truePile[i])
             } catch (e: IndexOutOfBoundsException) {
                 return list
             }
@@ -21,7 +25,8 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Removes [amount] given and returns them as a list.
+     *  Removes and returns a list of first [amount] of cards in [truePile]. Returns smaller list
+     *  if [amount] is greater than [truePile] size.
      */
     fun removeMany(amount: Int): List<Card> {
         val list = mutableListOf<Card>()
@@ -38,7 +43,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Add given [cards] to [_truePile].
+     *  Add given [cards] to [truePile].
      */
     override fun add(cards: List<Card>) {
         _truePile.addAll(cards.map { it.copy(faceUp = false) })
@@ -47,7 +52,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Remove the first [Card] in [_truePile] and return it.
+     *  Remove the first [Card] in [truePile] and return it.
      */
     override fun remove(tappedIndex: Int): Card {
         val removedCard = _truePile.removeFirst()
@@ -57,7 +62,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Reset [_truePile] using given [cards].
+     *  Reset [truePile] using given [cards].
      */
     override fun reset(cards: List<Card>) {
         animatedPiles.clear()
@@ -69,7 +74,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Used to return [_truePile] to a previous state.
+     *  Used to return [truePile] to a previous state.
      */
     override fun undo() {
         _truePile.clear()
@@ -81,5 +86,8 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         currentStep = _truePile.toList()
     }
 
+    /**
+     *  Used to ensure currentStep is correctly updated after game has been fully reset.
+     */
     fun recordHistory() { currentStep = _truePile.toList() }
 }

@@ -27,10 +27,16 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 class AppModule {
 
+    /**
+     *  Provides [DisplayMetrics] to determine screen size.
+     */
     @Provides
     fun provideDisplayMetrics(@ApplicationContext context: Context): DisplayMetrics =
         context.resources.displayMetrics
 
+    /**
+     *  Provides [LayoutInfo] using screen size.
+     */
     @Provides
     fun provideLayoutInfo(dm: DisplayMetrics): LayoutInfo {
         val screenWidth = dm.widthPixels

@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
@@ -83,6 +84,7 @@ fun SolitaireBoard(
     val sWidth = config.screenWidthDp.dp
     val cardWidth = sWidth / 7 // need to fit 7 piles wide on screen
     val cardHeight = cardWidth.times(1.4f)
+    val cardDpSize = DpSize(cardWidth, cardHeight)
 
     Box(modifier = modifier.fillMaxSize()) {
         Column(
@@ -102,10 +104,10 @@ fun SolitaireBoard(
                 Suits.entries.forEachIndexed { index, suit ->
                     SolitairePile(
                         modifier = rowModifier.testTag("Foundation #$index"),
+                        cardDpSize = cardDpSize,
                         pile = foundationList[index].truePile,
                         emptyIconId = suit.emptyIcon,
-                        onClick = { handleMoveResult(onFoundationClick(index)) },
-                        cardWidth = cardWidth
+                        onClick = { handleMoveResult(onFoundationClick(index)) }
                     )
                 }
                 if (drawAmount == 1) Spacer(modifier = rowModifier)
@@ -114,19 +116,18 @@ fun SolitaireBoard(
                         .weight(if (drawAmount == 1) 1f else 2.04f)
                         .height(cardHeight)
                         .testTag("Waste"),
+                    cardDpSize = cardDpSize,
                     pile = waste.truePile,
                     emptyIconId = R.drawable.waste_empty,
                     onClick = { handleMoveResult(onWasteClick()) },
-                    drawAmount = drawAmount,
-                    cardWidth = cardWidth
+                    drawAmount = drawAmount
                 )
                 SolitaireStock(
                     modifier = rowModifier.testTag("Stock"),
+                    cardDpSize = cardDpSize,
                     pile = stock.truePile,
-                    stockWasteEmpty = stockWasteEmpty,
-                    onClick = { handleMoveResult(onStockClick(drawAmount)) },
-                    cardWidth = cardWidth
-                )
+                    stockWasteEmpty = stockWasteEmpty
+                ) { handleMoveResult(onStockClick(drawAmount)) }
             }
             Row(
                 modifier = Modifier
@@ -137,9 +138,9 @@ fun SolitaireBoard(
                 tableauList.forEachIndexed { index, tableau ->
                     SolitaireTableau(
                         modifier = Modifier.weight(1f),
+                        cardDpSize = cardDpSize,
                         pile = tableau.truePile,
                         tableauIndex = index,
-                        cardHeight = cardHeight,
                         onClick = onTableauClick,
                         handleMoveResult = handleMoveResult
                     )
