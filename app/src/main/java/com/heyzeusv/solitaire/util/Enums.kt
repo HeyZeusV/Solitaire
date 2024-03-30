@@ -12,8 +12,9 @@ import com.heyzeusv.solitaire.util.Redeals.*
 
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
- *  Includes [suit] in String Resource form, [color] of Suit, drawable id of its [icon], and
- *  drawable id of [emptyIcon] which is shown when its Foundation pile is empty.
+ *  Includes [suit] in String Resource form, [color] of Suit, drawable id of its [icon], the
+ *  drawable id of [emptyIcon] which is shown when its Foundation pile is empty, and the [GamePiles]
+ *  associated to it by given [gamePile].
  */
 enum class Suits(
     @StringRes val suit: Int,
@@ -200,6 +201,11 @@ enum class MenuState(
     ABOUT(R.string.menu_button_about, R.drawable.button_menu_about, R.string.menu_cdesc_about)
 }
 
+/**
+ *  Used by animations to determine start/end positions. Each entry except [TableauAll] is
+ *  associated to a single pile. [TableauAll] is only used when playing [Games.EASTHAVEN] when
+ *  clicking on Stock.
+ */
 enum class GamePiles {
     Stock,
     Waste,

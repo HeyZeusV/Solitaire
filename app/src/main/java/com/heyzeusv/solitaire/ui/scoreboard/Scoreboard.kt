@@ -41,6 +41,8 @@ fun SolitaireScoreboard(
 
     // start timer once user makes a move
     if (moves == 1 && sbVM.jobIsCancelled()) sbVM.startTimer()
+
+    // stop time once autocomplete starts
     LaunchedEffect(key1 = autoCompleteActive) { if (autoCompleteActive) sbVM.pauseTimer() }
 
     SolitaireScoreboard(
