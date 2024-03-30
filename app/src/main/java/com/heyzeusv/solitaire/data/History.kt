@@ -14,9 +14,7 @@ data class PileHistory(
     val waste: Waste,
     val foundation: List<Foundation>,
     val tableau: List<Tableau>
-) {
-    lateinit var undoAnimateInfo: AnimateInfo
-}
+)
 
 /**
  *  Data class to hold [score]. This will be used to return the user to a previous state of the game.

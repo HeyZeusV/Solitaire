@@ -1,41 +1,52 @@
 package com.heyzeusv.solitaire.data
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.ui.game.HorizontalCardPileWithFlip
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.plusX
 import com.heyzeusv.solitaire.util.toDp
 
-data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: Int) {
-//    val layoutWidth: Int = layPos.layoutWidth
-//    val layoutPadding: Int = layPos.layoutPadding
+/**
+ *  Helper data class that contains [Card] sizes, pile offsets, and constraints. All data is taken
+ *  from given [layPos]. Pile offsets are further edited by given [extraWidth], which is the
+ *  extra screen width when compared to given [LayoutPositions.layoutWidth] value.
+ */
+data class LayoutInfo(private val layPos: LayoutPositions, private val extraWidth: Int) {
+    // Card specs
     val cardWidth: Int = layPos.cardWidth
     val cardHeight: Int = layPos.cardHeight
     private val cardSpacing: Int = layPos.cardSpacing
-    val clubsFoundation: IntOffset = layPos.clubsFoundation.plusX(xWidth)
-    val diamondsFoundation: IntOffset = layPos.diamondsFoundation.plusX(xWidth)
-    val heartsFoundation: IntOffset = layPos.heartsFoundation.plusX(xWidth)
-    val spadesFoundation: IntOffset = layPos.spadesFoundation.plusX(xWidth)
-    val wastePile: IntOffset = layPos.wastePile.plusX(xWidth)
-    val stockPile: IntOffset = layPos.stockPile.plusX(xWidth)
-    val tableauZero: IntOffset = layPos.tableauZero.plusX(xWidth)
-    val tableauOne: IntOffset = layPos.tableauOne.plusX(xWidth)
-    val tableauTwo: IntOffset = layPos.tableauTwo.plusX(xWidth)
-    val tableauThree: IntOffset = layPos.tableauThree.plusX(xWidth)
-    val tableauFour: IntOffset = layPos.tableauFour.plusX(xWidth)
-    val tableauFive: IntOffset = layPos.tableauFive.plusX(xWidth)
-    val tableauSix: IntOffset = layPos.tableauSix.plusX(xWidth)
+    // pile offsets
+    val clubsFoundation: IntOffset = layPos.clubsFoundation.plusX(extraWidth)
+    val diamondsFoundation: IntOffset = layPos.diamondsFoundation.plusX(extraWidth)
+    val heartsFoundation: IntOffset = layPos.heartsFoundation.plusX(extraWidth)
+    val spadesFoundation: IntOffset = layPos.spadesFoundation.plusX(extraWidth)
+    val wastePile: IntOffset = layPos.wastePile.plusX(extraWidth)
+    val stockPile: IntOffset = layPos.stockPile.plusX(extraWidth)
+    val tableauZero: IntOffset = layPos.tableauZero.plusX(extraWidth)
+    val tableauOne: IntOffset = layPos.tableauOne.plusX(extraWidth)
+    val tableauTwo: IntOffset = layPos.tableauTwo.plusX(extraWidth)
+    val tableauThree: IntOffset = layPos.tableauThree.plusX(extraWidth)
+    val tableauFour: IntOffset = layPos.tableauFour.plusX(extraWidth)
+    val tableauFive: IntOffset = layPos.tableauFive.plusX(extraWidth)
+    val tableauSix: IntOffset = layPos.tableauSix.plusX(extraWidth)
 
+    // pile constraints
     val cardConstraints: Constraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
     private val wasteWidth: Int = (cardWidth * 2) + cardSpacing
     val wasteConstraints: Constraints = Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
 
+    // horizontal pile offsets
     private val leftCardXOffset: Int = cardSpacing
     private val middleCardXOffset: Int = cardWidth.div(2) + cardSpacing
     private val rightCardXOffset: Int = cardWidth + cardSpacing
 
+    // layout ids 
     val horizontalPileLayoutIds: List<String> = listOf("Right Card", "Middle Card", "Left Card")
     val multiPileLayoutIds: List<String> = listOf(
         "Tableau Zero Card",
@@ -47,12 +58,18 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
         "Tableau Six Card"
     )
 
+    /**
+     *  Used by movement animations to determine given [gamePile] offset. Animations between
+     *  Stock and Waste requires a different offset, [stockWasteMove] determines which to use.
+     *  [tAllPile] is used to recursively call this function in order to get the correct offset,
+     *  when [gamePile] is [GamePiles.TableauAll].
+     */
     fun getPilePosition(
-        gamePiles: GamePiles,
+        gamePile: GamePiles,
         stockWasteMove: Boolean = false,
         tAllPile: GamePiles = GamePiles.TableauZero
     ): IntOffset {
-        return when (gamePiles) {
+        return when (gamePile) {
             GamePiles.Stock -> stockPile
             GamePiles.Waste -> if (stockWasteMove) {
                 wastePile
@@ -74,10 +91,18 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
         }
     }
 
+    /**
+     *  Used by animations involving Tableau piles in order to determine additional Y offset needed
+     *  since animation could only involve a sublist of Tableau, rather than entire pile.
+     */
     fun getCardsYOffset(index: Int): IntOffset {
         return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
     }
 
+    /**
+     *  Used by [HorizontalCardPileWithFlip] in order to retrieve [HorizontalCardOffsets] which
+     *  contains necessary offsets for animations. [flipCardInfo] determines start/end positions.
+     */
     fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets {
         return if (flipCardInfo is FlipCardInfo.FaceDown) {
             HorizontalCardOffsets(
@@ -100,25 +125,37 @@ data class LayoutInfo(private val layPos: LayoutPositions, private val xWidth: I
         }
     }
 
+    /**
+     *  Returns size of [Card] in dp in the form of [DpSize].
+     */
     @Composable
     fun getCardDpSize(): DpSize = DpSize(cardWidth.toDp(), cardHeight.toDp())
 }
 
+/**
+ *  Data class containing offsets needed by [HorizontalCardPileWithFlip] animations.
+ */
 data class HorizontalCardOffsets(
-    val rightCardStartOffset: IntOffset,
-    val rightCardEndOffset: IntOffset,
-    val middleCardStartOffset: IntOffset,
-    val middleCardEndOffset: IntOffset,
-    val leftCardStartOffset: IntOffset,
-    val leftCardEndOffset: IntOffset
+    private val rightCardStartOffset: IntOffset,
+    private val rightCardEndOffset: IntOffset,
+    private val middleCardStartOffset: IntOffset,
+    private val middleCardEndOffset: IntOffset,
+    private val leftCardStartOffset: IntOffset,
+    private val leftCardEndOffset: IntOffset
 ) {
     val startOffsets = listOf(rightCardStartOffset, middleCardStartOffset, leftCardStartOffset)
     val endOffsets = listOf(rightCardEndOffset, middleCardEndOffset, leftCardEndOffset)
 }
 
+/**
+ *  Enum class referring to various device screen widths. Contains [Card] size in pixels and pile
+ *  offsets. Using predetermined positions due to [Layout] using [Int]/[IntOffset] to determine
+ *  content positions on screen. This would cause issues when trying to apply padding, which would
+ *  be in [Dp], as it would cause items to appear lopsided due to padding being correct on one side
+ *  but not the other.
+ */
 enum class LayoutPositions(
     val layoutWidth: Int,
-//    val layoutPadding: Int,
     val cardWidth: Int,
     val cardHeight: Int,
     val cardSpacing: Int,
@@ -138,7 +175,6 @@ enum class LayoutPositions(
 ) {
     Width480(
         layoutWidth = 480,
-//        layoutPadding = 4,
         cardWidth = 64,
         cardHeight = 92,
         cardSpacing = 4,
@@ -158,7 +194,6 @@ enum class LayoutPositions(
     ),
     Width720(
         layoutWidth = 720,
-//        layoutPadding = 5,
         cardWidth = 98,
         cardHeight = 140,
         cardSpacing = 4,
@@ -178,7 +213,6 @@ enum class LayoutPositions(
     ),
     Width960(
         layoutWidth = 960,
-//        layoutPadding = 8,
         cardWidth = 128,
         cardHeight = 180,
         cardSpacing = 8,
@@ -198,7 +232,6 @@ enum class LayoutPositions(
     ),
     Width1080(
         layoutWidth = 1080,
-//        layoutPadding = 7,
         cardWidth = 148,
         cardHeight = 208,
         cardSpacing = 5,
@@ -218,7 +251,6 @@ enum class LayoutPositions(
     ),
     Width1440(
         layoutWidth = 1440,
-//        layoutPadding = 10,
         cardWidth = 196,
         cardHeight = 276,
         cardSpacing = 8,
@@ -238,7 +270,6 @@ enum class LayoutPositions(
     ),
     Width2160(
         layoutWidth = 2160,
-//        layoutPadding = 14,
         cardWidth = 296,
         cardHeight = 416,
         cardSpacing = 10,
