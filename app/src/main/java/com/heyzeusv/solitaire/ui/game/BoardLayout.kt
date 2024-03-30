@@ -37,7 +37,7 @@ import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
-import com.heyzeusv.solitaire.util.SolitairePreview
+import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
@@ -445,7 +445,7 @@ fun MultiPileCardWithFlip(
     layInfo: LayoutInfo,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
-    modifier: Modifier
+    modifier: Modifier = Modifier
 ) {
     animateInfo.let {
         var tZeroCardOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -662,90 +662,144 @@ fun AnimateFlip(
 @Preview(device = "id:Nexus One")
 @Composable
 fun BoardLayout480Preview() {
-    SolitairePreview {
-        BoardLayout(
-            layInfo = LayoutInfo(LayoutPositions.Width480, 0),
-            animationDurations = AnimationDurations.TwoHundredFifty,
-            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            undoAnimation = false,
-            drawAmount = 1,
-            handleMoveResult = { },
-            stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            waste = Waste(),
-            foundationList = Suits.entries.map { Foundation(it) },
-            tableauList = List(7) { Tableau.KlondikeTableau() },
-        )
+    PreviewUtil().apply {
+        Preview {
+            BoardLayout(
+                layInfo = LayoutInfo(LayoutPositions.Width480, 0),
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                undoAnimation = false,
+                drawAmount = 1,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = Suits.entries.map { Foundation(it) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+            )
+        }
     }
 }
 
 @Preview(device = "id:Nexus 4")
 @Composable
 fun BoardLayout720Preview() {
-    SolitairePreview {
-        BoardLayout(
-            layInfo = LayoutInfo(LayoutPositions.Width720, 24),
-            animationDurations = AnimationDurations.TwoHundredFifty,
-            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            undoAnimation = false,
-            drawAmount = 1,
-            stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            waste = Waste(),
-            foundationList = Suits.entries.map { Foundation(it) },
-            tableauList = List(7) { Tableau.KlondikeTableau() },
-        )
+    PreviewUtil().apply {
+        Preview {
+            BoardLayout(
+                layInfo = LayoutInfo(LayoutPositions.Width720, 24),
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                undoAnimation = false,
+                drawAmount = 1,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = Suits.entries.map { Foundation(it) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 fun BoardLayout1080Preview() {
-    SolitairePreview {
-        BoardLayout(
-            layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
-            animationDurations = AnimationDurations.TwoHundredFifty,
-            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            undoAnimation = false,
-            drawAmount = 1,
-            stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            waste = Waste(),
-            foundationList = Suits.entries.map { Foundation(it) },
-            tableauList = List(7) { Tableau.KlondikeTableau() },
-        )
+    PreviewUtil().apply {
+        Preview {
+            BoardLayout(
+                layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                undoAnimation = false,
+                drawAmount = 1,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = Suits.entries.map { Foundation(it) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+            )
+        }
     }
 }
 
 @Preview(device = "id:pixel_xl")
 @Composable
 fun BoardLayout1440Preview() {
-    SolitairePreview {
-        BoardLayout(
-            layInfo = LayoutInfo(LayoutPositions.Width1440, 0),
-            animationDurations = AnimationDurations.TwoHundredFifty,
-            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            undoAnimation = false,
-            drawAmount = 1,
-            stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            waste = Waste(),
-            foundationList = Suits.entries.map { Foundation(it) },
-            tableauList = List(7) { Tableau.KlondikeTableau() },
-        )
+    PreviewUtil().apply {
+        Preview {
+            BoardLayout(
+                layInfo = LayoutInfo(LayoutPositions.Width1440, 0),
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                undoAnimation = false,
+                drawAmount = 1,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = Suits.entries.map { Foundation(it) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+            )
+        }
     }
 }
 
 @Preview(device = "spec:width=2160px,height=3840px,dpi=640")
 @Composable
 fun BoardLayout2160Preview() {
-    SolitairePreview {
-        BoardLayout(
-            layInfo = LayoutInfo(LayoutPositions.Width2160, 0),
-            animationDurations = AnimationDurations.TwoHundredFifty,
-            animateInfo = AnimateInfo(GamePiles.Stock, GamePiles.Stock, emptyList()),
-            undoAnimation = false,
-            drawAmount = 1,
-            stock = Stock(listOf(Card(10, Suits.CLUBS))),
-            waste = Waste(),
-            foundationList = Suits.entries.map { Foundation(it) },
-            tableauList = List(7) { Tableau.KlondikeTableau() },
-        )
+    PreviewUtil().apply {
+        Preview {
+            BoardLayout(
+                layInfo = LayoutInfo(LayoutPositions.Width2160, 0),
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                undoAnimation = false,
+                drawAmount = 1,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = Suits.entries.map { Foundation(it) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun VerticalCardPilePreview() {
+    PreviewUtil().apply {
+        Preview {
+            VerticalCardPile(cardDpSize, pile)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TableauPileWithFlipPreview() {
+    PreviewUtil().apply {
+        Preview {
+            TableauPileWithFlip(cardDpSize, animateInfo, animationDurations)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun HorizontalCardPileWithFlipPreview() {
+    PreviewUtil().apply {
+        Preview {
+            HorizontalCardPileWithFlip(layInfo, animateInfo, animationDurations)
+        }
+    }
+}
+
+@Preview
+@Composable
+fun FlipCardPreview() {
+    PreviewUtil().apply {
+        Preview {
+            FlipCard(
+                flipCard = animateInfo.animatedCards.first(),
+                cardDpSize = cardDpSize,
+                flipRotation = 0f,
+                flipCardInfo = animateInfo.flipCardInfo
+            )
+        }
     }
 }

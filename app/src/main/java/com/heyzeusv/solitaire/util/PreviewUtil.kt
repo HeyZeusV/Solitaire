@@ -7,8 +7,43 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
+import com.heyzeusv.solitaire.data.AnimateInfo
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.LayoutInfo
+import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.util.theme.PreviewBG
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
+
+/**
+ *  Used to create Compose Previews.
+ */
+class PreviewUtil {
+    val pile = List(3) { Card(10, Suits.CLUBS, true) }
+
+    val cardDpSize = DpSize(148.dp, 208.dp)
+    val layInfo = LayoutInfo(LayoutPositions.Width1080, 0)
+    val animateInfo = AnimateInfo(
+        start = GamePiles.Stock,
+        end = GamePiles.Waste,
+        animatedCards = pile
+    )
+    val animationDurations = AnimationDurations.TwoHundredFifty
+
+    /**
+     *  Helper function for Composable Previews. Gives semi-transparent background to previews to
+     *  make it easier to see solo components
+     */
+    @Composable
+    fun Preview(content: @Composable () -> Unit) {
+        SolitaireTheme {
+            Box(Modifier.fillMaxWidth().background(PreviewBG)) {
+                content()
+            }
+        }
+    }
+}
 
 /**
  *  Helper function for Composable Previews. Gives semi-transparent background to previews to make

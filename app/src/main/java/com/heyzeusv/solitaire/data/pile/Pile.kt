@@ -52,5 +52,6 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
 
     init {
         _truePile.addAll(initialPile)
+        _displayPile.addAll(initialPile)
     }
 }
