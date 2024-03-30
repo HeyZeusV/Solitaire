@@ -9,7 +9,7 @@ import com.heyzeusv.solitaire.util.Suits
 /**
  *  Sealed class containing all possible options of [Tableau] piles. Each game has its own set of
  *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
- *  condition to add a new pile to the end of [_truePile].
+ *  condition to add a new pile to the end of [truePile].
  */
 sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPile) {
     /**
@@ -89,7 +89,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     protected open val anyCardEmptyPile: Boolean = false
 
     /**
-     *  Each game has their own version to adding new [Card]s to [_truePile]. This is used in [add] to
+     *  Each game has their own version to adding new [Card]s to [truePile]. This is used in [add] to
      *  determine if cads should be added.
      */
     abstract fun addCondition(cFirst: Card, pLast: Card): Boolean
@@ -100,7 +100,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     protected open fun addListCondition(cards: List<Card>): Boolean = false
 
     /**
-     *  Attempts to add given [cards] to [_truePile] depending on [addCondition].
+     *  Adds given [cards] to [truePile].
      */
     override fun add(cards: List<Card>) {
         _truePile.addAll(cards)
@@ -108,6 +108,9 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
         appendHistory(_truePile.toList())
     }
 
+    /**
+     *  Checks if given [cards] can be added to [truePile] depending on [addCondition].
+     */
     fun canAdd(cards:List<Card>): Boolean {
         if (cards.isEmpty()) return false
         if (addListCondition(cards)) return false
@@ -129,7 +132,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     }
 
     /**
-     *  Removes all cards from [_truePile] starting from [tappedIndex] to the end of [_truePile] and
+     *  Removes all cards from [truePile] starting from [tappedIndex] to the end of [truePile] and
      *  flips the last card if any.
      */
     override fun remove(tappedIndex: Int): Card {
@@ -145,7 +148,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
     }
 
     /**
-     *  Reset [_truePile] to initial game state.
+     *  Reset [truePile] to initial game state using given [cards].
      */
     override fun reset(cards: List<Card>) {
         animatedPiles.clear()
@@ -166,6 +169,9 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
         }
     }
 
+    /**
+     *  Used to return [truePile] to a previous state.
+     */
     override fun undo() {
         _truePile.clear()
         val history = retrieveHistory()
@@ -174,6 +180,10 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
         currentStep = _truePile.toList()
     }
 
+    /**
+     *  Checks if last card of [Tableau] will need a flip animation. If so, returns
+     *  [TableauCardFlipInfo] using given [cardIndex].
+     */
     fun getTableauCardFlipInfo(cardIndex: Int): TableauCardFlipInfo? {
         val lastTableauCard: Card
         try {

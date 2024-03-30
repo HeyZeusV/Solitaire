@@ -9,7 +9,7 @@ import com.heyzeusv.solitaire.data.Card
 class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
     /**
-     *  Adds given [cards] to [_truePile].
+     *  Adds given [cards] to [truePile].
      */
     override fun add(cards: List<Card>) {
         _truePile.addAll(cards.map { it.copy(faceUp = true) })
@@ -18,7 +18,7 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Removes the last [Card] in [_truePile] which would refer to the top showing card and return it.
+     *  Removes the last [Card] in [truePile] which would refer to the top showing card and return it.
      */
     override fun remove(tappedIndex: Int): Card {
         val removedCard = _truePile.removeLast()
@@ -27,6 +27,10 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
         return removedCard
     }
 
+    /**
+     *  Used when [Stock] is pressed when it is empty, which causes all [Waste] [Card]s to be
+     *  removed.
+     */
     fun removeAll() {
         _truePile.clear()
         animatedPiles.add(_truePile.toList())
@@ -34,7 +38,7 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Reset [_truePile] using given [cards].
+     *  Reset [truePile] using given [cards].
      */
     override fun reset(cards: List<Card>) {
         animatedPiles.clear()
@@ -45,7 +49,7 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Used to return [_truePile] to a previous state.
+     *  Used to return [truePile] to a previous state.
      */
     override fun undo() {
         _truePile.clear()

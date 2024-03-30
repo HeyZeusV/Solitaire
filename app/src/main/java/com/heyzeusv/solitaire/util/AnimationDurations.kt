@@ -11,21 +11,23 @@ import kotlinx.coroutines.delay
  *   [delay] in order to prevent Cards from flashing in and out before and after animations.
  *   [tableauCardFlipAniSpec] is the duration of the animation that occurs when a [Tableau] Card is
  *   flipped with [tableauCardFlipDelayAniSpec] being the delay before it occurs. Both are used by
- *   [AnimationSpec]
+ *   [AnimationSpec]. [autoCompleteDelay] is delay used during autocomplete between each valid move.
  */
 enum class AnimationDurations(
     val fullAniSpec: Int,
     val beforeActionDelay: Long,
     val afterActionDelay: Long,
     val tableauCardFlipAniSpec: Int,
-    val tableauCardFlipDelayAniSpec: Int
+    val tableauCardFlipDelayAniSpec: Int,
+    val autoCompleteDelay: Long
 ) {
     TwoHundredFifty(
         fullAniSpec = 250,
         beforeActionDelay = 15,
         afterActionDelay = 240,
         tableauCardFlipAniSpec = 200,
-        tableauCardFlipDelayAniSpec = 50
+        tableauCardFlipDelayAniSpec = 50,
+        autoCompleteDelay = 300
     );
 
     val fullDelay: Long = fullAniSpec.toLong()
