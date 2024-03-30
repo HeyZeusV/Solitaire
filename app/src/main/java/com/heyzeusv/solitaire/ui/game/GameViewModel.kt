@@ -143,7 +143,6 @@ abstract class GameViewModel (
                 end = GamePiles.Waste,
                 animatedCards = cards,
                 flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
-                stockWasteMove = true
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
@@ -168,7 +167,6 @@ abstract class GameViewModel (
                 end = GamePiles.Stock,
                 animatedCards = listOf(cards.last()),
                 flipCardInfo = FlipCardInfo.FaceDown.SinglePile,
-                stockWasteMove = true
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
