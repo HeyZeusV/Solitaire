@@ -42,7 +42,7 @@ fun SolitaireTools(
     val autoCompleteActive by gameVM.autoCompleteActive.collectAsState()
 
     SolitaireTools(
-        menuOnClick = menuVM::updateDisplayMenuButtons,
+        menuOnClick = menuVM::updateDisplayMenuButtonsAndMenuState,
         resetRestartOnConfirm = {
             menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
             gameVM.resetAll(RESTART)

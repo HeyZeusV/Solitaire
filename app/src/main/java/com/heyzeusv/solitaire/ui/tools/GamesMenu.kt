@@ -80,7 +80,7 @@ fun GamesMenu(
                     gameVM.resetAll(ResetOptions.NEW)
                     delay(300)
                 }
-                menuVM.updateMenuState(MenuState.BUTTONS)
+                menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
             }
         }
     )
@@ -147,7 +147,7 @@ fun GamesMenu(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ){
             MenuHeaderBar(
-                menu = MenuState.GAMES,
+                menu = MenuState.Games,
                 onBackPress = { onBackPress(menuSelectedGame) }
             )
             LazyColumn(

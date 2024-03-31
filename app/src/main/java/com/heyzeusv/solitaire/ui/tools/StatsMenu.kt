@@ -17,9 +17,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -71,27 +71,27 @@ fun StatsMenu(
         stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
     StatsMenu(
-        updateMenuState = menuVM::updateMenuState,
         selectedGame = selectedGame,
         updateSelectedGame = menuVM::updateStatsSelectedGame,
-        stats = selectedGameStats
+        stats = selectedGameStats,
+        onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) }
     )
 }
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of [selectedGame]
  *  which is updated through [updateSelectedGame]. All the data has been hoisted into above
- *  [StatsMenu] thus allowing for easier testing. [StatsMenu] can be opened and closed by updating
- *  [MenuState] value using [updateMenuState]. [stats] are to be displayed.
+ *  [StatsMenu] thus allowing for easier testing. [onBackPressed] handles opening and closing
+ *  [StatsMenu]. [stats] are to be displayed.
  */
 @Composable
 fun StatsMenu(
-    updateMenuState: (MenuState) -> Unit,
     selectedGame: Games,
     updateSelectedGame: (Games) -> Unit,
-    stats: GameStats
+    stats: GameStats,
+    onBackPressed: () -> Unit
 ) {
-    BackHandler { updateMenuState(MenuState.BUTTONS) }
+    BackHandler { onBackPressed() }
     Card(
         modifier = Modifier
             .fillMaxSize()
@@ -105,8 +105,8 @@ fun StatsMenu(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             MenuHeaderBar(
-                menu = MenuState.STATS,
-                onBackPress = { updateMenuState(MenuState.BUTTONS) }
+                menu = MenuState.Stats,
+                onBackPress = onBackPressed
             )
             StatsDropDownMenu(
                 selectedGame = selectedGame,
@@ -289,7 +289,7 @@ fun StatField(
             text = statValue,
             style = MaterialTheme.typography.titleLarge
         )
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.padding(top = 4.dp),
             color = Purple80
         )
@@ -301,11 +301,10 @@ fun StatField(
 fun StatsMenuPreview() {
     SolitairePreview {
         StatsMenu(
-            updateMenuState = { },
             selectedGame = Games.KLONDIKE_TURN_ONE,
             updateSelectedGame = { },
             stats = GameStats.getDefaultInstance()
-        )
+        ) { }
     }
 }
 

@@ -6,7 +6,6 @@ import androidx.compose.animation.SizeTransform
 import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.EaseInCubic
 import androidx.compose.animation.core.EaseOutCubic
-import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.animateDp
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.core.updateTransition
@@ -45,11 +44,13 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.SolitaireButton
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
@@ -74,23 +75,27 @@ fun MenuContainer(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
-            option = MenuState.GAMES,
+            option = MenuState.Games,
             content = { GamesMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
         )
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
-            option = MenuState.STATS,
+            option = MenuState.Stats,
             content = { StatsMenu(menuVM = menuVM) }
         )
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
-            option = MenuState.ABOUT,
+            option = MenuState.About,
             transformOrigin = TransformOrigin(0.5f, 0.20f),
-            content = { AboutMenu { menuVM.updateMenuState(MenuState.BUTTONS) } },
+            content = {
+                AboutMenu {
+                    menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
+                }
+            },
             bottomPadding = 80.dp
         )
     }
@@ -113,6 +118,14 @@ fun MenuOptionTransition(
     bottomPadding: Dp = 8.dp,
     transformOrigin: TransformOrigin = TransformOrigin.Center
 ) {
+    val menuButtonDuration = integerResource(R.integer.menuButtonDuration)
+    val menuButtonDelay = integerResource(R.integer.menuButtonDelay)
+    val menuButtonAniSpec = if (menuState == MenuState.ButtonsFromScreen) {
+        tween<Float>(menuButtonDuration, menuButtonDelay)
+    } else {
+        tween(menuButtonDuration)
+    }
+    val menuOptionDuration = integerResource(R.integer.menuOptionDuration)
 
     val transition = updateTransition(targetState = menuState, label = "Menu Transition")
     val backgroundColor by transition.animateColor(
@@ -127,12 +140,12 @@ fun MenuOptionTransition(
         label = "Menu ${option.name} cornerRadius Transition",
         transitionSpec = {
             when (targetState) {
-                MenuState.BUTTONS -> tween(
-                    durationMillis = 500,
+                MenuState.Buttons, MenuState.ButtonsFromScreen -> tween(
+                    durationMillis = menuOptionDuration,
                     easing = EaseOutCubic
                 )
                 else -> tween(
-                    durationMillis = 500,
+                    durationMillis = menuOptionDuration,
                     easing = EaseInCubic
                 )
             }
@@ -147,12 +160,12 @@ fun MenuOptionTransition(
         label = "Menu ${option.name} borderWidth Transition",
         transitionSpec = {
             when (targetState) {
-                MenuState.BUTTONS -> tween(
-                    durationMillis = 500,
+                MenuState.Buttons, MenuState.ButtonsFromScreen -> tween(
+                    durationMillis = menuOptionDuration,
                     easing = EaseOutCubic
                 )
                 else -> tween(
-                    durationMillis = 500,
+                    durationMillis = menuOptionDuration,
                     easing = EaseInCubic
                 )
             }
@@ -167,12 +180,12 @@ fun MenuOptionTransition(
         label = "Menu ${option.name} borderColor Transition",
         transitionSpec = {
             when (targetState) {
-                MenuState.BUTTONS -> tween(
-                    durationMillis = 500,
+                MenuState.Buttons, MenuState.ButtonsFromScreen -> tween(
+                    durationMillis = menuOptionDuration,
                     easing = EaseOutCubic
                 )
                 else -> tween(
-                    durationMillis = 500,
+                    durationMillis = menuOptionDuration,
                     easing = EaseInCubic
                 )
             }
@@ -187,11 +200,11 @@ fun MenuOptionTransition(
         label = "Menu ${option.name} elevation Transition",
         transitionSpec = {
             when (targetState) {
-                MenuState.BUTTONS -> tween(
-                    durationMillis = 500,
+                MenuState.Buttons, MenuState.ButtonsFromScreen -> tween(
+                    durationMillis = menuOptionDuration,
                     easing = EaseOutCubic,
                 )else -> tween(
-                    durationMillis = 500,
+                    durationMillis = menuOptionDuration,
                     easing = EaseInCubic,
                 )
             }
@@ -214,15 +227,21 @@ fun MenuOptionTransition(
         label = "Menu ${option.name} paddingBottom Transition"
     ) { state ->
         when (state) {
-            MenuState.BUTTONS -> bottomPadding
+            MenuState.Buttons, MenuState.ButtonsFromScreen -> bottomPadding
             else -> 0.dp
         }
     }
 
     AnimatedVisibility(
         visible = displayMenuButtons,
-        enter = scaleIn(transformOrigin = transformOrigin),
-        exit = scaleOut(transformOrigin = transformOrigin)
+        enter = scaleIn(
+            animationSpec = menuButtonAniSpec,
+            transformOrigin = transformOrigin
+        ),
+        exit = scaleOut(
+            animationSpec = menuButtonAniSpec,
+            transformOrigin = transformOrigin
+        )
     ) {
         transition.AnimatedContent(
             modifier = Modifier
@@ -241,16 +260,16 @@ fun MenuOptionTransition(
                 )
                 .drawBehind { drawRect(backgroundColor) },
             transitionSpec = {
-                (fadeIn(animationSpec = tween(durationMillis = 500)))
-                    .togetherWith(fadeOut(animationSpec = tween(durationMillis = 500)))
+                (fadeIn(animationSpec = tween(durationMillis = menuOptionDuration)))
+                    .togetherWith(fadeOut(tween(durationMillis = menuOptionDuration)))
                     .using(SizeTransform(clip = false, sizeAnimationSpec = { _, _ ->
-                        tween(durationMillis = 500, easing = FastOutSlowInEasing)
+                        tween(durationMillis = menuOptionDuration)
                     }))
             }
         ) { state ->
             when (state) {
                 option -> content()
-                MenuState.BUTTONS -> MenuOptionButton(
+                MenuState.Buttons, MenuState.ButtonsFromScreen -> MenuOptionButton(
                     option = option,
                     onClick = { updateMenuState(option) }
                 )
@@ -312,7 +331,7 @@ fun MenuOptionButtonPreview() {
             .padding(12.dp)
             .fillMaxWidth()) {
             MenuOptionButton(
-                option = MenuState.STATS,
+                option = MenuState.Stats,
                 onClick = { },
                 modifier = Modifier
                     .fillMaxWidth(0.3f)

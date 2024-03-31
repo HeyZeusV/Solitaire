@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
@@ -30,11 +31,18 @@ class MenuViewModel @Inject constructor(
 
     private val _displayMenuButtons = MutableStateFlow(false)
     val displayMenuButtons: StateFlow<Boolean> get() = _displayMenuButtons
-    fun updateDisplayMenuButtons() { _displayMenuButtons.value = !_displayMenuButtons.value }
+    private fun updateDisplayMenuButtons() { _displayMenuButtons.value = !_displayMenuButtons.value }
 
-    private val _menuState = MutableStateFlow(MenuState.BUTTONS)
+    private val _menuState = MutableStateFlow(MenuState.Buttons)
     val menuState: StateFlow<MenuState> get() = _menuState
     fun updateMenuState(newValue: MenuState) { _menuState.value = newValue}
+    fun updateDisplayMenuButtonsAndMenuState(newMenuState: MenuState = MenuState.Buttons) {
+        updateDisplayMenuButtons()
+        updateMenuState(newMenuState)
+    }
+
+    private val _animationDurations = MutableStateFlow(AnimationDurations.TwoHundredFifty)
+    val animationDurations: StateFlow<AnimationDurations> get() = _animationDurations
 
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
     val selectedGame: StateFlow<Games> get() = _selectedGame

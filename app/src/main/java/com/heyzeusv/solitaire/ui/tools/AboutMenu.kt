@@ -85,7 +85,7 @@ fun AboutMenu(
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             MenuHeaderBar(
-                menu = MenuState.ABOUT,
+                menu = MenuState.About,
                 onBackPress = onBackPress
             )
             Column(
