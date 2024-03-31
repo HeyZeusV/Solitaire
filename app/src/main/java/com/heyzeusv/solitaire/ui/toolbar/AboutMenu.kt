@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.tools
+package com.heyzeusv.solitaire.ui.toolbar
 
 import android.content.Context
 import androidx.activity.compose.BackHandler

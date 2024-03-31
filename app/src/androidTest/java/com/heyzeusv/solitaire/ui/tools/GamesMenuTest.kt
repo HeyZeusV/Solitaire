@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.toolbar.GamesMenu
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.onLazyListScrollToNode
 import com.heyzeusv.solitaire.util.onNodeWithTextId

@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.tools
+package com.heyzeusv.solitaire.ui.toolbar
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -253,12 +253,12 @@ fun MenuOptionTransition(
             when (state) {
                 option -> content()
                 MenuState.Buttons, MenuState.ButtonsFromScreen -> BaseButton(
-                    icon = painterResource(option.iconId),
-                    iconContentDesc = stringResource(option.iconDescId),
-                    buttonText = stringResource(option.nameId),
                     modifier = Modifier
                         .height(40.dp)
-                        .fillMaxWidth(0.3f)
+                        .fillMaxWidth(0.3f),
+                    icon = painterResource(option.iconId),
+                    iconContentDesc = stringResource(option.iconDescId),
+                    buttonText = stringResource(option.nameId)
                 ) { updateMenuState(option) }
                 else -> {}
             }

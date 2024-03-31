@@ -1,7 +1,6 @@
 package com.heyzeusv.solitaire.ui
 
 import androidx.compose.animation.core.Transition
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -36,17 +35,17 @@ import com.heyzeusv.solitaire.util.getContentColor
 
 /**
  *  Custom Button Composable that uses [Box] rather than standard [OutlinedButton] to allow for
- *  easier animations using [Transition]. Displays given [icon] with content description of
- *  [iconContentDesc] and given [buttonText]. This custom Button is very bare bones, so it requires
- *  [modifier] to provide additional styling. [enabled] is used to determine which colors from
+ *  easier animations using [Transition]. This custom Button is very bare bones, so it requires
+ *  [modifier] to provide additional styling. Displays given [icon] with content description of
+ *  [iconContentDesc] and given [buttonText]. [enabled] is used to determine which colors from
  *  [buttonColors] should be used and if [onClick] is ran when Button is clicked.
  */
 @Composable
 fun BaseButton(
+    modifier: Modifier,
     icon: Painter,
     iconContentDesc: String,
     buttonText: String,
-    modifier: Modifier,
     enabled: Boolean = true,
     buttonColors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
@@ -87,43 +86,6 @@ fun BaseButton(
 }
 
 /**
- *  [onClick] is called when button is pressed. [icon] refers to the drawable to be display next to
- *  [buttonText]. [iconContentDes] is the content description required for the icon. [enabled]
- *  determines if user is able to interact with Button.
- */
-@Composable
-fun SolitaireButton(
-    onClick: () -> Unit,
-    icon: Painter,
-    iconContentDes: String,
-    buttonText: String,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    OutlinedButton(
-        onClick = onClick,
-        modifier = modifier,
-        enabled = enabled,
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.Transparent,
-            contentColor = Color.White
-        ),
-        border = BorderStroke(
-            width = 2.dp,
-            color = if (enabled) Color.White else Color(0x12FFFFFF)
-        )
-    ) {
-        Icon(
-            painter = icon,
-            contentDescription = iconContentDes,
-            modifier = Modifier.size(ButtonDefaults.IconSize)
-        )
-        Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
-        Text(text = buttonText)
-    }
-}
-
-/**
  *  Composable used by [MenuState] screens that display given [menu] name as a title and a back
  *  arrow button that runs [onBackPress] when clicked.
  */
@@ -159,42 +121,18 @@ fun BaseButtonPreview() {
         Preview {
             Row {
                 BaseButton(
+                    modifier = Modifier,
                     icon = painterResource(R.drawable.button_reset),
                     iconContentDesc = "",
-                    buttonText = "Enabled",
-                    modifier = Modifier
+                    buttonText = "Enabled"
                 ) { }
                 BaseButton(
+                    modifier = Modifier,
                     icon = painterResource(R.drawable.button_reset),
                     iconContentDesc = "",
                     buttonText = "Disabled",
-                    modifier = Modifier,
                     enabled = false
                 ) { }
-            }
-        }
-    }
-}
-
-@Preview
-@Composable
-fun SolitaireButtonPreview() {
-    PreviewUtil().apply {
-        Preview {
-            Row {
-                SolitaireButton(
-                    onClick = { },
-                    icon = painterResource(R.drawable.button_reset),
-                    iconContentDes = "",
-                    buttonText = "Enabled"
-                )
-                SolitaireButton(
-                    onClick = { },
-                    icon = painterResource(R.drawable.button_reset),
-                    iconContentDes = "",
-                    buttonText = "Disabled",
-                    enabled = false
-                )
             }
         }
     }
