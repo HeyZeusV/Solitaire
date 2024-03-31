@@ -22,10 +22,11 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.BaseButton
 import com.heyzeusv.solitaire.ui.ResetAlertDialog
@@ -76,11 +77,11 @@ fun Toolbar(
 /**
  *  Composable that displays several buttons for the user. Pressing on Menu button, [menuOnClick],
  *  displays a Composable where user can view games and stats. Pressing on Reset button opens up an
- *  AlertDialog which gives user 3 options, restart current game, reset with a brand new shuffle, or
- *  continue current game; first two options call [resetRestartOnConfirm] or [resetNewOnConfirm].
+ *  AlertDialog which gives user 3 options, restart current game, reset with a brand new shuffle,
+ *  or continue current game; first two options call [resetRestartOnConfirm] or [resetNewOnConfirm].
  *  Undo button state is determined by [undoEnabled] and when pressed calls [undoOnClick], which
- *  returns the game back 1 legal move. [autoCompleteActive] determines if Buttons should be enabled
- *  due to game being in autocomplete mode.
+ *  returns the game back 1 legal move. [autoCompleteActive] determines if Buttons should be
+ *  enabled due to game being in autocomplete mode.
  */
 @Composable
 fun Toolbar(
@@ -103,15 +104,15 @@ fun Toolbar(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 12.dp)
-            .padding(bottom = 24.dp)
+            .padding(horizontal = dimensionResource(R.dimen.tbPaddingHorizontal))
+            .padding(bottom = dimensionResource(R.dimen.tbPaddingBottom))
             .testTag("Tools"),
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.tbRowSpacedBy)),
         verticalAlignment = Alignment.Top
     ) {
         val rowModifier = Modifier
             .weight(1f)
-            .height(48.dp)
+            .height(dimensionResource(R.dimen.tbButtonHeight))
         // Menu Button
         ToolbarButton(
             modifier = rowModifier,
@@ -158,19 +159,20 @@ fun ToolbarButton(
 ) {
     val containerColor = buttonColors.getContainerColor(enabled)
     val contentColor = buttonColors.getContentColor(enabled)
+    val shape = RoundedCornerShape(integerResource(R.integer.buttonRoundedCornerPercent))
 
     BaseButton(
         modifier = modifier
             .border(
                 border = BorderStroke(
-                    width = 2.dp,
+                    width = dimensionResource(R.dimen.buttonBorderWidth),
                     color = contentColor
                 ),
-                shape = RoundedCornerShape(50)
+                shape = shape
             )
             .shadow(
-                elevation = 1.dp,
-                shape = RoundedCornerShape(50),
+                elevation = dimensionResource(R.dimen.buttonElevation),
+                shape = shape,
                 ambientColor = containerColor,
                 spotColor = containerColor
             ),
@@ -207,7 +209,7 @@ fun ToolbarButtonPreview() {
             Row {
                 val mod = Modifier
                     .weight(1f)
-                    .height(48.dp)
+                    .height(dimensionResource(R.dimen.tbButtonHeight))
                 ToolbarButton(
                     modifier = mod,
                     icon = painterResource(R.drawable.button_menu_games),

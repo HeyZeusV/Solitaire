@@ -23,11 +23,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -65,7 +65,8 @@ fun BaseButton(
         contentAlignment = Alignment.Center,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 24.dp),
+            modifier = Modifier
+                .padding(horizontal = dimensionResource(R.dimen.buttonPaddingHorizontal)),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -101,8 +102,8 @@ fun MenuHeaderBar(
             contentDescription = stringResource(R.string.menu_cdesc_close, menuName),
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .padding(top = 3.dp)
-                .size(50.dp)
+                .padding(top = dimensionResource(R.dimen.mhbIconPaddingTop))
+                .size(dimensionResource(R.dimen.mhbIconSize))
                 .clickable { onBackPress() }
         )
         Text(

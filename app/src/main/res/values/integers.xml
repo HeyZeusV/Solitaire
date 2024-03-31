@@ -4,4 +4,7 @@
     <integer name="menuButtonDuration">500</integer>
     <integer name="menuButtonDelay">300</integer>
     <integer name="menuOptionDuration">500</integer>
+
+    <!-- General -->
+    <integer name="buttonRoundedCornerPercent">50</integer>
 </resources>

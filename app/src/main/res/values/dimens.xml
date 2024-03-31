@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- General -->
+    <dimen name="buttonBorderWidth">2.dp</dimen>
+    <dimen name="buttonPaddingHorizontal">24.dp</dimen>
+    <dimen name="buttonElevation">1.dp</dimen>
+
+    <!-- Menu Header Bar (mhb) -->
+    <dimen name="mhbIconPaddingTop">3.dp</dimen>
+    <dimen name="mhbIconSize">50.dp</dimen>
+
+    <!-- Toolbar (tb) -->
+    <dimen name="tbPaddingHorizontal">12.dp</dimen>
+    <dimen name="tbPaddingBottom">24.dp</dimen>
+    <dimen name="tbRowSpacedBy">12.dp</dimen>
+    <dimen name="tbButtonHeight">48.dp</dimen>
+</resources>
