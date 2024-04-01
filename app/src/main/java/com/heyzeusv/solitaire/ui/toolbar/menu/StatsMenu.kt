@@ -46,7 +46,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
-import com.heyzeusv.solitaire.util.SolitairePreview
+import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.getAverageMoves
 import com.heyzeusv.solitaire.util.getAverageScore
@@ -284,46 +284,52 @@ fun StatField(
 @Preview
 @Composable
 fun StatsMenuPreview() {
-    SolitairePreview {
-        StatsMenu(
-            selectedGame = Games.KLONDIKE_TURN_ONE,
-            updateSelectedGame = { },
-            stats = GameStats.getDefaultInstance()
-        ) { }
+    PreviewUtil().apply {
+        Preview {
+            StatsMenu(
+                selectedGame = Games.KLONDIKE_TURN_ONE,
+                updateSelectedGame = { },
+                stats = GameStats.getDefaultInstance()
+            ) { }
+        }
     }
 }
 
 @Preview
 @Composable
 fun StatsDropDownMenuPreview() {
-    SolitairePreview {
-        StatsDropDownMenu(
-            selectedGame = Games.AUSTRALIAN_PATIENCE,
-            updateSelectedGame = { }
-        )
+    PreviewUtil().apply {
+        Preview {
+            StatsDropDownMenu(
+                selectedGame = Games.AUSTRALIAN_PATIENCE,
+                updateSelectedGame = { }
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 fun StatFieldPreview() {
-    SolitairePreview {
-        val test1 = 100
-        val test2 = 100000f
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RectangleShape
-        ) {
-            Column {
-                StatField(
-                    statNameId = R.string.stats_average_score,
-                    statValue = "$test1"
-                )
-                StatField(
-                    statNameId = R.string.stats_best_score,
-                    statValue = "$test2",
-                    statTipId = R.string.stats_best_score_tip
-                )
+    PreviewUtil().apply {
+        Preview {
+            val test1 = 100
+            val test2 = 100000f
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RectangleShape
+            ) {
+                Column {
+                    StatField(
+                        statNameId = R.string.stats_average_score,
+                        statValue = "$test1"
+                    )
+                    StatField(
+                        statNameId = R.string.stats_best_score,
+                        statValue = "$test2",
+                        statTipId = R.string.stats_best_score_tip
+                    )
+                }
             }
         }
     }

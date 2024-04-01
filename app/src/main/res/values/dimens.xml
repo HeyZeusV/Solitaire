@@ -9,6 +9,13 @@
     <dimen name="aRevealHeight">200.dp</dimen>
     <dimen name="aRevealPaddingAll">8.dp</dimen>
 
+    <!-- Games (g) -->
+    <dimen name="gColumnSpacedBy">2.dp</dimen>
+    <dimen name="gInfoHeight">150.dp</dimen>
+    <dimen name="gInfoColumnPaddingAll">8.dp</dimen>
+    <dimen name="gInfoColumnSpacedBy">12.dp</dimen>
+    <dimen name="gInfoImagePaddingAll">8.dp</dimen>
+    <dimen name="gInfoImageSize">150.dp</dimen>
     <!-- General -->
     <dimen name="buttonBorderWidth">2.dp</dimen>
     <dimen name="buttonPaddingHorizontal">24.dp</dimen>

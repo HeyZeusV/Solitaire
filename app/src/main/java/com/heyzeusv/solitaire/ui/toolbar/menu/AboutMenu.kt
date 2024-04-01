@@ -51,7 +51,7 @@ import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.toSize
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.MenuState
-import com.heyzeusv.solitaire.util.SolitairePreview
+import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.theme.ARevealBG
 import com.heyzeusv.solitaire.util.theme.Pink80
 import com.heyzeusv.solitaire.util.theme.Purple40
@@ -292,37 +292,45 @@ private fun loadFile(file: String, context: Context): String {
 @Preview
 @Composable
 fun AboutMenuPreview() {
-    SolitairePreview {
-        AboutMenu(onBackPress = { })
+    PreviewUtil().apply {
+        Preview {
+            AboutMenu(onBackPress = { })
+        }
     }
 }
 
 @Preview
 @Composable
 fun TextCenterAlignPreview() {
-    SolitairePreview {
-        CenterAlignText(text = "Text Center Align Preview")
+    PreviewUtil().apply {
+        Preview {
+            CenterAlignText(text = "Text Center Align Preview")
+        }
     }
 }
 
 @Preview
 @Composable
 fun ButtonRevealContentPreview() {
-    SolitairePreview {
-        ButtonRevealContent(
-            buttonText = "Button Reveal Content Preview",
-            file = "Changelog.txt"
-        )
+    PreviewUtil().apply {
+        Preview {
+            ButtonRevealContent(
+                buttonText = "Button Reveal Content Preview",
+                file = "Changelog.txt"
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 fun HyperlinkTextPreview() {
-    SolitairePreview {
-        HyperlinkText(
-            text = "Hyperlink Text Preview",
-            link = stringResource(R.string.about_privacy_policy_link)
-        )
+    PreviewUtil().apply {
+        Preview {
+            HyperlinkText(
+                text = "Hyperlink Text Preview",
+                link = stringResource(R.string.about_privacy_policy_link)
+            )
+        }
     }
 }
