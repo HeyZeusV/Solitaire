@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
@@ -22,26 +23,29 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.getContentColor
+import com.heyzeusv.solitaire.util.icons.Games
 
 /**
  *  Custom Button Composable that uses [Box] rather than standard [OutlinedButton] to allow for
  *  easier animations using [Transition]. This custom Button is very bare bones, so it requires
- *  [modifier] to provide additional styling. Displays given [icon] with content description of
- *  [iconContentDesc] and given [buttonText]. [enabled] is used to determine which colors from
- *  [buttonColors] should be used and if [onClick] is ran when Button is clicked.
+ *  [modifier] to provide additional styling. Displays given [iconPainter] or [iconImgVector] with
+ *  content description of [iconContentDesc] and given [buttonText]. [enabled] is used to determine
+ *  which colors from [buttonColors] should be used and if [onClick] is ran when Button is clicked.
  */
 @Composable
 fun BaseButton(
     modifier: Modifier,
-    icon: Painter,
     iconContentDesc: String,
     buttonText: String,
+    iconPainter: Painter? = null,
+    iconImgVector: ImageVector? = null,
     enabled: Boolean = true,
     buttonColors: ButtonColors = ButtonDefaults.buttonColors(
         containerColor = Color.Transparent,
@@ -66,12 +70,22 @@ fun BaseButton(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                painter = icon,
-                contentDescription = iconContentDesc,
-                modifier = Modifier.size(ButtonDefaults.IconSize),
-                tint = contentColor
-            )
+            iconPainter?.let {
+                Icon(
+                    painter = iconPainter,
+                    contentDescription = iconContentDesc,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                    tint = contentColor
+                )
+            }
+            iconImgVector?.let {
+                Icon(
+                    imageVector = iconImgVector,
+                    contentDescription = iconContentDesc,
+                    modifier = Modifier.size(ButtonDefaults.IconSize),
+                    tint = contentColor
+                )
+            }
             Spacer(modifier = Modifier.size(ButtonDefaults.IconSpacing))
             Text(
                 text = buttonText,
@@ -90,15 +104,15 @@ fun BaseButtonPreview() {
             Row {
                 BaseButton(
                     modifier = Modifier,
-                    icon = painterResource(R.drawable.button_reset),
                     iconContentDesc = "",
-                    buttonText = "Enabled"
+                    buttonText = "Enabled",
+                    iconPainter = painterResource(R.drawable.button_reset),
                 ) { }
                 BaseButton(
                     modifier = Modifier,
-                    icon = painterResource(R.drawable.button_reset),
                     iconContentDesc = "",
                     buttonText = "Disabled",
+                    iconImgVector = Icons.Filled.Games,
                     enabled = false
                 ) { }
             }

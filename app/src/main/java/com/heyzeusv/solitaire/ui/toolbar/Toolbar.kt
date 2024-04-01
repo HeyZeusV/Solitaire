@@ -176,9 +176,9 @@ fun ToolbarButton(
                 ambientColor = containerColor,
                 spotColor = containerColor
             ),
-        icon = icon,
         iconContentDesc = iconContentDesc,
         buttonText = buttonText,
+        iconPainter = icon,
         enabled = enabled
     ) { onClick() }
 }
@@ -212,14 +212,14 @@ fun ToolbarButtonPreview() {
                     .height(dimensionResource(R.dimen.tbButtonHeight))
                 ToolbarButton(
                     modifier = mod,
-                    icon = painterResource(R.drawable.button_menu_games),
+                    icon = painterResource(R.drawable.button_menu),
                     iconContentDesc = "",
                     buttonText = "Enabled",
                     enabled = true
                 ) { }
                 ToolbarButton(
                     modifier = mod,
-                    icon = painterResource(R.drawable.button_menu_stats),
+                    icon = painterResource(R.drawable.button_undo),
                     iconContentDesc = "",
                     buttonText = "Disabled",
                     enabled = false

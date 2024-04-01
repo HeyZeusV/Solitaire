@@ -31,7 +31,6 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
 import androidx.compose.ui.res.integerResource
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -266,9 +265,9 @@ fun MenuOptionTransition(
                     modifier = Modifier
                         .height(40.dp)
                         .fillMaxWidth(0.3f),
-                    icon = painterResource(option.iconId),
                     iconContentDesc = stringResource(option.iconDescId),
-                    buttonText = stringResource(option.nameId)
+                    buttonText = stringResource(option.nameId),
+                    iconImgVector = option.icon,
                 ) { updateMenuState(option) }
                 else -> {}
             }
