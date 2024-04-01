@@ -45,11 +45,10 @@ class StatsMenuTest {
             setContent {
                 SolitaireTheme {
                     StatsMenu(
-                        updateMenuState = { },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         updateSelectedGame = { },
                         stats = gameOneStats
-                    )
+                    ) { }
                 }
             }
 
@@ -64,11 +63,10 @@ class StatsMenuTest {
             setContent {
                 SolitaireTheme {
                     StatsMenu(
-                        updateMenuState = { },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         updateSelectedGame = { },
                         stats = gameOneStats
-                    )
+                    ) { }
                 }
             }
 
@@ -87,7 +85,6 @@ class StatsMenuTest {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     StatsMenu(
-                        updateMenuState = { },
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
@@ -98,7 +95,7 @@ class StatsMenuTest {
                             }
                         },
                         stats = stats
-                    )
+                    ) { }
                 }
             }
 

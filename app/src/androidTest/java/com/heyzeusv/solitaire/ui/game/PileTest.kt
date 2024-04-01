@@ -6,6 +6,7 @@ import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
@@ -33,7 +34,7 @@ class PileTest {
                     SolitairePile(
                         pile = emptyList(),
                         emptyIconId = R.drawable.tableau_empty,
-                        cardWidth = 70.dp
+                        cardDpSize = DpSize(100.dp, 140.dp)
                     )
                 }
             }
@@ -52,7 +53,7 @@ class PileTest {
                     SolitairePile(
                         pile = listOf(tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
-                        cardWidth = 70.dp
+                        cardDpSize = DpSize(100.dp, 140.dp)
                     )
                 }
             }
@@ -74,7 +75,7 @@ class PileTest {
                         pile = listOf(tc.card1CFU, tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
                         drawAmount = 3,
-                        cardWidth = 70.dp
+                        cardDpSize = DpSize(100.dp, 140.dp)
                     )
                 }
             }
@@ -104,7 +105,7 @@ class PileTest {
                         pile = listOf(tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
                         drawAmount = 3,
-                        cardWidth = 70.dp
+                        cardDpSize = DpSize(100.dp, 140.dp)
                     )
                 }
             }
