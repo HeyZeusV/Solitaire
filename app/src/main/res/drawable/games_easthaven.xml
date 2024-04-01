@@ -3,10 +3,10 @@
     android:width="150dp"
     android:height="150dp"
     android:viewportWidth="506"
-    android:viewportHeight="252">
+    android:viewportHeight="452">
     <path
         android:fillColor="#FF096240"
-        android:pathData="M0 0H506V252H0z"/>
+        android:pathData="M0 0H506V452H0z"/>
     <path
         android:fillColor="#FFD9D9D9"
         android:pathData="M438 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4h-62Z"/>
@@ -33,7 +33,7 @@
     <path
         android:strokeColor="#59000000"
         android:strokeWidth="1"
-        android:pathData="M436 152.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94c0-0.83 0.67-1.5 1.5-1.5Z"/>
+        android:pathData="M434.5 154c0-0.83 0.67-1.5 1.5-1.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94Z"/>
     <path
         android:fillColor="#FFD9D9D9"
         android:pathData="M366 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4h-62Z"/>
@@ -60,7 +60,7 @@
     <path
         android:strokeColor="#59000000"
         android:strokeWidth="1"
-        android:pathData="M364 152.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94c0-0.83 0.67-1.5 1.5-1.5Z"/>
+        android:pathData="M362.5 154c0-0.83 0.67-1.5 1.5-1.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94Z"/>
     <path
         android:fillColor="#FFD9D9D9"
         android:pathData="M294 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4h-62Z"/>
@@ -87,7 +87,7 @@
     <path
         android:strokeColor="#59000000"
         android:strokeWidth="1"
-        android:pathData="M292 152.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94c0-0.83 0.67-1.5 1.5-1.5Z"/>
+        android:pathData="M290.5 154c0-0.83 0.67-1.5 1.5-1.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94Z"/>
     <path
         android:fillColor="#FFD9D9D9"
         android:pathData="M222 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4h-62Z"/>
@@ -114,7 +114,7 @@
     <path
         android:strokeColor="#59000000"
         android:strokeWidth="1"
-        android:pathData="M220 152.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94c0-0.83 0.67-1.5 1.5-1.5Z"/>
+        android:pathData="M218.5 154c0-0.83 0.67-1.5 1.5-1.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94Z"/>
     <path
         android:fillColor="#FFD9D9D9"
         android:pathData="M150 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4h-62Z"/>
@@ -141,7 +141,7 @@
     <path
         android:strokeColor="#59000000"
         android:strokeWidth="1"
-        android:pathData="M148 152.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94c0-0.83 0.67-1.5 1.5-1.5Z"/>
+        android:pathData="M146.5 154c0-0.83 0.67-1.5 1.5-1.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5h-66c-0.83 0-1.5-0.67-1.5-1.5v-94Z"/>
     <path
         android:fillColor="#FFD9D9D9"
         android:pathData="M78 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4H78Z"/>
@@ -168,7 +168,7 @@
     <path
         android:strokeColor="#59000000"
         android:strokeWidth="1"
-        android:pathData="M76 152.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5H76c-0.83 0-1.5-0.67-1.5-1.5v-94c0-0.83 0.67-1.5 1.5-1.5Z"/>
+        android:pathData="M74.5 154c0-0.83 0.67-1.5 1.5-1.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5H76c-0.83 0-1.5-0.67-1.5-1.5v-94Z"/>
     <path
         android:fillColor="#FFD9D9D9"
         android:pathData="M6 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4H6Z"/>
@@ -195,7 +195,7 @@
     <path
         android:strokeColor="#59000000"
         android:strokeWidth="1"
-        android:pathData="M4 152.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5H4c-0.83 0-1.5-0.67-1.5-1.5v-94c0-0.83 0.67-1.5 1.5-1.5Z"/>
+        android:pathData="M2.5 154c0-0.83 0.67-1.5 1.5-1.5h66c0.83 0 1.5 0.67 1.5 1.5v94c0 0.83-0.67 1.5-1.5 1.5H4c-0.83 0-1.5-0.67-1.5-1.5v-94Z"/>
     <path
         android:fillColor="#FFFFFFFF"
         android:pathData="M252.79 36.21c0-0.11 0.1-0.21 0.21-0.21 0.12 0 0.21 0.1 0.21 0.21V65.8c0 0.11-0.1 0.21-0.21 0.21-0.12 0-0.21-0.1-0.21-0.21V36.2Z"/>
