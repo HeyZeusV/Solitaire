@@ -30,10 +30,10 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.TransformOrigin
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.BaseButton
 import com.heyzeusv.solitaire.ui.game.GameViewModel
@@ -83,7 +83,7 @@ fun MenuContainer(
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.About,
-            bottomPadding = 80.dp,
+            bottomPadding = dimensionResource(R.dimen.mbPaddingBottom),
             transformOrigin = TransformOrigin(0.5f, 0.20f)
         ) {
             AboutMenu {
@@ -106,10 +106,11 @@ fun MenuOptionTransition(
     menuState: MenuState,
     updateMenuState: (MenuState) -> Unit,
     option: MenuState,
-    bottomPadding: Dp = 8.dp,
+    bottomPadding: Dp = dimensionResource(R.dimen.mbPaddingBottomDefault),
     transformOrigin: TransformOrigin = TransformOrigin.Center,
     content: @Composable () -> Unit
-) {
+) { 
+    val zeroDp = dimensionResource(R.dimen.zero)
     val menuButtonDuration = integerResource(R.integer.mButtonDuration)
     val menuButtonDelay = integerResource(R.integer.mButtonDelay)
     val menuButtonAniSpec = if (menuState == MenuState.ButtonsFromScreen) {
@@ -144,8 +145,8 @@ fun MenuOptionTransition(
         }
     ) { state ->
         when (state) {
-            option -> 0.dp
-            else -> 20.dp
+            option -> zeroDp
+            else -> dimensionResource(R.dimen.mbRoundRadius)
         }
     }
     val borderWidth by transition.animateDp(
@@ -164,8 +165,8 @@ fun MenuOptionTransition(
         }
     ) { state ->
         when (state) {
-            option -> 0.dp
-            else -> 2.dp
+            option -> zeroDp
+            else -> dimensionResource(R.dimen.buttonBorderWidth)
         }
     }
     val borderColor by transition.animateColor(
@@ -203,16 +204,16 @@ fun MenuOptionTransition(
         }
     ) { state ->
         when (state) {
-            option -> 0.dp
-            else -> 1.dp
+            option -> zeroDp
+            else -> dimensionResource(R.dimen.buttonElevation)
         }
     }
     val paddingStart by transition.animateDp(
         label = "Menu ${option.name} paddingStart Transition"
     ) { state ->
         when (state) {
-            option -> 0.dp
-            else -> 12.dp
+            option -> zeroDp
+            else -> dimensionResource(R.dimen.mbPaddingStart)
         }
     }
     val paddingBottom by transition.animateDp(
@@ -220,7 +221,7 @@ fun MenuOptionTransition(
     ) { state ->
         when (state) {
             MenuState.Buttons, MenuState.ButtonsFromScreen -> bottomPadding
-            else -> 0.dp
+            else -> zeroDp
         }
     }
 
@@ -263,7 +264,7 @@ fun MenuOptionTransition(
                 option -> content()
                 MenuState.Buttons, MenuState.ButtonsFromScreen -> BaseButton(
                     modifier = Modifier
-                        .height(40.dp)
+                        .height(dimensionResource(R.dimen.mbHeight))
                         .fillMaxWidth(0.3f),
                     iconContentDesc = stringResource(option.iconDescId),
                     buttonText = stringResource(option.nameId),

@@ -16,16 +16,25 @@
     <dimen name="gInfoColumnSpacedBy">12.dp</dimen>
     <dimen name="gInfoImagePaddingAll">8.dp</dimen>
     <dimen name="gInfoImageSize">150.dp</dimen>
+
     <!-- General -->
+    <dimen name="zero">0.dp</dimen>
     <dimen name="buttonBorderWidth">2.dp</dimen>
     <dimen name="buttonPaddingHorizontal">12.dp</dimen>
     <dimen name="buttonElevation">1.dp</dimen>
+
+    <!-- Menu Button (mb) -->
+    <dimen name="mbPaddingBottomDefault">8.dp</dimen>
+    <dimen name="mbPaddingBottom">80.dp</dimen>
+    <dimen name="mbRoundRadius">20.dp</dimen>
+    <dimen name="mbPaddingStart">12.dp</dimen>
+    <dimen name="mbHeight">40.dp</dimen>
 
     <!-- Menu Header Bar (mhb) -->
     <dimen name="mhbIconPaddingTop">3.dp</dimen>
     <dimen name="mhbIconSize">50.dp</dimen>
 
-    <!-- MenuScreen (ms) -->
+    <!-- Menu Screen (ms) -->
     <dimen name="msPaddingAll">8.dp</dimen>
     <dimen name="msColumnSpacedBy">8.dp</dimen>
 
