@@ -18,7 +18,7 @@
     <dimen name="gInfoImageSize">150.dp</dimen>
     <!-- General -->
     <dimen name="buttonBorderWidth">2.dp</dimen>
-    <dimen name="buttonPaddingHorizontal">24.dp</dimen>
+    <dimen name="buttonPaddingHorizontal">12.dp</dimen>
     <dimen name="buttonElevation">1.dp</dimen>
 
     <!-- Menu Header Bar (mhb) -->

@@ -189,10 +189,11 @@ enum class MoveResult {
 /**
  *  Enum class that represents possible states when user interacts with Menu Button. [Buttons] is
  *  the state when user presses Menu Button. [ButtonsFromScreen] is the state when the user closes
- *  a Menu Screen. [Games], [Stats], and [About] refer to the possible Menu Screens user can
- *  open when pressing their respective Buttons. They hold resource ids that are used for their
+ *  a Menu Screen. [Games], [Stats], [Settings] and [About] refer to the possible Menu Screens user
+ *  can open when pressing their respective Buttons. They hold resource ids that are used for their
  *  Buttons.
  */
+// TODO switch ImageVectors
 enum class MenuState(
     @StringRes val nameId: Int = 0,
     @DrawableRes val iconId: Int = 0,
@@ -202,6 +203,7 @@ enum class MenuState(
     ButtonsFromScreen,
     Games(R.string.menu_button_games, R.drawable.button_menu_games, R.string.menu_cdesc_games),
     Stats(R.string.menu_button_stats, R.drawable.button_menu_stats, R.string.menu_cdesc_stats),
+    Settings(R.string.menu_button_settings, R.drawable.button_menu_settings, R.string.menu_cdesc_settings),
     About(R.string.menu_button_about, R.drawable.button_menu_about, R.string.menu_cdesc_about)
 }
 

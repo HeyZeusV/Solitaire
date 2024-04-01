@@ -29,7 +29,7 @@ class PreviewUtil {
         end = GamePiles.Waste,
         animatedCards = pile
     )
-    val animationDurations = AnimationDurations.TwoHundredFifty
+    val animationDurations = AnimationDurations.Fast
 
     /**
      *  Helper function for Composable Previews. Gives semi-transparent background to previews to

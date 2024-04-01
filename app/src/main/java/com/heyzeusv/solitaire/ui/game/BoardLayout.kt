@@ -56,7 +56,7 @@ fun BoardLayout(
     BoardLayout(
         modifier = modifier,
         layInfo = gameVM.layoutInfo,
-        animationDurations = AnimationDurations.TwoHundredFifty,
+        animationDurations = AnimationDurations.Fast,
         animateInfo = animateInfo,
         updateAnimateInfo = gameVM::updateAnimateInfo,
         updateUndoEnabled = gameVM::updateUndoEnabled,

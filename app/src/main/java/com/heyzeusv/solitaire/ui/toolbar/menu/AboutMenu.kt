@@ -70,7 +70,7 @@ fun AboutMenu(
     MenuScreen(
         menu = MenuState.About,
         modifier = Modifier.testTag("About Menu"),
-        onBackPress = { onBackPress() }
+        onBackPress = onBackPress
     ) {
         Column(
             modifier = Modifier

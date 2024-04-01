@@ -275,7 +275,7 @@ abstract class GameViewModel (
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
                         _foundation.forEach { foundation ->
                             if (foundation.canAdd(tableau.truePile.takeLast(1))) {
-                                delay(AnimationDurations.TwoHundredFifty.autoCompleteDelay)
+                                delay(AnimationDurations.Fast.autoCompleteDelay)
                                 onTableauClick(i, tableau.truePile.size - 1)
                             }
                         }

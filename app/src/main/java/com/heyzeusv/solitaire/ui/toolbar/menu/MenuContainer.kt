@@ -41,6 +41,8 @@ import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.MenuState
+import com.heyzeusv.solitaire.util.PreviewDevices
+import com.heyzeusv.solitaire.util.PreviewUtil
 
 /**
  *  Composable that displays Menu options which transition into Menu screens.
@@ -59,29 +61,36 @@ fun MenuContainer(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
-            option = MenuState.Games,
-            content = { GamesMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
-        )
+            option = MenuState.Games
+        ) { GamesMenu(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM) }
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
-            option = MenuState.Stats,
-            content = { StatsMenu(menuVM = menuVM) }
-        )
+            option = MenuState.Stats
+        ) { StatsMenu(menuVM = menuVM) }
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
+            option = MenuState.Settings
+        ) {
+            SettingsMenu {
+                menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
+            }
+        }
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.About,
-            transformOrigin = TransformOrigin(0.5f, 0.20f),
-            content = {
-                AboutMenu {
-                    menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
-                }
-            },
-            bottomPadding = 80.dp
-        )
+            bottomPadding = 80.dp,
+            transformOrigin = TransformOrigin(0.5f, 0.20f)
+        ) {
+            AboutMenu {
+                menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
+            }
+        }
     }
 }
 
@@ -98,9 +107,9 @@ fun MenuOptionTransition(
     menuState: MenuState,
     updateMenuState: (MenuState) -> Unit,
     option: MenuState,
-    content: @Composable () -> Unit,
     bottomPadding: Dp = 8.dp,
-    transformOrigin: TransformOrigin = TransformOrigin.Center
+    transformOrigin: TransformOrigin = TransformOrigin.Center,
+    content: @Composable () -> Unit
 ) {
     val menuButtonDuration = integerResource(R.integer.mButtonDuration)
     val menuButtonDelay = integerResource(R.integer.mButtonDelay)
@@ -263,6 +272,21 @@ fun MenuOptionTransition(
                 ) { updateMenuState(option) }
                 else -> {}
             }
+        }
+    }
+}
+
+@PreviewDevices
+@Composable
+fun MenuOptionTransitionPreview() {
+    PreviewUtil().apply {
+        Preview {
+            MenuOptionTransition(
+                displayMenuButtons = true,
+                menuState = MenuState.Buttons,
+                updateMenuState = { },
+                option = MenuState.Settings
+            ) { }
         }
     }
 }

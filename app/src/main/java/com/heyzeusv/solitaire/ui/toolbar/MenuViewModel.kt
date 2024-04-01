@@ -41,7 +41,7 @@ class MenuViewModel @Inject constructor(
         updateMenuState(newMenuState)
     }
 
-    private val _animationDurations = MutableStateFlow(AnimationDurations.TwoHundredFifty)
+    private val _animationDurations = MutableStateFlow(AnimationDurations.Fast)
     val animationDurations: StateFlow<AnimationDurations> get() = _animationDurations
 
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
