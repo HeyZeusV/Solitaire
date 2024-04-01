@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.toolbar
+package com.heyzeusv.solitaire.ui.toolbar.menu
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.AnimatedVisibility
@@ -39,6 +39,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.BaseButton
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.MenuState
 
 /**
@@ -101,14 +102,14 @@ fun MenuOptionTransition(
     bottomPadding: Dp = 8.dp,
     transformOrigin: TransformOrigin = TransformOrigin.Center
 ) {
-    val menuButtonDuration = integerResource(R.integer.menuButtonDuration)
-    val menuButtonDelay = integerResource(R.integer.menuButtonDelay)
+    val menuButtonDuration = integerResource(R.integer.mButtonDuration)
+    val menuButtonDelay = integerResource(R.integer.mButtonDelay)
     val menuButtonAniSpec = if (menuState == MenuState.ButtonsFromScreen) {
         tween<Float>(menuButtonDuration, menuButtonDelay)
     } else {
         tween(menuButtonDuration)
     }
-    val menuOptionDuration = integerResource(R.integer.menuOptionDuration)
+    val menuOptionDuration = integerResource(R.integer.mOptionDuration)
 
     val transition = updateTransition(targetState = menuState, label = "Menu Transition")
     val backgroundColor by transition.animateColor(

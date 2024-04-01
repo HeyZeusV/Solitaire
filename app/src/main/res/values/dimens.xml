@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- About (a) -->
+    <dimen name="aColumnSpacedBy">8.dp</dimen>
+    <dimen name="aImageElevation">1.dp</dimen>
+    <dimen name="aImageRoundSize">20.dp</dimen>
+    <dimen name="aButtonPaddingBottom">8.dp</dimen>
+    <dimen name="aButtonRoundSize">4.dp</dimen>
+    <dimen name="aRevealHeight">200.dp</dimen>
+    <dimen name="aRevealPaddingAll">8.dp</dimen>
+
     <!-- General -->
     <dimen name="buttonBorderWidth">2.dp</dimen>
     <dimen name="buttonPaddingHorizontal">24.dp</dimen>
@@ -8,6 +17,10 @@
     <!-- Menu Header Bar (mhb) -->
     <dimen name="mhbIconPaddingTop">3.dp</dimen>
     <dimen name="mhbIconSize">50.dp</dimen>
+
+    <!-- MenuScreen (ms) -->
+    <dimen name="msPaddingAll">8.dp</dimen>
+    <dimen name="msColumnSpacedBy">8.dp</dimen>
 
     <!-- Toolbar (tb) -->
     <dimen name="tbPaddingHorizontal">12.dp</dimen>

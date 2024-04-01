@@ -1,13 +1,11 @@
-package com.heyzeusv.solitaire.ui.toolbar
+package com.heyzeusv.solitaire.ui.toolbar.menu
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -45,7 +43,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.MenuHeaderBar
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.SolitairePreview
@@ -91,32 +89,19 @@ fun StatsMenu(
     stats: GameStats,
     onBackPressed: () -> Unit
 ) {
-    BackHandler { onBackPressed() }
-    Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("Stats Menu"),
-        shape = RectangleShape
+    MenuScreen(
+        menu = MenuState.Stats,
+        modifier = Modifier.testTag("Stats Menu"),
+        onBackPress = onBackPressed
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(all = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            MenuHeaderBar(
-                menu = MenuState.Stats,
-                onBackPress = onBackPressed
-            )
-            StatsDropDownMenu(
-                selectedGame = selectedGame,
-                updateSelectedGame = { updateSelectedGame(it) }
-            )
-            StatColumn(
-                stats = stats,
-                game = selectedGame
-            )
-        }
+        StatsDropDownMenu(
+            selectedGame = selectedGame,
+            updateSelectedGame = { updateSelectedGame(it) }
+        )
+        StatColumn(
+            stats = stats,
+            game = selectedGame
+        )
     }
 }
 

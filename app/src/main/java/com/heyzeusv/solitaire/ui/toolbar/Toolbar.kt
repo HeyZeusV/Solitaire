@@ -159,7 +159,7 @@ fun ToolbarButton(
 ) {
     val containerColor = buttonColors.getContainerColor(enabled)
     val contentColor = buttonColors.getContentColor(enabled)
-    val shape = RoundedCornerShape(integerResource(R.integer.buttonRoundedCornerPercent))
+    val shape = RoundedCornerShape(integerResource(R.integer.buttonRoundPercent))
 
     BaseButton(
         modifier = modifier

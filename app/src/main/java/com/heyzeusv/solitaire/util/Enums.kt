@@ -6,8 +6,8 @@ import androidx.compose.ui.graphics.Color
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.GameViewModel
-import com.heyzeusv.solitaire.ui.toolbar.GamesMenu
-import com.heyzeusv.solitaire.ui.toolbar.StatsMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
 import com.heyzeusv.solitaire.util.Redeals.*
 
 /**

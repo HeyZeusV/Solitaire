@@ -1,7 +1,6 @@
-package com.heyzeusv.solitaire.ui.toolbar
+package com.heyzeusv.solitaire.ui.toolbar.menu
 
 import android.content.Context
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
@@ -11,7 +10,6 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,7 +19,6 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,12 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
@@ -51,12 +48,11 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.MenuHeaderBar
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.SolitairePreview
+import com.heyzeusv.solitaire.util.theme.ARevealBG
 import com.heyzeusv.solitaire.util.theme.Pink80
 import com.heyzeusv.solitaire.util.theme.Purple40
 import java.io.BufferedReader
@@ -71,77 +67,64 @@ import java.io.InputStreamReader
 fun AboutMenu(
     onBackPress: () -> Unit
 ) {
-    BackHandler { onBackPress() }
-    Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("About Menu"),
-        shape = RectangleShape
+    MenuScreen(
+        menu = MenuState.About,
+        modifier = Modifier.testTag("About Menu"),
+        onBackPress = { onBackPress() }
     ) {
         Column(
             modifier = Modifier
-                .fillMaxSize()
-                .padding(all = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState()),
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.aColumnSpacedBy)),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            MenuHeaderBar(
-                menu = MenuState.About,
-                onBackPress = onBackPress
-            )
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .verticalScroll(rememberScrollState()),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Box {
-                    Image(
-                        painter = painterResource(R.mipmap.ic_launcher_background),
-                        contentDescription = null,
-                        modifier = Modifier.shadow(
-                            elevation = 1.dp,
-                            shape = RoundedCornerShape(20.dp)
-                        )
-                    )
-                    Image(
-                        painter = painterResource(R.mipmap.ic_launcher_foreground),
-                        contentDescription = stringResource(R.string.app_name)
-                    )
-                }
-                CenterAlignText(
-                    text = stringResource(R.string.app_name),
-                    style = MaterialTheme.typography.displayMedium.copy(
-                        fontWeight = FontWeight.Bold
+            Box {
+                Image(
+                    painter = painterResource(R.mipmap.ic_launcher_background),
+                    contentDescription = null,
+                    modifier = Modifier.shadow(
+                        elevation = dimensionResource(R.dimen.aImageElevation),
+                        shape = RoundedCornerShape(dimensionResource(R.dimen.aImageRoundSize))
                     )
                 )
-                CenterAlignText(text = stringResource(R.string.about_by_name))
-                CenterAlignText(text = stringResource(R.string.about_version))
-                ButtonRevealContent(
-                    buttonText = stringResource(R.string.about_changelog),
-                    file = "Changelog.txt"
-                )
-                HyperlinkText(
-                    text = stringResource(R.string.about_privacy_policy),
-                    link = stringResource(R.string.about_privacy_policy_link)
-                )
-                CenterAlignText(text = stringResource(R.string.about_special_thanks))
-                CenterAlignText(text = stringResource(R.string.about_contact_me))
-                HyperlinkText(
-                    text = stringResource(R.string.about_email),
-                    link = stringResource(R.string.about_email_link)
-                )
-                CenterAlignText(
-                    text = stringResource(R.string.about_external_icons),
-                    style = MaterialTheme.typography.headlineMedium.copy(
-                        fontWeight = FontWeight.Bold
-                    )
-                )
-                HyperlinkText(
-                    text = stringResource(R.string.about_icon_credit),
-                    link = stringResource(R.string.about_icon_credit_link)
+                Image(
+                    painter = painterResource(R.mipmap.ic_launcher_foreground),
+                    contentDescription = stringResource(R.string.app_name)
                 )
             }
+            CenterAlignText(
+                text = stringResource(R.string.app_name),
+                style = MaterialTheme.typography.displayMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            CenterAlignText(text = stringResource(R.string.about_by_name))
+            CenterAlignText(text = stringResource(R.string.about_version))
+            ButtonRevealContent(
+                buttonText = stringResource(R.string.about_changelog),
+                file = "Changelog.txt"
+            )
+            HyperlinkText(
+                text = stringResource(R.string.about_privacy_policy),
+                link = stringResource(R.string.about_privacy_policy_link)
+            )
+            CenterAlignText(text = stringResource(R.string.about_special_thanks))
+            CenterAlignText(text = stringResource(R.string.about_contact_me))
+            HyperlinkText(
+                text = stringResource(R.string.about_email),
+                link = stringResource(R.string.about_email_link)
+            )
+            CenterAlignText(
+                text = stringResource(R.string.about_external_icons),
+                style = MaterialTheme.typography.headlineMedium.copy(
+                    fontWeight = FontWeight.Bold
+                )
+            )
+            HyperlinkText(
+                text = stringResource(R.string.about_icon_credit),
+                link = stringResource(R.string.about_icon_credit_link)
+            )
         }
     }
 }
@@ -162,8 +145,8 @@ fun ButtonRevealContent(buttonText: String, file: String) {
     ) {
         Button(
             onClick = { revealContent = !revealContent },
-            modifier = Modifier.padding(bottom = 8.dp),
-            shape = RoundedCornerShape(4.dp),
+            modifier = Modifier.padding(bottom = dimensionResource(R.dimen.aButtonPaddingBottom)),
+            shape = RoundedCornerShape(dimensionResource(R.dimen.aButtonRoundSize)),
             colors = ButtonDefaults.buttonColors(
                 containerColor = Purple40
             )
@@ -180,14 +163,14 @@ fun ButtonRevealContent(buttonText: String, file: String) {
             visible = revealContent,
             enter = expandVertically(
                 animationSpec = tween(
-                    durationMillis = 1000,
+                    durationMillis = integerResource(R.integer.aButtonDuration),
                     easing = LinearEasing
                 ),
                 initialHeight = { -composeSize.height.toInt() - 50 }
             ),
             exit = shrinkVertically(
                 animationSpec = tween(
-                    durationMillis = 1000,
+                    durationMillis = integerResource(R.integer.aButtonDuration),
                     easing = LinearEasing
                 ),
                 targetHeight = { -composeSize.height.toInt() - 50 }
@@ -196,15 +179,15 @@ fun ButtonRevealContent(buttonText: String, file: String) {
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(dimensionResource(R.dimen.aRevealHeight))
                     .onGloballyPositioned { composeSize = it.size.toSize() },
                 shape = MaterialTheme.shapes.medium,
-                color = Color(0x26000000)
+                color = ARevealBG
             ) {
                 CenterAlignText(
                     text = fileContent,
                     modifier = Modifier
-                        .padding(all = 8.dp)
+                        .padding(all = dimensionResource(R.dimen.aRevealPaddingAll))
                         .verticalScroll(rememberScrollState())
                         .testTag("About $file"),
                     style = MaterialTheme.typography.bodyLarge
@@ -224,7 +207,7 @@ fun CenterAlignText(
     modifier: Modifier = Modifier,
     style: TextStyle = MaterialTheme.typography.titleLarge.copy(
         fontSize = TextUnit(
-            20f,
+            integerResource(R.integer.aTextSize).toFloat(),
             TextUnitType.Sp
         )
     )
@@ -266,7 +249,7 @@ fun HyperlinkText(text: String, link: String) {
         text = annotatedString,
         style = MaterialTheme.typography.titleLarge.copy(
             fontSize = TextUnit(
-                20f,
+                integerResource(R.integer.aTextSize).toFloat(),
                 TextUnitType.Sp
             ),
             textAlign = TextAlign.Center

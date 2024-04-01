@@ -25,7 +25,7 @@ import com.heyzeusv.solitaire.ui.game.*
 import com.heyzeusv.solitaire.ui.game.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
-import com.heyzeusv.solitaire.ui.toolbar.MenuContainer
+import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.ui.toolbar.Toolbar
