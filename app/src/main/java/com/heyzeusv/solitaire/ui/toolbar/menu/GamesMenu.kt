@@ -27,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
@@ -165,7 +166,8 @@ fun GamesInfo(
             .testTag("${game.name} Card $selected"),
         shape = ShapeDefaults.Small,
         colors = CardDefaults.cardColors(
-            containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface
+            containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface,
+            contentColor = if (selected) Color.Black else MaterialTheme.colorScheme.onSurface
         )
     ) {
         Row(
