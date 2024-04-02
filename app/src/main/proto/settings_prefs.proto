@@ -1,0 +1,16 @@
+syntax = "proto3";
+
+option java_package = "com.heyzeusv.solitaire";
+option java_multiple_files = true;
+
+message Settings {
+    AnimationDurationsSetting animation_durations = 1;
+}
+
+enum AnimationDurationsSetting {
+    NONE = 0;
+    SLOWEST = 1;
+    SLOW = 2;
+    FAST = 3;
+    FASTEST = 4;
+}

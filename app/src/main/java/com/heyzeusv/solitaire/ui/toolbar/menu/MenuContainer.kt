@@ -73,11 +73,7 @@ fun MenuContainer(
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.Settings
-        ) {
-            SettingsMenu {
-                menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
-            }
-        }
+        ) { SettingsMenu(menuVM = menuVM)}
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,

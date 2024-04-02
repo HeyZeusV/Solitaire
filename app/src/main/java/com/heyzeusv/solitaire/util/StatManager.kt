@@ -14,11 +14,10 @@ import javax.inject.Singleton
 class StatManager @Inject constructor(
     private val statPreferences: DataStore<StatPreferences>
 ) {
-
     // preferences will be emitted here
     val statData: Flow<StatPreferences> = statPreferences.data
         .catch { exception ->
-            // dataStore.data throws an IOException when an error is encountered when reading data
+            // DataStore.data throws an IOException when an error is encountered when reading data
             if (exception is IOException) {
                 Log.e("Solitaire", "Error reading stats.", exception)
                 emit(StatPreferences.getDefaultInstance())
@@ -31,12 +30,12 @@ class StatManager @Inject constructor(
      *  Stats can all be updated together when a game is ended by any means.
      */
     suspend fun updateStats(stats: GameStats) {
-        statPreferences.updateData { game ->
-            val index = game.statsList.indexOfFirst { it.game == stats.game }
+        statPreferences.updateData { statPrefs ->
+            val index = statPrefs.statsList.indexOfFirst { it.game == stats.game }
             if (index == -1) {
-                game.toBuilder().addStats(stats).build()
+                statPrefs.toBuilder().addStats(stats).build()
             } else {
-                game.toBuilder().setStats(index, stats).build()
+                statPrefs.toBuilder().setStats(index, stats).build()
             }
         }
     }

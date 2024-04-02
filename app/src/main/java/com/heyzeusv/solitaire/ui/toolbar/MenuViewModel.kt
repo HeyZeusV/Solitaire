@@ -3,12 +3,14 @@ package com.heyzeusv.solitaire.ui.toolbar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
+import com.heyzeusv.solitaire.util.SettingsManager
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +28,7 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MenuViewModel @Inject constructor(
+    private val settingsManager: SettingsManager,
     private val statManager: StatManager
 ) : ViewModel() {
 
@@ -41,8 +44,11 @@ class MenuViewModel @Inject constructor(
         updateMenuState(newMenuState)
     }
 
-    private val _animationDurations = MutableStateFlow(AnimationDurations.Fast)
-    val animationDurations: StateFlow<AnimationDurations> get() = _animationDurations
+    val settings: StateFlow<Settings> = settingsManager.settingsData.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = Settings.getDefaultInstance()
+    )
 
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
     val selectedGame: StateFlow<Games> get() = _selectedGame
@@ -60,6 +66,12 @@ class MenuViewModel @Inject constructor(
         started = SharingStarted.Eagerly,
         initialValue = StatPreferences.getDefaultInstance()
     )
+
+    fun updateAnimationDurations(animationDurations: AnimationDurations) {
+        viewModelScope.launch {
+            settingsManager.updateAnimationDurations(animationDurations.ads)
+        }
+    }
 
     fun updateStats(lgs: LastGameStats) {
         val prevGS =

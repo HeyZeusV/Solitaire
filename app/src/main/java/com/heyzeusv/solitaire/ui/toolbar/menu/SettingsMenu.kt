@@ -12,11 +12,10 @@ import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.SingleChoiceSegmentedButtonRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -26,13 +25,31 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewDevices
 import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.theme.Purple40
+import com.heyzeusv.solitaire.util.theme.Purple80
+
+@Composable
+fun SettingsMenu(menuVM: MenuViewModel) {
+    val settings by menuVM.settings.collectAsState()
+    val selectedAnimationDurations = AnimationDurations from settings.animationDurations
+
+    SettingsMenu(
+        selectedAnimationDurations = selectedAnimationDurations,
+        updateAnimationDurations = menuVM::updateAnimationDurations
+    ) {
+        menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
+    }
+}
 
 @Composable
 fun SettingsMenu(
+    selectedAnimationDurations: AnimationDurations,
+    updateAnimationDurations: (AnimationDurations) -> Unit,
     onBackPressed: () -> Unit
 ) {
     MenuScreen(
@@ -40,19 +57,19 @@ fun SettingsMenu(
         modifier = Modifier.testTag("Settings Menu"),
         onBackPress = onBackPressed
     ) {
-        AnimationDurationSetting()
+        AnimationDurationSetting(selectedAnimationDurations) { updateAnimationDurations(it) }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AnimationDurationSetting() {
-var selected by remember { mutableStateOf(AnimationDurations.Fastest) }
-    Column(
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.sColumnSpacedBy))
-    ) {
+fun AnimationDurationSetting(
+    selectedAnimationDurations: AnimationDurations,
+    updateAnimationDurations: (AnimationDurations) -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.sColumnSpacedBy))) {
         Text(
-            text = "Animation Speed",
+            text = stringResource(R.string.settings_animation_duration),
             style = MaterialTheme.typography.headlineSmall.copy(
                 textDecoration = TextDecoration.Underline
             )
@@ -60,11 +77,16 @@ var selected by remember { mutableStateOf(AnimationDurations.Fastest) }
         SingleChoiceSegmentedButtonRow {
             AnimationDurations.entries.forEachIndexed { index, ad ->
                 SegmentedButton(
-                    selected = selected == ad,
-                    onClick = { selected = ad },
+                    selected = selectedAnimationDurations == ad,
+                    onClick = { updateAnimationDurations(ad) },
                     shape = SegmentedButtonDefaults.itemShape(
                         index = index,
                         count = AnimationDurations.entries.size
+                    ),
+                    colors = SegmentedButtonDefaults.colors().copy(
+                        activeContainerColor = Purple40,
+                        activeContentColor = Color.Black,
+                        activeBorderColor = Purple80
                     ),
                     icon = { }
                 ) {
@@ -76,7 +98,7 @@ var selected by remember { mutableStateOf(AnimationDurations.Fastest) }
             }
         }
         Text(
-            text = stringResource(selected.settingDisplayId),
+            text = stringResource(selectedAnimationDurations.settingDisplayId),
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontSize = TextUnit(
                     20f,
@@ -96,7 +118,10 @@ var selected by remember { mutableStateOf(AnimationDurations.Fastest) }
 fun SettingsMenuPreview() {
     PreviewUtil().apply {
         Preview {
-            SettingsMenu { }
+            SettingsMenu(
+                selectedAnimationDurations = AnimationDurations.None,
+                updateAnimationDurations = { }
+            ) { }
         }
     }
 }
@@ -106,7 +131,9 @@ fun SettingsMenuPreview() {
 fun AnimationDurationSettingPreview() {
     PreviewUtil().apply {
         Preview {
-            AnimationDurationSetting()
+            AnimationDurationSetting(
+                selectedAnimationDurations = AnimationDurations.Fastest
+            ) { }
         }
     }
 }

@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire.util
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.AnimationSpec
+import com.heyzeusv.solitaire.AnimationDurationsSetting
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.toolbar.menu.SettingsMenu
@@ -26,7 +27,8 @@ enum class AnimationDurations(
     val tableauCardFlipDelayAniSpec: Int,
     val autoCompleteDelay: Long,
     @DrawableRes val iconId: Int,
-    @StringRes val settingDisplayId: Int
+    @StringRes val settingDisplayId: Int,
+    val ads: AnimationDurationsSetting
 ) {
     None(
         fullAniSpec = 0,
@@ -36,7 +38,8 @@ enum class AnimationDurations(
         tableauCardFlipDelayAniSpec = 0,
         autoCompleteDelay = 0,
         iconId = R.drawable.button_animation_none,
-        settingDisplayId = R.string.animation_duration_none
+        settingDisplayId = R.string.animation_duration_none,
+        ads = AnimationDurationsSetting.NONE
     ),
     Slowest(
         fullAniSpec = 1000,
@@ -46,7 +49,8 @@ enum class AnimationDurations(
         tableauCardFlipDelayAniSpec = 50,
         autoCompleteDelay = 1050,
         iconId = R.drawable.button_animation_slowest,
-        settingDisplayId = R.string.animation_duration_slowest
+        settingDisplayId = R.string.animation_duration_slowest,
+        ads = AnimationDurationsSetting.SLOWEST
     ),
     Slow(
         fullAniSpec = 500,
@@ -56,7 +60,8 @@ enum class AnimationDurations(
         tableauCardFlipDelayAniSpec = 50,
         autoCompleteDelay = 550,
         iconId = R.drawable.button_animation_slow,
-        settingDisplayId = R.string.animation_duration_slow
+        settingDisplayId = R.string.animation_duration_slow,
+        ads = AnimationDurationsSetting.SLOW
     ),
     Fast(
         fullAniSpec = 250,
@@ -66,7 +71,8 @@ enum class AnimationDurations(
         tableauCardFlipDelayAniSpec = 50,
         autoCompleteDelay = 300,
         iconId = R.drawable.button_animation_fast,
-        settingDisplayId = R.string.animation_duration_fast
+        settingDisplayId = R.string.animation_duration_fast,
+        ads = AnimationDurationsSetting.FAST
     ),
     Fastest(
         fullAniSpec = 100,
@@ -76,9 +82,15 @@ enum class AnimationDurations(
         tableauCardFlipDelayAniSpec = 50,
         autoCompleteDelay = 150,
         iconId = R.drawable.button_animation_fastest,
-        settingDisplayId = R.string.animation_duration_fastest
+        settingDisplayId = R.string.animation_duration_fastest,
+        ads = AnimationDurationsSetting.FASTEST
     );
 
     val fullDelay: Long = fullAniSpec.toLong()
     val noAnimation: Int = 0
+
+    companion object {
+        infix fun from(ads: AnimationDurationsSetting): AnimationDurations =
+            entries.firstOrNull { it.ads == ads } ?: None
+    }
 }
