@@ -38,6 +38,9 @@
     <dimen name="msPaddingAll">8.dp</dimen>
     <dimen name="msColumnSpacedBy">8.dp</dimen>
 
+    <!-- Settings (s) -->
+    <dimen name="sColumnSpacedBy">4.dp</dimen>
+
     <!-- Toolbar (tb) -->
     <dimen name="tbPaddingHorizontal">12.dp</dimen>
     <dimen name="tbPaddingBottom">24.dp</dimen>
