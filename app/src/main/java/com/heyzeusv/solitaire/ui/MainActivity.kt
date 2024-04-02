@@ -114,6 +114,7 @@ fun SolitaireScreen(
         BoardLayout(
             sbVM = sbVM,
             gameVM = gameVM,
+            menuVM = menuVM,
             selectedGame = selectedGame,
             modifier = Modifier.weight(1f)
         )

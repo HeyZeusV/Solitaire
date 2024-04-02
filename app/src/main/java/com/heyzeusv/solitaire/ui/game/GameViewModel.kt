@@ -90,6 +90,8 @@ abstract class GameViewModel (
     val animateInfo: StateFlow<AnimateInfo?> get() = _animateInfo
     fun updateAnimateInfo(newValue: AnimateInfo?) { _animateInfo.value = newValue }
 
+    var autoCompleteDelay: Long = AnimationDurations.Fast.autoCompleteDelay
+
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
      *  new game depending on [resetOption].
@@ -275,7 +277,7 @@ abstract class GameViewModel (
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
                         _foundation.forEach { foundation ->
                             if (foundation.canAdd(tableau.truePile.takeLast(1))) {
-                                delay(AnimationDurations.Fast.autoCompleteDelay)
+                                delay(autoCompleteDelay)
                                 onTableauClick(i, tableau.truePile.size - 1)
                             }
                         }

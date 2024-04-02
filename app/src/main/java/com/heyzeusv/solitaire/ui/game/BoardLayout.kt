@@ -33,6 +33,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Games
@@ -46,17 +47,21 @@ import kotlinx.coroutines.delay
 fun BoardLayout(
     sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
+    menuVM: MenuViewModel,
     selectedGame: Games,
     modifier: Modifier = Modifier
 ) {
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
     val undoAnimation by gameVM.undoAnimation.collectAsState()
+    val settings by menuVM.settings.collectAsState()
+    val animationDurations = AnimationDurations from settings.animationDurations
+    gameVM.autoCompleteDelay = animationDurations.autoCompleteDelay
 
     BoardLayout(
         modifier = modifier,
         layInfo = gameVM.layoutInfo,
-        animationDurations = AnimationDurations.Fast,
+        animationDurations = animationDurations,
         animateInfo = animateInfo,
         updateAnimateInfo = gameVM::updateAnimateInfo,
         updateUndoEnabled = gameVM::updateUndoEnabled,

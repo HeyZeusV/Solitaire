@@ -21,11 +21,10 @@ import kotlinx.coroutines.delay
  */
 enum class AnimationDurations(
     val fullAniSpec: Int,
-    val beforeActionDelay: Long,
+    val beforeActionDelay: Long = 15,
     val afterActionDelay: Long,
     val tableauCardFlipAniSpec: Int,
-    val tableauCardFlipDelayAniSpec: Int,
-    val autoCompleteDelay: Long,
+    val tableauCardFlipDelayAniSpec: Int = 50,
     @DrawableRes val iconId: Int,
     @StringRes val settingDisplayId: Int,
     val ads: AnimationDurationsSetting
@@ -36,51 +35,38 @@ enum class AnimationDurations(
         afterActionDelay = 0,
         tableauCardFlipAniSpec = 0,
         tableauCardFlipDelayAniSpec = 0,
-        autoCompleteDelay = 0,
         iconId = R.drawable.button_animation_none,
         settingDisplayId = R.string.animation_duration_none,
         ads = AnimationDurationsSetting.NONE
     ),
     Slowest(
         fullAniSpec = 1000,
-        beforeActionDelay = 15,
         afterActionDelay = 990,
         tableauCardFlipAniSpec = 950,
-        tableauCardFlipDelayAniSpec = 50,
-        autoCompleteDelay = 1050,
         iconId = R.drawable.button_animation_slowest,
         settingDisplayId = R.string.animation_duration_slowest,
         ads = AnimationDurationsSetting.SLOWEST
     ),
     Slow(
         fullAniSpec = 500,
-        beforeActionDelay = 15,
         afterActionDelay = 490,
         tableauCardFlipAniSpec = 450,
-        tableauCardFlipDelayAniSpec = 50,
-        autoCompleteDelay = 550,
         iconId = R.drawable.button_animation_slow,
         settingDisplayId = R.string.animation_duration_slow,
         ads = AnimationDurationsSetting.SLOW
     ),
     Fast(
         fullAniSpec = 250,
-        beforeActionDelay = 15,
         afterActionDelay = 240,
         tableauCardFlipAniSpec = 200,
-        tableauCardFlipDelayAniSpec = 50,
-        autoCompleteDelay = 300,
         iconId = R.drawable.button_animation_fast,
         settingDisplayId = R.string.animation_duration_fast,
         ads = AnimationDurationsSetting.FAST
     ),
     Fastest(
         fullAniSpec = 100,
-        beforeActionDelay = 15,
         afterActionDelay = 90,
         tableauCardFlipAniSpec = 50,
-        tableauCardFlipDelayAniSpec = 50,
-        autoCompleteDelay = 150,
         iconId = R.drawable.button_animation_fastest,
         settingDisplayId = R.string.animation_duration_fastest,
         ads = AnimationDurationsSetting.FASTEST
@@ -88,8 +74,12 @@ enum class AnimationDurations(
 
     val fullDelay: Long = fullAniSpec.toLong()
     val noAnimation: Int = 0
+    val autoCompleteDelay: Long = (fullAniSpec + 50).toLong()
 
     companion object {
+        /**
+         *  Returns [AnimationDurations] that corresponds to given [ads].
+         */
         infix fun from(ads: AnimationDurationsSetting): AnimationDurations =
             entries.firstOrNull { it.ads == ads } ?: None
     }
