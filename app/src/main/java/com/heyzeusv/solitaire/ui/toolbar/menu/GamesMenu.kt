@@ -37,8 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
+import com.heyzeusv.solitaire.ui.game.BoardLayout
 import com.heyzeusv.solitaire.ui.game.GameViewModel
-import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.Games
@@ -50,7 +50,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- *   Composable that displays Menu which allows user to switch games.
+ *  Composable that displays Menu which allows user to switch games.
  */
 @Composable
 fun GamesMenu(
@@ -92,7 +92,7 @@ fun GamesMenu(
  *   [gameSwitchConfirmOnClick] on confirm. [selectedGame] determines which game is selected when
  *   user opens [GamesMenu]. [onBackPress] is launched when user tries to close [GamesMenu] using
  *   either top left arrow icon or back button on phone; it updates [selectedGame] which causes
- *   [SolitaireBoard] to recompose, so small delay is added before closing [GamesMenu] by updating
+ *   [BoardLayout] to recompose, so small delay is added before closing [GamesMenu] by updating
  *   [MenuState].
  */
 @Composable

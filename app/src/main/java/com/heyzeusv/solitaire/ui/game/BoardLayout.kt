@@ -43,6 +43,9 @@ import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
+/**
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau.
+ */
 @Composable
 fun BoardLayout(
     sbVM: ScoreboardViewModel,
@@ -81,6 +84,15 @@ fun BoardLayout(
     )
 }
 
+/**
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [layInfo] is
+ *  used to determine offsets of every pile. [animationDurations] determines how long each animation
+ *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
+ *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
+ *  animations. [undoAnimation] is used to enable/disable all clicks during an undo animation and
+ *  is updated using [updateUndoAnimation]. [drawAmount] determines how many cards are drawn from
+ *  [Stock] and shown by [Waste].
+ */
 @Composable
 fun BoardLayout(
     modifier: Modifier = Modifier,
@@ -93,6 +105,7 @@ fun BoardLayout(
     updateUndoAnimation: (Boolean) -> Unit = { },
     drawAmount: Int,
     handleMoveResult: (MoveResult) -> Unit = { },
+    /** Piles and their onClicks */
     stock: Stock,
     onStockClick: (Int) -> MoveResult = { MoveResult.Illegal },
     waste: Waste,

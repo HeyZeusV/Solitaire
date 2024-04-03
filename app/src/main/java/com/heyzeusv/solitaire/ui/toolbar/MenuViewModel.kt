@@ -67,12 +67,18 @@ class MenuViewModel @Inject constructor(
         initialValue = StatPreferences.getDefaultInstance()
     )
 
+    /**
+     *  Updates [Settings].[AnimationDurations] using given [animationDurations].
+     */
     fun updateAnimationDurations(animationDurations: AnimationDurations) {
         viewModelScope.launch {
             settingsManager.updateAnimationDurations(animationDurations.ads)
         }
     }
 
+    /**
+     *  Updates the [GameStats] of [selectedGame] using given [lgs].
+     */
     fun updateStats(lgs: LastGameStats) {
         val prevGS =
             stats.value.statsList.find { it.game == _selectedGame.value.dataStoreEnum }

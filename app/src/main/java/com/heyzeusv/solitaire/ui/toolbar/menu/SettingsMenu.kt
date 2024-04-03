@@ -33,6 +33,9 @@ import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.theme.Purple80
 
+/**
+ *  Composable that displays Menu which allows user to change various Settings.
+ */
 @Composable
 fun SettingsMenu(menuVM: MenuViewModel) {
     val settings by menuVM.settings.collectAsState()
@@ -46,21 +49,32 @@ fun SettingsMenu(menuVM: MenuViewModel) {
     }
 }
 
+/**
+ *  Composable that displays Menu which allows user to change various Settings.
+ *  [selectedAnimationDurations] and [updateAnimationDurations] are used to display/update
+ *  Animation Duration Setting. [onBackPress] is launched when user tries to close [SettingsMenu]
+ *  using either top left arrow icon or back button on phone.
+ */
 @Composable
 fun SettingsMenu(
     selectedAnimationDurations: AnimationDurations,
     updateAnimationDurations: (AnimationDurations) -> Unit,
-    onBackPressed: () -> Unit
+    onBackPress: () -> Unit
 ) {
     MenuScreen(
         menu = MenuState.Settings,
         modifier = Modifier.testTag("Settings Menu"),
-        onBackPress = onBackPressed
+        onBackPress = onBackPress
     ) {
         AnimationDurationSetting(selectedAnimationDurations) { updateAnimationDurations(it) }
     }
 }
 
+/**
+ *  Composable that display Animation Duration Setting. [selectedAnimationDurations] is the
+ *  currently selected [AnimationDurations], while [updateAnimationDurations] is used to update
+ *  [AnimationDurations].
+ */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AnimationDurationSetting(
