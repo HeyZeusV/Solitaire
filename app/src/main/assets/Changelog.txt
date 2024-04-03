@@ -1,6 +1,6 @@
 v3.1.0
 -New: Settings Screen.
--New: 5 Animation Speed options including no animations.
+-New: 5 Animation Speed options, including no animations.
 -Enhancement: Game preview images are now all the same size to prevent weird stretching.
 -Enhancement: Menu buttons now close automatically after returning from any menu screen.
 
