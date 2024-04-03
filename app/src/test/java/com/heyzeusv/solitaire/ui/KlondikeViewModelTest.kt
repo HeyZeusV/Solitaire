@@ -4,7 +4,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.ui.game.KlondikeViewModel
+import com.heyzeusv.solitaire.ui.board.KlondikeViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards

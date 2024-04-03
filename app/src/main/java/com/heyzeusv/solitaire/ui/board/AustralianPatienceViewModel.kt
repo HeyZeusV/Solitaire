@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.game
+package com.heyzeusv.solitaire.ui.board
 
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed

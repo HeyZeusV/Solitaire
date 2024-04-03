@@ -30,7 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.BaseButton
 import com.heyzeusv.solitaire.ui.ResetAlertDialog
-import com.heyzeusv.solitaire.ui.game.GameViewModel
+import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.PreviewDevices
 import com.heyzeusv.solitaire.util.PreviewUtil

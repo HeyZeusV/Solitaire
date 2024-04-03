@@ -21,8 +21,8 @@ import androidx.compose.ui.res.imageResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.game.*
-import com.heyzeusv.solitaire.ui.game.YukonViewModel
+import com.heyzeusv.solitaire.ui.board.*
+import com.heyzeusv.solitaire.ui.board.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer

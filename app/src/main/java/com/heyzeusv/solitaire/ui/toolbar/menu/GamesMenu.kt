@@ -37,8 +37,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
-import com.heyzeusv.solitaire.ui.game.BoardLayout
-import com.heyzeusv.solitaire.ui.game.GameViewModel
+import com.heyzeusv.solitaire.ui.board.BoardLayout
+import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.Games

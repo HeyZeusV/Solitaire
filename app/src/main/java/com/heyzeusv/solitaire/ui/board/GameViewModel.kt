@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.game
+package com.heyzeusv.solitaire.ui.board
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

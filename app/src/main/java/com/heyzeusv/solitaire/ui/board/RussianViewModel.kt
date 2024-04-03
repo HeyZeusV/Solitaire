@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.game
+package com.heyzeusv.solitaire.ui.board
 
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.ShuffleSeed
@@ -8,27 +8,27 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 /**
- *  Data manager for Yukon.
+ *  Data manager for Russian.
  *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
 @HiltViewModel
-open class YukonViewModel @Inject constructor(
+class RussianViewModel @Inject constructor(
     ss: ShuffleSeed,
     layoutInfo: LayoutInfo
 ) : GameViewModel(ss, layoutInfo) {
 
-    override val baseRedealAmount: Int = 0
-    override var redealLeft: Int = 0
-
-    override val _tableau: MutableList<Tableau> = initializeTableau(Tableau.YukonTableau::class)
+    override val _tableau: MutableList<Tableau> = initializeTableau(Tableau.RussianTableau::class)
 
     /**
-     *  Autocomplete requires all Tableau piles to be all face up and in order by value descending.
+     *  Autocomplete requires all Tableau piles to be all face up, single suit, and in order by
+     *  value descending.
      */
     override fun autoCompleteTableauCheck(): Boolean {
-        _tableau.forEach { if (it.faceDownExists() || it.notInOrder()) return false }
+        _tableau.forEach {
+            if (it.faceDownExists() || it.isMultiSuit() || it.notInOrder()) return false
+        }
         return true
     }
 

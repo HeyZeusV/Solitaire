@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.game
+package com.heyzeusv.solitaire.ui.board
 
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
