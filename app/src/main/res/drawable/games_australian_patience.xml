@@ -3,10 +3,10 @@
     android:width="150dp"
     android:height="150dp"
     android:viewportWidth="506"
-    android:viewportHeight="277">
+    android:viewportHeight="452">
     <path
         android:fillColor="#FF096240"
-        android:pathData="M0 0H506V277H0z"/>
+        android:pathData="M0 0H506V452H0z"/>
     <path
         android:fillColor="#FFFFFFFF"
         android:pathData="M438 102c-2.2 0-4 1.8-4 4v32h70v-32c0-2.2-1.8-4-4-4h-62Z"/>

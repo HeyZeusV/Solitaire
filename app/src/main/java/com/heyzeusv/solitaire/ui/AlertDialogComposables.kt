@@ -16,7 +16,7 @@ import androidx.compose.ui.res.stringResource
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
-import com.heyzeusv.solitaire.ui.tools.MenuViewModel
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.formatTimeDisplay
 

@@ -39,15 +39,15 @@ class AppTest {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-            onNodeWithTextId(MenuState.GAMES.nameId).assertIsDisplayed()
-            onNodeWithTextId(MenuState.STATS.nameId).assertIsDisplayed()
-            onNodeWithTextId(MenuState.ABOUT.nameId).assertIsDisplayed()
+            onNodeWithTextId(MenuState.Games.nameId).assertIsDisplayed()
+            onNodeWithTextId(MenuState.Stats.nameId).assertIsDisplayed()
+            onNodeWithTextId(MenuState.About.nameId).assertIsDisplayed()
 
             onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-            onNodeWithTextId(MenuState.GAMES.nameId).assertDoesNotExist()
-            onNodeWithTextId(MenuState.STATS.nameId).assertDoesNotExist()
-            onNodeWithTextId(MenuState.ABOUT.nameId).assertDoesNotExist()
+            onNodeWithTextId(MenuState.Games.nameId).assertDoesNotExist()
+            onNodeWithTextId(MenuState.Stats.nameId).assertDoesNotExist()
+            onNodeWithTextId(MenuState.About.nameId).assertDoesNotExist()
         }
     }
 
@@ -57,17 +57,17 @@ class AppTest {
         composeRule.apply {
             onNodeWithTextId(R.string.tools_button_menu).performClick()
 
-            onNodeWithTextId(MenuState.GAMES.nameId).performClick()
+            onNodeWithTextId(MenuState.Games.nameId).performClick()
             onNode(hasTestTag("Games Menu")).assertIsDisplayed()
             onNodeWithConDescId(R.string.menu_cdesc_close, "Games").performClick()
             waitUntilDoesNotExist(hasTestTag("Games Menu"), timeoutMillis = 5000L)
 
-            onNodeWithTextId(MenuState.STATS.nameId).performClick()
+            onNodeWithTextId(MenuState.Stats.nameId).performClick()
             onNode(hasTestTag("Stats Menu")).assertIsDisplayed()
             onNodeWithConDescId(R.string.menu_cdesc_close, "Stats").performClick()
             waitUntilDoesNotExist(hasTestTag("Stats Menu"), timeoutMillis = 5000L)
 
-            onNodeWithTextId(MenuState.ABOUT.nameId).performClick()
+            onNodeWithTextId(MenuState.About.nameId).performClick()
             onNode(hasTestTag("About Menu")).assertIsDisplayed()
             onNodeWithConDescId(R.string.menu_cdesc_close, "About").performClick()
             waitUntilDoesNotExist(hasTestTag("About Menu"), timeoutMillis = 5000L)

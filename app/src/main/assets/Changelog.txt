@@ -1,3 +1,9 @@
+v3.1.0
+-New: Settings Screen.
+-New: 5 Animation Speed options including no animations.
+-Enhancement: Game preview images are now all the same size to prevent weird stretching.
+-Enhancement: Menu buttons now close automatically after returning from any menu screen.
+
 v3.0.0
 -New: Card animations!!
 -Enhancement: Autocomplete no longer does useless moves.
@@ -31,7 +37,7 @@ v1.2.1
 -Fix: Accepting game change midway through another will now correctly update stats before switching.
 
 v1.2.0
--Update: Change to the way Stats are stored to make it much easier to add new games in the future.
+-Enhancement: Change to the way Stats are stored to make it much easier to add new games in the future.
 
 v1.1.1
 -Fix: Several icon colors.

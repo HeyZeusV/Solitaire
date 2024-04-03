@@ -25,10 +25,10 @@ import com.heyzeusv.solitaire.ui.game.*
 import com.heyzeusv.solitaire.ui.game.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
-import com.heyzeusv.solitaire.ui.tools.MenuContainer
+import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
-import com.heyzeusv.solitaire.ui.tools.MenuViewModel
-import com.heyzeusv.solitaire.ui.tools.SolitaireTools
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
+import com.heyzeusv.solitaire.ui.toolbar.Toolbar
 import com.heyzeusv.solitaire.util.Games
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -114,10 +114,11 @@ fun SolitaireScreen(
         BoardLayout(
             sbVM = sbVM,
             gameVM = gameVM,
+            menuVM = menuVM,
             selectedGame = selectedGame,
             modifier = Modifier.weight(1f)
         )
-        SolitaireTools(
+        Toolbar(
             sbVM = sbVM,
             gameVM = gameVM,
             menuVM = menuVM,

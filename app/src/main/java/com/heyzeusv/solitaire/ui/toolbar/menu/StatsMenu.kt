@@ -1,13 +1,11 @@
-package com.heyzeusv.solitaire.ui.tools
+package com.heyzeusv.solitaire.ui.toolbar.menu
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -17,9 +15,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -45,10 +43,10 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.MenuHeaderBar
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
-import com.heyzeusv.solitaire.util.SolitairePreview
+import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.getAverageMoves
 import com.heyzeusv.solitaire.util.getAverageScore
@@ -71,52 +69,39 @@ fun StatsMenu(
         stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
     StatsMenu(
-        updateMenuState = menuVM::updateMenuState,
         selectedGame = selectedGame,
         updateSelectedGame = menuVM::updateStatsSelectedGame,
-        stats = selectedGameStats
+        stats = selectedGameStats,
+        onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) }
     )
 }
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of [selectedGame]
  *  which is updated through [updateSelectedGame]. All the data has been hoisted into above
- *  [StatsMenu] thus allowing for easier testing. [StatsMenu] can be opened and closed by updating
- *  [MenuState] value using [updateMenuState]. [stats] are to be displayed.
+ *  [StatsMenu] thus allowing for easier testing. [onBackPressed] handles opening and closing
+ *  [StatsMenu]. [stats] are to be displayed.
  */
 @Composable
 fun StatsMenu(
-    updateMenuState: (MenuState) -> Unit,
     selectedGame: Games,
     updateSelectedGame: (Games) -> Unit,
-    stats: GameStats
+    stats: GameStats,
+    onBackPressed: () -> Unit
 ) {
-    BackHandler { updateMenuState(MenuState.BUTTONS) }
-    Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("Stats Menu"),
-        shape = RectangleShape
+    MenuScreen(
+        menu = MenuState.Stats,
+        modifier = Modifier.testTag("Stats Menu"),
+        onBackPress = onBackPressed
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(all = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            MenuHeaderBar(
-                menu = MenuState.STATS,
-                onBackPress = { updateMenuState(MenuState.BUTTONS) }
-            )
-            StatsDropDownMenu(
-                selectedGame = selectedGame,
-                updateSelectedGame = { updateSelectedGame(it) }
-            )
-            StatColumn(
-                stats = stats,
-                game = selectedGame
-            )
-        }
+        StatsDropDownMenu(
+            selectedGame = selectedGame,
+            updateSelectedGame = { updateSelectedGame(it) }
+        )
+        StatColumn(
+            stats = stats,
+            game = selectedGame
+        )
     }
 }
 
@@ -289,7 +274,7 @@ fun StatField(
             text = statValue,
             style = MaterialTheme.typography.titleLarge
         )
-        Divider(
+        HorizontalDivider(
             modifier = Modifier.padding(top = 4.dp),
             color = Purple80
         )
@@ -299,47 +284,52 @@ fun StatField(
 @Preview
 @Composable
 fun StatsMenuPreview() {
-    SolitairePreview {
-        StatsMenu(
-            updateMenuState = { },
-            selectedGame = Games.KLONDIKE_TURN_ONE,
-            updateSelectedGame = { },
-            stats = GameStats.getDefaultInstance()
-        )
+    PreviewUtil().apply {
+        Preview {
+            StatsMenu(
+                selectedGame = Games.KLONDIKE_TURN_ONE,
+                updateSelectedGame = { },
+                stats = GameStats.getDefaultInstance()
+            ) { }
+        }
     }
 }
 
 @Preview
 @Composable
 fun StatsDropDownMenuPreview() {
-    SolitairePreview {
-        StatsDropDownMenu(
-            selectedGame = Games.AUSTRALIAN_PATIENCE,
-            updateSelectedGame = { }
-        )
+    PreviewUtil().apply {
+        Preview {
+            StatsDropDownMenu(
+                selectedGame = Games.AUSTRALIAN_PATIENCE,
+                updateSelectedGame = { }
+            )
+        }
     }
 }
 
 @Preview
 @Composable
 fun StatFieldPreview() {
-    SolitairePreview {
-        val test1 = 100
-        val test2 = 100000f
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            shape = RectangleShape
-        ) {
-            Column {
-                StatField(
-                    statNameId = R.string.stats_average_score,
-                    statValue = "$test1"
-                )
-                StatField(
-                    statNameId = R.string.stats_best_score,
-                    statValue = "$test2",
-                    statTipId = R.string.stats_best_score_tip
-                )
+    PreviewUtil().apply {
+        Preview {
+            val test1 = 100
+            val test2 = 100000f
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                shape = RectangleShape
+            ) {
+                Column {
+                    StatField(
+                        statNameId = R.string.stats_average_score,
+                        statValue = "$test1"
+                    )
+                    StatField(
+                        statNameId = R.string.stats_best_score,
+                        statValue = "$test2",
+                        statTipId = R.string.stats_best_score_tip
+                    )
+                }
             }
         }
     }

@@ -1,13 +1,16 @@
-package com.heyzeusv.solitaire.ui.tools
+package com.heyzeusv.solitaire.ui.toolbar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
+import com.heyzeusv.solitaire.util.SettingsManager
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,16 +28,27 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class MenuViewModel @Inject constructor(
+    private val settingsManager: SettingsManager,
     private val statManager: StatManager
 ) : ViewModel() {
 
     private val _displayMenuButtons = MutableStateFlow(false)
     val displayMenuButtons: StateFlow<Boolean> get() = _displayMenuButtons
-    fun updateDisplayMenuButtons() { _displayMenuButtons.value = !_displayMenuButtons.value }
+    private fun updateDisplayMenuButtons() { _displayMenuButtons.value = !_displayMenuButtons.value }
 
-    private val _menuState = MutableStateFlow(MenuState.BUTTONS)
+    private val _menuState = MutableStateFlow(MenuState.Buttons)
     val menuState: StateFlow<MenuState> get() = _menuState
     fun updateMenuState(newValue: MenuState) { _menuState.value = newValue}
+    fun updateDisplayMenuButtonsAndMenuState(newMenuState: MenuState = MenuState.Buttons) {
+        updateDisplayMenuButtons()
+        updateMenuState(newMenuState)
+    }
+
+    val settings: StateFlow<Settings> = settingsManager.settingsData.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = Settings.getDefaultInstance()
+    )
 
     private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
     val selectedGame: StateFlow<Games> get() = _selectedGame
@@ -53,6 +67,18 @@ class MenuViewModel @Inject constructor(
         initialValue = StatPreferences.getDefaultInstance()
     )
 
+    /**
+     *  Updates [Settings].[AnimationDurations] using given [animationDurations].
+     */
+    fun updateAnimationDurations(animationDurations: AnimationDurations) {
+        viewModelScope.launch {
+            settingsManager.updateAnimationDurations(animationDurations.ads)
+        }
+    }
+
+    /**
+     *  Updates the [GameStats] of [selectedGame] using given [lgs].
+     */
     fun updateStats(lgs: LastGameStats) {
         val prevGS =
             stats.value.statsList.find { it.game == _selectedGame.value.dataStoreEnum }

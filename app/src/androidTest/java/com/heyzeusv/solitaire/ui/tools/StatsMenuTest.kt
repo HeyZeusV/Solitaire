@@ -11,6 +11,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.onNodeWithTextId
@@ -44,11 +45,10 @@ class StatsMenuTest {
             setContent {
                 SolitaireTheme {
                     StatsMenu(
-                        updateMenuState = { },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         updateSelectedGame = { },
                         stats = gameOneStats
-                    )
+                    ) { }
                 }
             }
 
@@ -63,11 +63,10 @@ class StatsMenuTest {
             setContent {
                 SolitaireTheme {
                     StatsMenu(
-                        updateMenuState = { },
                         selectedGame = Games.KLONDIKE_TURN_ONE,
                         updateSelectedGame = { },
                         stats = gameOneStats
-                    )
+                    ) { }
                 }
             }
 
@@ -86,7 +85,6 @@ class StatsMenuTest {
                     var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     StatsMenu(
-                        updateMenuState = { },
                         selectedGame = selectedGame,
                         updateSelectedGame = {
                             selectedGame = it
@@ -97,7 +95,7 @@ class StatsMenuTest {
                             }
                         },
                         stats = stats
-                    )
+                    ) { }
                 }
             }
 

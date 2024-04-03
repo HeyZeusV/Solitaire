@@ -5,7 +5,6 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
@@ -28,7 +27,7 @@ class TableauTest {
     fun tableau_empty() {
         composeRule.setContent {
             SolitaireTheme {
-                SolitaireTableau(cardHeight = 120.dp)
+                SolitaireTableau()
             }
         }
 
@@ -43,7 +42,6 @@ class TableauTest {
             setContent {
                 SolitaireTheme {
                     SolitaireTableau(
-                        cardHeight = 100.dp,
                         pile = listOf(
                             tc.card5SFU, tc.card4DFU, tc.card3DFU, tc.card13DFU,
                             tc.card11HFU, tc.card9CFU, tc.card7SFU

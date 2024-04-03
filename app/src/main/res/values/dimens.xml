@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- About (a) -->
+    <dimen name="aColumnSpacedBy">8.dp</dimen>
+    <dimen name="aImageElevation">1.dp</dimen>
+    <dimen name="aImageRoundSize">20.dp</dimen>
+    <dimen name="aButtonPaddingBottom">8.dp</dimen>
+    <dimen name="aButtonRoundSize">4.dp</dimen>
+    <dimen name="aRevealHeight">200.dp</dimen>
+    <dimen name="aRevealPaddingAll">8.dp</dimen>
+
+    <!-- Games (g) -->
+    <dimen name="gColumnSpacedBy">2.dp</dimen>
+    <dimen name="gInfoHeight">150.dp</dimen>
+    <dimen name="gInfoColumnPaddingAll">8.dp</dimen>
+    <dimen name="gInfoColumnSpacedBy">12.dp</dimen>
+    <dimen name="gInfoImagePaddingAll">8.dp</dimen>
+    <dimen name="gInfoImageSize">150.dp</dimen>
+
+    <!-- General -->
+    <dimen name="zero">0.dp</dimen>
+    <dimen name="buttonBorderWidth">2.dp</dimen>
+    <dimen name="buttonPaddingHorizontal">12.dp</dimen>
+    <dimen name="buttonElevation">1.dp</dimen>
+
+    <!-- Menu Button (mb) -->
+    <dimen name="mbPaddingBottomDefault">8.dp</dimen>
+    <dimen name="mbPaddingBottom">80.dp</dimen>
+    <dimen name="mbRoundRadius">20.dp</dimen>
+    <dimen name="mbPaddingStart">12.dp</dimen>
+    <dimen name="mbHeight">40.dp</dimen>
+
+    <!-- Menu Header Bar (mhb) -->
+    <dimen name="mhbIconPaddingTop">3.dp</dimen>
+    <dimen name="mhbIconSize">50.dp</dimen>
+
+    <!-- Menu Screen (ms) -->
+    <dimen name="msPaddingAll">8.dp</dimen>
+    <dimen name="msColumnSpacedBy">8.dp</dimen>
+
+    <!-- Settings (s) -->
+    <dimen name="sColumnSpacedBy">4.dp</dimen>
+
+    <!-- Toolbar (tb) -->
+    <dimen name="tbPaddingHorizontal">12.dp</dimen>
+    <dimen name="tbPaddingBottom">24.dp</dimen>
+    <dimen name="tbRowSpacedBy">12.dp</dimen>
+    <dimen name="tbButtonHeight">48.dp</dimen>
+</resources>

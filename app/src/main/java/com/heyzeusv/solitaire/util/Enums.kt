@@ -2,13 +2,20 @@ package com.heyzeusv.solitaire.util
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.ThumbUp
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.game.GameViewModel
-import com.heyzeusv.solitaire.ui.tools.GamesMenu
-import com.heyzeusv.solitaire.ui.tools.StatsMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
 import com.heyzeusv.solitaire.util.Redeals.*
+import com.heyzeusv.solitaire.util.icons.Games
+import com.heyzeusv.solitaire.util.icons.Stats
 
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
@@ -187,18 +194,23 @@ enum class MoveResult {
 }
 
 /**
- *  Enum class that represents the available options when user clicks on Menu button. Also to be
- *  used as state to determine which screen to show.
+ *  Enum class that represents possible states when user interacts with Menu Button. [Buttons] is
+ *  the state when user presses Menu Button. [ButtonsFromScreen] is the state when the user closes
+ *  a Menu Screen. [Games], [Stats], [Settings] and [About] refer to the possible Menu Screens user
+ *  can open when pressing their respective Buttons. They hold resource ids that are used for their
+ *  Buttons.
  */
 enum class MenuState(
-    @StringRes val nameId: Int,
-    @DrawableRes val iconId: Int,
-    @StringRes val iconDescId: Int
+    @StringRes val nameId: Int = 0,
+    val icon: ImageVector = Icons.Filled.ThumbUp,
+    @StringRes val iconDescId: Int = 0
 ) {
-    BUTTONS(0, 0, 0),
-    GAMES(R.string.menu_button_games, R.drawable.button_menu_games, R.string.menu_cdesc_games),
-    STATS(R.string.menu_button_stats, R.drawable.button_menu_stats, R.string.menu_cdesc_stats),
-    ABOUT(R.string.menu_button_about, R.drawable.button_menu_about, R.string.menu_cdesc_about)
+    Buttons,
+    ButtonsFromScreen,
+    Games(R.string.menu_button_games, Icons.Filled.Games, R.string.menu_cdesc_games),
+    Stats(R.string.menu_button_stats, Icons.Filled.Stats, R.string.menu_cdesc_stats),
+    Settings(R.string.menu_button_settings, Icons.Filled.Settings, R.string.menu_cdesc_settings),
+    About(R.string.menu_button_about, Icons.Filled.Info, R.string.menu_cdesc_about)
 }
 
 /**
@@ -222,4 +234,3 @@ enum class GamePiles {
     TableauSix,
     TableauAll
 }
-

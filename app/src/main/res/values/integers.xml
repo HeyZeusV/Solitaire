@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- About (a) -->
+    <integer name="aButtonDuration">1000</integer>
+    <integer name="aTextSize">20</integer>
+
+    <!-- Menu (m) -->
+    <integer name="mButtonDuration">500</integer>
+    <integer name="mButtonDelay">300</integer>
+    <integer name="mOptionDuration">500</integer>
+
+    <!-- General -->
+    <integer name="buttonRoundPercent">50</integer>
+</resources>

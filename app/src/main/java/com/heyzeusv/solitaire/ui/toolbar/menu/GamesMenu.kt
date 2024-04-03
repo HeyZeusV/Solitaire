@@ -1,16 +1,14 @@
-package com.heyzeusv.solitaire.ui.tools
+package com.heyzeusv.solitaire.ui.toolbar.menu
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -29,29 +27,30 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
-import com.heyzeusv.solitaire.ui.MenuHeaderBar
+import com.heyzeusv.solitaire.ui.game.BoardLayout
 import com.heyzeusv.solitaire.ui.game.GameViewModel
-import com.heyzeusv.solitaire.ui.game.SolitaireBoard
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
+import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.ResetOptions
-import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.theme.Purple40
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 /**
- *   Composable that displays Menu which allows user to switch games.
+ *  Composable that displays Menu which allows user to switch games.
  */
 @Composable
 fun GamesMenu(
@@ -71,19 +70,18 @@ fun GamesMenu(
             }
         },
         gameInfoOnClickCheck = { sbVM.retrieveLastGameStats(false).moves > 0 },
-        selectedGame = selectedGame,
-        onBackPress = { game ->
-            scope.launch {
-                if (game != selectedGame) {
-                    menuVM.updateSelectedGame(game)
-                    sbVM.reset()
-                    gameVM.resetAll(ResetOptions.NEW)
-                    delay(300)
-                }
-                menuVM.updateMenuState(MenuState.BUTTONS)
+        selectedGame = selectedGame
+    ) { game ->
+        scope.launch {
+            if (game != selectedGame) {
+                menuVM.updateSelectedGame(game)
+                sbVM.reset()
+                gameVM.resetAll(ResetOptions.NEW)
+                delay(300)
             }
+            menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
         }
-    )
+    }
 }
 
 /**
@@ -94,7 +92,7 @@ fun GamesMenu(
  *   [gameSwitchConfirmOnClick] on confirm. [selectedGame] determines which game is selected when
  *   user opens [GamesMenu]. [onBackPress] is launched when user tries to close [GamesMenu] using
  *   either top left arrow icon or back button on phone; it updates [selectedGame] which causes
- *   [SolitaireBoard] to recompose, so small delay is added before closing [GamesMenu] by updating
+ *   [BoardLayout] to recompose, so small delay is added before closing [GamesMenu] by updating
  *   [MenuState].
  */
 @Composable
@@ -119,9 +117,6 @@ fun GamesMenu(
     }
     val lazyColumnState = rememberLazyListState()
 
-    BackHandler {
-        onBackPress(menuSelectedGame)
-    }
     LaunchedEffect(key1 = Unit) {
         lazyColumnState.animateScrollToItem(selectedGame.ordinal)
     }
@@ -134,34 +129,21 @@ fun GamesMenu(
         },
         dismissOnClick = { displayGameSwitch = false }
     )
-    Card(
-        modifier = Modifier
-            .fillMaxSize()
-            .testTag("Games Menu"),
-        shape = RectangleShape
+    MenuScreen(
+        menu = MenuState.Games,
+        modifier = Modifier.testTag("Games Menu"),
+        onBackPress = { onBackPress(menuSelectedGame) }
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(all = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ){
-            MenuHeaderBar(
-                menu = MenuState.GAMES,
-                onBackPress = { onBackPress(menuSelectedGame) }
-            )
-            LazyColumn(
-                modifier = Modifier.testTag("Games Menu List"),
-                state = lazyColumnState,
-                verticalArrangement = Arrangement.spacedBy(2.dp)
-            ) {
-                items(Games.entries) { game ->
-                    GamesInfo(
-                        game = game,
-                        selected = menuSelectedGame == game,
-                        onClick = gamesInfoOnClick
-                    )
-                }
+        LazyColumn(
+            modifier = Modifier.testTag("Games Menu List"),
+            state = lazyColumnState,
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.gColumnSpacedBy))
+        ) {
+            items(Games.entries) { game ->
+                GamesInfo(
+                    game = game,
+                    selected = menuSelectedGame == game
+                ) { gamesInfoOnClick(game) }
             }
         }
     }
@@ -176,30 +158,32 @@ fun GamesMenu(
 fun GamesInfo(
     game: Games,
     selected: Boolean,
-    onClick: (Games) -> Unit
+    onClick: () -> Unit
 ) {
     Card(
         modifier = Modifier
-            .clickable { onClick.invoke(game) }
+            .clickable { onClick() }
             .testTag("${game.name} Card $selected"),
         shape = ShapeDefaults.Small,
         colors = CardDefaults.cardColors(
-            containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface
+            containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface,
+            contentColor = if (selected) Color.Black else MaterialTheme.colorScheme.onSurface
         )
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(150.dp),
+                .height(dimensionResource(R.dimen.gInfoHeight)),
             horizontalArrangement = Arrangement.SpaceBetween
         ) {
             val family = stringResource(game.familyId)
             val redeals = stringResource(game.redeals.nameId)
             Column(
                 modifier = Modifier
-                    .padding(8.dp)
+                    .padding(dimensionResource(R.dimen.gInfoColumnPaddingAll))
                     .weight(1f),
-                verticalArrangement = Arrangement.spacedBy(12.dp)
+                verticalArrangement =
+                    Arrangement.spacedBy(dimensionResource(R.dimen.gInfoColumnSpacedBy))
             ) {
                 Text(
                     text = stringResource(game.nameId),
@@ -212,9 +196,8 @@ fun GamesInfo(
                 painter = painterResource(game.iconId),
                 contentDescription = stringResource(game.nameId),
                 modifier = Modifier
-                    .padding(8.dp)
-                    .height(150.dp)
-                    .width(150.dp),
+                    .padding(dimensionResource(R.dimen.gInfoImagePaddingAll))
+                    .size(dimensionResource(R.dimen.gInfoImageSize)),
                 contentScale = ContentScale.FillBounds
             )
         }
@@ -224,30 +207,33 @@ fun GamesInfo(
 @Preview
 @Composable
 fun GamesMenuPreview() {
-    SolitairePreview {
-        GamesMenu(
-            gameSwitchConfirmOnClick = { },
-            gameInfoOnClickCheck = { true },
-            selectedGame = Games.KLONDIKE_TURN_ONE,
-            onBackPress = { }
-        )
+    PreviewUtil().apply {
+        Preview {
+            GamesMenu(
+                gameSwitchConfirmOnClick = { },
+                gameInfoOnClickCheck = { true },
+                selectedGame = Games.KLONDIKE_TURN_ONE
+            ) { }
+        }
     }
 }
 
 @Preview
 @Composable
 fun GamesInfoPreview() {
-    SolitairePreview {
-        Column(modifier = Modifier.padding(all = 8.dp)) {
-            GamesInfo(
-                game = Games.KLONDIKE_TURN_ONE,
-                true
-            ) { }
-            HorizontalDivider()
-            GamesInfo(
-                game = Games.YUKON,
-                false
-            ) { }
+    PreviewUtil().apply {
+        Preview {
+            Column(modifier = Modifier.padding(all = 8.dp)) {
+                GamesInfo(
+                    game = Games.KLONDIKE_TURN_ONE,
+                    true
+                ) { }
+                HorizontalDivider()
+                GamesInfo(
+                    game = Games.YUKON,
+                    false
+                ) { }
+            }
         }
     }
 }

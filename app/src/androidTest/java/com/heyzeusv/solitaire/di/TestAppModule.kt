@@ -1,10 +1,13 @@
 package com.heyzeusv.solitaire.di
 
 import android.content.Context
+import android.util.DisplayMetrics
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.data.LayoutInfo
+import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
@@ -29,6 +32,19 @@ import javax.inject.Singleton
     replaces = [AppModule::class]
 )
 class TestAppModule {
+
+    /**
+     *  Provides [DisplayMetrics] to determine screen size.
+     */
+    @Provides
+    fun provideDisplayMetrics(@ApplicationContext context: Context): DisplayMetrics =
+        context.resources.displayMetrics
+
+    /**
+     *  Provides [LayoutInfo] using screen size.
+     */
+    @Provides
+    fun provideLayoutInfo(): LayoutInfo = LayoutInfo(LayoutPositions.Width1080, 0)
 
     /**
      *  Provides [ShuffleSeed] obj containing [Random] with seed parameter ensuring that every
