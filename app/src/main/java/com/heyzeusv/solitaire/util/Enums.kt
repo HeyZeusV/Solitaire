@@ -11,6 +11,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.pile.Stock
+import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
@@ -190,6 +191,15 @@ enum class Redeals(
 enum class MaxScore(val amount: Int) {
     ONE_DECK(52),
     ONE_DECK_NO_ACES(48)
+}
+
+/**
+ *  Each game starts with a certain [amount] of Cards face up on each [Tableau] pile.
+ */
+enum class ResetFaceUpAmount(val amount: Int) {
+    One(1),
+    Four(4),
+    Five(5)
 }
 
 /**

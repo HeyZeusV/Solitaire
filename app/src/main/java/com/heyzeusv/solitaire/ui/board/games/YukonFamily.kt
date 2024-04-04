@@ -2,10 +2,12 @@ package com.heyzeusv.solitaire.ui.board.games
 
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.Redeals
+import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 
 /**
  *  Games that belong to Yukon family.
@@ -13,6 +15,7 @@ import com.heyzeusv.solitaire.util.Redeals
 sealed class YukonFamily : Games() {
     override val familyId: Int = R.string.games_family_yukon
 
+    override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.Five
     override val drawAmount: DrawAmount = DrawAmount.Zero
     override val redeals: Redeals = Redeals.None
 
@@ -26,6 +29,13 @@ sealed class YukonFamily : Games() {
             }
         }
     }
+
+    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1
+    }
 }
 
 class Yukon : YukonFamily() {
@@ -36,6 +46,13 @@ class Yukon : YukonFamily() {
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists() || it.notInOrder()) return false }
         return true
+    }
+
+    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
     }
 }
 
@@ -49,6 +66,14 @@ class Alaska : YukonFamily() {
             if (it.faceDownExists() || it.isMultiSuit() || it.notInOrder()) return false
         }
         return true
+    }
+
+    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit == tLast.suit &&
+               (cFirst.value == tLast.value - 1 || cFirst.value == tLast.value + 1)
     }
 }
 
@@ -70,6 +95,7 @@ class AustralianPatience : YukonFamily() {
     override val previewId: Int = R.drawable.preview_australian_patience
     override val dataStoreEnum: Game = Game.GAME_AUSTRALIAN_PATIENCE
 
+    override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.Four
     override val drawAmount: DrawAmount = DrawAmount.One
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
@@ -90,6 +116,7 @@ class Canberra : YukonFamily() {
     override val previewId: Int = R.drawable.preview_australian_patience
     override val dataStoreEnum: Game = Game.GAME_CANBERRA
 
+    override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.Four
     override val drawAmount: DrawAmount = DrawAmount.One
     override val redeals: Redeals = Redeals.Once
 

@@ -9,6 +9,7 @@ import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
+import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.Suits
 
 /**
@@ -17,6 +18,7 @@ import com.heyzeusv.solitaire.util.Suits
 sealed class KlondikeFamily : Games() {
     override val familyId: Int = R.string.games_family_klondike
 
+    override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
     override val drawAmount: DrawAmount = DrawAmount.One
     override val redeals: Redeals = Redeals.Unlimited
 
@@ -30,6 +32,13 @@ sealed class KlondikeFamily : Games() {
             val cards = List(index + 1) { stock.remove() }
             tableau.reset(cards)
         }
+    }
+
+    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
     }
 }
 
@@ -55,6 +64,7 @@ class ClassicWestcliff : KlondikeFamily() {
     override val baseDeck: List<Card> = List(48) { Card((it % 12) + 1, getSuit(it)) }
     override val redeals: Redeals = Redeals.None
     override val maxScore: MaxScore = MaxScore.ONE_DECK_NO_ACES
+    override val anyCardCanStartPile: Boolean = true
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEach { tableau ->
@@ -82,6 +92,7 @@ class Easthaven : KlondikeFamily() {
 
     override val drawAmount: DrawAmount = DrawAmount.Seven
     override val redeals: Redeals = Redeals.None
+    override val anyCardCanStartPile: Boolean = true
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists() || it.notInOrderOrAltColor()) return false }
@@ -93,5 +104,14 @@ class Easthaven : KlondikeFamily() {
             val cards = List(3) { stock.remove() }
             tableau.reset(cards)
         }
+    }
+
+    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit.color != tLast.suit.color &&
+               cFirst.value == tLast.value - 1 &&
+               tableau.notInOrderOrAltColor(cardsToAdd)
     }
 }
