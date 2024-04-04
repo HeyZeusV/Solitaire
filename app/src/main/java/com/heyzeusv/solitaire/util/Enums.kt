@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
@@ -85,24 +86,24 @@ enum class Games(
     KLONDIKE_TURN_ONE(
         R.string.games_klondike_turn_one,
         R.string.games_family_klondike,
-        R.drawable.games_klondike_turn_one,
-        UNLIMITED,
+        R.drawable.preview_klondike_turn_one,
+        Unlimited,
         1,
         Game.GAME_KLONDIKETURNONE
     ),
     KLONDIKE_TURN_THREE(
         R.string.games_klondike_turn_three,
         R.string.games_family_klondike,
-        R.drawable.games_klondike_turn_three,
-        UNLIMITED,
+        R.drawable.preview_klondike_turn_three,
+        Unlimited,
         3,
         Game.GAME_KLONDIKETURNTHREE
     ),
     CLASSIC_WESTCLIFF(
         R.string.games_classic_westcliff,
         R.string.games_family_klondike,
-        R.drawable.games_classic_westcliff,
-        NONE,
+        R.drawable.preview_classic_westcliff,
+        None,
         1,
         Game.GAME_CLASSIC_WESTCLIFF,
         MaxScore.ONE_DECK_NO_ACES
@@ -110,51 +111,62 @@ enum class Games(
     EASTHAVEN(
         R.string.games_easthaven,
         R.string.games_family_klondike,
-        R.drawable.games_easthaven,
-        NONE,
+        R.drawable.preview_easthaven,
+        None,
         0,
         Game.GAME_EASTHAVEN
     ),
     YUKON(
         R.string.games_yukon,
         R.string.games_family_yukon,
-        R.drawable.games_yukon,
-        NONE,
+        R.drawable.preview_yukon,
+        None,
         0,
         Game.GAME_YUKON
     ),
     ALASKA(
         R.string.games_alaska,
         R.string.games_family_yukon,
-        R.drawable.games_yukon,
-        NONE,
+        R.drawable.preview_yukon,
+        None,
         0,
         Game.GAME_ALASKA
     ),
     RUSSIAN(
         R.string.games_russian,
         R.string.games_family_yukon,
-        R.drawable.games_yukon,
-        NONE,
+        R.drawable.preview_yukon,
+        None,
         0,
         Game.GAME_RUSSIAN
     ),
     AUSTRALIAN_PATIENCE(
         R.string.games_australian_patience,
         R.string.games_family_yukon,
-        R.drawable.games_australian_patience,
-        NONE,
+        R.drawable.preview_australian_patience,
+        None,
         1,
         Game.GAME_AUSTRALIAN_PATIENCE
     ),
     CANBERRA(
         R.string.games_canberra,
         R.string.games_family_yukon,
-        R.drawable.games_australian_patience,
-        ONCE,
+        R.drawable.preview_australian_patience,
+        Once,
         1,
         Game.GAME_CANBERRA
     )
+}
+
+/**
+ *  Enum class that holds the possible [amount] of cards that are drawn at a time when user clicks
+ *  on [Stock] pile.
+ */
+enum class DrawAmount(val amount: Int) {
+    Zero(0),
+    One(1),
+    Three(3),
+    Seven(7)
 }
 
 /**
@@ -166,9 +178,9 @@ enum class Redeals(
     @StringRes val nameId: Int,
     val amount: Int
 ) {
-    NONE(R.string.redeal_none, 0),
-    ONCE(R.string.redeal_once, 1),
-    UNLIMITED(R.string.redeal_unlimited, Int.MAX_VALUE)
+    None(R.string.redeal_none, 0),
+    Once(R.string.redeal_once, 1),
+    Unlimited(R.string.redeal_unlimited, Int.MAX_VALUE)
 }
 
 /**
