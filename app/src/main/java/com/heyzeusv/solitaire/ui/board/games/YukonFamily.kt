@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui.board.games
 
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
@@ -30,6 +31,7 @@ sealed class YukonFamily : Games() {
 class Yukon : YukonFamily() {
     override val nameId: Int = R.string.games_yukon
     override val previewId: Int = R.drawable.preview_yukon
+    override val dataStoreEnum: Game = Game.GAME_YUKON
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists() || it.notInOrder()) return false }
@@ -40,6 +42,7 @@ class Yukon : YukonFamily() {
 class Alaska : YukonFamily() {
     override val nameId: Int = R.string.games_alaska
     override val previewId: Int = R.drawable.preview_yukon
+    override val dataStoreEnum: Game = Game.GAME_ALASKA
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach {
@@ -52,6 +55,7 @@ class Alaska : YukonFamily() {
 class Russian : YukonFamily() {
     override val nameId: Int = R.string.games_russian
     override val previewId: Int = R.drawable.preview_yukon
+    override val dataStoreEnum: Game = Game.GAME_RUSSIAN
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach {
@@ -64,6 +68,7 @@ class Russian : YukonFamily() {
 class AustralianPatience : YukonFamily() {
     override val nameId: Int = R.string.games_australian_patience
     override val previewId: Int = R.drawable.preview_australian_patience
+    override val dataStoreEnum: Game = Game.GAME_AUSTRALIAN_PATIENCE
 
     override val drawAmount: DrawAmount = DrawAmount.One
 
@@ -83,6 +88,7 @@ class AustralianPatience : YukonFamily() {
 class Canberra : YukonFamily() {
     override val nameId: Int = R.string.games_canberra
     override val previewId: Int = R.drawable.preview_australian_patience
+    override val dataStoreEnum: Game = Game.GAME_CANBERRA
 
     override val drawAmount: DrawAmount = DrawAmount.One
     override val redeals: Redeals = Redeals.Once

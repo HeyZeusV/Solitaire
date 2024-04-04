@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui.board.games
 
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.pile.Foundation
@@ -35,11 +36,13 @@ sealed class KlondikeFamily : Games() {
 class KlondikeTurnOne : KlondikeFamily() {
     override val nameId: Int = R.string.games_klondike_turn_one
     override val previewId: Int = R.drawable.preview_klondike_turn_one
+    override val dataStoreEnum: Game = Game.GAME_KLONDIKETURNONE
 }
 
 class KlondikeTurnThree : KlondikeFamily() {
     override val nameId: Int = R.string.games_klondike_turn_three
     override val previewId: Int = R.drawable.preview_klondike_turn_three
+    override val dataStoreEnum: Game = Game.GAME_KLONDIKETURNTHREE
 
     override val drawAmount: DrawAmount = DrawAmount.Three
 }
@@ -47,6 +50,7 @@ class KlondikeTurnThree : KlondikeFamily() {
 class ClassicWestcliff : KlondikeFamily() {
     override val nameId: Int = R.string.games_classic_westcliff
     override val previewId: Int = R.drawable.preview_classic_westcliff
+    override val dataStoreEnum: Game = Game.GAME_CLASSIC_WESTCLIFF
 
     override val baseDeck: List<Card> = List(48) { Card((it % 12) + 1, getSuit(it)) }
     override val redeals: Redeals = Redeals.None
@@ -74,6 +78,7 @@ class ClassicWestcliff : KlondikeFamily() {
 class Easthaven : KlondikeFamily() {
     override val nameId: Int = R.string.games_easthaven
     override val previewId: Int = R.drawable.preview_easthaven
+    override val dataStoreEnum: Game = Game.GAME_EASTHAVEN
 
     override val drawAmount: DrawAmount = DrawAmount.Seven
     override val redeals: Redeals = Redeals.None

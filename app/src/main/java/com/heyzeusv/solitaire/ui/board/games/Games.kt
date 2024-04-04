@@ -2,6 +2,8 @@ package com.heyzeusv.solitaire.ui.board.games
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
+import com.heyzeusv.solitaire.Game
+import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Foundation
@@ -29,12 +31,14 @@ sealed class Games : GameInfo, GameRules {
 /**
  *  Info that each game requires. Each game has its own unique [nameId] and belongs to a family
  *  which is retrieved using [familyId]. Each game on [GamesMenu] has a small preview image,
- *  [previewId], to give users an idea of the type of game it is.
+ *  [previewId], to give users an idea of the type of game it is. [dataStoreEnum] is used to ensure
+ *  the correct [GameStats] is updated when updating stats.
  */
 interface GameInfo {
     @get:StringRes val nameId: Int
     @get:StringRes val familyId: Int
     @get:DrawableRes val previewId: Int
+    val dataStoreEnum: Game
 }
 
 /**
