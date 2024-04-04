@@ -231,7 +231,7 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
      *  This checks if given [cards] is not in order descending and not alternating color, this way
      *  autocomplete will not be stuck in an infinite loop.
      */
-    fun notInOrderOrAltColor(cards: List<Card>): Boolean {
+    fun notInOrderOrAltColor(cards: List<Card> = truePile.toList()): Boolean {
         val it = cards.iterator()
         if (!it.hasNext()) return false
         var current = it.next()

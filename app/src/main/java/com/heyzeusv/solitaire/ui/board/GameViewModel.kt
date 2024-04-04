@@ -13,6 +13,7 @@ import com.heyzeusv.solitaire.data.pile.Pile
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
+import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -187,6 +188,49 @@ abstract class GameViewModel (
             }
             _animateInfo.value = aniInfo
             redealLeft--
+            return Move
+        }
+        return Illegal
+    }
+
+    /**
+     *  Custom onStockClick for [Easthaven] due to [Card]s being move directly from [Stock] to
+     *  [Tableau]. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile. If there
+     *  isn't enough for all 7 [Tableau] piles, it adds from left to right until it runs out.
+     */
+    fun onStockClickEasthaven(): MoveResult {
+        if (_stock.truePile.isNotEmpty()) {
+            val stockCards = _stock.getCards(7)
+            val tableauIndices = mutableListOf<Int>()
+            _tableau.forEach { tableau -> tableauIndices.add(tableau.truePile.size) }
+            val aniInfo = AnimateInfo(
+                start = GamePiles.Stock,
+                end = GamePiles.TableauAll,
+                endTableauIndices = tableauIndices,
+                animatedCards = stockCards,
+                flipCardInfo = FlipCardInfo.FaceUp.MultiPile
+            )
+            aniInfo.actionBeforeAnimation = {
+                mutex.withLock {
+                    _stock.removeMany(stockCards.size)
+                    _tableau.forEachIndexed { index, tableau ->
+                        val stockCard: List<Card> = try {
+                            listOf(stockCards[index])
+                        } catch (e: IndexOutOfBoundsException) {
+                            emptyList()
+                        }
+                        (tableau as Tableau.EasthavenTableau).addFromStock(stockCard)
+                    }
+                    _stock.updateDisplayPile()
+                }
+            }
+            aniInfo.actionAfterAnimation = {
+                mutex.withLock {
+                    _tableau.forEach { it.updateDisplayPile() }
+                    appendHistory(aniInfo.getUndoAnimateInfo())
+                }
+            }
+            _animateInfo.value = aniInfo
             return Move
         }
         return Illegal
