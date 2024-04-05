@@ -32,6 +32,7 @@ import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
+import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
@@ -58,10 +59,12 @@ fun BoardLayout(
     val undoAnimation by gameVM.undoAnimation.collectAsState()
     val settings by menuVM.settings.collectAsState()
     var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
-    LaunchedEffect(key1 = settings) {
+    LaunchedEffect(key1 = settings.animationDurations) {
         animationDurations = AnimationDurations from settings.animationDurations
         gameVM.updateAutoCompleteDelay(animationDurations.autoCompleteDelay)
-        gameVM.updateSelectedGame(com.heyzeusv.solitaire.ui.board.games.Games.getGameClass(settings.selectedGame).createInstance())
+    }
+    LaunchedEffect(key1 = settings.selectedGame) {
+        gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame).createInstance())
     }
 
     BoardLayout(
@@ -694,7 +697,7 @@ fun BoardLayout480Preview() {
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
     }
@@ -714,7 +717,7 @@ fun BoardLayout720Preview() {
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
     }
@@ -734,7 +737,7 @@ fun BoardLayout1080Preview() {
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
     }
@@ -754,7 +757,7 @@ fun BoardLayout1440Preview() {
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
     }
@@ -774,7 +777,7 @@ fun BoardLayout2160Preview() {
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
     }

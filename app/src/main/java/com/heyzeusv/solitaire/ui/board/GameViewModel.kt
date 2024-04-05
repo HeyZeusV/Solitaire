@@ -222,11 +222,11 @@ class GameViewModel @Inject constructor(
                     _stock.removeMany(stockCards.size)
                     _tableau.forEachIndexed { index, tableau ->
                         val stockCard: List<Card> = try {
-                            listOf(stockCards[index])
+                            listOf(stockCards[index].copy(faceUp = true))
                         } catch (e: IndexOutOfBoundsException) {
                             emptyList()
                         }
-                        (tableau as Tableau.EasthavenTableau).addFromStock(stockCard)
+                        tableau.add(stockCard)
                     }
                     _stock.updateDisplayPile()
                 }
@@ -395,7 +395,7 @@ class GameViewModel @Inject constructor(
         // try to add to non-empty tableau first
         _tableau.forEach {
             val endIndex = it.truePile.size
-            if (it.truePile.isNotEmpty() && it.canAdd(cards)) {
+            if (it.truePile.isNotEmpty() && selectedGame.canAddToTableau(it, cards)) {
                 val aniInfo = AnimateInfo(
                     start = start,
                     end = it.gamePile,
@@ -423,7 +423,7 @@ class GameViewModel @Inject constructor(
             }
         }
         _tableau.forEach {
-            if (it.truePile.isEmpty() && it.canAdd(cards)) {
+            if (it.truePile.isEmpty() && selectedGame.canAddToTableau(it, cards)) {
                 val aniInfo = AnimateInfo(
                     start = start,
                     end = it.gamePile,
