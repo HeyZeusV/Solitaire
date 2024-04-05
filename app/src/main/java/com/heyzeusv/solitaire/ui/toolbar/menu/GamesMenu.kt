@@ -38,7 +38,6 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
 import com.heyzeusv.solitaire.ui.board.BoardLayout
-import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.games.Yukon
@@ -46,7 +45,6 @@ import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
-import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.theme.Purple40
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -59,7 +57,6 @@ import kotlin.reflect.full.createInstance
 @Composable
 fun GamesMenu(
     sbVM: ScoreboardViewModel,
-    gameVM: GameViewModel,
     menuVM: MenuViewModel
 ) {
     val settings by menuVM.settings.collectAsState()
@@ -81,7 +78,6 @@ fun GamesMenu(
             if (game != selectedGame) {
                 menuVM.updateSelectedGame(game)
                 sbVM.reset()
-                gameVM.resetAll(ResetOptions.NEW)
                 delay(300)
             }
             menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)

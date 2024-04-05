@@ -52,7 +52,7 @@ sealed class Games : GameInfo, GameRules {
      *  Using [resetFaceUpAmount], flips given [ResetFaceUpAmount.amount] of Cards face up in
      *  [cards] and returns it as a new list.
      */
-    fun resetFlipCard(
+    protected fun resetFlipCard(
         cards: List<Card>,
         resetFaceUpAmount: ResetFaceUpAmount
     ): List<Card> {
@@ -146,7 +146,7 @@ interface GameRules {
      *  Some games requires additional steps to fully reset their [Foundation] piles. Using
      *  [Foundation.reset], cards will be added to given each [Foundation] in [foundationList].
      */
-    fun resetFoundation(foundationList: List<Foundation>) { }
+    fun resetFoundation(foundationList: List<Foundation>) { foundationList.forEach { it.reset() } }
 
     /**
      *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile.

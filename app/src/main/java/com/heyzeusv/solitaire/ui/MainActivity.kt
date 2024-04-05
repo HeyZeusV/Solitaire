@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,14 +20,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.*
-import com.heyzeusv.solitaire.ui.board.YukonViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.ui.toolbar.Toolbar
-import com.heyzeusv.solitaire.util.Games
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -49,18 +45,7 @@ class MainActivity : ComponentActivity() {
 fun SolitaireApp(finishApp: () -> Unit) {
     val sbVM = hiltViewModel<ScoreboardViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
-    val selectedGame by menuVM.selectedGame.collectAsState()
-    val gameVM = when (selectedGame) {
-        Games.YUKON -> hiltViewModel<YukonViewModel>()
-        Games.AUSTRALIAN_PATIENCE -> hiltViewModel<AustralianPatienceViewModel>()
-        Games.CANBERRA -> hiltViewModel<CanberraViewModel>()
-        Games.ALASKA -> hiltViewModel<AlaskaViewModel>()
-        Games.RUSSIAN -> hiltViewModel<RussianViewModel>()
-        Games.CLASSIC_WESTCLIFF -> hiltViewModel<ClassicWestcliffViewModel>()
-        Games.EASTHAVEN -> hiltViewModel<EasthavenViewModel>()
-        Games.KLONDIKE_TURN_ONE -> hiltViewModel<KlondikeViewModel>()
-        Games.KLONDIKE_TURN_THREE -> hiltViewModel<KlondikeViewModel>()
-    }
+    val gameVM = hiltViewModel<GameViewModel>()
 
     // background pattern that repeats
     val pattern = ImageBitmap.imageResource(R.drawable.pattern_noise)
@@ -85,7 +70,6 @@ fun SolitaireApp(finishApp: () -> Unit) {
         )
         MenuContainer(
             sbVM = sbVM,
-            gameVM = gameVM,
             menuVM = menuVM,
             modifier = Modifier.align(Alignment.BottomStart)
         )
