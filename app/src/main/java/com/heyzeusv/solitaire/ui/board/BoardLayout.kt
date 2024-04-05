@@ -36,12 +36,12 @@ import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
-import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
+import kotlin.reflect.full.createInstance
 
 /**
  *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau.
@@ -51,15 +51,18 @@ fun BoardLayout(
     sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
-    selectedGame: Games,
     modifier: Modifier = Modifier
 ) {
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
     val undoAnimation by gameVM.undoAnimation.collectAsState()
     val settings by menuVM.settings.collectAsState()
-    val animationDurations = AnimationDurations from settings.animationDurations
-    gameVM.autoCompleteDelay = animationDurations.autoCompleteDelay
+    var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
+    LaunchedEffect(key1 = settings) {
+        animationDurations = AnimationDurations from settings.animationDurations
+        gameVM.updateAutoCompleteDelay(animationDurations.autoCompleteDelay)
+        gameVM.updateSelectedGame(com.heyzeusv.solitaire.ui.board.games.Games.getGameClass(settings.selectedGame).createInstance())
+    }
 
     BoardLayout(
         modifier = modifier,
@@ -70,7 +73,7 @@ fun BoardLayout(
         updateUndoEnabled = gameVM::updateUndoEnabled,
         undoAnimation = undoAnimation,
         updateUndoAnimation = gameVM::updateUndoAnimation,
-        drawAmount = selectedGame.drawAmount,
+        drawAmount = gameVM.selectedGame.drawAmount.amount,
         handleMoveResult = sbVM::handleMoveResult,
         stock = gameVM.stock,
         onStockClick = gameVM::onStockClick,

@@ -14,6 +14,8 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
+import com.heyzeusv.solitaire.ui.board.games.Games
+import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -42,6 +44,10 @@ abstract class GameViewModel (
 
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     protected val mutex = Mutex()
+
+    var selectedGame: Games = KlondikeTurnOne()
+        private set
+    fun updateSelectedGame(newGame: Games) { selectedGame = newGame }
 
     // holds all 52 playing Cards
     protected open var baseDeck = MutableList(52) { Card(it % 13, getSuit(it)) }
@@ -91,7 +97,8 @@ abstract class GameViewModel (
     val animateInfo: StateFlow<AnimateInfo?> get() = _animateInfo
     fun updateAnimateInfo(newValue: AnimateInfo?) { _animateInfo.value = newValue }
 
-    var autoCompleteDelay: Long = AnimationDurations.Fast.autoCompleteDelay
+    private var autoCompleteDelay: Long = AnimationDurations.Fast.autoCompleteDelay
+    fun updateAutoCompleteDelay(newValue: Long) { autoCompleteDelay = newValue }
 
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a

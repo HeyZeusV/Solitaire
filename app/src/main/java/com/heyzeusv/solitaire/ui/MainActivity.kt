@@ -81,8 +81,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
         SolitaireScreen(
             sbVM = sbVM,
             gameVM = gameVM,
-            menuVM = menuVM,
-            selectedGame = selectedGame
+            menuVM = menuVM
         )
         MenuContainer(
             sbVM = sbVM,
@@ -102,8 +101,7 @@ fun SolitaireApp(finishApp: () -> Unit) {
 fun SolitaireScreen(
     sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
-    menuVM: MenuViewModel,
-    selectedGame: Games
+    menuVM: MenuViewModel
 ) {
     Column(Modifier.fillMaxSize()) {
         SolitaireScoreboard(
@@ -115,7 +113,6 @@ fun SolitaireScreen(
             sbVM = sbVM,
             gameVM = gameVM,
             menuVM = menuVM,
-            selectedGame = selectedGame,
             modifier = Modifier.weight(1f)
         )
         Toolbar(
