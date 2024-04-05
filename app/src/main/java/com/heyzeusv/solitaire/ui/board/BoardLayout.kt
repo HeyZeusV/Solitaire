@@ -36,6 +36,7 @@ import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
+import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -59,12 +60,16 @@ fun BoardLayout(
     val undoAnimation by gameVM.undoAnimation.collectAsState()
     val settings by menuVM.settings.collectAsState()
     var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
+    var drawAmount by remember { mutableStateOf(DrawAmount.One) }
     LaunchedEffect(key1 = settings.animationDurations) {
         animationDurations = AnimationDurations from settings.animationDurations
         gameVM.updateAutoCompleteDelay(animationDurations.autoCompleteDelay)
     }
     LaunchedEffect(key1 = settings.selectedGame) {
-        gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame).createInstance())
+        val instance = Games.getGameClass(settings.selectedGame).createInstance()
+        gameVM.updateSelectedGame(instance)
+        drawAmount = instance.drawAmount
+
     }
 
     BoardLayout(
@@ -76,7 +81,7 @@ fun BoardLayout(
         updateUndoEnabled = gameVM::updateUndoEnabled,
         undoAnimation = undoAnimation,
         updateUndoAnimation = gameVM::updateUndoAnimation,
-        drawAmount = gameVM.selectedGame.drawAmount.amount,
+        drawAmount = drawAmount,
         handleMoveResult = sbVM::handleMoveResult,
         stock = gameVM.stock,
         onStockClick = gameVM::onStockClick,
@@ -109,11 +114,11 @@ fun BoardLayout(
     updateUndoEnabled: (Boolean) -> Unit = { },
     undoAnimation: Boolean,
     updateUndoAnimation: (Boolean) -> Unit = { },
-    drawAmount: Int,
+    drawAmount: DrawAmount,
     handleMoveResult: (MoveResult) -> Unit = { },
     /** Piles and their onClicks */
     stock: Stock,
-    onStockClick: (Int) -> MoveResult = { MoveResult.Illegal },
+    onStockClick: () -> MoveResult = { MoveResult.Illegal },
     waste: Waste,
     stockWasteEmpty: () -> Boolean = { true },
     onWasteClick: () -> MoveResult = { MoveResult.Illegal },
@@ -231,7 +236,7 @@ fun BoardLayout(
                 cardDpSize = layInfo.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { handleMoveResult(onStockClick(drawAmount)) }
+                onClick = { handleMoveResult(onStockClick()) }
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
@@ -693,7 +698,7 @@ fun BoardLayout480Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = 1,
+                drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
@@ -713,7 +718,7 @@ fun BoardLayout720Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = 1,
+                drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
@@ -733,7 +738,7 @@ fun BoardLayout1080Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = 1,
+                drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
@@ -753,7 +758,7 @@ fun BoardLayout1440Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = 1,
+                drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
@@ -773,7 +778,7 @@ fun BoardLayout2160Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = 1,
+                drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },

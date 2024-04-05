@@ -46,8 +46,7 @@ class GameViewModel @Inject constructor(
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     private val mutex = Mutex()
 
-    var selectedGame: Games = KlondikeTurnOne()
-        private set
+    private var selectedGame: Games = KlondikeTurnOne()
     fun updateSelectedGame(newGame: Games) {
         selectedGame = newGame
         resetAll(ResetOptions.NEW)
@@ -73,7 +72,7 @@ class GameViewModel @Inject constructor(
     val tableau: List<Tableau> get() = _tableau
 
     private val _historyList = mutableListOf<AnimateInfo>()
-    val historyList: List<AnimateInfo> get() = _historyList
+    private val historyList: List<AnimateInfo> get() = _historyList
 
     // determines if Undo Button is available
     private val _undoEnabled = MutableStateFlow(false)
@@ -142,14 +141,23 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  Runs when user taps on Stock pile. Either draws Card(s) from Stock if any or resets Stock by
-     *  adding Cards back from Waste. [drawAmount] will be used for testing and has default
-     *  parameter that will be updated depending on game selected.
+     *  Checks [selectedGame] value to determine which onStockClick to run.
      */
-    fun onStockClick(drawAmount: Int): MoveResult {
+    fun onStockClick(): MoveResult {
+        return when (selectedGame) {
+            is Easthaven -> onStockClickEasthaven()
+            else -> onStockClickStandard()
+        }
+    }
+
+    /**
+     *  Runs when user taps on Stock pile. Either draws Card(s) from Stock if any or resets Stock by
+     *  adding Cards back from Waste.
+     */
+    private fun onStockClickStandard(): MoveResult {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.truePile.isNotEmpty()) {
-            val cards = _stock.getCards(drawAmount)
+            val cards = _stock.getCards(selectedGame.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
                 end = GamePiles.Waste,
@@ -158,7 +166,7 @@ class GameViewModel @Inject constructor(
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
-                    _stock.removeMany(drawAmount)
+                    _stock.removeMany(selectedGame.drawAmount.amount)
                     _waste.add(cards)
                     _stock.updateDisplayPile()
                 }
@@ -205,7 +213,7 @@ class GameViewModel @Inject constructor(
      *  [Tableau]. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile. If there
      *  isn't enough for all 7 [Tableau] piles, it adds from left to right until it runs out.
      */
-    fun onStockClickEasthaven(): MoveResult {
+    private fun onStockClickEasthaven(): MoveResult {
         if (_stock.truePile.isNotEmpty()) {
             val stockCards = _stock.getCards(7)
             val tableauIndices = mutableListOf<Int>()

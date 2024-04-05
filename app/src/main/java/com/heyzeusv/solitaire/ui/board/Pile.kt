@@ -18,6 +18,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 
@@ -33,7 +34,7 @@ fun SolitairePile(
     pile: List<Card>,
     @DrawableRes emptyIconId: Int,
     onClick: () -> Unit = { },
-    drawAmount: Int = 1
+    drawAmount: DrawAmount = DrawAmount.One
 ) {
     if (pile.isEmpty()) {
         Image(
@@ -52,7 +53,7 @@ fun SolitairePile(
                 alignment = Alignment.End
             )
         ) {
-            if (pile.size >= 3 && drawAmount >= 3) {
+            if (pile.size >= 3 && drawAmount.amount >= 3) {
                 SolitaireCard(
                     modifier = Modifier
                         .size(cardDpSize)
@@ -60,7 +61,7 @@ fun SolitairePile(
                     card = pile[pile.size - 3]
                 )
             }
-            if (pile.size >= 2 && drawAmount >= 2) {
+            if (pile.size >= 2 && drawAmount.amount >= 2) {
                 SolitaireCard(
                     modifier = Modifier
                         .size(cardDpSize)
@@ -133,6 +134,6 @@ fun SolitairePile3DrawPreview() {
         cardDpSize = DpSize(56.dp, 79.dp),
         pile = listOf(card, card, card),
         emptyIconId = R.drawable.waste_empty,
-        drawAmount = 3
+        drawAmount = DrawAmount.Three
     )
 }
