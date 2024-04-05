@@ -19,6 +19,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import kotlin.reflect.KClass
+import kotlin.reflect.full.createInstance
 
 /**
  *  Data manager for menu.
@@ -73,6 +75,16 @@ class MenuViewModel @Inject constructor(
     fun updateAnimationDurations(animationDurations: AnimationDurations) {
         viewModelScope.launch {
             settingsManager.updateAnimationDurations(animationDurations.ads)
+        }
+    }
+
+    /**
+     *  Updates [Settings.selectedGame_] using given [game].
+     */
+    fun updateSelectedGame(game: KClass<out com.heyzeusv.solitaire.ui.board.games.Games>) {
+        viewModelScope.launch {
+            val instance = game.createInstance()
+            settingsManager.updateSelectedGame(instance.dataStoreEnum)
         }
     }
 
