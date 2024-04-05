@@ -30,7 +30,7 @@ sealed class KlondikeFamily : Games() {
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEachIndexed { index, tableau ->
             val cards = List(index + 1) { stock.remove() }
-            tableau.reset(cards)
+            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 
@@ -69,7 +69,7 @@ class ClassicWestcliff : KlondikeFamily() {
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEach { tableau ->
             val cards = List(3) { stock.remove() }
-            tableau.reset(cards)
+            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 
@@ -102,7 +102,7 @@ class Easthaven : KlondikeFamily() {
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEach { tableau ->
             val cards = List(3) { stock.remove() }
-            tableau.reset(cards)
+            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 

@@ -49,6 +49,25 @@ sealed class Games : GameInfo, GameRules {
             return false
         }
     }
+
+    /**
+     *  Using [resetFaceUpAmount], flips given [ResetFaceUpAmount.amount] of Cards face up in
+     *  [cards] and returns it as a new list.
+     */
+    fun resetFlipCard(
+        cards: List<Card>,
+        resetFaceUpAmount: ResetFaceUpAmount
+    ): List<Card> {
+        val mCards = cards.toMutableList()
+        for (i in mCards.size.downTo(mCards.size - resetFaceUpAmount.amount + 1)) {
+            try {
+                mCards[i - 1] = mCards[i - 1].copy(faceUp = true)
+            } catch (e: IndexOutOfBoundsException) {
+                break
+            }
+        }
+        return mCards
+    }
 }
 
 /**

@@ -23,9 +23,10 @@ sealed class YukonFamily : Games() {
         tableauList.forEachIndexed { index, tableau ->
             if (index != 0) {
                 val cards = List(index + 5) { stock.remove() }
-                tableau.reset(cards)
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
             } else {
-                tableau.reset(listOf(stock.remove()))
+                val cards = List(1) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
             }
         }
     }
@@ -106,7 +107,7 @@ class AustralianPatience : YukonFamily() {
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEach { tableau ->
             val cards = List(4) { stock.remove() }
-            tableau.reset(cards)
+            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 }
@@ -128,7 +129,7 @@ class Canberra : YukonFamily() {
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEach { tableau ->
             val cards = List(4) { stock.remove() }
-            tableau.reset(cards)
+            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 }

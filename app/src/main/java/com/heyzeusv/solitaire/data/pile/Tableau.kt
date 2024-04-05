@@ -156,13 +156,13 @@ sealed class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(in
         _truePile.run {
             clear()
             addAll(cards)
-            for (i in cards.size.downTo(cards.size - resetFaceUpAmount + 1)) {
-                try {
-                    this[i - 1] = this[i - 1].copy(faceUp = true)
-                } catch (e: IndexOutOfBoundsException) {
-                    break
-                }
-            }
+//            for (i in cards.size.downTo(cards.size - resetFaceUpAmount + 1)) {
+//                try {
+//                    this[i - 1] = this[i - 1].copy(faceUp = true)
+//                } catch (e: IndexOutOfBoundsException) {
+//                    break
+//                }
+//            }
             _displayPile.clear()
             _displayPile.addAll(_truePile.toList())
             currentStep = this.toList()
