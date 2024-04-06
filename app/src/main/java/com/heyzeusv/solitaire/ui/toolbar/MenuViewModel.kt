@@ -8,7 +8,6 @@ import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.StatManager
-import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.SettingsManager
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
@@ -52,13 +51,6 @@ class MenuViewModel @Inject constructor(
         initialValue = Settings.getDefaultInstance()
     )
 
-    private val _selectedGame = MutableStateFlow(Games.KLONDIKE_TURN_ONE)
-    val selectedGame: StateFlow<Games> get() = _selectedGame
-//    fun updateSelectedGame(newValue: Games) {
-//        _selectedGame.value = newValue
-//        _statsSelectedGame.value = newValue
-//    }
-
     val stats: StateFlow<StatPreferences> = statManager.statData.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
@@ -85,17 +77,17 @@ class MenuViewModel @Inject constructor(
     }
 
     /**
-     *  Updates the [GameStats] of [selectedGame] using given [lgs].
+     *  Updates the [GameStats] of [Settings.selectedGame_] using given [lgs].
      */
     fun updateStats(lgs: LastGameStats) {
         val prevGS =
-            stats.value.statsList.find { it.game == _selectedGame.value.dataStoreEnum }
+            stats.value.statsList.find { it.game == settings.value.selectedGame }
                 ?: getStatsDefaultInstance()
 
         var newGS: GameStats
         prevGS.let { old ->
             newGS = GameStats.newBuilder().also { new ->
-                new.game = _selectedGame.value.dataStoreEnum
+                new.game = settings.value.selectedGame
                 new.gamesPlayed = old.gamesPlayed.plus(1)
                 new.gamesWon = old.gamesWon.plus(if (lgs.gameWon) 1 else 0)
                 new.lowestMoves =

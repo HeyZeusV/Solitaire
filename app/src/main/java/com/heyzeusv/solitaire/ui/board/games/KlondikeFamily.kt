@@ -112,6 +112,6 @@ class Easthaven : KlondikeFamily() {
 
         return cFirst.suit.color != tLast.suit.color &&
                cFirst.value == tLast.value - 1 &&
-               tableau.notInOrderOrAltColor(cardsToAdd)
+               !tableau.notInOrderOrAltColor(cardsToAdd)
     }
 }
