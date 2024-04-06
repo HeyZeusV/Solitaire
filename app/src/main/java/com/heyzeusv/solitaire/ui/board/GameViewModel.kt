@@ -46,7 +46,8 @@ class GameViewModel @Inject constructor(
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     private val mutex = Mutex()
 
-    private var selectedGame: Games = KlondikeTurnOne()
+    var selectedGame: Games = KlondikeTurnOne()
+        private set
     fun updateSelectedGame(newGame: Games) {
         selectedGame = newGame
         resetAll(ResetOptions.NEW)
@@ -215,7 +216,7 @@ class GameViewModel @Inject constructor(
      */
     private fun onStockClickEasthaven(): MoveResult {
         if (_stock.truePile.isNotEmpty()) {
-            val stockCards = _stock.getCards(7)
+            val stockCards = _stock.getCards(selectedGame.drawAmount.amount)
             val tableauIndices = mutableListOf<Int>()
             _tableau.forEach { tableau -> tableauIndices.add(tableau.truePile.size) }
             val aniInfo = AnimateInfo(

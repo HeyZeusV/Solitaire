@@ -8,7 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
@@ -18,15 +23,24 @@ import androidx.compose.ui.graphics.TileMode
 import androidx.compose.ui.res.imageResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.*
+import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.ui.toolbar.Toolbar
+import com.heyzeusv.solitaire.util.AnimationDurations
+import com.heyzeusv.solitaire.util.NavScreens
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
+import kotlin.reflect.full.createInstance
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -42,20 +56,63 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun SolitaireApp(finishApp: () -> Unit) {
+fun SolitaireApp(
+    finishApp: () -> Unit,
+    navController: NavHostController = rememberNavController()
+) {
     val sbVM = hiltViewModel<ScoreboardViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
     val gameVM = hiltViewModel<GameViewModel>()
 
+    val settings by menuVM.settings.collectAsState()
+    var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
+    LaunchedEffect(key1 = settings.animationDurations) {
+        animationDurations = AnimationDurations from settings.animationDurations
+        gameVM.updateAutoCompleteDelay(animationDurations.autoCompleteDelay)
+    }
+    LaunchedEffect(key1 = settings.selectedGame) {
+        val instance = Games.getGameClass(settings.selectedGame).createInstance()
+        gameVM.updateSelectedGame(instance)
+    }
+    LifecycleResumeEffect {
+        if (sbVM.moves.value != 0) sbVM.startTimer()
+        onPauseOrDispose { sbVM.pauseTimer() }
+    }
+
+    NavHost(navController = navController, startDestination = NavScreens.Splash.route) {
+        composable(route = NavScreens.Splash.route) {
+            LaunchedEffect(key1 = Unit) {
+                delay(3000)
+                navController.navigate(NavScreens.Game.route)
+            }
+        }
+        composable(route = NavScreens.Game.route) {
+            GameScreen(
+                sbVM = sbVM,
+                gameVM = gameVM,
+                menuVM = menuVM,
+                animationDurations = animationDurations
+            ) { finishApp() }
+        }
+    }
+}
+
+/**
+ *  Composable which displays GameScreen which includes [SolitaireScoreboard], [BoardLayout], and
+ *  [Toolbar].
+ */
+@Composable
+fun GameScreen(
+    sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
+    menuVM: MenuViewModel,
+    animationDurations: AnimationDurations,
+    finishApp: () -> Unit
+) {
     // background pattern that repeats
     val pattern = ImageBitmap.imageResource(R.drawable.pattern_noise)
     val brush = remember(pattern) {
         ShaderBrush(ImageShader(pattern, TileMode.Repeated, TileMode.Repeated))
-    }
-
-    LifecycleResumeEffect {
-        if (sbVM.moves.value != 0) sbVM.startTimer()
-        onPauseOrDispose { sbVM.pauseTimer() }
     }
 
     Box(
@@ -63,11 +120,25 @@ fun SolitaireApp(finishApp: () -> Unit) {
             .fillMaxSize()
             .background(brush)
     ) {
-        SolitaireScreen(
-            sbVM = sbVM,
-            gameVM = gameVM,
-            menuVM = menuVM
-        )
+        Column(Modifier.fillMaxSize()) {
+            SolitaireScoreboard(
+                sbVM = sbVM,
+                gameVM = gameVM,
+                modifier = Modifier
+            )
+            BoardLayout(
+                sbVM = sbVM,
+                gameVM = gameVM,
+                animationDurations = animationDurations,
+                modifier = Modifier.weight(1f)
+            )
+            Toolbar(
+                sbVM = sbVM,
+                gameVM = gameVM,
+                menuVM = menuVM,
+                modifier = Modifier
+            )
+        }
         MenuContainer(
             sbVM = sbVM,
             menuVM = menuVM,
@@ -76,34 +147,4 @@ fun SolitaireApp(finishApp: () -> Unit) {
     }
     CloseGameAlertDialog(sbVM = sbVM, menuVM = menuVM, finishApp = finishApp)
     GameWonAlertDialog(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
-}
-
-/**
- *  Composable which displays Scoreboard, Board, and Tools.
- */
-@Composable
-fun SolitaireScreen(
-    sbVM: ScoreboardViewModel,
-    gameVM: GameViewModel,
-    menuVM: MenuViewModel
-) {
-    Column(Modifier.fillMaxSize()) {
-        SolitaireScoreboard(
-            sbVM = sbVM,
-            gameVM = gameVM,
-            modifier = Modifier
-        )
-        BoardLayout(
-            sbVM = sbVM,
-            gameVM = gameVM,
-            menuVM = menuVM,
-            modifier = Modifier.weight(1f)
-        )
-        Toolbar(
-            sbVM = sbVM,
-            gameVM = gameVM,
-            menuVM = menuVM,
-            modifier = Modifier
-        )
-    }
 }
