@@ -48,8 +48,6 @@ import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.theme.Purple40
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
 
 /**
  *  Composable that displays Menu which allows user to switch games.
@@ -100,13 +98,13 @@ fun GamesMenu(
 fun GamesMenu(
     gameSwitchConfirmOnClick: () -> Unit,
     gameInfoOnClickCheck: () -> Boolean,
-    selectedGame: KClass<out Games>,
-    onBackPress: (KClass<out Games>) -> Unit
+    selectedGame: Games,
+    onBackPress: (Games) -> Unit
 ) {
     var displayGameSwitch by remember { mutableStateOf(false) }
     var menuSelectedGame by remember { mutableStateOf(selectedGame) }
-    var inProgressSelectedGame by remember { mutableStateOf<KClass<out Games>>(Yukon::class) }
-    val gamesInfoOnClick = { game: KClass<out Games> ->
+    var inProgressSelectedGame by remember { mutableStateOf<Games>(Yukon) }
+    val gamesInfoOnClick = { game: Games ->
         if (game != menuSelectedGame) {
             if (gameInfoOnClickCheck()) {
                 displayGameSwitch = true
@@ -141,9 +139,8 @@ fun GamesMenu(
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.gColumnSpacedBy))
         ) {
             items(Games.orderedSubclasses) { game ->
-                val instance = game.createInstance()
                 GamesInfo(
-                    game = instance,
+                    game = game,
                     selected = menuSelectedGame == game
                 ) { gamesInfoOnClick(game) }
             }
@@ -214,7 +211,7 @@ fun GamesMenuPreview() {
             GamesMenu(
                 gameSwitchConfirmOnClick = { },
                 gameInfoOnClickCheck = { true },
-                selectedGame = KlondikeTurnOne::class
+                selectedGame = KlondikeTurnOne
             ) { }
         }
     }
@@ -227,12 +224,12 @@ fun GamesInfoPreview() {
         Preview {
             Column(modifier = Modifier.padding(all = 8.dp)) {
                 GamesInfo(
-                    game = KlondikeTurnOne(),
+                    game = KlondikeTurnOne,
                     true
                 ) { }
                 HorizontalDivider()
                 GamesInfo(
-                    game = Yukon(),
+                    game = Yukon,
                     false
                 ) { }
             }

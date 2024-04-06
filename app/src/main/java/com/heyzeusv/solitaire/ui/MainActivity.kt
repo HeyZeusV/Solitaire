@@ -50,7 +50,6 @@ import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.NavScreens
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
-import kotlin.reflect.full.createInstance
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -70,6 +69,12 @@ fun SolitaireApp(
     finishApp: () -> Unit,
     navController: NavHostController = rememberNavController()
 ) {
+    /**
+     *  DO NOT REMOVE, app was crashing when navigating to GamesMenu due to one value of
+     *  [Games.orderedSubclasses] being null. Calling it here fixes it.
+     */
+    Games.orderedSubclasses
+
     val sbVM = hiltViewModel<ScoreboardViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
     val gameVM = hiltViewModel<GameViewModel>()
@@ -81,8 +86,7 @@ fun SolitaireApp(
         gameVM.updateAutoCompleteDelay(animationDurations.autoCompleteDelay)
     }
     LaunchedEffect(key1 = settings.selectedGame) {
-        val instance = Games.getGameClass(settings.selectedGame).createInstance()
-        gameVM.updateSelectedGame(instance)
+        gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
     }
     LifecycleResumeEffect {
         if (sbVM.moves.value != 0) sbVM.startTimer()

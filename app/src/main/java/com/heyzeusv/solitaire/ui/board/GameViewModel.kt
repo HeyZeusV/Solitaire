@@ -46,7 +46,7 @@ class GameViewModel @Inject constructor(
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     private val mutex = Mutex()
 
-    var selectedGame: Games = KlondikeTurnOne()
+    var selectedGame: Games = KlondikeTurnOne
         private set
     fun updateSelectedGame(newGame: Games) {
         selectedGame = newGame

@@ -15,16 +15,14 @@ import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.Suits
-import kotlin.reflect.KClass
 
 /**
  *  Subclasses of this will not be games exactly, but instead the families the game belongs to in
  *  order to have an extra layer of organization.
  */
 sealed class Games : GameInfo, GameRules {
-    override val baseDeck: List<Card> = List(52) { Card(it % 13, getSuit(it))}
-    override val maxScore: MaxScore = MaxScore.ONE_DECK
-    override val anyCardCanStartPile: Boolean = false
+    sealed class KlondikeFamily : Games()
+    sealed class YukonFamily : Games()
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
@@ -71,29 +69,27 @@ sealed class Games : GameInfo, GameRules {
 //        private val familySubclasses = Games::class.sealedSubclasses
 //        val gameSubclasses = familySubclasses.flatMap { it.sealedSubclasses }
 
-        val orderedSubclasses: List<KClass<out Games>> = listOf(
-            KlondikeTurnOne::class, KlondikeTurnThree::class,
-            ClassicWestcliff::class, Easthaven::class,
-            Yukon::class, Alaska::class,
-            Russian::class, AustralianPatience::class,
-            Canberra::class
+        val orderedSubclasses: List<Games> = listOf(
+            KlondikeTurnOne, KlondikeTurnThree, ClassicWestcliff,
+            Easthaven, Yukon, Alaska,
+            Russian, AustralianPatience, Canberra
         )
 
         /**
          *  Returns [Games] subclass associated with given [game] from Proto DataSture [Game].
          */
-        fun getGameClass(game: Game): KClass<out Games> {
+        fun getGameClass(game: Game): Games {
             return when (game) {
-                Game.GAME_KLONDIKETURNONE -> KlondikeTurnOne::class
-                Game.GAME_KLONDIKETURNTHREE -> KlondikeTurnThree::class
-                Game.GAME_AUSTRALIAN_PATIENCE -> AustralianPatience::class
-                Game.GAME_CANBERRA -> Canberra::class
-                Game.GAME_YUKON -> Yukon::class
-                Game.GAME_ALASKA -> Alaska::class
-                Game.GAME_RUSSIAN -> Russian::class
-                Game.GAME_CLASSIC_WESTCLIFF -> ClassicWestcliff::class
-                Game.GAME_EASTHAVEN -> Easthaven::class
-                Game.UNRECOGNIZED -> KlondikeTurnOne::class
+                Game.GAME_KLONDIKETURNONE -> KlondikeTurnOne
+                Game.GAME_KLONDIKETURNTHREE -> KlondikeTurnThree
+                Game.GAME_AUSTRALIAN_PATIENCE -> AustralianPatience
+                Game.GAME_CANBERRA -> Canberra
+                Game.GAME_YUKON -> Yukon
+                Game.GAME_ALASKA -> Alaska
+                Game.GAME_RUSSIAN -> Russian
+                Game.GAME_CLASSIC_WESTCLIFF -> ClassicWestcliff
+                Game.GAME_EASTHAVEN -> Easthaven
+                Game.UNRECOGNIZED -> KlondikeTurnOne
             }
         }
     }

@@ -6,6 +6,7 @@ import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.StatManager
 import com.heyzeusv.solitaire.util.MenuState
@@ -18,8 +19,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import javax.inject.Inject
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
 
 /**
  *  Data manager for menu.
@@ -69,10 +68,9 @@ class MenuViewModel @Inject constructor(
     /**
      *  Updates [Settings.selectedGame_] using given [game].
      */
-    fun updateSelectedGame(game: KClass<out com.heyzeusv.solitaire.ui.board.games.Games>) {
+    fun updateSelectedGame(game: Games) {
         viewModelScope.launch {
-            val instance = game.createInstance()
-            settingsManager.updateSelectedGame(instance.dataStoreEnum)
+            settingsManager.updateSelectedGame(game.dataStoreEnum)
         }
     }
 

@@ -57,8 +57,6 @@ import com.heyzeusv.solitaire.util.getScorePercentage
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.getWinPercentage
 import com.heyzeusv.solitaire.util.theme.Purple80
-import kotlin.reflect.KClass
-import kotlin.reflect.full.createInstance
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of selected game.
@@ -71,7 +69,7 @@ fun StatsMenu(
     var selectedGame by remember { mutableStateOf(Games.getGameClass(settings.selectedGame)) }
     val stats by menuVM.stats.collectAsState()
     val selectedGameStats =
-        stats.statsList.find { it.game == selectedGame.createInstance().dataStoreEnum }
+        stats.statsList.find { it.game == selectedGame.dataStoreEnum }
             ?: getStatsDefaultInstance()
 
     StatsMenu(
@@ -90,24 +88,23 @@ fun StatsMenu(
  */
 @Composable
 fun StatsMenu(
-    selectedGame: KClass<out Games>,
-    updateSelectedGameStats: (KClass<out Games>) -> Unit,
+    selectedGame: Games,
+    updateSelectedGameStats: (Games) -> Unit,
     selectedGameStats: GameStats,
     onBackPressed: () -> Unit
 ) {
-    val instance = selectedGame.createInstance()
     MenuScreen(
         menu = MenuState.Stats,
         modifier = Modifier.testTag("Stats Menu"),
         onBackPress = onBackPressed
     ) {
         StatsDropDownMenu(
-            selectedGame = instance,
+            selectedGame = selectedGame,
             updateSelectedGame = { updateSelectedGameStats(it) }
         )
         StatColumn(
             selectedGameStats = selectedGameStats,
-            game = instance
+            game = selectedGame
         )
     }
 }
@@ -119,7 +116,7 @@ fun StatsMenu(
 @Composable
 fun StatsDropDownMenu(
     selectedGame: Games,
-    updateSelectedGame: (KClass<out Games>) -> Unit
+    updateSelectedGame: (Games) -> Unit
 ) {
     // used to make sure DropdownMenuItems are the same size as OutlinedTextField
     var textFieldSize by remember { mutableStateOf(Size.Zero) }
@@ -175,14 +172,13 @@ fun StatsDropDownMenu(
                 modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
             ) {
                 Games.orderedSubclasses.forEach { game ->
-                    val instance = game.createInstance()
                     DropdownMenuItem(
-                        text = { Text(stringResource(instance.nameId)) },
+                        text = { Text(stringResource(game.nameId)) },
                         onClick = {
                             updateSelectedGame(game)
                             expanded = false
                         },
-                        modifier = Modifier.testTag("DropDownMenu Item ${game.simpleName}")
+                        modifier = Modifier.testTag("DropDownMenu Item ${game::class.java.simpleName}")
                     )
                 }
             }
@@ -295,7 +291,7 @@ fun StatsMenuPreview() {
     PreviewUtil().apply {
         Preview {
             StatsMenu(
-                selectedGame = KlondikeTurnOne::class,
+                selectedGame = KlondikeTurnOne,
                 updateSelectedGameStats = { },
                 selectedGameStats = GameStats.getDefaultInstance()
             ) { }
@@ -309,7 +305,7 @@ fun StatsDropDownMenuPreview() {
     PreviewUtil().apply {
         Preview {
             StatsDropDownMenu(
-                selectedGame = AustralianPatience(),
+                selectedGame = AustralianPatience,
                 updateSelectedGame = { }
             )
         }

@@ -11,6 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.SolitairePile
+import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onCard
@@ -75,7 +76,7 @@ class PileTest {
                     SolitairePile(
                         pile = listOf(tc.card1CFU, tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
-                        drawAmount = 3,
+                        drawAmount = DrawAmount.Three,
                         cardDpSize = DpSize(100.dp, 140.dp)
                     )
                 }
@@ -105,7 +106,7 @@ class PileTest {
                     SolitairePile(
                         pile = listOf(tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
-                        drawAmount = 3,
+                        drawAmount = DrawAmount.Three,
                         cardDpSize = DpSize(100.dp, 140.dp)
                     )
                 }
