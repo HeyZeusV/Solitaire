@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.game
+package com.heyzeusv.solitaire.ui.board
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image

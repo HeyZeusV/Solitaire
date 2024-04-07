@@ -2,7 +2,7 @@ package com.heyzeusv.solitaire.ui
 
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.ui.game.CanberraViewModel
+import com.heyzeusv.solitaire.ui.board.CanberraViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import org.junit.Assert.assertEquals
 import org.junit.Before
