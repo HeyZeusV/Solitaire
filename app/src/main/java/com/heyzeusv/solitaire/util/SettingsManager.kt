@@ -3,7 +3,6 @@ package com.heyzeusv.solitaire.util
 import android.util.Log
 import androidx.datastore.core.DataStore
 import com.heyzeusv.solitaire.AnimationDurationsSetting
-import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.Settings
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
@@ -24,7 +23,6 @@ class SettingsManager @Inject constructor(
                 emit(
                     Settings.getDefaultInstance().toBuilder()
                         .setAnimationDurations(AnimationDurationsSetting.FAST)
-                        .setSelectedGame(Game.GAME_KLONDIKETURNONE)
                         .build()
                 )
             } else {
@@ -34,9 +32,5 @@ class SettingsManager @Inject constructor(
 
     suspend fun updateAnimationDurations(animationDurations: AnimationDurationsSetting) {
         settings.updateData { it.toBuilder().setAnimationDurations(animationDurations).build() }
-    }
-
-    suspend fun updateSelectedGame(game: Game) {
-        settings.updateData { it.toBuilder().setSelectedGame(game).build() }
     }
 }

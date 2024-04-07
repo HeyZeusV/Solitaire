@@ -43,10 +43,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.board.games.AustralianPatience
-import com.heyzeusv.solitaire.ui.board.games.Games
-import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.formatTimeStats
@@ -65,32 +63,30 @@ import com.heyzeusv.solitaire.util.theme.Purple80
 fun StatsMenu(
     menuVM: MenuViewModel
 ) {
-    val settings by menuVM.settings.collectAsState()
-    var selectedGame by remember { mutableStateOf(Games.getGameClass(settings.selectedGame)) }
+    val selectedGame by menuVM.statsSelectedGame.collectAsState()
     val stats by menuVM.stats.collectAsState()
     val selectedGameStats =
-        stats.statsList.find { it.game == selectedGame.dataStoreEnum }
-            ?: getStatsDefaultInstance()
+        stats.statsList.find { it.game == selectedGame.dataStoreEnum } ?: getStatsDefaultInstance()
 
     StatsMenu(
         selectedGame = selectedGame,
-        updateSelectedGameStats = { selectedGame = it },
-        selectedGameStats = selectedGameStats,
+        updateSelectedGame = menuVM::updateStatsSelectedGame,
+        stats = selectedGameStats,
         onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) }
     )
 }
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of [selectedGame]
- *  which is updated through [updateSelectedGameStats]. All the data has been hoisted into above
+ *  which is updated through [updateSelectedGame]. All the data has been hoisted into above
  *  [StatsMenu] thus allowing for easier testing. [onBackPressed] handles opening and closing
- *  [StatsMenu]. [selectedGameStats] are to be displayed.
+ *  [StatsMenu]. [stats] are to be displayed.
  */
 @Composable
 fun StatsMenu(
     selectedGame: Games,
-    updateSelectedGameStats: (Games) -> Unit,
-    selectedGameStats: GameStats,
+    updateSelectedGame: (Games) -> Unit,
+    stats: GameStats,
     onBackPressed: () -> Unit
 ) {
     MenuScreen(
@@ -100,10 +96,10 @@ fun StatsMenu(
     ) {
         StatsDropDownMenu(
             selectedGame = selectedGame,
-            updateSelectedGame = { updateSelectedGameStats(it) }
+            updateSelectedGame = { updateSelectedGame(it) }
         )
         StatColumn(
-            selectedGameStats = selectedGameStats,
+            stats = stats,
             game = selectedGame
         )
     }
@@ -171,14 +167,14 @@ fun StatsDropDownMenu(
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
             ) {
-                Games.orderedSubclasses.forEach { game ->
+                Games.entries.forEach { game ->
                     DropdownMenuItem(
                         text = { Text(stringResource(game.nameId)) },
                         onClick = {
                             updateSelectedGame(game)
                             expanded = false
                         },
-                        modifier = Modifier.testTag("DropDownMenu Item ${game::class.java.simpleName}")
+                        modifier = Modifier.testTag("DropDownMenu Item ${game.name}")
                     )
                 }
             }
@@ -187,12 +183,12 @@ fun StatsDropDownMenu(
 }
 
 /**
- *  Composable which displays all stats stored in given [selectedGameStats] plus a few extras
- *  thanks to extension functions.
+ *  Composable which displays all stats stored in given [stats] plus a few extras thanks to
+ *  extension functions.
  */
 @Composable
 fun StatColumn(
-    selectedGameStats: GameStats,
+    stats: GameStats,
     game: Games
 ) {
     Column(
@@ -201,52 +197,52 @@ fun StatColumn(
     ) {
         StatField(
             statNameId = R.string.stats_games_played,
-            statValue = "${selectedGameStats.gamesPlayed}"
+            statValue = "${stats.gamesPlayed}"
         )
         StatField(
             statNameId = R.string.stats_games_won,
             statValue = stringResource(
                 R.string.stats_games_won_value,
-                selectedGameStats.gamesWon,
-                selectedGameStats.getWinPercentage()
+                stats.gamesWon,
+                stats.getWinPercentage()
             )
         )
         StatField(
             statNameId = R.string.stats_lowest_moves,
-            statValue = "${selectedGameStats.lowestMoves}"
+            statValue = "${stats.lowestMoves}"
         )
         StatField(
             statNameId = R.string.stats_average_moves,
-            statValue = "${selectedGameStats.getAverageMoves()}"
+            statValue = "${stats.getAverageMoves()}"
         )
         StatField(
             statNameId = R.string.stats_total_moves,
-            statValue = "${selectedGameStats.totalMoves}"
+            statValue = "${stats.totalMoves}"
         )
         StatField(
             statNameId = R.string.stats_fastest_win,
-            statValue = selectedGameStats.fastestWin.formatTimeStats()
+            statValue = stats.fastestWin.formatTimeStats()
         )
         StatField(
             statNameId = R.string.stats_average_time,
-            statValue = selectedGameStats.getAverageTime().formatTimeStats()
+            statValue = stats.getAverageTime().formatTimeStats()
         )
         StatField(
             statNameId = R.string.stats_total_time,
-            statValue = selectedGameStats.totalTime.formatTimeStats()
+            statValue = stats.totalTime.formatTimeStats()
         )
         StatField(
             statNameId = R.string.stats_average_score,
             statValue = stringResource(
                 R.string.stats_average_score_value,
-                selectedGameStats.getAverageScore(),
+                stats.getAverageScore(),
                 game.maxScore.amount,
-                selectedGameStats.getScorePercentage(game.maxScore)
+                stats.getScorePercentage(game.maxScore)
             )
         )
         StatField(
             statNameId = R.string.stats_best_score,
-            statValue = "${selectedGameStats.bestTotalScore}",
+            statValue = "${stats.bestTotalScore}",
             statTipId = R.string.stats_best_score_tip
         )
     }
@@ -291,9 +287,9 @@ fun StatsMenuPreview() {
     PreviewUtil().apply {
         Preview {
             StatsMenu(
-                selectedGame = KlondikeTurnOne,
-                updateSelectedGameStats = { },
-                selectedGameStats = GameStats.getDefaultInstance()
+                selectedGame = Games.KLONDIKE_TURN_ONE,
+                updateSelectedGame = { },
+                stats = GameStats.getDefaultInstance()
             ) { }
         }
     }
@@ -305,7 +301,7 @@ fun StatsDropDownMenuPreview() {
     PreviewUtil().apply {
         Preview {
             StatsDropDownMenu(
-                selectedGame = AustralianPatience,
+                selectedGame = Games.AUSTRALIAN_PATIENCE,
                 updateSelectedGame = { }
             )
         }

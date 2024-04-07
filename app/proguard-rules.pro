@@ -24,5 +24,3 @@
 }
 -keep class kotlin.reflect.**{*;}
 -keep class com.heyzeusv.solitaire.data.pile.**{*;}
--keep class com.heyzeusv.solitaire.ui.board.games.Games { *; }
--keep class com.heyzeusv.solitaire.ui.board.games.Games$* { *; }

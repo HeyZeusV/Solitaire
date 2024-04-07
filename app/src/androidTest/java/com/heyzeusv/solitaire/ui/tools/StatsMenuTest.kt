@@ -11,11 +11,8 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.board.games.Alaska
-import com.heyzeusv.solitaire.ui.board.games.AustralianPatience
-import com.heyzeusv.solitaire.ui.board.games.Games
-import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
@@ -48,9 +45,9 @@ class StatsMenuTest {
             setContent {
                 SolitaireTheme {
                     StatsMenu(
-                        selectedGame = KlondikeTurnOne,
-                        updateSelectedGameStats = { },
-                        selectedGameStats = gameOneStats
+                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        updateSelectedGame = { },
+                        stats = gameOneStats
                     ) { }
                 }
             }
@@ -66,16 +63,16 @@ class StatsMenuTest {
             setContent {
                 SolitaireTheme {
                     StatsMenu(
-                        selectedGame = KlondikeTurnOne,
-                        updateSelectedGameStats = { },
-                        selectedGameStats = gameOneStats
+                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        updateSelectedGame = { },
+                        stats = gameOneStats
                     ) { }
                 }
             }
 
             onNode(hasTestTag("DropDownMenu")).performClick()
-            Games.orderedSubclasses.forEach {
-                onNode(hasTestTag("DropDownMenu Item")).assertIsDisplayed()
+            Games.entries.forEach { game ->
+                onNode(hasTestTag("DropDownMenu Item ${game.name}")).assertIsDisplayed()
             }
         }
     }
@@ -85,11 +82,11 @@ class StatsMenuTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    var selectedGame by remember { mutableStateOf<Games>(KlondikeTurnOne) }
+                    var selectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_ONE) }
                     var stats by remember { mutableStateOf(gameOneStats) }
                     StatsMenu(
                         selectedGame = selectedGame,
-                        updateSelectedGameStats = {
+                        updateSelectedGame = {
                             selectedGame = it
                             stats = if (stats == gameOneStats) {
                                 gameTwoStats
@@ -97,21 +94,21 @@ class StatsMenuTest {
                                 gameOneStats
                             }
                         },
-                        selectedGameStats = stats
+                        stats = stats
                     ) { }
                 }
             }
 
             // switch to Australian Patience and check stats
             onNode(hasTestTag("DropDownMenu")).performClick()
-            onNode(hasTestTag("DropDownMenu Item")).performClick()
-            onNodeWithTextId(AustralianPatience.nameId).assertIsDisplayed()
+            onNode(hasTestTag("DropDownMenu Item ${Games.AUSTRALIAN_PATIENCE}")).performClick()
+            onNodeWithTextId(Games.AUSTRALIAN_PATIENCE.nameId).assertIsDisplayed()
             gameTwoStatsDisplayed()
 
             // switch to Alaska and check stats
             onNode(hasTestTag("DropDownMenu")).performClick()
-            onNode(hasTestTag("DropDownMenu Item")).performClick()
-            onNodeWithTextId(Alaska.nameId).assertIsDisplayed()
+            onNode(hasTestTag("DropDownMenu Item ${Games.ALASKA}")).performClick()
+            onNodeWithTextId(Games.ALASKA.nameId).assertIsDisplayed()
             gameOneStatsDisplayed()
         }
     }

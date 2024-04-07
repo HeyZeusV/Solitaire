@@ -90,8 +90,6 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
-    // Compose Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.7")
     // Proto Datastore
     implementation("androidx.datastore:datastore:1.0.0")
     implementation("com.google.protobuf:protobuf-javalite:3.25.2")
