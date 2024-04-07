@@ -37,7 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
-import com.heyzeusv.solitaire.ui.board.BoardLayout
+import com.heyzeusv.solitaire.ui.board.Board
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.games.Yukon
@@ -91,7 +91,7 @@ fun GamesMenu(
  *   [gameSwitchConfirmOnClick] on confirm. [selectedGame] determines which game is selected when
  *   user opens [GamesMenu]. [onBackPress] is launched when user tries to close [GamesMenu] using
  *   either top left arrow icon or back button on phone; it updates [selectedGame] which causes
- *   [BoardLayout] to recompose, so small delay is added before closing [GamesMenu] by updating
+ *   [Board] to recompose, so small delay is added before closing [GamesMenu] by updating
  *   [MenuState].
  */
 @Composable

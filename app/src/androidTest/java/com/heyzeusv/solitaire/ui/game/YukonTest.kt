@@ -6,11 +6,10 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.MainActivity
-import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
-import com.heyzeusv.solitaire.util.switchGame
+//import com.heyzeusv.solitaire.util.switchGame
 import com.heyzeusv.solitaire.util.waitUntilPileCardExists
 import com.heyzeusv.solitaire.util.waitUntilTableauExists
 import dagger.hilt.android.testing.HiltAndroidRule
@@ -35,7 +34,7 @@ class YukonTest {
 
     @Before
     fun setUp() {
-        composeRule.switchGame(Games.YUKON)
+//        composeRule.switchGame(Games.YUKON)
     }
 
     @Test

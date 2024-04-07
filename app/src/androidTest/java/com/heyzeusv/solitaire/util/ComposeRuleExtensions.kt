@@ -18,7 +18,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import com.heyzeusv.solitaire.R
+//import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
 
 /**
@@ -148,17 +148,17 @@ fun <A : ComponentActivity> AndroidTestRule<A>.onLazyListScrollToNode(
         .performScrollToNode(hasText(activity.getString(nodeId, *args)))
         .assertIsDisplayed()
 
-/**
- *  Switches to given [game].
- */
-@OptIn(ExperimentalTestApi::class)
-fun <A : ComponentActivity> AndroidTestRule<A>.switchGame(game: Games) {
-    onNodeWithTextId(R.string.tools_button_menu).performClick()
-    onNodeWithTextId(R.string.menu_button_games).performClick()
-    onLazyListScrollToNode("Games Menu List", game.nameId)
-    onNodeWithTextId(game.nameId).performClick()
-    onNodeWithConDescId(R.string.menu_cdesc_close, "Games").performClick()
-    waitUntilDoesNotExist(hasTestTag("Games Menu"), timeoutMillis = 5000L)
-}
+///**
+// *  Switches to given [game].
+// */
+//@OptIn(ExperimentalTestApi::class)
+//fun <A : ComponentActivity> AndroidTestRule<A>.switchGame(game: Games) {
+//    onNodeWithTextId(R.string.tools_button_menu).performClick()
+//    onNodeWithTextId(R.string.menu_button_games).performClick()
+//    onLazyListScrollToNode("Games Menu List", game.nameId)
+//    onNodeWithTextId(game.nameId).performClick()
+//    onNodeWithConDescId(R.string.menu_cdesc_close, "Games").performClick()
+//    waitUntilDoesNotExist(hasTestTag("Games Menu"), timeoutMillis = 5000L)
+//}
 
 typealias AndroidTestRule<A> = AndroidComposeTestRule<ActivityScenarioRule<A>, A>

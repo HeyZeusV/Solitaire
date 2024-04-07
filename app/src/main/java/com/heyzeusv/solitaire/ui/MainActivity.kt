@@ -40,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.*
 import com.heyzeusv.solitaire.ui.board.games.Games
+import com.heyzeusv.solitaire.ui.board.Board
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer
@@ -114,7 +115,7 @@ fun SolitaireApp(
 }
 
 /**
- *  Composable which displays GameScreen which includes [SolitaireScoreboard], [BoardLayout], and
+ *  Composable which displays GameScreen which includes [SolitaireScoreboard], [Board], and
  *  [Toolbar].
  */
 @Composable
@@ -142,7 +143,7 @@ fun GameScreen(
                 gameVM = gameVM,
                 modifier = Modifier
             )
-            BoardLayout(
+            Board(
                 sbVM = sbVM,
                 gameVM = gameVM,
                 animationDurations = animationDurations,
