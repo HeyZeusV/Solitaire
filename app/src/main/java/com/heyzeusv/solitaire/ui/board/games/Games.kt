@@ -15,6 +15,7 @@ import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.notInOrder
 
 /**
  *  Subclasses of this will not be games exactly, but instead the families the game belongs to in
@@ -40,7 +41,7 @@ sealed class Games : GameInfo, GameRules {
             } else if ((cFirst.value == 12 || anyCardCanStartPile)) {
                 // add cards if pile is empty and first card of given cards is the highest value
                 // (King) or if any card is allowed to start a new pile
-                return true
+                return !(this is Easthaven && cardsToAdd.notInOrder())
             }
             return false
         }

@@ -5,6 +5,7 @@ import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.TableauCardFlipInfo
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.notInOrder
 
 /**
  *  Sealed class containing all possible options of [Tableau] piles. Each game has its own set of
@@ -97,17 +98,7 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPi
      *  It is possible for pile to be same suit, but out of order. This checks if pile is not in
      *  order descending, this way autocomplete will not be stuck in an infinite loop.
      */
-    fun notInOrder(): Boolean {
-        val it = _truePile.iterator()
-        if (!it.hasNext()) return false
-        var current = it.next()
-        while (true) {
-            if (!it.hasNext()) return false
-            val next = it.next()
-            if (current.value - 1 != next.value) return true
-            current = next
-        }
-    }
+    fun notInOrder(): Boolean = _truePile.notInOrder()
 
     /**
      *  It is possible for pile to be different suits, but out of order or not alternating colors.
