@@ -13,9 +13,9 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.GameViewModel
+import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
-import com.heyzeusv.solitaire.util.Redeals.*
 import com.heyzeusv.solitaire.util.icons.Games
 import com.heyzeusv.solitaire.util.icons.Stats
 
@@ -68,95 +68,6 @@ enum class Suits(
 enum class ResetOptions {
     RESTART,
     NEW
-}
-
-/**
- *  Enum class containing the [nameId]'s string resource id of all available games and
- *  [drawAmount] which is the amount of Cards drawn at a time. It also contains the Proto DataStore
- *  enum value [dataStoreEnum] which is used to save stats to correct game.
- */
-enum class Games(
-    @StringRes val nameId: Int,
-    @StringRes val familyId: Int,
-    @DrawableRes val iconId: Int,
-    val redeals: Redeals,
-    val drawAmount: Int,
-    val dataStoreEnum: Game,
-    val maxScore: MaxScore = MaxScore.ONE_DECK
-    ) {
-    KLONDIKE_TURN_ONE(
-        R.string.games_klondike_turn_one,
-        R.string.games_family_klondike,
-        R.drawable.preview_klondike_turn_one,
-        Unlimited,
-        1,
-        Game.GAME_KLONDIKETURNONE
-    ),
-    KLONDIKE_TURN_THREE(
-        R.string.games_klondike_turn_three,
-        R.string.games_family_klondike,
-        R.drawable.preview_klondike_turn_three,
-        Unlimited,
-        3,
-        Game.GAME_KLONDIKETURNTHREE
-    ),
-    CLASSIC_WESTCLIFF(
-        R.string.games_classic_westcliff,
-        R.string.games_family_klondike,
-        R.drawable.preview_classic_westcliff,
-        None,
-        1,
-        Game.GAME_CLASSIC_WESTCLIFF,
-        MaxScore.ONE_DECK_NO_ACES
-    ),
-    EASTHAVEN(
-        R.string.games_easthaven,
-        R.string.games_family_klondike,
-        R.drawable.preview_easthaven,
-        None,
-        0,
-        Game.GAME_EASTHAVEN
-    ),
-    YUKON(
-        R.string.games_yukon,
-        R.string.games_family_yukon,
-        R.drawable.preview_yukon,
-        None,
-        0,
-        Game.GAME_YUKON
-    ),
-    ALASKA(
-        R.string.games_alaska,
-        R.string.games_family_yukon,
-        R.drawable.preview_yukon,
-        None,
-        0,
-        Game.GAME_ALASKA
-    ),
-    RUSSIAN(
-        R.string.games_russian,
-        R.string.games_family_yukon,
-        R.drawable.preview_yukon,
-        None,
-        0,
-        Game.GAME_RUSSIAN
-    ),
-    AUSTRALIAN_PATIENCE(
-        R.string.games_australian_patience,
-        R.string.games_family_yukon,
-        R.drawable.preview_australian_patience,
-        None,
-        1,
-        Game.GAME_AUSTRALIAN_PATIENCE
-    ),
-    CANBERRA(
-        R.string.games_canberra,
-        R.string.games_family_yukon,
-        R.drawable.preview_australian_patience,
-        Once,
-        1,
-        Game.GAME_CANBERRA
-    )
 }
 
 /**
@@ -237,7 +148,7 @@ enum class MenuState(
 
 /**
  *  Used by animations to determine start/end positions. Each entry except [TableauAll] is
- *  associated to a single pile. [TableauAll] is only used when playing [Games.EASTHAVEN] when
+ *  associated to a single pile. [TableauAll] is only used when playing [Easthaven] when
  *  clicking on Stock.
  */
 enum class GamePiles {
