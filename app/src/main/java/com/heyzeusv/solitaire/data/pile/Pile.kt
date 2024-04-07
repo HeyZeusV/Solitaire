@@ -38,11 +38,7 @@ abstract class Pile(initialPile: List<Card> = emptyList()) {
      *  Updates [displayPile] by retrieving the first value of [animatedPiles].
      */
     fun updateDisplayPile() {
-        val aniPile = try {
-            animatedPiles.removeFirst()
-        } catch (e: NoSuchElementException) {
-            _truePile.toList()
-        }
+        val aniPile = animatedPiles.removeFirst()
         _displayPile.clear()
         _displayPile.addAll(aniPile)
     }

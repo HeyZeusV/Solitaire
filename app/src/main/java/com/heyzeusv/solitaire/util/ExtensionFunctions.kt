@@ -10,7 +10,6 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
-import com.heyzeusv.solitaire.data.Card
 import java.text.DecimalFormat
 
 fun Long.formatTimeDisplay(): String {
@@ -82,18 +81,3 @@ fun ButtonColors.getContainerColor(enabled: Boolean): Color =
 
 fun ButtonColors.getContentColor(enabled: Boolean): Color =
     if (enabled) contentColor else disabledContentColor
-
-/**
- *  Checks if pile is not in order descending.
- */
-fun List<Card>.notInOrder(): Boolean {
-    val it = this.iterator()
-    if (!it.hasNext()) return false
-    var current = it.next()
-    while (true) {
-        if (!it.hasNext()) return false
-        val next = it.next()
-        if (current.value - 1 != next.value) return true
-        current = next
-    }
-}

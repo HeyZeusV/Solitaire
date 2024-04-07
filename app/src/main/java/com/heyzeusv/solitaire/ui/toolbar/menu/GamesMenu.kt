@@ -37,14 +37,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
-import com.heyzeusv.solitaire.ui.board.BoardLayout
-import com.heyzeusv.solitaire.ui.board.games.Games
-import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
-import com.heyzeusv.solitaire.ui.board.games.Yukon
+import com.heyzeusv.solitaire.ui.game.BoardLayout
+import com.heyzeusv.solitaire.ui.game.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.theme.Purple40
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -55,10 +55,10 @@ import kotlinx.coroutines.launch
 @Composable
 fun GamesMenu(
     sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
     menuVM: MenuViewModel
 ) {
-    val settings by menuVM.settings.collectAsState()
-    val selectedGame = Games.getGameClass(settings.selectedGame)
+    val selectedGame by menuVM.selectedGame.collectAsState()
     val scope = rememberCoroutineScope()
 
     GamesMenu(
@@ -76,6 +76,7 @@ fun GamesMenu(
             if (game != selectedGame) {
                 menuVM.updateSelectedGame(game)
                 sbVM.reset()
+                gameVM.resetAll(ResetOptions.NEW)
                 delay(300)
             }
             menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
@@ -103,7 +104,7 @@ fun GamesMenu(
 ) {
     var displayGameSwitch by remember { mutableStateOf(false) }
     var menuSelectedGame by remember { mutableStateOf(selectedGame) }
-    var inProgressSelectedGame by remember { mutableStateOf<Games>(Yukon) }
+    var inProgressSelectedGame by remember { mutableStateOf(Games.KLONDIKE_TURN_THREE) }
     val gamesInfoOnClick = { game: Games ->
         if (game != menuSelectedGame) {
             if (gameInfoOnClickCheck()) {
@@ -117,7 +118,7 @@ fun GamesMenu(
     val lazyColumnState = rememberLazyListState()
 
     LaunchedEffect(key1 = Unit) {
-        lazyColumnState.animateScrollToItem(Games.orderedSubclasses.indexOf(selectedGame))
+        lazyColumnState.animateScrollToItem(selectedGame.ordinal)
     }
     GameSwitchAlertDialog(
         displayGameSwitch = displayGameSwitch,
@@ -138,7 +139,7 @@ fun GamesMenu(
             state = lazyColumnState,
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.gColumnSpacedBy))
         ) {
-            items(Games.orderedSubclasses) { game ->
+            items(Games.entries) { game ->
                 GamesInfo(
                     game = game,
                     selected = menuSelectedGame == game
@@ -162,7 +163,7 @@ fun GamesInfo(
     Card(
         modifier = Modifier
             .clickable { onClick() }
-            .testTag("${game::class.simpleName} Card $selected"),
+            .testTag("${game.name} Card $selected"),
         shape = ShapeDefaults.Small,
         colors = CardDefaults.cardColors(
             containerColor = if (selected) Purple40 else MaterialTheme.colorScheme.surface,
@@ -192,7 +193,7 @@ fun GamesInfo(
                 Text(text = stringResource(R.string.redeal, redeals))
             }
             Image(
-                painter = painterResource(game.previewId),
+                painter = painterResource(game.iconId),
                 contentDescription = stringResource(game.nameId),
                 modifier = Modifier
                     .padding(dimensionResource(R.dimen.gInfoImagePaddingAll))
@@ -211,7 +212,7 @@ fun GamesMenuPreview() {
             GamesMenu(
                 gameSwitchConfirmOnClick = { },
                 gameInfoOnClickCheck = { true },
-                selectedGame = KlondikeTurnOne
+                selectedGame = Games.KLONDIKE_TURN_ONE
             ) { }
         }
     }
@@ -224,12 +225,12 @@ fun GamesInfoPreview() {
         Preview {
             Column(modifier = Modifier.padding(all = 8.dp)) {
                 GamesInfo(
-                    game = KlondikeTurnOne,
+                    game = Games.KLONDIKE_TURN_ONE,
                     true
                 ) { }
                 HorizontalDivider()
                 GamesInfo(
-                    game = Yukon,
+                    game = Games.YUKON,
                     false
                 ) { }
             }

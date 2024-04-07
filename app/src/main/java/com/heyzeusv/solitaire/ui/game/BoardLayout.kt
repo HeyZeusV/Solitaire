@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
@@ -33,9 +33,10 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
-import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
+import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.Suits
@@ -49,12 +50,16 @@ import kotlinx.coroutines.delay
 fun BoardLayout(
     sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
-    animationDurations: AnimationDurations,
+    menuVM: MenuViewModel,
+    selectedGame: Games,
     modifier: Modifier = Modifier
 ) {
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
     val undoAnimation by gameVM.undoAnimation.collectAsState()
+    val settings by menuVM.settings.collectAsState()
+    val animationDurations = AnimationDurations from settings.animationDurations
+    gameVM.autoCompleteDelay = animationDurations.autoCompleteDelay
 
     BoardLayout(
         modifier = modifier,
@@ -65,7 +70,7 @@ fun BoardLayout(
         updateUndoEnabled = gameVM::updateUndoEnabled,
         undoAnimation = undoAnimation,
         updateUndoAnimation = gameVM::updateUndoAnimation,
-        drawAmount = gameVM.selectedGame.drawAmount,
+        drawAmount = selectedGame.drawAmount,
         handleMoveResult = sbVM::handleMoveResult,
         stock = gameVM.stock,
         onStockClick = gameVM::onStockClick,
@@ -98,11 +103,11 @@ fun BoardLayout(
     updateUndoEnabled: (Boolean) -> Unit = { },
     undoAnimation: Boolean,
     updateUndoAnimation: (Boolean) -> Unit = { },
-    drawAmount: DrawAmount,
+    drawAmount: Int,
     handleMoveResult: (MoveResult) -> Unit = { },
     /** Piles and their onClicks */
     stock: Stock,
-    onStockClick: () -> MoveResult = { MoveResult.Illegal },
+    onStockClick: (Int) -> MoveResult = { MoveResult.Illegal },
     waste: Waste,
     stockWasteEmpty: () -> Boolean = { true },
     onWasteClick: () -> MoveResult = { MoveResult.Illegal },
@@ -220,7 +225,7 @@ fun BoardLayout(
                 cardDpSize = layInfo.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { handleMoveResult(onStockClick()) }
+                onClick = { handleMoveResult(onStockClick(drawAmount)) }
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
@@ -682,11 +687,11 @@ fun BoardLayout480Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = DrawAmount.One,
+                drawAmount = 1,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
             )
         }
     }
@@ -702,11 +707,11 @@ fun BoardLayout720Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = DrawAmount.One,
+                drawAmount = 1,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
             )
         }
     }
@@ -722,11 +727,11 @@ fun BoardLayout1080Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = DrawAmount.One,
+                drawAmount = 1,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
             )
         }
     }
@@ -742,11 +747,11 @@ fun BoardLayout1440Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = DrawAmount.One,
+                drawAmount = 1,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
             )
         }
     }
@@ -762,11 +767,11 @@ fun BoardLayout2160Preview() {
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
-                drawAmount = DrawAmount.One,
+                drawAmount = 1,
                 stock = Stock(pile),
                 waste = Waste(),
                 foundationList = Suits.entries.map { Foundation(it) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+                tableauList = List(7) { Tableau.KlondikeTableau(initialPile = pile) },
             )
         }
     }

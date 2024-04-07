@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board
+package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
