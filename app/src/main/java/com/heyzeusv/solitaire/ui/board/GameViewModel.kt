@@ -126,11 +126,6 @@ class GameViewModel @Inject constructor(
         _stockWasteEmpty.value = true
     }
 
-//    /**
-//     *  Initial Tableau state might be different from game to game.
-//     */
-//    protected abstract fun resetTableau()
-
     /**
      *  Helper function to call both reset functions at the same time.
      */
@@ -315,11 +310,6 @@ class GameViewModel @Inject constructor(
         }
         return Illegal
     }
-
-//    /**
-//     *  After meeting certain tableau conditions, depending on game, complete the game for the user.
-//     */
-//    protected abstract fun autoCompleteTableauCheck(): Boolean
 
     /**
      *  After meeting certain conditions, depending on game, complete the game for the user.
@@ -522,20 +512,6 @@ class GameViewModel @Inject constructor(
             GamePiles.TableauAll -> return _tableau
         }
     }
-
-//    /**
-//     *  Used during creation of deck to assign suit to each card.
-//     *  Cards  0-12 -> Clubs
-//     *  Cards 13-25 -> Diamonds
-//     *  Cards 26-38 -> Hearts
-//     *  Cards 39-51 -> Spades
-//     */
-//    protected open fun getSuit(i: Int) = when (i / 13) {
-//        0 -> Suits.CLUBS
-//        1 -> Suits.DIAMONDS
-//        2 -> Suits.HEARTS
-//        else -> Suits.SPADES
-//    }
 
     /**
      *  Initializes 7 [Tableau] with [initialPiles].

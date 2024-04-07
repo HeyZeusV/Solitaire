@@ -167,12 +167,12 @@ fun GameScreen(
 
 /**
  *  First screen that user sees in order to give Settings to load correct game. Uses
- *  [navController] to navigate to [GameScreen] after short duration.
+ *  [navController] to navigate to [GameScreen] after short delay.
  */
 @Composable
 fun SplashScreen(navController: NavHostController) {
     LaunchedEffect(key1 = Unit) {
-        val delay = (2500L..3500L).random()
+        val delay = (1500L..2500L).random()
         delay(delay)
         navController.navigate(NavScreens.Game.route)
     }
