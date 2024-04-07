@@ -5,10 +5,12 @@ import android.util.DisplayMetrics
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.util.SettingsSerializer
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
 import dagger.Provides
@@ -64,6 +66,19 @@ class TestAppModule {
         scope = scope
     ) {
         context.dataStoreFile("test_stat_preferences.pb")
+    }
+
+    @Provides
+    @Singleton
+    fun provideTestSettingsDataStore(
+        @ApplicationContext context: Context,
+        @AppTestScope scope: TestScope,
+        settingsSerializer: SettingsSerializer
+    ): DataStore<Settings> = DataStoreFactory.create(
+        serializer = settingsSerializer,
+        scope = scope
+    ) {
+        context.dataStoreFile("test_settings.pb")
     }
 
     @Provides

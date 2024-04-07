@@ -6,7 +6,7 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
-import com.heyzeusv.solitaire.ui.game.HorizontalCardPileWithFlip
+import com.heyzeusv.solitaire.ui.board.HorizontalCardPileWithFlip
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.plusX
 import com.heyzeusv.solitaire.util.toDp

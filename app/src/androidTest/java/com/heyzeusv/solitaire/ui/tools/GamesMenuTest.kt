@@ -7,6 +7,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.onLazyListScrollToNode
@@ -30,7 +31,7 @@ class GamesMenuTest {
                     GamesMenu(
                         gameSwitchConfirmOnClick = { },
                         gameInfoOnClickCheck = { false },
-                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        selectedGame = KlondikeTurnOne,
                         onBackPress = { }
                     )
                 }
@@ -56,7 +57,7 @@ class GamesMenuTest {
                     GamesMenu(
                         gameSwitchConfirmOnClick = { },
                         gameInfoOnClickCheck = { false },
-                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        selectedGame = KlondikeTurnOne,
                         onBackPress = { }
                     )
                 }
@@ -98,7 +99,7 @@ class GamesMenuTest {
                     GamesMenu(
                         gameSwitchConfirmOnClick = { },
                         gameInfoOnClickCheck = { true },
-                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        selectedGame = KlondikeTurnOne,
                         onBackPress = { }
                     )
                 }
@@ -131,7 +132,7 @@ class GamesMenuTest {
                     GamesMenu(
                         gameSwitchConfirmOnClick = { },
                         gameInfoOnClickCheck = { true },
-                        selectedGame = Games.KLONDIKE_TURN_ONE,
+                        selectedGame = KlondikeTurnOne,
                         onBackPress = { }
                     )
                 }
