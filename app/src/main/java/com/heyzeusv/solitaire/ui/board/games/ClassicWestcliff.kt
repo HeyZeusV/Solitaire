@@ -10,6 +10,7 @@ import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
+import com.heyzeusv.solitaire.util.StartingScore
 import com.heyzeusv.solitaire.util.Suits
 
 data object ClassicWestcliff : Games.KlondikeFamily() {
@@ -28,7 +29,8 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
     override val drawAmount: DrawAmount = DrawAmount.One
     override val redeals: Redeals = Redeals.None
-    override val maxScore: MaxScore = MaxScore.ONE_DECK_NO_ACES
+    override val startingScore: StartingScore = StartingScore.Four
+    override val maxScore: MaxScore = MaxScore.OneDeck
     override val anyCardCanStartPile: Boolean = true
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {

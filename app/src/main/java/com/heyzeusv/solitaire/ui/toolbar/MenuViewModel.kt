@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.ui.toolbar
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
@@ -78,9 +79,8 @@ class MenuViewModel @Inject constructor(
      *  Updates the [GameStats] of [Settings.selectedGame_] using given [lgs].
      */
     fun updateStats(lgs: LastGameStats) {
-        val prevGS =
-            stats.value.statsList.find { it.game == settings.value.selectedGame }
-                ?: getStatsDefaultInstance()
+        val prevGS = stats.value.statsList.find { it.game == settings.value.selectedGame }
+            ?: getStatsDefaultInstance()
 
         var newGS: GameStats
         prevGS.let { old ->
@@ -114,6 +114,30 @@ class MenuViewModel @Inject constructor(
     fun checkMovesUpdateStats(lgs: LastGameStats) {
         if (lgs.moves > 1) {
             updateStats(lgs)
+        }
+    }
+
+    /**
+     *  Due to scoring change, users before v3.2.0 would have a lower Classic Westcliff average
+     *  score. This adds the missing score to total score by multiplying the amount of missing
+     *  points (4) by the number of games user played before update. After running, it updates
+     *  a boolean in Proto DataStore to ensure it is only ran once per user. Will be removed in the
+     *  future.
+     */
+    fun updateClassicWestcliffScore() {
+        if (!settings.value.updatedClassicWestcliffScore) {
+            val prevGS = stats.value.statsList.find { it.game == Game.GAME_CLASSIC_WESTCLIFF }
+                ?: getStatsDefaultInstance()
+
+            val gamesPlayed = prevGS.gamesPlayed
+            val extraScore = gamesPlayed * 4
+            val newTotalScore = prevGS.totalScore + extraScore
+            val newGS = prevGS.toBuilder().setTotalScore(newTotalScore).build()
+
+            viewModelScope.launch {
+                statManager.updateStats(newGS)
+                settingsManager.updateUpdatedClassicWestCliffScore()
+            }
         }
     }
 }

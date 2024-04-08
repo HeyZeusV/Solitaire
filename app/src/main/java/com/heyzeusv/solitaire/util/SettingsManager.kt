@@ -39,4 +39,8 @@ class SettingsManager @Inject constructor(
     suspend fun updateSelectedGame(game: Game) {
         settings.updateData { it.toBuilder().setSelectedGame(game).build() }
     }
+
+    suspend fun updateUpdatedClassicWestCliffScore() {
+        settings.updateData { it.toBuilder().setUpdatedClassicWestcliffScore(true).build() }
+    }
 }

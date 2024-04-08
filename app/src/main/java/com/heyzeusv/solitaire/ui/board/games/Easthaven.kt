@@ -9,6 +9,7 @@ import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
+import com.heyzeusv.solitaire.util.StartingScore
 
 data object Easthaven : Games.KlondikeFamily() {
     /**
@@ -26,7 +27,8 @@ data object Easthaven : Games.KlondikeFamily() {
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
     override val drawAmount: DrawAmount = DrawAmount.Seven
     override val redeals: Redeals = Redeals.None
-    override val maxScore: MaxScore = MaxScore.ONE_DECK
+    override val startingScore: StartingScore = StartingScore.Zero
+    override val maxScore: MaxScore = MaxScore.OneDeck
     override val anyCardCanStartPile: Boolean = true
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {

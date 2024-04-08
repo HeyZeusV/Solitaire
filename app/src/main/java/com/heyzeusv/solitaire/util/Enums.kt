@@ -14,6 +14,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
+import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
 import com.heyzeusv.solitaire.util.icons.Games
@@ -96,12 +97,21 @@ enum class Redeals(
 }
 
 /**
+ *  Enum class that holds possible starting scores a [Game] can have. [amount] will be used by
+ *  [ScoreboardViewModel].
+ */
+enum class StartingScore(val amount: Int) {
+    Zero(0),
+    One(1),
+    Four(4)
+}
+
+/**
  *  Enum class that holds the highest score a player can obtain in a [Games]. [amount] will be
  *  displayed on [StatsMenu] and to calculate average score percentage.
  */
 enum class MaxScore(val amount: Int) {
-    ONE_DECK(52),
-    ONE_DECK_NO_ACES(48)
+    OneDeck(52),
 }
 
 /**

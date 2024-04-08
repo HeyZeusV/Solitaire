@@ -14,6 +14,7 @@ import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
+import com.heyzeusv.solitaire.util.StartingScore
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.notInOrder
 
@@ -116,8 +117,9 @@ interface GameInfo {
  *  Rules that are shared between each game, but with different values. [baseDeck] is a list of all
  *  Cards that are available when resetting a game. [resetFaceUpAmount] is the number of Cards that
  *  start face up on game reset. [drawAmount] is the amount of Cards drawn per click of [Stock].
- *  [redeals] is the number of times [Stock] can be refilled from [Waste]. [maxScore] refers to the
- *  max score users can get from just placing Cards in [Foundation]. [anyCardCanStartPile]
+ *  [redeals] is the number of times [Stock] can be refilled from [Waste]. [startingScore] refers
+ *  to the score a game starts with due to starting with cards in [Foundation]. [maxScore] refers
+ *  to the max score users can get from just placing Cards in [Foundation]. [anyCardCanStartPile]
  *  determines if game allows any card to start a [Tableau] pile rather than just a King.
  */
 interface GameRules {
@@ -125,6 +127,7 @@ interface GameRules {
     val resetFaceUpAmount: ResetFaceUpAmount
     val drawAmount: DrawAmount
     val redeals: Redeals
+    val startingScore: StartingScore
     val maxScore: MaxScore
     val anyCardCanStartPile: Boolean
 

@@ -9,6 +9,7 @@ import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
+import com.heyzeusv.solitaire.util.StartingScore
 
 data object Russian : Games.YukonFamily() {
     /**
@@ -26,7 +27,8 @@ data object Russian : Games.YukonFamily() {
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.Five
     override val drawAmount: DrawAmount = DrawAmount.Zero
     override val redeals: Redeals = Redeals.None
-    override val maxScore: MaxScore = MaxScore.ONE_DECK
+    override val startingScore: StartingScore = StartingScore.Zero
+    override val maxScore: MaxScore = MaxScore.OneDeck
     override val anyCardCanStartPile: Boolean = false
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
