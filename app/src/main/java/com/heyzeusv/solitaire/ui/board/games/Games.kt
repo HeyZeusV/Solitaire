@@ -170,6 +170,15 @@ interface GameRules {
     fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean
 
     /**
+     *  Checks if game has been won depending on [foundation] truePile condition.
+     */
+    fun gameWon(foundation: List<Foundation>): Boolean {
+        // each foundation should have Ace to King which is 13 cards
+        foundation.forEach { if (it.truePile.size != 13) return false }
+        return true
+    }
+
+    /**
      *  Used during creation of deck to assign suit to each card.
      *  Cards  0-12 -> Clubs
      *  Cards 13-25 -> Diamonds

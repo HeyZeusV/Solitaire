@@ -61,4 +61,9 @@ data object Golf : Games.GolfFamily() {
         return firstCard.value == lastFoundationCard.value + 1 ||
                firstCard.value == lastFoundationCard.value - 1
     }
+
+    override fun gameWon(foundation: List<Foundation>): Boolean {
+        // single Foundation pile should have all cards
+        return foundation[3].truePile.size == 52
+    }
 }
