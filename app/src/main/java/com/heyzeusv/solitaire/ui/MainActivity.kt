@@ -40,6 +40,7 @@ import androidx.navigation.compose.rememberNavController
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.*
 import com.heyzeusv.solitaire.ui.board.games.Games
+import com.heyzeusv.solitaire.ui.board.Board
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer
@@ -80,6 +81,7 @@ fun SolitaireApp(
     val gameVM = hiltViewModel<GameViewModel>()
 
     val settings by menuVM.settings.collectAsState()
+    val stats by menuVM.stats.collectAsState()
     var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
     LaunchedEffect(key1 = settings.animationDurations) {
         animationDurations = AnimationDurations from settings.animationDurations
@@ -87,6 +89,10 @@ fun SolitaireApp(
     }
     LaunchedEffect(key1 = settings.selectedGame) {
         gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
+        sbVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
+    }
+    LaunchedEffect(key1 = stats) {
+        menuVM.updateClassicWestcliffScore()
     }
     LifecycleResumeEffect {
         if (sbVM.moves.value != 0) sbVM.startTimer()
@@ -114,7 +120,7 @@ fun SolitaireApp(
 }
 
 /**
- *  Composable which displays GameScreen which includes [SolitaireScoreboard], [BoardLayout], and
+ *  Composable which displays GameScreen which includes [SolitaireScoreboard], [Board], and
  *  [Toolbar].
  */
 @Composable
@@ -142,7 +148,7 @@ fun GameScreen(
                 gameVM = gameVM,
                 modifier = Modifier
             )
-            BoardLayout(
+            Board(
                 sbVM = sbVM,
                 gameVM = gameVM,
                 animationDurations = animationDurations,

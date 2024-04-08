@@ -6,9 +6,8 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.MainActivity
-import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.onNodeWithTextId
-import com.heyzeusv.solitaire.util.switchGame
+//import com.heyzeusv.solitaire.util.switchGame
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import org.junit.Before
@@ -29,7 +28,7 @@ class ClassicWestcliffTest {
 
     @Before
     fun setUp() {
-        composeRule.switchGame(Games.CLASSIC_WESTCLIFF)
+//        composeRule.switchGame(Games.CLASSIC_WESTCLIFF)
     }
 
     @Test

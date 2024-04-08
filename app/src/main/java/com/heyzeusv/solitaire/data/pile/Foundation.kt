@@ -13,19 +13,9 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
      *  Adds first card of given [cards] to [truePile].
      */
     override fun add(cards: List<Card>) {
-        _truePile.add(cards.first())
+        _truePile.add(cards.first().copy(faceUp = true))
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
-    }
-
-    /**
-     *  Checks if given [cards] matches this [Foundation]'s [suit] and its value matches what is
-     *  required next in [truePile].
-     */
-    fun canAdd(cards:List<Card>): Boolean {
-        if (cards.isEmpty()) return false
-        val card = cards[0]
-        return card.suit == suit && card.value == truePile.size
     }
 
     /**
@@ -46,10 +36,14 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
         animatedPiles.clear()
         resetHistory()
         _truePile.clear()
-        _truePile.addAll(cards)
         _displayPile.clear()
-        _displayPile.addAll(cards)
         currentStep = cards
+        if (cards.isNotEmpty()) {
+            val flippedCards = cards.map { it.copy(faceUp = true) }
+            _truePile.addAll(flippedCards)
+            _displayPile.addAll(flippedCards)
+            currentStep = flippedCards
+        }
     }
 
     /**

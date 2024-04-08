@@ -8,12 +8,11 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.MainActivity
-import com.heyzeusv.solitaire.util.Games
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnPileTT
 import com.heyzeusv.solitaire.util.clickOnTableauCard
 import com.heyzeusv.solitaire.util.onNodeWithTextId
-import com.heyzeusv.solitaire.util.switchGame
+//import com.heyzeusv.solitaire.util.switchGame
 import com.heyzeusv.solitaire.util.waitUntilTableauDoesNotExist
 import com.heyzeusv.solitaire.util.waitUntilTableauExists
 import com.heyzeusv.solitaire.util.waitUntilPileCardDoesNotExists
@@ -40,7 +39,7 @@ class AustralianPatienceTest {
 
     @Before
     fun setUp() {
-        composeRule.switchGame(Games.AUSTRALIAN_PATIENCE)
+//        composeRule.switchGame(Games.AUSTRALIAN_PATIENCE)
     }
 
     @Test

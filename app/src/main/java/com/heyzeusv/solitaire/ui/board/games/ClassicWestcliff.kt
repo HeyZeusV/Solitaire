@@ -10,6 +10,7 @@ import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
+import com.heyzeusv.solitaire.util.StartingScore
 import com.heyzeusv.solitaire.util.Suits
 
 data object ClassicWestcliff : Games.KlondikeFamily() {
@@ -28,8 +29,9 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
     override val drawAmount: DrawAmount = DrawAmount.One
     override val redeals: Redeals = Redeals.None
-    override val maxScore: MaxScore = MaxScore.ONE_DECK_NO_ACES
-    override val anyCardCanStartPile: Boolean = true
+    override val startingScore: StartingScore = StartingScore.Four
+    override val maxScore: MaxScore = MaxScore.OneDeck
+    override val autocompleteAvailable: Boolean = true
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists()) return false }
@@ -43,15 +45,26 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
         }
     }
 
-    override fun resetFoundation(foundationList: List<Foundation>) {
+    /**
+     *  Start each pile with its Ace.
+     */
+    override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
         foundationList.forEach { it.reset(listOf(Card(0, it.suit, true))) }
     }
 
-    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
         return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
+    }
+
+    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean = true
+
+    override fun gameWon(foundation: List<Foundation>): Boolean {
+        // each foundation should have Ace to King which is 13 cards
+        foundation.forEach { if (it.truePile.size != 13) return false }
+        return true
     }
 
     override fun getSuit(i: Int) = when (i / 12) {

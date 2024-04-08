@@ -5,6 +5,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.data.ScoreHistory
+import com.heyzeusv.solitaire.ui.board.games.Games
+import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.*
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +25,11 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ScoreboardViewModel @Inject constructor() : ViewModel() {
+    private var selectedGame: Games = KlondikeTurnOne
+    fun updateSelectedGame(newGame: Games) {
+        selectedGame = newGame
+        reset()
+    }
 
     // increases whenever a card/s moves
     private val _moves = MutableStateFlow(0)
@@ -104,7 +111,7 @@ class ScoreboardViewModel @Inject constructor() : ViewModel() {
     fun reset() {
         _moves.value = 0
         resetTimer()
-        _score.value = 0
+        _score.value = selectedGame.startingScore.amount
         _historyList.clear()
         recordHistory()
     }
