@@ -30,7 +30,6 @@ data object Golf : Games.GolfFamily() {
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.One
     override val maxScore: MaxScore = MaxScore.OneDeck
-    override val anyCardCanStartPile: Boolean = false
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean = false
 
@@ -48,7 +47,13 @@ data object Golf : Games.GolfFamily() {
         foundationList[3].reset(listOf(stock.remove()))
     }
 
-    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean = false
+    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        return false
+    }
+
+    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        return false
+    }
 
     /**
      *  Checks if given [cardsToAdd] is one more or less than last card of [foundation] truePile.

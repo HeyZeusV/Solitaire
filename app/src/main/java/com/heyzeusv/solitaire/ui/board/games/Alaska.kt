@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire.ui.board.games
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
@@ -29,7 +30,6 @@ data object Alaska : Games.YukonFamily() {
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Zero
     override val maxScore: MaxScore = MaxScore.OneDeck
-    override val anyCardCanStartPile: Boolean = false
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach {
@@ -50,11 +50,26 @@ data object Alaska : Games.YukonFamily() {
         }
     }
 
-    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
+        foundationList.forEach { it.reset() }
+    }
+
+    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
         return cFirst.suit == tLast.suit &&
                (cFirst.value == tLast.value - 1 || cFirst.value == tLast.value + 1)
+    }
+
+    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val cFirst = cardsToAdd.first()
+        return cFirst.value == 12
+    }
+
+    override fun gameWon(foundation: List<Foundation>): Boolean {
+        // each foundation should have Ace to King which is 13 cards
+        foundation.forEach { if (it.truePile.size != 13) return false }
+        return true
     }
 }

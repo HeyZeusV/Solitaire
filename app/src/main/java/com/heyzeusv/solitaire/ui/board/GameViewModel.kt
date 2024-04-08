@@ -377,7 +377,7 @@ class GameViewModel @Inject constructor(
      *  after one of those clicks and if each foundation pile has exactly 13 Cards.
      */
     private fun gameWon(): Boolean {
-        foundation.forEach { if (it.truePile.size != 13) return false }
+        if (!_selectedGame.value.gameWon(foundation)) return false
         _autoCompleteActive.value = false
         _gameWon.value = true
         return true

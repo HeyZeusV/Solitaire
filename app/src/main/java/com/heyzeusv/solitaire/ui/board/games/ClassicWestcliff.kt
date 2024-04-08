@@ -31,7 +31,6 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Four
     override val maxScore: MaxScore = MaxScore.OneDeck
-    override val anyCardCanStartPile: Boolean = true
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists()) return false }
@@ -52,11 +51,19 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
         foundationList.forEach { it.reset(listOf(Card(0, it.suit, true))) }
     }
 
-    override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
         return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
+    }
+
+    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean = true
+
+    override fun gameWon(foundation: List<Foundation>): Boolean {
+        // each foundation should have Ace to King which is 13 cards
+        foundation.forEach { if (it.truePile.size != 13) return false }
+        return true
     }
 
     override fun getSuit(i: Int) = when (i / 12) {
