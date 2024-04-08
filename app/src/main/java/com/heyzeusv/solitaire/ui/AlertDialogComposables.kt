@@ -82,7 +82,7 @@ fun CloseGameAlertDialog(
             finishApp()
         },
         dismissText = stringResource(R.string.close_ad_dismiss),
-        dismissOnClick = { closeGame = false}
+        dismissOnClick = { closeGame = false }
     )
 }
 
