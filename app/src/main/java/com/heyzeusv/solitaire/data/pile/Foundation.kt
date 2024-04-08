@@ -19,16 +19,6 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
     }
 
     /**
-     *  Checks if given [cards] matches this [Foundation]'s [suit] and its value matches what is
-     *  required next in [truePile].
-     */
-    fun canAdd(cards:List<Card>): Boolean {
-        if (cards.isEmpty()) return false
-        val card = cards[0]
-        return card.suit == suit && card.value == truePile.size
-    }
-
-    /**
      *  Removes the last [Card] in [truePile] which would refer to the top showing card and
      *  returns it.
      */

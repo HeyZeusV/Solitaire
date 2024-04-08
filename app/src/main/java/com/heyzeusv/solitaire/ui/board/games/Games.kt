@@ -50,6 +50,16 @@ sealed class Games : GameInfo, GameRules {
     }
 
     /**
+     *  Checks if given [cardsToAdd] matches this [Foundation.suit] and its value matches the size
+     *  of [foundation] truePile.
+     */
+    open fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
+        if (cardsToAdd.isEmpty()) return false
+        val firstCard = cardsToAdd[0]
+        return firstCard.suit == foundation.suit && firstCard.value == foundation.truePile.size
+    }
+
+    /**
      *  Using [resetFaceUpAmount], flips given [ResetFaceUpAmount.amount] of Cards face up in
      *  [cards] and returns it as a new list.
      */

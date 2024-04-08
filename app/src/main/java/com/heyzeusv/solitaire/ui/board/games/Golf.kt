@@ -49,4 +49,16 @@ data object Golf : Games.GolfFamily() {
     }
 
     override fun canAddToTableauRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean = false
+
+    /**
+     *  Checks if given [cardsToAdd] is one more or less than last card of [foundation] truePile.
+     */
+    override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
+        if (cardsToAdd.isEmpty()) return false
+        if (foundation.truePile.isEmpty()) return false
+        val firstCard = cardsToAdd[0]
+        val lastFoundationCard = foundation.truePile.last()
+        return firstCard.value == lastFoundationCard.value + 1 ||
+               firstCard.value == lastFoundationCard.value - 1
+    }
 }

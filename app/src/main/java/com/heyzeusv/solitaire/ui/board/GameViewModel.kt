@@ -15,6 +15,7 @@ import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.ui.board.games.Games
+import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
@@ -142,6 +143,7 @@ class GameViewModel @Inject constructor(
     fun onStockClick(): MoveResult {
         return when (_selectedGame.value) {
             is Easthaven -> onStockClickEasthaven()
+            is Golf -> onStockClickGolf()
             else -> onStockClickStandard()
         }
     }
@@ -248,6 +250,38 @@ class GameViewModel @Inject constructor(
     }
 
     /**
+     *  Custom onStockClick for [Golf] due to [Card]s being move directly from [Stock] to specific
+     *  [Foundation] pile. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile.
+     */
+    private fun onStockClickGolf(): MoveResult {
+        if (_stock.truePile.isNotEmpty()) {
+            val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
+            val aniInfo = AnimateInfo(
+                start = GamePiles.Stock,
+                end = GamePiles.SpadesFoundation,
+                animatedCards = cards,
+                flipCardInfo = FlipCardInfo.FaceUp.SinglePile
+            )
+            aniInfo.actionBeforeAnimation = {
+                mutex.withLock {
+                    _stock.removeMany(cards.size)
+                    _foundation[3].add(cards)
+                    _stock.updateDisplayPile()
+                }
+            }
+            aniInfo.actionAfterAnimation = {
+                mutex.withLock {
+                    _foundation[3].updateDisplayPile()
+                    appendHistory(aniInfo.getUndoAnimateInfo())
+                }
+            }
+            _animateInfo.value = aniInfo
+            return Move
+        }
+        return Illegal
+    }
+
+    /**
      *  Runs when user taps on Waste pile. Checks to see if top [Card] can be moved to any other
      *  pile except [Stock]. If so, it is removed from [Waste].
      */
@@ -326,7 +360,8 @@ class GameViewModel @Inject constructor(
                     _tableau.forEachIndexed { i, tableau ->
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
                         _foundation.forEach { foundation ->
-                            if (foundation.canAdd(tableau.truePile.takeLast(1))) {
+                            val lastTableauCard = tableau.truePile.takeLast(1)
+                            if (_selectedGame.value.canAddToFoundation(foundation, lastTableauCard)) {
                                 delay(autoCompleteDelay)
                                 onTableauClick(i, tableau.truePile.size - 1)
                             }
@@ -363,7 +398,7 @@ class GameViewModel @Inject constructor(
         // only one card can be added to Foundation at a time.
         if (cards.size == 1) {
             _foundation.forEach {
-                if (it.canAdd(cards)) {
+                if (selectedGame.value.canAddToFoundation(it, cards)) {
                     val aniInfo = AnimateInfo(
                         start = start,
                         end = it.suit.gamePile,
