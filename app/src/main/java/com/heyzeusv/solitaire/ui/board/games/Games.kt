@@ -24,6 +24,7 @@ import com.heyzeusv.solitaire.util.notInOrder
 sealed class Games : GameInfo, GameRules {
     sealed class KlondikeFamily : Games()
     sealed class YukonFamily : Games()
+    sealed class GolfFamily : Games()
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
@@ -73,7 +74,8 @@ sealed class Games : GameInfo, GameRules {
         val orderedSubclasses: List<Games> = listOf(
             KlondikeTurnOne, KlondikeTurnThree, ClassicWestcliff,
             Easthaven, Yukon, Alaska,
-            Russian, AustralianPatience, Canberra
+            Russian, AustralianPatience, Canberra,
+            Golf
         )
 
         /**
@@ -90,6 +92,7 @@ sealed class Games : GameInfo, GameRules {
                 Game.GAME_RUSSIAN -> Russian
                 Game.GAME_CLASSIC_WESTCLIFF -> ClassicWestcliff
                 Game.GAME_EASTHAVEN -> Easthaven
+                Game.GAME_GOLF -> Golf
                 Game.UNRECOGNIZED -> KlondikeTurnOne
             }
         }

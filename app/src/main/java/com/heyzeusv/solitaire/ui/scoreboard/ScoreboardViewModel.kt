@@ -101,6 +101,7 @@ class ScoreboardViewModel @Inject constructor() : ViewModel() {
     /**
      *  Resets stats for next game.
      */
+    // TODO pass Game, add into Game startingScore: Int
     fun reset() {
         _moves.value = 0
         resetTimer()

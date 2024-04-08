@@ -44,27 +44,31 @@ fun Board(
     val animateInfo by gameVM.animateInfo.collectAsState()
     val undoAnimation by gameVM.undoAnimation.collectAsState()
 
-    StandardLayout(
-        modifier = modifier,
-        layInfo = gameVM.layoutInfo,
-        animationDurations = animationDurations,
-        animateInfo = animateInfo,
-        updateAnimateInfo = gameVM::updateAnimateInfo,
-        updateUndoEnabled = gameVM::updateUndoEnabled,
-        undoAnimation = undoAnimation,
-        updateUndoAnimation = gameVM::updateUndoAnimation,
-        drawAmount = gameVM.selectedGame.drawAmount,
-        handleMoveResult = sbVM::handleMoveResult,
-        stock = gameVM.stock,
-        onStockClick = gameVM::onStockClick,
-        waste = gameVM.waste,
-        stockWasteEmpty = { stockWasteEmpty },
-        onWasteClick = gameVM::onWasteClick,
-        foundationList = gameVM.foundation,
-        onFoundationClick = gameVM::onFoundationClick,
-        tableauList = gameVM.tableau,
-        onTableauClick = gameVM::onTableauClick
-    )
+    when (gameVM.selectedGame) {
+        else -> {
+            StandardLayout(
+                modifier = modifier,
+                layInfo = gameVM.layoutInfo,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                updateAnimateInfo = gameVM::updateAnimateInfo,
+                updateUndoEnabled = gameVM::updateUndoEnabled,
+                undoAnimation = undoAnimation,
+                updateUndoAnimation = gameVM::updateUndoAnimation,
+                drawAmount = gameVM.selectedGame.drawAmount,
+                handleMoveResult = sbVM::handleMoveResult,
+                stock = gameVM.stock,
+                onStockClick = gameVM::onStockClick,
+                waste = gameVM.waste,
+                stockWasteEmpty = { stockWasteEmpty },
+                onWasteClick = gameVM::onWasteClick,
+                foundationList = gameVM.foundation,
+                onFoundationClick = gameVM::onFoundationClick,
+                tableauList = gameVM.tableau,
+                onTableauClick = gameVM::onTableauClick
+            )
+        }
+    }
 }
 
 /**
