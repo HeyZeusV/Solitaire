@@ -45,7 +45,10 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
         }
     }
 
-    override fun resetFoundation(foundationList: List<Foundation>) {
+    /**
+     *  Start each pile with its Ace.
+     */
+    override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
         foundationList.forEach { it.reset(listOf(Card(0, it.suit, true))) }
     }
 

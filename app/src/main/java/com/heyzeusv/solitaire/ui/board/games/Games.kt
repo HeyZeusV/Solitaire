@@ -148,8 +148,11 @@ interface GameRules {
     /**
      *  Some games requires additional steps to fully reset their [Foundation] piles. Using
      *  [Foundation.reset], cards will be added to given each [Foundation] in [foundationList].
+     *  [stock] is used if a random card is needed at start.
      */
-    fun resetFoundation(foundationList: List<Foundation>) { foundationList.forEach { it.reset() } }
+    fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
+        foundationList.forEach { it.reset() }
+    }
 
     /**
      *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile.

@@ -1,10 +1,12 @@
 package com.heyzeusv.solitaire.ui
 
+import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.LastGameStats
+import com.heyzeusv.solitaire.data.LayoutInfo
+import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.ui.board.KlondikeViewModel
+import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
@@ -22,20 +24,23 @@ import org.junit.Test
 import java.util.Random
 
 /**
- *  [KlondikeViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have
+ *  [GameViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have
  *  decided to test both at the same time.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
 class KlondikeAndScoreboardViewModelTest {
 
     private val tc = TestCards
-    private lateinit var kdVM: KlondikeViewModel
+    private lateinit var kdVM: GameViewModel
     private lateinit var sbVM: ScoreboardViewModel
 
     @Before
     fun setup() {
         Dispatchers.setMain(StandardTestDispatcher())
-        kdVM = KlondikeViewModel(ShuffleSeed(Random(10L)))
+        kdVM = GameViewModel(
+            ShuffleSeed(Random(10L)),
+            LayoutInfo(LayoutPositions.Width1080, 0)
+        )
         sbVM = ScoreboardViewModel()
     }
 
@@ -65,7 +70,7 @@ class KlondikeAndScoreboardViewModelTest {
         val expectedStock = kdVM.stock.truePile.toList()
         val expectedFoundation = emptyList<Card>()
         val expectedWaste = emptyList<Card>()
-        val expectedHistoryList = emptyList<PileHistory>()
+        val expectedHistoryList = emptyList<AnimateInfo>()
         val expectedUndoEnabled = false
         val expectedGameWon = false
         val expectedAutoCompleteActive = false
@@ -107,9 +112,9 @@ class KlondikeAndScoreboardViewModelTest {
 
         // draw 3 Cards
         sbVM.apply {
-            handleMoveResult(kdVM.onStockClick(1))
-            handleMoveResult(kdVM.onStockClick(1))
-            handleMoveResult(kdVM.onStockClick(1))
+            handleMoveResult(kdVM.onStockClick())
+            handleMoveResult(kdVM.onStockClick())
+            handleMoveResult(kdVM.onStockClick())
         }
 
         assertEquals(expectedStock, kdVM.stock.truePile.toList())
@@ -133,12 +138,12 @@ class KlondikeAndScoreboardViewModelTest {
         val expectedStockWasteEmpty = false
 
         // draw 24 Cards
-        kdVM.apply { for (i in 1..24) sbVM.handleMoveResult(onStockClick(1)) }
+        kdVM.apply { for (i in 1..24) sbVM.handleMoveResult(onStockClick()) }
 
         assertEquals(expectedStockBefore, kdVM.stock.truePile.toList())
         assertEquals(expectedWastePileBefore, kdVM.waste.truePile.toList())
 
-        sbVM.handleMoveResult(kdVM.onStockClick(1))
+        sbVM.handleMoveResult(kdVM.onStockClick())
 
         assertEquals(expectedStockAfter, kdVM.stock.truePile.toList())
         assertEquals(expectedWastePileAfter, kdVM.waste.truePile.toList())
@@ -156,7 +161,7 @@ class KlondikeAndScoreboardViewModelTest {
         val expectedStockWasteEmpty = false
 
         // fill Waste with 3 Cards
-        kdVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
+        kdVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
         // this should remove top card from Waste and move it to Tableau pile #4
         kdVM.onWasteClick()
 
@@ -176,14 +181,14 @@ class KlondikeAndScoreboardViewModelTest {
 
         // fill Waste with 3 Cards
         sbVM.apply {
-            handleMoveResult(kdVM.onStockClick(1))
-            handleMoveResult(kdVM.onStockClick(1))
-            handleMoveResult(kdVM.onStockClick(1))
+            handleMoveResult(kdVM.onStockClick())
+            handleMoveResult(kdVM.onStockClick())
+            handleMoveResult(kdVM.onStockClick())
         }
         // this should remove top card from Waste and move it to Tableau pile #4
         sbVM.handleMoveResult(kdVM.onWasteClick())
         // draw another Card and move it to Foundation Clubs pile
-        sbVM.handleMoveResult(kdVM.onStockClick(1))
+        sbVM.handleMoveResult(kdVM.onStockClick())
         sbVM.handleMoveResult(kdVM.onWasteClick())
 
         assertEquals(expectedFoundationPile, kdVM.foundation[0].truePile.toList())
@@ -209,9 +214,9 @@ class KlondikeAndScoreboardViewModelTest {
 
         // giving each just 1 card and Tableau empty for testing
         kdVM.stock.reset(listOf(tc.card10C))
-        kdVM.waste.undo(emptyList())
-        kdVM.tableau.forEach { it.undo(emptyList()) }
-        kdVM.onStockClick(1)
+        kdVM.waste.undo()
+        kdVM.tableau.forEach { it.undo() }
+        kdVM.onStockClick()
 
         assertEquals(expectedStockWasteEmptyAfter, kdVM.stockWasteEmpty.value)
         assertEquals(expectedStockAfter, kdVM.stock.truePile.toList())
@@ -228,8 +233,8 @@ class KlondikeAndScoreboardViewModelTest {
 
         // giving each just 1 card and Tableau empty for testing
         kdVM.stock.reset(emptyList())
-        kdVM.waste.undo(listOf(tc.card10CFU, tc.card13CFU))
-        kdVM.tableau.forEach { it.undo(emptyList()) }
+        kdVM.waste.undo()
+        kdVM.tableau.forEach { it.undo() }
         kdVM.onWasteClick()
 
         assertEquals(expectedStockWasteEmptyAfter, kdVM.stockWasteEmpty.value)
@@ -244,7 +249,7 @@ class KlondikeAndScoreboardViewModelTest {
         val expectedTableauPile4After = listOf(tc.card1H, tc.card10C, tc.card7SFU)
 
         // fill Waste with 3 Cards
-        kdVM.apply { onStockClick(1) ; onStockClick(1) ; onStockClick(1) }
+        kdVM.apply { onStockClick() ; onStockClick() ; onStockClick() }
         // this should remove top card from Waste and move it to Tableau pile #4
         kdVM.onWasteClick()
 
@@ -266,8 +271,8 @@ class KlondikeAndScoreboardViewModelTest {
         val expectedHistoryListSize = 1
         val expectedUndoEnabled = true
 
-        sbVM.handleMoveResult(kdVM.onStockClick(1))
-        sbVM.handleMoveResult(kdVM.onStockClick(1))
+        sbVM.handleMoveResult(kdVM.onStockClick())
+        sbVM.handleMoveResult(kdVM.onStockClick())
         kdVM.undo()
         sbVM.undo()
 
@@ -288,7 +293,7 @@ class KlondikeAndScoreboardViewModelTest {
         assertEquals(expectedLGS1, sbVM.retrieveLastGameStats(false))
 
         // this should place A of Clubs at top of Waste pile
-        kdVM.apply { for (i in 0..3) sbVM.handleMoveResult(onStockClick(1)) }
+        kdVM.apply { for (i in 0..3) sbVM.handleMoveResult(onStockClick()) }
         // this should place A of Clubs to foundation pile and reward point
         sbVM.handleMoveResult(kdVM.onWasteClick())
 
@@ -312,7 +317,7 @@ class KlondikeAndScoreboardViewModelTest {
         // going to cheat and give lists that are ready to auto complete
         kdVM.stock.reset(emptyList())
         kdVM.waste.reset(emptyList())
-        kdVM.tableau.forEach { it.undo(emptyList()) }
+        kdVM.tableau.forEach { it.undo() }
         kdVM.tableau[0].add(expectedClubs.reversed())
         kdVM.tableau[1].add(expectedDiamonds.reversed())
         kdVM.tableau[2].add(expectedHearts.reversed())

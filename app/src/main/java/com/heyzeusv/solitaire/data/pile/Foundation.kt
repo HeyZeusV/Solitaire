@@ -46,10 +46,14 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
         animatedPiles.clear()
         resetHistory()
         _truePile.clear()
-        _truePile.addAll(cards)
         _displayPile.clear()
-        _displayPile.addAll(cards)
         currentStep = cards
+        if (cards.isNotEmpty()) {
+            val flippedCards = cards.map { it.copy(faceUp = true) }
+            _truePile.addAll(flippedCards)
+            _displayPile.addAll(flippedCards)
+            currentStep = flippedCards
+        }
     }
 
     /**

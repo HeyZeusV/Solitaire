@@ -24,6 +24,8 @@ import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
+import com.heyzeusv.solitaire.ui.board.games.Golf
+import com.heyzeusv.solitaire.ui.board.layouts.GolfLayout
 import com.heyzeusv.solitaire.ui.board.layouts.StandardLayout
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
@@ -43,8 +45,28 @@ fun Board(
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
     val undoAnimation by gameVM.undoAnimation.collectAsState()
+    val selectedGame by gameVM.selectedGame.collectAsState()
 
-    when (gameVM.selectedGame) {
+    when (selectedGame) {
+        is Golf -> {
+            GolfLayout(
+                modifier = modifier,
+                layInfo = gameVM.layoutInfo,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                updateAnimateInfo = gameVM::updateAnimateInfo,
+                updateUndoEnabled = gameVM::updateUndoEnabled,
+                undoAnimation = undoAnimation,
+                updateUndoAnimation = gameVM::updateUndoAnimation,
+                handleMoveResult = sbVM::handleMoveResult,
+                stock = gameVM.stock,
+                onStockClick = gameVM::onStockClick,
+                stockWasteEmpty = { stockWasteEmpty },
+                foundationList = gameVM.foundation,
+                tableauList = gameVM.tableau,
+                onTableauClick = gameVM::onTableauClick
+            )
+        }
         else -> {
             StandardLayout(
                 modifier = modifier,
@@ -55,7 +77,7 @@ fun Board(
                 updateUndoEnabled = gameVM::updateUndoEnabled,
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
-                drawAmount = gameVM.selectedGame.drawAmount,
+                drawAmount = selectedGame.drawAmount,
                 handleMoveResult = sbVM::handleMoveResult,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
