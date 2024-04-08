@@ -30,7 +30,11 @@ data object Golf : Games.GolfFamily() {
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.One
     override val maxScore: MaxScore = MaxScore.OneDeck
+    override val autocompleteAvailable: Boolean = false
 
+    /**
+     *  Autocomplete is not available for this game.
+     */
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean = false
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {

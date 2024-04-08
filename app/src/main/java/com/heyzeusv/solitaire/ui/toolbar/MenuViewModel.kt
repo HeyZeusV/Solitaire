@@ -132,7 +132,10 @@ class MenuViewModel @Inject constructor(
             val gamesPlayed = prevGS.gamesPlayed
             val extraScore = gamesPlayed * 4
             val newTotalScore = prevGS.totalScore + extraScore
-            val newGS = prevGS.toBuilder().setTotalScore(newTotalScore).build()
+            val newGS = prevGS.toBuilder()
+                .setGame(Game.GAME_CLASSIC_WESTCLIFF)
+                .setTotalScore(newTotalScore)
+                .build()
 
             viewModelScope.launch {
                 statManager.updateStats(newGS)

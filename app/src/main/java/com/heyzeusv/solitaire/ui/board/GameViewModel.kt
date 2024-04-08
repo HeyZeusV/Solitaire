@@ -273,6 +273,7 @@ class GameViewModel @Inject constructor(
                 mutex.withLock {
                     _foundation[3].updateDisplayPile()
                     appendHistory(aniInfo.getUndoAnimateInfo())
+                    gameWon()
                 }
             }
             _animateInfo.value = aniInfo
@@ -350,6 +351,10 @@ class GameViewModel @Inject constructor(
      */
     private fun autoComplete() {
         if (_autoCompleteActive.value) return
+        if (!_selectedGame.value.autocompleteAvailable) {
+            gameWon()
+            return
+        }
         if (_stock.truePile.isEmpty() && _waste.truePile.isEmpty()) {
             if (!_selectedGame.value.autocompleteTableauCheck(tableau)) return
             viewModelScope.launch {
@@ -373,8 +378,7 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  Should be called after successful [onWasteClick] or [onTableauClick] since game can only end
-     *  after one of those clicks and if each foundation pile has exactly 13 Cards.
+     *  Called during [autoComplete] and uses [Games.gameWon] to determine if user has won.
      */
     private fun gameWon(): Boolean {
         if (!_selectedGame.value.gameWon(foundation)) return false

@@ -126,7 +126,8 @@ interface GameInfo {
  *  start face up on game reset. [drawAmount] is the amount of Cards drawn per click of [Stock].
  *  [redeals] is the number of times [Stock] can be refilled from [Waste]. [startingScore] refers
  *  to the score a game starts with due to starting with cards in [Foundation]. [maxScore] refers
- *  to the max score users can get from just placing Cards in [Foundation].
+ *  to the max score users can get from just placing Cards in [Foundation]. [autocompleteAvailable]
+ *  determines if game offers autocomplete if [autocompleteTableauCheck] passes.
  */
 interface GameRules {
     val baseDeck: List<Card>
@@ -135,6 +136,7 @@ interface GameRules {
     val redeals: Redeals
     val startingScore: StartingScore
     val maxScore: MaxScore
+    val autocompleteAvailable: Boolean
 
     /**
      *  Each game has its own rules to determine if user has progressed far enough to activate

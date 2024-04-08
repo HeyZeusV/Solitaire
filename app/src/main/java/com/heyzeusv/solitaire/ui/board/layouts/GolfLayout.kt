@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire.ui.board.layouts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -19,8 +20,9 @@ import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
+import com.heyzeusv.solitaire.ui.board.AnimateFlip
 import com.heyzeusv.solitaire.ui.board.AnimateOffset
-import com.heyzeusv.solitaire.ui.board.HorizontalCardPileWithFlip
+import com.heyzeusv.solitaire.ui.board.FlipCard
 import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
@@ -60,6 +62,7 @@ fun GolfLayout(
     onTableauClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal }
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
+    var flipRotation by remember { mutableFloatStateOf(0f) }
 
     animateInfo?.let {
         // Updating AnimateInfo to null if animation is fully completed
@@ -98,6 +101,13 @@ fun GolfLayout(
             updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
             updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
         )
+        AnimateFlip(
+            animateInfo = it,
+            flipDuration = animationDurations.fullAniSpec,
+            flipDelay = animationDurations.noAnimation,
+            flipCardInfo = it.flipCardInfo,
+            updateRotation = { value -> flipRotation = value}
+        )
     }
 
     Layout(
@@ -106,10 +116,11 @@ fun GolfLayout(
             animateInfo?.let {
                 when (it.flipCardInfo) {
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
-                        HorizontalCardPileWithFlip(
-                            layInfo = layInfo,
-                            animateInfo = it,
-                            animationDurations = animationDurations,
+                        FlipCard(
+                            flipCard = it.animatedCards.first(),
+                            cardDpSize = layInfo.getCardDpSize(),
+                            flipRotation = flipRotation,
+                            flipCardInfo = it.flipCardInfo,
                             modifier = Modifier.layoutId("Animated Horizontal Pile")
                         )
                     }
@@ -174,13 +185,12 @@ fun GolfLayout(
             val cardWidth = layInfo.cardWidth
             val cardHeight = layInfo.cardHeight
             val cardConstraints = layInfo.cardConstraints
-            val wasteConstraints = layInfo.wasteConstraints
             val tableauHeight = constraints.maxHeight - layInfo.tableauZero.y
             val tableauConstraints = Constraints(cardWidth, cardWidth, cardHeight, tableauHeight)
 
             if (animatedOffset != IntOffset.Zero) {
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
-                animatedHorizontalPile?.measure(wasteConstraints)?.place(animatedOffset, 2f)
+                animatedHorizontalPile?.measure(cardConstraints)?.place(animatedOffset, 2f)
             }
             spadesFoundation?.measure(cardConstraints)?.place(layInfo.spadesFoundation)
             stockPile?.measure(cardConstraints)?.place(layInfo.stockPile)

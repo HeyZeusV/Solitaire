@@ -13,7 +13,7 @@ class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(
      *  Adds first card of given [cards] to [truePile].
      */
     override fun add(cards: List<Card>) {
-        _truePile.add(cards.first())
+        _truePile.add(cards.first().copy(faceUp = true))
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }

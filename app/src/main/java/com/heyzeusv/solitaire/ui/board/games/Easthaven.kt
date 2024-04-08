@@ -31,6 +31,7 @@ data object Easthaven : Games.KlondikeFamily() {
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Zero
     override val maxScore: MaxScore = MaxScore.OneDeck
+    override val autocompleteAvailable: Boolean = true
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists() || it.notInOrderOrAltColor()) return false }

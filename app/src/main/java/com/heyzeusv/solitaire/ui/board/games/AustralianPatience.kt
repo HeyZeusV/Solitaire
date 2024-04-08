@@ -30,6 +30,7 @@ data object AustralianPatience : Games.YukonFamily() {
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Zero
     override val maxScore: MaxScore = MaxScore.OneDeck
+    override val autocompleteAvailable: Boolean = true
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.isMultiSuit() || it.notInOrder()) return false }
