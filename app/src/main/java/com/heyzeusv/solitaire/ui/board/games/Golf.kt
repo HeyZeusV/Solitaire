@@ -19,6 +19,13 @@ data object Golf : Games.GolfFamily() {
     override val nameId: Int = R.string.games_golf
     override val familyId: Int = R.string.games_family_golf
     override val previewId: Int = R.drawable.preview_golf
+    override val gamePileRules: GamePileRules = GamePileRules(
+        rulesId = R.drawable.rules_golf,
+        stockRulesId = R.string.golf_stock_rules,
+        wasteRulesId = null,
+        foundationRulesId = R.string.golf_foundation_rules,
+        tableauRulesId = R.string.golf_tableau_rules
+    )
     override val dataStoreEnum: Game = Game.GAME_GOLF
 
     /**

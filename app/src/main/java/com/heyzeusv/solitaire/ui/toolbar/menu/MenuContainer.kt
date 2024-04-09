@@ -64,6 +64,16 @@ fun MenuContainer(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
+            option = MenuState.Rules
+        ) {
+            RulesMenu(selectedGame = sbVM.selectedGame) {
+                menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
+            }
+        }
+        MenuOptionTransition(
+            displayMenuButtons = displayMenuButtons,
+            menuState = menuState,
+            updateMenuState = menuVM::updateMenuState,
             option = MenuState.Stats
         ) { StatsMenu(menuVM = menuVM) }
         MenuOptionTransition(

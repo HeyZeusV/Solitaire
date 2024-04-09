@@ -1,8 +1,11 @@
+v3.3.0
+-New: Rules Screen, displays rules for each pile specific to currently selected game.
+
 v3.2.0
 -New: Golf is now available to play!
 -New: Splash screen on start up.
 -New: Game starts up on last played game type.
--Fixed: Score now starts correctly for Classic Westcliff
+-Fixed: Score now starts correctly for Classic Westcliff.
 
 v3.1.0
 -New: Settings Screen.

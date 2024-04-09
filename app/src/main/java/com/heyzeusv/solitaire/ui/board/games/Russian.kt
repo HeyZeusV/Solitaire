@@ -19,6 +19,13 @@ data object Russian : Games.YukonFamily() {
     override val nameId: Int = R.string.games_russian
     override val familyId: Int = R.string.games_family_yukon
     override val previewId: Int = R.drawable.preview_yukon
+    override val gamePileRules: GamePileRules = GamePileRules(
+        rulesId = R.drawable.rules_yukon,
+        stockRulesId = null,
+        wasteRulesId = null,
+        foundationRulesId = R.string.russian_foundation_rules,
+        tableauRulesId = R.string.russian_tableau_rules
+    )
     override val dataStoreEnum: Game = Game.GAME_RUSSIAN
 
     /**

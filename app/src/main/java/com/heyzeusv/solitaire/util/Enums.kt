@@ -16,9 +16,15 @@ import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.RulesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
 import com.heyzeusv.solitaire.util.icons.Games
+import com.heyzeusv.solitaire.util.icons.Rules
 import com.heyzeusv.solitaire.util.icons.Stats
+import com.heyzeusv.solitaire.util.theme.FoundationRules
+import com.heyzeusv.solitaire.util.theme.StockRules
+import com.heyzeusv.solitaire.util.theme.TableauRules
+import com.heyzeusv.solitaire.util.theme.WasteRules
 
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
@@ -139,9 +145,9 @@ enum class MoveResult {
 /**
  *  Enum class that represents possible states when user interacts with Menu Button. [Buttons] is
  *  the state when user presses Menu Button. [ButtonsFromScreen] is the state when the user closes
- *  a Menu Screen. [Games], [Stats], [Settings] and [About] refer to the possible Menu Screens user
- *  can open when pressing their respective Buttons. They hold resource ids that are used for their
- *  Buttons.
+ *  a Menu Screen. [Games], [Rules], [Stats], [Settings] and [About] refer to the possible Menu
+ *  Screens user can open when pressing their respective Buttons. They hold resource ids that are
+ *  used for their Buttons.
  */
 enum class MenuState(
     @StringRes val nameId: Int = 0,
@@ -151,6 +157,7 @@ enum class MenuState(
     Buttons,
     ButtonsFromScreen,
     Games(R.string.menu_button_games, Icons.Filled.Games, R.string.menu_cdesc_games),
+    Rules(R.string.menu_button_rules, Icons.Filled.Rules, R.string.menu_cdesc_rules),
     Stats(R.string.menu_button_stats, Icons.Filled.Stats, R.string.menu_cdesc_stats),
     Settings(R.string.menu_button_settings, Icons.Filled.Settings, R.string.menu_cdesc_settings),
     About(R.string.menu_button_about, Icons.Filled.Info, R.string.menu_cdesc_about)
@@ -176,4 +183,18 @@ enum class GamePiles {
     TableauFive,
     TableauSix,
     TableauAll
+}
+
+/**
+ *  Used on [RulesMenu] to display each pile name in different colors that match pile colors found
+ *  in each game's rule image.
+ */
+enum class PileInfo(
+    @StringRes val nameId: Int,
+    val color: Color
+) {
+    Stock(R.string.rules_stock, StockRules),
+    Waste(R.string.rules_waste, WasteRules),
+    Foundation(R.string.rules_foundation, FoundationRules),
+    Tableau(R.string.rules_tableau, TableauRules)
 }

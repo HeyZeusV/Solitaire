@@ -10,6 +10,7 @@ import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.RulesMenu
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
@@ -111,12 +112,15 @@ sealed class Games : GameInfo, GameRules {
  *  Info that each game requires. Each game has its own unique [nameId] and belongs to a family
  *  which is retrieved using [familyId]. Each game on [GamesMenu] has a small preview image,
  *  [previewId], to give users an idea of the type of game it is. [dataStoreEnum] is used to ensure
- *  the correct [GameStats] is updated when updating stats.
+ *  the correct [GameStats] is updated when updating stats. [gamePileRules] contains resource ids
+ *  for data to be displayed in [RulesMenu] which are essentially typed out versions of [GameRules]
+ *  for users to understand how the game plays.
  */
 interface GameInfo {
     @get:StringRes val nameId: Int
     @get:StringRes val familyId: Int
     @get:DrawableRes val previewId: Int
+    val gamePileRules: GamePileRules
     val dataStoreEnum: Game
 }
 
@@ -189,4 +193,17 @@ interface GameRules {
         2 -> Suits.HEARTS
         else -> Suits.SPADES
      }
+}
+
+/**
+ *  Contains resource ids for drawables and strings used in [RulesMenu].
+ */
+data class GamePileRules(
+    @DrawableRes val rulesId: Int,
+    @StringRes private val stockRulesId: Int?,
+    @StringRes private val wasteRulesId: Int?,
+    @StringRes private val foundationRulesId: Int?,
+    @StringRes private val tableauRulesId: Int?
+) {
+    val pileRulesIds = listOf(stockRulesId, wasteRulesId, foundationRulesId, tableauRulesId)
 }

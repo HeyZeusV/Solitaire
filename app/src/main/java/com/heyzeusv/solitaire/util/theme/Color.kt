@@ -13,3 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 val PreviewBG = Color(0x77000000)
 
 val ARevealBG = Color(0x26000000)
+
+val StockRules = Color.Red
+val WasteRules = Color(0xFFFFE500)
+val FoundationRules = Color(0xFF0075FF)
+val TableauRules = Color(0xFFFA00FF)

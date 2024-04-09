@@ -25,7 +25,8 @@ import javax.inject.Inject
  */
 @HiltViewModel
 class ScoreboardViewModel @Inject constructor() : ViewModel() {
-    private var selectedGame: Games = KlondikeTurnOne
+    var selectedGame: Games = KlondikeTurnOne
+        private set
     fun updateSelectedGame(newGame: Games) {
         selectedGame = newGame
         reset()

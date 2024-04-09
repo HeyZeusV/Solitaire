@@ -38,6 +38,10 @@
     <dimen name="msPaddingAll">8.dp</dimen>
     <dimen name="msColumnSpacedBy">8.dp</dimen>
 
+    <!-- Rules (r) -->
+    <dimen name="rColumnSpacedBy">8.dp</dimen>
+    <dimen name="rInfoSpacedBy">0.dp</dimen>
+
     <!-- Settings (s) -->
     <dimen name="sColumnSpacedBy">4.dp</dimen>
 
