@@ -111,20 +111,16 @@ sealed class Games : GameInfo, GameRules {
 /**
  *  Info that each game requires. Each game has its own unique [nameId] and belongs to a family
  *  which is retrieved using [familyId]. Each game on [GamesMenu] has a small preview image,
- *  [previewId], to give users an idea of the type of game it is. [rulesId] is displayed in
- *  [RulesMenu], so users can tell piles apart. [dataStoreEnum] is used to ensure the correct
- *  [GameStats] is updated when updating stats. [stockHelpId], [wasteHelpId], [foundationHelpId],
- *  and [tableauHelpId] are used on [RulesMenu] to teach users how to play each game.
+ *  [previewId], to give users an idea of the type of game it is. [dataStoreEnum] is used to ensure
+ *  the correct [GameStats] is updated when updating stats. [gamePileRules] contains resource ids
+ *  for data to be displayed in [RulesMenu] which are essentially typed out versions of [GameRules]
+ *  for users to understand how the game plays.
  */
 interface GameInfo {
     @get:StringRes val nameId: Int
     @get:StringRes val familyId: Int
     @get:DrawableRes val previewId: Int
-    @get:DrawableRes val rulesId: Int
-//    @get:StringRes val stockHelpId: Int?
-//    @get:StringRes val wasteHelpId: Int?
-//    @get:StringRes val foundationHelpId: Int?
-//    @get:StringRes val tableauHelpId: Int?
+    val gamePileRules: GamePileRules
     val dataStoreEnum: Game
 }
 
@@ -197,4 +193,17 @@ interface GameRules {
         2 -> Suits.HEARTS
         else -> Suits.SPADES
      }
+}
+
+/**
+ *  Contains resource ids for drawables and strings used in [RulesMenu].
+ */
+data class GamePileRules(
+    @DrawableRes val rulesId: Int,
+    @StringRes private val stockRulesId: Int?,
+    @StringRes private val wasteRulesId: Int?,
+    @StringRes private val foundationRulesId: Int?,
+    @StringRes private val tableauRulesId: Int?
+) {
+    val pileRulesIds = listOf(stockRulesId, wasteRulesId, foundationRulesId, tableauRulesId)
 }

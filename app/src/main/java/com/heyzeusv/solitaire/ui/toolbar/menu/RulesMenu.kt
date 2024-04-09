@@ -42,29 +42,7 @@ fun RulesMenu(
             modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.rColumnSpacedBy))
         ) {
-            Box(
-                modifier = Modifier.fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    verticalArrangement =
-                        Arrangement.spacedBy(dimensionResource(R.dimen.rColumnSpacedBy)),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    Text(
-                        text = stringResource(selectedGame.nameId),
-                        fontWeight = FontWeight.Bold,
-                        textDecoration = TextDecoration.Underline,
-                        style = MaterialTheme.typography.headlineLarge
-                    )
-                    Image(
-                        painter = painterResource(selectedGame.rulesId),
-                        contentDescription = stringResource(selectedGame.nameId),
-                        modifier = Modifier.fillMaxWidth(fraction = 0.8f),
-                        contentScale = ContentScale.FillWidth
-                    )
-                }
-            }
+            GameTitleAndImage(selectedGame = selectedGame)
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -72,43 +50,69 @@ fun RulesMenu(
                 verticalArrangement =
                     Arrangement.spacedBy(dimensionResource(R.dimen.rColumnSpacedBy))
             ) {
-                PileInfo(
-                    pileName = PileInfo.Stock,
-                    pileInfo = stringResource(R.string.klondike_turn_one_stock_rules)
-                )
-                PileInfo(
-                    pileName = PileInfo.Waste,
-                    pileInfo = stringResource(R.string.klondike_turn_one_waste_rules)
-                )
-                PileInfo(
-                    pileName = PileInfo.Foundation,
-                    pileInfo = stringResource(R.string.klondike_turn_one_foundation_rules)
-                )
-                PileInfo(
-                    pileName = PileInfo.Tableau,
-                    pileInfo = stringResource(R.string.klondike_turn_one_tableau_rules)
-                )
+                selectedGame.gamePileRules.pileRulesIds.forEachIndexed { index, id ->
+                    id?.let {
+                        GamePileInfo(
+                            pileInfo = PileInfo.entries[index],
+                            pileRules = stringResource(id)
+                        )
+                    }
+                }
             }
         }
     }
 }
 
+/**
+ *  Displays [selectedGame] name and image used to differentiate between piles.
+ */
 @Composable
-fun PileInfo(
-    pileName: PileInfo,
-    pileInfo: String
+fun GameTitleAndImage(selectedGame: Games) {
+    Box(
+        modifier = Modifier.fillMaxWidth(),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(
+            verticalArrangement =
+            Arrangement.spacedBy(dimensionResource(R.dimen.rColumnSpacedBy)),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = stringResource(selectedGame.nameId),
+                fontWeight = FontWeight.Bold,
+                textDecoration = TextDecoration.Underline,
+                style = MaterialTheme.typography.headlineLarge
+            )
+            Image(
+                painter = painterResource(selectedGame.gamePileRules.rulesId),
+                contentDescription = stringResource(selectedGame.nameId),
+                modifier = Modifier.fillMaxWidth(fraction = 0.8f),
+                contentScale = ContentScale.FillWidth
+            )
+        }
+    }
+}
+
+/**
+ *  Displays [pileInfo], which is the name of the pile in a specific color, and [pileRules], the
+ *  rules for the pile specific to the currently selected game.
+ */
+@Composable
+    fun GamePileInfo(
+    pileInfo: PileInfo,
+    pileRules: String
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.rInfoSpacedBy))
     ) {
         Text(
-            text = stringResource(pileName.nameId),
-            color = pileName.color,
+            text = stringResource(pileInfo.nameId),
+            color = pileInfo.color,
             fontWeight = FontWeight.Bold,
             textDecoration = TextDecoration.Underline,
             style = MaterialTheme.typography.titleLarge
         )
-        Text(text = pileInfo)
+        Text(text = pileRules)
     }
 }

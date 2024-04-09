@@ -20,7 +20,13 @@ data object Easthaven : Games.KlondikeFamily() {
     override val nameId: Int = R.string.games_easthaven
     override val familyId: Int = R.string.games_family_klondike
     override val previewId: Int = R.drawable.preview_easthaven
-    override val rulesId: Int = R.drawable.rules_easthaven
+    override val gamePileRules: GamePileRules = GamePileRules(
+        rulesId = R.drawable.rules_easthaven,
+        stockRulesId = R.string.easthaven_stock_rules,
+        wasteRulesId = null,
+        foundationRulesId = R.string.easthaven_foundation_rules,
+        tableauRulesId = R.string.easthaven_tableau_rules
+    )
     override val dataStoreEnum: Game = Game.GAME_EASTHAVEN
 
     /**
@@ -50,10 +56,6 @@ data object Easthaven : Games.KlondikeFamily() {
         foundationList.forEach { it.reset() }
     }
 
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return !cardsToAdd.notInOrder()
-    }
-
     override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
@@ -61,6 +63,10 @@ data object Easthaven : Games.KlondikeFamily() {
         return cFirst.suit.color != tLast.suit.color &&
                 cFirst.value == tLast.value - 1 &&
                 !tableau.notInOrderOrAltColor(cardsToAdd)
+    }
+
+    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        return !cardsToAdd.notInOrder()
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
