@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 val Icons.Filled.Stats: ImageVector
     get() {
         if (mStats != null) {
-            return mStats !!
+            return mStats!!
         }
         mStats = materialIcon(name = "Filled.Games") {
             materialPath {

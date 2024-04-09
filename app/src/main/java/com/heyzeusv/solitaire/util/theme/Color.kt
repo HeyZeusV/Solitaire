@@ -13,3 +13,8 @@ val Pink40 = Color(0xFF7D5260)
 val PreviewBG = Color(0x77000000)
 
 val ARevealBG = Color(0x26000000)
+
+val StockHelp = Color.Red
+val WasteHelp = Color(0xFFFFE500)
+val FoundationHelp = Color(0xFF0075FF)
+val TableauHelp = Color(0xFFFA00FF)
