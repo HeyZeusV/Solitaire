@@ -22,10 +22,7 @@ import androidx.compose.ui.text.style.TextDecoration
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.util.MenuState
-import com.heyzeusv.solitaire.util.theme.FoundationHelp
-import com.heyzeusv.solitaire.util.theme.StockHelp
-import com.heyzeusv.solitaire.util.theme.TableauHelp
-import com.heyzeusv.solitaire.util.theme.WasteHelp
+import com.heyzeusv.solitaire.util.PileInfo
 
 /**
  *  Composable that displays Help Menu Screen where users can get info of currently [selectedGame].
@@ -42,9 +39,7 @@ fun HelpMenu(
         onBackPress = onBackPress
     ) {
         Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .verticalScroll(rememberScrollState()),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.hsColumnSpacedBy))
         ) {
             Box(
@@ -70,34 +65,50 @@ fun HelpMenu(
                     )
                 }
             }
-            Text(
-                text = "Stock",
-                color = StockHelp,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                text = "Waste",
-                color = WasteHelp,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                text = "Foundation",
-                color = FoundationHelp,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.titleLarge
-            )
-            Text(
-                text = "Tableau",
-                color = TableauHelp,
-                fontWeight = FontWeight.Bold,
-                textDecoration = TextDecoration.Underline,
-                style = MaterialTheme.typography.titleLarge
-            )
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .verticalScroll(rememberScrollState()),
+                verticalArrangement =
+                    Arrangement.spacedBy(dimensionResource(R.dimen.hsColumnSpacedBy))
+            ) {
+                PileInfo(
+                    pileName = PileInfo.Stock,
+                    pileInfo = stringResource(R.string.klondike_turn_one_stock_help)
+                )
+                PileInfo(
+                    pileName = PileInfo.Waste,
+                    pileInfo = stringResource(R.string.klondike_turn_one_waste_help)
+                )
+                PileInfo(
+                    pileName = PileInfo.Foundation,
+                    pileInfo = stringResource(R.string.klondike_turn_one_foundation_help)
+                )
+                PileInfo(
+                    pileName = PileInfo.Tableau,
+                    pileInfo = stringResource(R.string.klondike_turn_one_tableau_help)
+                )
+            }
         }
+    }
+}
+
+@Composable
+fun PileInfo(
+    pileName: PileInfo,
+    pileInfo: String
+) {
+    Column(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.hsInfoSpacedBy))
+    ) {
+        Text(
+            text = stringResource(pileName.nameId),
+            color = pileName.color,
+            fontWeight = FontWeight.Bold,
+            textDecoration = TextDecoration.Underline,
+            style = MaterialTheme.typography.titleLarge
+        )
+        Text(text = pileInfo)
     }
 }

@@ -96,4 +96,8 @@
     <string name="animation_duration_fast">Fast - 250ms</string>
     <string name="animation_duration_fastest">Fastest - 100ms</string>
     <string name="settings_animation_duration">Animation Speed</string>
+    <string name="help_stock">Stock</string>
+    <string name="help_waste">Waste</string>
+    <string name="help_foundation">Foundation</string>
+    <string name="help_tableau">Tableau</string>
 </resources>

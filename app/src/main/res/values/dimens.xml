@@ -25,6 +25,7 @@
 
     <!-- Help Screen (hs) -->
     <dimen name="hsColumnSpacedBy">8.dp</dimen>
+    <dimen name="hsInfoSpacedBy">0.dp</dimen>
 
     <!-- Menu Button (mb) -->
     <dimen name="mbPaddingBottomDefault">8.dp</dimen>

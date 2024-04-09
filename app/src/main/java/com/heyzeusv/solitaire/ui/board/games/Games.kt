@@ -113,13 +113,18 @@ sealed class Games : GameInfo, GameRules {
  *  which is retrieved using [familyId]. Each game on [GamesMenu] has a small preview image,
  *  [previewId], to give users an idea of the type of game it is. [helpId] is displayed in
  *  [HelpMenu], so users can tell piles apart. [dataStoreEnum] is used to ensure the correct
- *  [GameStats] is updated when updating stats.
+ *  [GameStats] is updated when updating stats. [stockHelpId], [wasteHelpId], [foundationHelpId],
+ *  and [tableauHelpId] are used on [HelpMenu] to teach users how to play each game.
  */
 interface GameInfo {
     @get:StringRes val nameId: Int
     @get:StringRes val familyId: Int
     @get:DrawableRes val previewId: Int
     @get:DrawableRes val helpId: Int
+//    @get:StringRes val stockHelpId: Int?
+//    @get:StringRes val wasteHelpId: Int?
+//    @get:StringRes val foundationHelpId: Int?
+//    @get:StringRes val tableauHelpId: Int?
     val dataStoreEnum: Game
 }
 

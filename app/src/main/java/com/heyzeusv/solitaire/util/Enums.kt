@@ -16,10 +16,15 @@ import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.HelpMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
 import com.heyzeusv.solitaire.util.icons.Games
 import com.heyzeusv.solitaire.util.icons.Help
 import com.heyzeusv.solitaire.util.icons.Stats
+import com.heyzeusv.solitaire.util.theme.FoundationHelp
+import com.heyzeusv.solitaire.util.theme.StockHelp
+import com.heyzeusv.solitaire.util.theme.TableauHelp
+import com.heyzeusv.solitaire.util.theme.WasteHelp
 
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
@@ -178,4 +183,18 @@ enum class GamePiles {
     TableauFive,
     TableauSix,
     TableauAll
+}
+
+/**
+ *  Used on [RulesMenu] to display each pile name in different colors that match pile colors found
+ *  in each game's rule image.
+ */
+enum class PileInfo(
+    @StringRes val nameId: Int,
+    val color: Color
+) {
+    Stock(R.string.help_stock, StockHelp),
+    Waste(R.string.help_waste, WasteHelp),
+    Foundation(R.string.help_foundation, FoundationHelp),
+    Tableau(R.string.help_tableau, TableauHelp)
 }
