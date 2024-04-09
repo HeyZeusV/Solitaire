@@ -19,6 +19,7 @@ data object KlondikeTurnOne : Games.KlondikeFamily() {
     override val nameId: Int = R.string.games_klondike_turn_one
     override val familyId: Int = R.string.games_family_klondike
     override val previewId: Int = R.drawable.preview_klondike_turn_one
+    override val helpId: Int = R.drawable.help_klondike_turn_one
     override val dataStoreEnum: Game = Game.GAME_KLONDIKETURNONE
 
     /**

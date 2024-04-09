@@ -19,6 +19,7 @@ data object Canberra : Games.YukonFamily() {
     override val nameId: Int = R.string.games_canberra
     override val familyId: Int = R.string.games_family_yukon
     override val previewId: Int = R.drawable.preview_australian_patience
+    override val helpId: Int = R.drawable.help_australian_patience
     override val dataStoreEnum: Game = Game.GAME_CANBERRA
 
     /**

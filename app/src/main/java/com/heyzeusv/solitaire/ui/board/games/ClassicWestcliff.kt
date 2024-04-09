@@ -20,6 +20,7 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val nameId: Int = R.string.games_classic_westcliff
     override val familyId: Int = R.string.games_family_klondike
     override val previewId: Int = R.drawable.preview_classic_westcliff
+    override val helpId: Int = R.drawable.help_classic_westcliff
     override val dataStoreEnum: Game = Game.GAME_CLASSIC_WESTCLIFF
 
     /**

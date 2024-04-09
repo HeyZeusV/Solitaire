@@ -20,6 +20,7 @@ data object Easthaven : Games.KlondikeFamily() {
     override val nameId: Int = R.string.games_easthaven
     override val familyId: Int = R.string.games_family_klondike
     override val previewId: Int = R.drawable.preview_easthaven
+    override val helpId: Int = R.drawable.help_easthaven
     override val dataStoreEnum: Game = Game.GAME_EASTHAVEN
 
     /**

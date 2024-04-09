@@ -10,6 +10,7 @@ import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
+import com.heyzeusv.solitaire.ui.toolbar.menu.HelpMenu
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
 import com.heyzeusv.solitaire.util.Redeals
@@ -110,13 +111,15 @@ sealed class Games : GameInfo, GameRules {
 /**
  *  Info that each game requires. Each game has its own unique [nameId] and belongs to a family
  *  which is retrieved using [familyId]. Each game on [GamesMenu] has a small preview image,
- *  [previewId], to give users an idea of the type of game it is. [dataStoreEnum] is used to ensure
- *  the correct [GameStats] is updated when updating stats.
+ *  [previewId], to give users an idea of the type of game it is. [helpId] is displayed in
+ *  [HelpMenu], so users can tell piles apart. [dataStoreEnum] is used to ensure the correct
+ *  [GameStats] is updated when updating stats.
  */
 interface GameInfo {
     @get:StringRes val nameId: Int
     @get:StringRes val familyId: Int
     @get:DrawableRes val previewId: Int
+    @get:DrawableRes val helpId: Int
     val dataStoreEnum: Game
 }
 
