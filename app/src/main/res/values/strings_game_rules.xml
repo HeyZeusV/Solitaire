@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="klondike_turn_one_stock_rules">• Click to move 1 card, face up, to Waste\n• When empty, click redeals all cards, face down, from Waste to Stock</string>
+    <string name="klondike_turn_one_waste_rules">• Click to move top card to valid pile in either Foundation or Tableau</string>
+    <string name="klondike_turn_one_foundation_rules">• Build up by suit and rank, starting from Ace and ending at King\n• Click to move top card to valid pile in Tableau</string>
+    <string name="klondike_turn_one_tableau_rules">• Build down by rank and alternating color\n• Any amount of cards can be moved as long as they are ranked correctly and alternating color\n• A King or pile starting with a King can be place on an empty spot</string>
+</resources>

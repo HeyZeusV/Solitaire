@@ -12,8 +12,8 @@
     <string name="menu_cdesc_close">Close %1$s menu.</string>
     <string name="menu_button_games">Games</string>
     <string name="menu_cdesc_games">Select game.</string>
-    <string name="menu_button_help">Help</string>
-    <string name="menu_cdesc_help">Game rules.</string>
+    <string name="menu_button_rules">Rules</string>
+    <string name="menu_cdesc_rules">Game rules.</string>
     <string name="menu_button_stats">Stats</string>
     <string name="menu_cdesc_stats">View stats.</string>
     <string name="menu_button_settings">Settings</string>
@@ -96,8 +96,8 @@
     <string name="animation_duration_fast">Fast - 250ms</string>
     <string name="animation_duration_fastest">Fastest - 100ms</string>
     <string name="settings_animation_duration">Animation Speed</string>
-    <string name="help_stock">Stock</string>
-    <string name="help_waste">Waste</string>
-    <string name="help_foundation">Foundation</string>
-    <string name="help_tableau">Tableau</string>
+    <string name="rules_stock">Stock</string>
+    <string name="rules_waste">Waste</string>
+    <string name="rules_foundation">Foundation</string>
+    <string name="rules_tableau">Tableau</string>
 </resources>

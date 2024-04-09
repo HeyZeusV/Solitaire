@@ -64,9 +64,9 @@ fun MenuContainer(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
-            option = MenuState.Help
+            option = MenuState.Rules
         ) {
-            HelpMenu(selectedGame = sbVM.selectedGame) {
+            RulesMenu(selectedGame = sbVM.selectedGame) {
                 menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
             }
         }

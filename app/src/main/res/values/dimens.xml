@@ -23,10 +23,6 @@
     <dimen name="buttonPaddingHorizontal">12.dp</dimen>
     <dimen name="buttonElevation">1.dp</dimen>
 
-    <!-- Help Screen (hs) -->
-    <dimen name="hsColumnSpacedBy">8.dp</dimen>
-    <dimen name="hsInfoSpacedBy">0.dp</dimen>
-
     <!-- Menu Button (mb) -->
     <dimen name="mbPaddingBottomDefault">8.dp</dimen>
     <dimen name="mbPaddingBottom">80.dp</dimen>
@@ -41,6 +37,10 @@
     <!-- Menu Screen (ms) -->
     <dimen name="msPaddingAll">8.dp</dimen>
     <dimen name="msColumnSpacedBy">8.dp</dimen>
+
+    <!-- Rules (r) -->
+    <dimen name="rColumnSpacedBy">8.dp</dimen>
+    <dimen name="rInfoSpacedBy">0.dp</dimen>
 
     <!-- Settings (s) -->
     <dimen name="sColumnSpacedBy">4.dp</dimen>

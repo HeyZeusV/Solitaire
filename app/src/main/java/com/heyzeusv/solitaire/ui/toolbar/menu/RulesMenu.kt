@@ -25,22 +25,22 @@ import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PileInfo
 
 /**
- *  Composable that displays Help Menu Screen where users can get info of currently [selectedGame].
- *  [onBackPress] navigates user away from [HelpMenu].
+ *  Composable that displays Rules Menu Screen where users can get info of currently [selectedGame].
+ *  [onBackPress] navigates user away from [RulesMenu].
  */
 @Composable
-fun HelpMenu(
+fun RulesMenu(
     selectedGame: Games,
     onBackPress: () -> Unit
 ) {
     MenuScreen(
-        menu = MenuState.Help,
-        modifier = Modifier.testTag("Help Menu"),
+        menu = MenuState.Rules,
+        modifier = Modifier.testTag("Rules Menu"),
         onBackPress = onBackPress
     ) {
         Column(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.hsColumnSpacedBy))
+            verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.rColumnSpacedBy))
         ) {
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -48,7 +48,7 @@ fun HelpMenu(
             ) {
                 Column(
                     verticalArrangement =
-                        Arrangement.spacedBy(dimensionResource(R.dimen.hsColumnSpacedBy)),
+                        Arrangement.spacedBy(dimensionResource(R.dimen.rColumnSpacedBy)),
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
                     Text(
@@ -58,7 +58,7 @@ fun HelpMenu(
                         style = MaterialTheme.typography.headlineLarge
                     )
                     Image(
-                        painter = painterResource(selectedGame.helpId),
+                        painter = painterResource(selectedGame.rulesId),
                         contentDescription = stringResource(selectedGame.nameId),
                         modifier = Modifier.fillMaxWidth(fraction = 0.8f),
                         contentScale = ContentScale.FillWidth
@@ -70,23 +70,23 @@ fun HelpMenu(
                     .fillMaxWidth()
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement =
-                    Arrangement.spacedBy(dimensionResource(R.dimen.hsColumnSpacedBy))
+                    Arrangement.spacedBy(dimensionResource(R.dimen.rColumnSpacedBy))
             ) {
                 PileInfo(
                     pileName = PileInfo.Stock,
-                    pileInfo = stringResource(R.string.klondike_turn_one_stock_help)
+                    pileInfo = stringResource(R.string.klondike_turn_one_stock_rules)
                 )
                 PileInfo(
                     pileName = PileInfo.Waste,
-                    pileInfo = stringResource(R.string.klondike_turn_one_waste_help)
+                    pileInfo = stringResource(R.string.klondike_turn_one_waste_rules)
                 )
                 PileInfo(
                     pileName = PileInfo.Foundation,
-                    pileInfo = stringResource(R.string.klondike_turn_one_foundation_help)
+                    pileInfo = stringResource(R.string.klondike_turn_one_foundation_rules)
                 )
                 PileInfo(
                     pileName = PileInfo.Tableau,
-                    pileInfo = stringResource(R.string.klondike_turn_one_tableau_help)
+                    pileInfo = stringResource(R.string.klondike_turn_one_tableau_rules)
                 )
             }
         }
@@ -100,7 +100,7 @@ fun PileInfo(
 ) {
     Column(
         modifier = Modifier.fillMaxWidth(),
-        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.hsInfoSpacedBy))
+        verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.rInfoSpacedBy))
     ) {
         Text(
             text = stringResource(pileName.nameId),
