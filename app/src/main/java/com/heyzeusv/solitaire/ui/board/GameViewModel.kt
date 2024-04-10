@@ -17,6 +17,7 @@ import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
+import com.heyzeusv.solitaire.ui.board.games.PuttPutt
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -143,7 +144,7 @@ class GameViewModel @Inject constructor(
     fun onStockClick(): MoveResult {
         return when (_selectedGame.value) {
             is Easthaven -> onStockClickEasthaven()
-            is Golf -> onStockClickGolf()
+            is Golf, is PuttPutt -> onStockClickGolf()
             else -> onStockClickStandard()
         }
     }

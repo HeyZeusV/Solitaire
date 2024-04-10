@@ -20,11 +20,11 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.LayoutInfo
-import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.layouts.GolfLayout
 import com.heyzeusv.solitaire.ui.board.layouts.StandardLayout
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
@@ -47,8 +47,8 @@ fun Board(
     val undoAnimation by gameVM.undoAnimation.collectAsState()
     val selectedGame by gameVM.selectedGame.collectAsState()
 
-    when (selectedGame) {
-        is Golf -> {
+    when (selectedGame.familyId) {
+        R.string.games_family_golf -> {
             GolfLayout(
                 modifier = modifier,
                 layInfo = gameVM.layoutInfo,

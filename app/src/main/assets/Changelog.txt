@@ -1,5 +1,5 @@
 v3.3.0
--New: Rules Screen, displays rules for each pile specific to currently selected game.
+-New: Rules Screen, displays rules for each pile specific to the currently selected game.
 
 v3.2.0
 -New: Golf is now available to play!
