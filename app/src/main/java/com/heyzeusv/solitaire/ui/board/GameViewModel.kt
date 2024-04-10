@@ -16,6 +16,7 @@ import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.Golf
+import com.heyzeusv.solitaire.ui.board.games.GolfRush
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.games.PuttPutt
 import com.heyzeusv.solitaire.util.AnimationDurations
@@ -144,7 +145,7 @@ class GameViewModel @Inject constructor(
     fun onStockClick(): MoveResult {
         return when (_selectedGame.value) {
             is Easthaven -> onStockClickEasthaven()
-            is Golf, is PuttPutt -> onStockClickGolf()
+            is Golf, is PuttPutt, is GolfRush -> onStockClickGolf()
             else -> onStockClickStandard()
         }
     }
@@ -278,7 +279,7 @@ class GameViewModel @Inject constructor(
                 }
             }
             _animateInfo.value = aniInfo
-            return Move
+            return MoveScore
         }
         return Illegal
     }
@@ -426,7 +427,7 @@ class GameViewModel @Inject constructor(
                         }
                     }
                     _animateInfo.value = aniInfo
-                    _autoCompleteCorrection++
+                    if (_selectedGame.value.autocompleteAvailable) _autoCompleteCorrection++
                     return MoveScore
                 }
             }
