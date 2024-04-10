@@ -48,6 +48,16 @@
 
 
     <string name="golf_stock_rules">• Click to move 1 card, face up, to Foundation</string>
-    <string name="golf_foundation_rules">• Build up or down by rank</string>
+    <string name="golf_foundation_rules">• Build up or down by rank\n• You cannot wrap from King to Ace or Ace to King</string>
     <string name="golf_tableau_rules">• Only one card, the top card, can be moved to the Foundation at a time</string>
+
+
+    <string name="putt_putt_stock_rules">• Click to move 1 card, face up, to Foundation</string>
+    <string name="putt_putt_foundation_rules">• Build up or down by rank\n• You can wrap from King to Ace or Ace to King</string>
+    <string name="putt_putt_tableau_rules">• Only one card, the top card, can be moved to the Foundation at a time</string>
+
+    
+    <string name="golf_rush_stock_rules">• Click to move 1 card, face up, to Foundation</string>
+    <string name="golf_rush_foundation_rules">• Build up or down by rank\n• You cannot wrap from King to Ace or Ace to King</string>
+    <string name="golf_rush_tableau_rules">• Only one card, the top card, can be moved to the Foundation at a time</string>
 </resources>

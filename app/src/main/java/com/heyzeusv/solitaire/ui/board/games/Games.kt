@@ -84,7 +84,7 @@ sealed class Games : GameInfo, GameRules {
             KlondikeTurnOne, KlondikeTurnThree, ClassicWestcliff,
             Easthaven, Yukon, Alaska,
             Russian, AustralianPatience, Canberra,
-            Golf
+            Golf, PuttPutt, GolfRush
         )
 
         /**
@@ -102,6 +102,8 @@ sealed class Games : GameInfo, GameRules {
                 Game.GAME_CLASSIC_WESTCLIFF -> ClassicWestcliff
                 Game.GAME_EASTHAVEN -> Easthaven
                 Game.GAME_GOLF -> Golf
+                Game.GAME_PUTT_PUTT -> PuttPutt
+                Game.GAME_GOLF_RUSH -> GolfRush
                 Game.UNRECOGNIZED -> KlondikeTurnOne
             }
         }

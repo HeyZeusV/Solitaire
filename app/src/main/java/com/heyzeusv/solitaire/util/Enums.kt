@@ -126,7 +126,8 @@ enum class MaxScore(val amount: Int) {
 enum class ResetFaceUpAmount(val amount: Int) {
     One(1),
     Four(4),
-    Five(5)
+    Five(5),
+    Seven(7)
 }
 
 /**
