@@ -28,6 +28,7 @@ import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.VerticalCardPile
 import com.heyzeusv.solitaire.util.AnimationDurations
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
@@ -91,12 +92,15 @@ fun GolfLayout(
                 it.actionAfterAnimation()
             }
         }
+        // end pile correction
+        val endPile =
+            if (it.end == GamePiles.ClubsFoundation) GamePiles.SpadesFoundation else it.end
         AnimateOffset(
             animateInfo = it,
             animationDurations = animationDurations,
             startOffset = layInfo.getPilePosition(it.start)
                 .plus(layInfo.getCardsYOffset(it.startTableauIndices.first())),
-            endOffset = layInfo.getPilePosition(it.end)
+            endOffset = layInfo.getPilePosition(endPile)
                 .plus(layInfo.getCardsYOffset(it.endTableauIndices.first())),
             updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
             updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
@@ -136,12 +140,12 @@ fun GolfLayout(
             }
             SolitairePile(
                 modifier = Modifier
-                    .layoutId("${Suits.SPADES.name} Foundation")
-                    .testTag("Foundation #$3"),
+                    .layoutId("Foundation")
+                    .testTag("Foundation #$0"),
                 cardDpSize = layInfo.getCardDpSize(),
-                pile = foundationList[3].displayPile,
+                pile = foundationList.first().displayPile,
                 emptyIconId = Suits.SPADES.emptyIcon,
-                onClick = { handleMoveResult(onFoundationClick(3)) }
+                onClick = { handleMoveResult(onFoundationClick(0)) }
             )
             SolitaireStock(
                 modifier = Modifier
@@ -164,7 +168,7 @@ fun GolfLayout(
             }
         }
     ) { measurables, constraints ->
-        val spadesFoundation = measurables.firstOrNull { it.layoutId == "SPADES Foundation" }
+        val spadesFoundation = measurables.firstOrNull { it.layoutId == "Foundation" }
         val stockPile = measurables.firstOrNull { it.layoutId == "Stock" }
 
         val tableauPile0 = measurables.firstOrNull { it.layoutId == "Tableau #0" }

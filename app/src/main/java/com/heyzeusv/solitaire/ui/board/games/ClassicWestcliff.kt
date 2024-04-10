@@ -8,6 +8,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
+import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
@@ -39,6 +40,7 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val startingScore: StartingScore = StartingScore.Four
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = true
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists()) return false }

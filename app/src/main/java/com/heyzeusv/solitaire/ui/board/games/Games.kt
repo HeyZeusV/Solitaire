@@ -13,6 +13,7 @@ import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.RulesMenu
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
+import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
@@ -134,6 +135,7 @@ interface GameInfo {
  *  to the score a game starts with due to starting with cards in [Foundation]. [maxScore] refers
  *  to the max score users can get from just placing Cards in [Foundation]. [autocompleteAvailable]
  *  determines if game offers autocomplete if [autocompleteTableauCheck] passes.
+ *  [numOfFoundationPiles] refers to the number of Foundation piles the game uses.
  */
 interface GameRules {
     val baseDeck: List<Card>
@@ -143,6 +145,7 @@ interface GameRules {
     val startingScore: StartingScore
     val maxScore: MaxScore
     val autocompleteAvailable: Boolean
+    val numOfFoundationPiles: NumberOfPiles
 
     /**
      *  Each game has its own rules to determine if user has progressed far enough to activate

@@ -69,7 +69,7 @@ class GameViewModel @Inject constructor(
     private val _stockWasteEmpty = MutableStateFlow(false)
     val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
-    private val _foundation = Suits.entries.map { Foundation(it) }.toMutableList()
+    private var _foundation = mutableListOf<Foundation>()
     val foundation: List<Foundation> get() = _foundation
 
     private val _tableau: MutableList<Tableau> = initializeTableau()
@@ -119,6 +119,7 @@ class GameViewModel @Inject constructor(
         }
         // clear the waste pile
         _waste.reset()
+        _foundation = initializeFoundation()
         _historyList.clear()
         _undoEnabled.value = false
         _undoAnimation.value = false
@@ -267,13 +268,13 @@ class GameViewModel @Inject constructor(
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
                     _stock.removeMany(cards.size)
-                    _foundation[3].add(cards)
+                    _foundation.first().add(cards)
                     _stock.updateDisplayPile()
                 }
             }
             aniInfo.actionAfterAnimation = {
                 mutex.withLock {
-                    _foundation[3].updateDisplayPile()
+                    _foundation.first().updateDisplayPile()
                     appendHistory(aniInfo.getUndoAnimateInfo())
                     gameWon()
                 }
@@ -552,6 +553,18 @@ class GameViewModel @Inject constructor(
             GamePiles.TableauSix -> return listOf(_tableau[6])
             GamePiles.TableauAll -> return _tableau
         }
+    }
+
+    /**
+     *  Initializes [Foundation] piles equal to [Games.numOfFoundationPiles].
+     */
+    private fun initializeFoundation(): MutableList<Foundation> {
+        val list = mutableListOf<Foundation>()
+        for (i in 0 until _selectedGame.value.numOfFoundationPiles.amount) {
+            val foundation = Foundation(Suits.entries[i % 4])
+            list.add(foundation)
+        }
+        return list
     }
 
     /**

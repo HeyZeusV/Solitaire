@@ -8,6 +8,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
+import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
@@ -38,6 +39,7 @@ data object PuttPutt : Games.GolfFamily() {
     override val startingScore: StartingScore = StartingScore.One
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = false
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.One
 
     /**
      *  Autocomplete is not available for this game.
@@ -55,7 +57,7 @@ data object PuttPutt : Games.GolfFamily() {
      *  Start single Foundation pile with a random Card.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList[3].reset(listOf(stock.remove()))
+        foundationList.first().reset(listOf(stock.remove()))
     }
 
     override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
@@ -73,7 +75,7 @@ data object PuttPutt : Games.GolfFamily() {
     override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
         if (cardsToAdd.isEmpty()) return false
         if (foundation.truePile.isEmpty()) return false
-        val firstCard = cardsToAdd[0]
+        val firstCard = cardsToAdd.first()
         val lastFoundationCard = foundation.truePile.last()
         return firstCard.value == lastFoundationCard.value + 1 ||
                firstCard.value == lastFoundationCard.value - 1 ||
@@ -83,6 +85,6 @@ data object PuttPutt : Games.GolfFamily() {
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // single Foundation pile should have all cards
-        return foundation[3].truePile.size == 52
+        return foundation.first().truePile.size == 52
     }
 }

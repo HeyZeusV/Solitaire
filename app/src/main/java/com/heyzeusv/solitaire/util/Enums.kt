@@ -10,6 +10,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.GameViewModel
@@ -127,6 +128,15 @@ enum class ResetFaceUpAmount(val amount: Int) {
     One(1),
     Four(4),
     Five(5),
+    Seven(7)
+}
+
+/**
+ *  Used to tell how many [Foundation] and [Tableau] piles currently selected [Games] uses.
+ */
+enum class NumberOfPiles(val amount: Int) {
+    One(1),
+    Four(4),
     Seven(7)
 }
 
