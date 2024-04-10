@@ -1,5 +1,7 @@
 v3.3.0
 -New: Rules Screen, displays rules for each pile specific to the currently selected game.
+-New: Putt Putt and Golf Rush, 2 easier variants of Golf.
+-Fixed: Golf score now increases when clicking on Stock.
 
 v3.2.0
 -New: Golf is now available to play!
