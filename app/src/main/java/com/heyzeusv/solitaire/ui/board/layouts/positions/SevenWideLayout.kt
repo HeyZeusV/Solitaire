@@ -38,10 +38,12 @@ data class SevenWideLayout(
     val tableauFour: IntOffset,
     val tableauFive: IntOffset,
     val tableauSix: IntOffset
-) {
-    val cardConstraints: Constraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
+) : XWideLayout {
+    override val cardConstraints: Constraints =
+        Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
     private val wasteWidth: Int = (cardWidth * 2) + cardSpacing
-    val wasteConstraints: Constraints =Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
+    override val wasteConstraints: Constraints =
+        Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
 
     // Waste <-> Stock offsets
     private val leftCardXOffset: Int = cardSpacing
@@ -66,10 +68,10 @@ data class SevenWideLayout(
      *  [tAllPile] is used to recursively call this function in order to get the correct offset,
      *  when [gamePile] is [GamePiles.TableauAll].
      */
-    fun getPilePosition(
+    override fun getPilePosition(
         gamePile: GamePiles,
-        stockWasteMove: Boolean = false,
-        tAllPile: GamePiles = GamePiles.TableauZero
+        stockWasteMove: Boolean,
+        tAllPile: GamePiles
     ): IntOffset {
         return when (gamePile) {
             GamePiles.Stock -> stockPile
@@ -78,10 +80,10 @@ data class SevenWideLayout(
             } else {
                 wastePile.plusX(cardWidth + cardSpacing)
             }
-            GamePiles.ClubsFoundation -> foundationClubs
-            GamePiles.DiamondsFoundation -> foundationDiamonds
-            GamePiles.HeartsFoundation -> foundationHearts
-            GamePiles.SpadesFoundation -> foundationSpades
+            GamePiles.FoundationClubsOne -> foundationClubs
+            GamePiles.FoundationDiamondsOne -> foundationDiamonds
+            GamePiles.FoundationHeartsOne -> foundationHearts
+            GamePiles.FoundationSpadesOne -> foundationSpades
             GamePiles.TableauZero -> tableauZero
             GamePiles.TableauOne -> tableauOne
             GamePiles.TableauTwo -> tableauTwo
@@ -90,6 +92,7 @@ data class SevenWideLayout(
             GamePiles.TableauFive -> tableauFive
             GamePiles.TableauSix -> tableauSix
             GamePiles.TableauAll -> getPilePosition(tAllPile)
+            else -> IntOffset.Zero
         }
     }
 
@@ -97,7 +100,7 @@ data class SevenWideLayout(
      *  Used by animations involving Tableau piles in order to determine additional Y offset needed
      *  since animation could only involve a sublist of Tableau, rather than entire pile.
      */
-    fun getCardsYOffset(index: Int): IntOffset {
+    override fun getCardsYOffset(index: Int): IntOffset {
         return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
     }
 
@@ -131,7 +134,7 @@ data class SevenWideLayout(
      *  Returns size of [Card] in dp in the form of [DpSize].
      */
     @Composable
-    fun getCardDpSize(): DpSize = DpSize(cardWidth.toDp(), cardHeight.toDp())
+    override fun getCardDpSize(): DpSize = DpSize(cardWidth.toDp(), cardHeight.toDp())
 }
 
 /**

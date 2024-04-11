@@ -94,7 +94,7 @@ fun GolfLayout(
         }
         // end pile correction
         val endPile =
-            if (it.end == GamePiles.ClubsFoundation) GamePiles.SpadesFoundation else it.end
+            if (it.end == GamePiles.FoundationClubsOne) GamePiles.FoundationSpadesOne else it.end
         AnimateOffset(
             animateInfo = it,
             animationDurations = animationDurations,

@@ -45,28 +45,28 @@ enum class Suits(
         Color.Black,
         R.drawable.suit_club,
         R.drawable.foundation_club_empty,
-        GamePiles.ClubsFoundation
+        GamePiles.FoundationClubsOne
     ),
     DIAMONDS(
         R.string.suits_diamonds,
         Color.Red,
         R.drawable.suit_diamond,
         R.drawable.foundation_diamond_empty,
-        GamePiles.DiamondsFoundation
+        GamePiles.FoundationDiamondsOne
     ),
     HEARTS(
         R.string.suits_hearts,
         Color.Red,
         R.drawable.suit_heart,
         R.drawable.foundation_heart_empty,
-        GamePiles.HeartsFoundation
+        GamePiles.FoundationHeartsOne
     ),
     SPADES(
         R.string.suits_spades,
         Color.Black,
         R.drawable.suit_spade,
         R.drawable.foundation_spade_empty,
-        GamePiles.SpadesFoundation
+        GamePiles.FoundationSpadesOne
     )
 }
 
@@ -182,10 +182,14 @@ enum class MenuState(
 enum class GamePiles {
     Stock,
     Waste,
-    ClubsFoundation,
-    DiamondsFoundation,
-    HeartsFoundation,
-    SpadesFoundation,
+    FoundationClubsOne,
+    FoundationDiamondsOne,
+    FoundationHeartsOne,
+    FoundationSpadesOne,
+    FoundationClubsTwo,
+    FoundationDiamondsTwo,
+    FoundationHeartsTwo,
+    FoundationSpadesTwo,
     TableauZero,
     TableauOne,
     TableauTwo,
@@ -193,6 +197,9 @@ enum class GamePiles {
     TableauFour,
     TableauFive,
     TableauSix,
+    TableauSeven,
+    TableauEight,
+    TableauNine,
     TableauAll
 }
 

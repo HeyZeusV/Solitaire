@@ -261,7 +261,7 @@ class GameViewModel @Inject constructor(
             val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
-                end = GamePiles.SpadesFoundation,
+                end = GamePiles.FoundationSpadesOne,
                 animatedCards = cards,
                 flipCardInfo = FlipCardInfo.FaceUp.SinglePile
             )
@@ -540,10 +540,14 @@ class GameViewModel @Inject constructor(
                 checkStockWasteEmpty()
                 return listOf(_waste)
             }
-            GamePiles.ClubsFoundation -> return listOf(_foundation[0])
-            GamePiles.DiamondsFoundation -> return listOf(_foundation[1])
-            GamePiles.HeartsFoundation -> return listOf(_foundation[2])
-            GamePiles.SpadesFoundation -> return listOf(_foundation[3])
+            GamePiles.FoundationClubsOne -> return listOf(_foundation[0])
+            GamePiles.FoundationDiamondsOne -> return listOf(_foundation[1])
+            GamePiles.FoundationHeartsOne -> return listOf(_foundation[2])
+            GamePiles.FoundationSpadesOne -> return listOf(_foundation[3])
+            GamePiles.FoundationClubsTwo -> return listOf(_foundation[4])
+            GamePiles.FoundationDiamondsTwo -> return listOf(_foundation[5])
+            GamePiles.FoundationHeartsTwo -> return listOf(_foundation[6])
+            GamePiles.FoundationSpadesTwo -> return listOf(_foundation[7])
             GamePiles.TableauZero -> return listOf(_tableau[0])
             GamePiles.TableauOne -> return listOf(_tableau[1])
             GamePiles.TableauTwo -> return listOf(_tableau[2])
@@ -551,6 +555,9 @@ class GameViewModel @Inject constructor(
             GamePiles.TableauFour -> return listOf(_tableau[4])
             GamePiles.TableauFive -> return listOf(_tableau[5])
             GamePiles.TableauSix -> return listOf(_tableau[6])
+            GamePiles.TableauSeven -> return listOf(_tableau[7])
+            GamePiles.TableauEight -> return listOf(_tableau[8])
+            GamePiles.TableauNine -> return listOf(_tableau[9])
             GamePiles.TableauAll -> return _tableau
         }
     }
