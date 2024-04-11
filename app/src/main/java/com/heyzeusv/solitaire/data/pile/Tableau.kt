@@ -12,7 +12,7 @@ import com.heyzeusv.solitaire.util.notInOrder
  *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
  *  condition to add a new pile to the end of [truePile].
  */
-class Tableau(val gamePile: GamePiles, initialPile: List<Card>) : Pile(initialPile) {
+class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     /**
      *  Adds given [cards] to [truePile].
      */

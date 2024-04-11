@@ -40,6 +40,7 @@ data object GolfRush : Games.GolfFamily() {
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = false
     override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.One
+    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     /**
      *  Autocomplete is not available for this game.

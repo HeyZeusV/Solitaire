@@ -69,10 +69,10 @@ class GameViewModel @Inject constructor(
     private val _stockWasteEmpty = MutableStateFlow(false)
     val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
-    private var _foundation = mutableListOf<Foundation>()
+    private val _foundation = mutableListOf<Foundation>()
     val foundation: List<Foundation> get() = _foundation
 
-    private val _tableau: MutableList<Tableau> = initializeTableau()
+    private val _tableau = mutableListOf<Tableau>()
     val tableau: List<Tableau> get() = _tableau
 
     private val _historyList = mutableListOf<AnimateInfo>()
@@ -119,7 +119,8 @@ class GameViewModel @Inject constructor(
         }
         // clear the waste pile
         _waste.reset()
-        _foundation = initializeFoundation()
+        initializeFoundation()
+        initializeTableau()
         _historyList.clear()
         _undoEnabled.value = false
         _undoAnimation.value = false
@@ -289,7 +290,7 @@ class GameViewModel @Inject constructor(
      *  Runs when user taps on Waste pile. Checks to see if top [Card] can be moved to any other
      *  pile except [Stock]. If so, it is removed from [Waste].
      */
-     fun onWasteClick(): MoveResult {
+    fun onWasteClick(): MoveResult {
         _waste.let {
             if (it.truePile.isNotEmpty()) {
                 val result = checkLegalMove(
@@ -316,7 +317,7 @@ class GameViewModel @Inject constructor(
         if (foundationPile.truePile.isNotEmpty()) {
             val result = checkLegalMove(
                 cards = listOf(foundationPile.truePile.last()),
-                start = foundationPile.suit.gamePile,
+                start = foundationPile.gamePile,
                 ifLegal = { foundationPile.remove() }
             ) { foundationPile.updateDisplayPile() }
             if (result != Illegal) {
@@ -368,8 +369,8 @@ class GameViewModel @Inject constructor(
                     _tableau.forEachIndexed { i, tableau ->
                         if (tableau.truePile.isEmpty()) return@forEachIndexed
                         _foundation.forEach { foundation ->
-                            val lastTableauCard = tableau.truePile.takeLast(1)
-                            if (_selectedGame.value.canAddToFoundation(foundation, lastTableauCard)) {
+                            val lastTCard = tableau.truePile.takeLast(1)
+                            if (_selectedGame.value.canAddToFoundation(foundation, lastTCard)) {
                                 delay(autoCompleteDelay)
                                 onTableauClick(i, tableau.truePile.size - 1)
                             }
@@ -408,7 +409,7 @@ class GameViewModel @Inject constructor(
                 if (selectedGame.value.canAddToFoundation(it, cards)) {
                     val aniInfo = AnimateInfo(
                         start = start,
-                        end = it.suit.gamePile,
+                        end = it.gamePile,
                         animatedCards = cards,
                         startTableauIndices = listOf(startIndex),
                         tableauCardFlipInfo = tableauCardFlipInfo
@@ -565,30 +566,21 @@ class GameViewModel @Inject constructor(
     /**
      *  Initializes [Foundation] piles equal to [Games.numOfFoundationPiles].
      */
-    private fun initializeFoundation(): MutableList<Foundation> {
-        val list = mutableListOf<Foundation>()
+    private fun initializeFoundation() {
+        _foundation.clear()
         for (i in 0 until _selectedGame.value.numOfFoundationPiles.amount) {
-            val foundation = Foundation(Suits.entries[i % 4])
-            list.add(foundation)
+            _foundation.add(Foundation(Suits.entries[i % 4], GamePiles.foundationPiles[i]))
         }
-        return list
     }
 
     /**
-     *  Initializes 7 [Tableau] with [initialPiles].
+     *  Initializes [Tableau] piles equal to [Games.numOfTableauPiles].
      */
-    private fun initializeTableau(
-        initialPiles: List<List<Card>> = List(7) { emptyList() }
-    ): MutableList<Tableau> {
-        return mutableListOf(
-            Tableau(GamePiles.TableauZero, initialPiles[0]),
-            Tableau(GamePiles.TableauOne, initialPiles[1]),
-            Tableau(GamePiles.TableauTwo, initialPiles[2]),
-            Tableau(GamePiles.TableauThree, initialPiles[3]),
-            Tableau(GamePiles.TableauFour, initialPiles[4]),
-            Tableau(GamePiles.TableauFive, initialPiles[5]),
-            Tableau(GamePiles.TableauSix, initialPiles[6])
-        )
+    private fun initializeTableau() {
+        _tableau.clear()
+        for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
+            _tableau.add(Tableau(GamePiles.tableauPiles[i]))
+        }
     }
 
     /**

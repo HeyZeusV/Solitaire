@@ -41,6 +41,7 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = true
     override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
+    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists()) return false }

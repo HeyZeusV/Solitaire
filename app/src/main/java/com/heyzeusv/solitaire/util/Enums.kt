@@ -30,43 +30,37 @@ import com.heyzeusv.solitaire.util.theme.WasteRules
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
  *  Includes [suit] in String Resource form, [color] of Suit, drawable id of its [icon], the
- *  drawable id of [emptyIcon] which is shown when its Foundation pile is empty, and the [GamePiles]
- *  associated to it by given [gamePile].
+ *  drawable id of [emptyIcon] which is shown when its Foundation pile is empty.
  */
 enum class Suits(
     @StringRes val suit: Int,
     val color: Color,
     @DrawableRes val icon: Int,
-    @DrawableRes val emptyIcon: Int,
-    val gamePile: GamePiles
+    @DrawableRes val emptyIcon: Int
 ) {
     CLUBS(
         R.string.suits_clubs,
         Color.Black,
         R.drawable.suit_club,
-        R.drawable.foundation_club_empty,
-        GamePiles.FoundationClubsOne
+        R.drawable.foundation_club_empty
     ),
     DIAMONDS(
         R.string.suits_diamonds,
         Color.Red,
         R.drawable.suit_diamond,
-        R.drawable.foundation_diamond_empty,
-        GamePiles.FoundationDiamondsOne
+        R.drawable.foundation_diamond_empty
     ),
     HEARTS(
         R.string.suits_hearts,
         Color.Red,
         R.drawable.suit_heart,
-        R.drawable.foundation_heart_empty,
-        GamePiles.FoundationHeartsOne
+        R.drawable.foundation_heart_empty
     ),
     SPADES(
         R.string.suits_spades,
         Color.Black,
         R.drawable.suit_spade,
-        R.drawable.foundation_spade_empty,
-        GamePiles.FoundationSpadesOne
+        R.drawable.foundation_spade_empty
     )
 }
 
@@ -200,7 +194,18 @@ enum class GamePiles {
     TableauSeven,
     TableauEight,
     TableauNine,
-    TableauAll
+    TableauAll;
+
+    companion object {
+        val foundationPiles = listOf(
+            FoundationClubsOne, FoundationDiamondsOne, FoundationHeartsOne, FoundationSpadesOne,
+            FoundationClubsTwo, FoundationDiamondsTwo, FoundationHeartsTwo, FoundationSpadesTwo
+        )
+        val tableauPiles = listOf(
+            TableauZero, TableauOne, TableauTwo, TableauThree, TableauFour,
+            TableauFive, TableauSix, TableauSeven, TableauEight, TableauNine
+        )
+    }
 }
 
 /**

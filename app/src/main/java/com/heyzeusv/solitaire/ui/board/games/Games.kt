@@ -136,6 +136,7 @@ interface GameInfo {
  *  to the max score users can get from just placing Cards in [Foundation]. [autocompleteAvailable]
  *  determines if game offers autocomplete if [autocompleteTableauCheck] passes.
  *  [numOfFoundationPiles] refers to the number of Foundation piles the game uses.
+ *  [numOfTableauPiles] refers to the number of Tableau piles the game uses.
  */
 interface GameRules {
     val baseDeck: List<Card>
@@ -146,6 +147,7 @@ interface GameRules {
     val maxScore: MaxScore
     val autocompleteAvailable: Boolean
     val numOfFoundationPiles: NumberOfPiles
+    val numOfTableauPiles: NumberOfPiles
 
     /**
      *  Each game has its own rules to determine if user has progressed far enough to activate

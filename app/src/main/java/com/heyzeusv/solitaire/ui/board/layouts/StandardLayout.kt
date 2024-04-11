@@ -286,7 +286,7 @@ fun BoardLayout480Preview() {
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -306,7 +306,7 @@ fun BoardLayout720Preview() {
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -326,7 +326,7 @@ fun BoardLayout1080Preview() {
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -346,7 +346,7 @@ fun BoardLayout1440Preview() {
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -366,7 +366,7 @@ fun BoardLayout2160Preview() {
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
