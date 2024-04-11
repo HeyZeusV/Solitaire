@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts.layouts
+package com.heyzeusv.solitaire.ui.board.boards.layouts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.Layout
@@ -47,6 +47,19 @@ data class TenWideLayout(
         Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
     override val wasteConstraints: Constraints =
         Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
+
+    override val multiPileLayoutIds: List<String> = listOf(
+        "Tableau Zero Card",
+        "Tableau One Card",
+        "Tableau Two Card",
+        "Tableau Three Card",
+        "Tableau Four Card",
+        "Tableau Five Card",
+        "Tableau Six Card",
+        "Tableau Seven Card",
+        "Tableau Eight Card",
+        "Tableau Nine Card",
+    )
 
     /**
      *  Used by movement animations to determine given [gamePile] offset. Animations between

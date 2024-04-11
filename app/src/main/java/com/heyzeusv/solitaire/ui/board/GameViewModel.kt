@@ -18,7 +18,7 @@ import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.games.GolfRush
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.games.PuttPutt
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.ScreenLayouts
+import com.heyzeusv.solitaire.ui.board.boards.layouts.ScreenLayouts
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult

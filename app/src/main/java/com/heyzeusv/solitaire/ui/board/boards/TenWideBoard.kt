@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts
+package com.heyzeusv.solitaire.ui.board.boards
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -10,7 +10,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.testTag
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.R
@@ -22,25 +21,17 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.board.AnimateOffset
-import com.heyzeusv.solitaire.ui.board.HorizontalCardPileWithFlip
 import com.heyzeusv.solitaire.ui.board.MultiPileCardWithFlip
 import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.TableauPileWithFlip
 import com.heyzeusv.solitaire.ui.board.VerticalCardPile
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.SevenWideLayout
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width1080
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width1440
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width2160
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width480
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width720
+import com.heyzeusv.solitaire.ui.board.boards.layouts.TenWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
-import com.heyzeusv.solitaire.util.PreviewUtil
-import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
@@ -54,9 +45,9 @@ import kotlinx.coroutines.delay
  *  [Stock] and shown by [Waste].
  */
 @Composable
-fun StandardBoard(
+fun TenWideBoard(
     modifier: Modifier = Modifier,
-    layout: SevenWideLayout,
+    layout: TenWideLayout,
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
@@ -124,14 +115,7 @@ fun StandardBoard(
         content = {
             animateInfo?.let {
                 when (it.flipCardInfo) {
-                    FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
-                        HorizontalCardPileWithFlip(
-                            layout = layout,
-                            animateInfo = it,
-                            animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Horizontal Pile")
-                        )
-                    }
+                    FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> { }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
                         MultiPileCardWithFlip(
                             layout = layout,
@@ -157,14 +141,14 @@ fun StandardBoard(
                     )
                 }
             }
-            Suits.entries.forEachIndexed { index, suit ->
+            foundationList.forEachIndexed { index, foundation ->
                 SolitairePile(
                     modifier = Modifier
-                        .layoutId("${suit.name} Foundation")
+                        .layoutId("Foundation #$index")
                         .testTag("Foundation #$index"),
                     cardDpSize = layout.getCardDpSize(),
-                    pile = foundationList[index].displayPile,
-                    emptyIconId = suit.emptyIcon,
+                    pile = foundation.displayPile,
+                    emptyIconId = foundation.suit.emptyIcon,
                     onClick = { handleMoveResult(onFoundationClick(index)) }
                 )
             }
@@ -199,23 +183,29 @@ fun StandardBoard(
             }
         }
     ) { measurables, constraints ->
-        val clubsFoundation = measurables.firstOrNull { it.layoutId == "CLUBS Foundation" }
-        val diamondsFoundation = measurables.firstOrNull { it.layoutId == "DIAMONDS Foundation" }
-        val heartsFoundation = measurables.firstOrNull { it.layoutId == "HEARTS Foundation" }
-        val spadesFoundation = measurables.firstOrNull { it.layoutId == "SPADES Foundation" }
+        val foundationClubsOne = measurables.firstOrNull { it.layoutId == "Foundation #0" }
+        val foundationDiamondsOne = measurables.firstOrNull { it.layoutId == "Foundation #1" }
+        val foundationHeartsOne = measurables.firstOrNull { it.layoutId == "Foundation #2" }
+        val foundationSpadesOne = measurables.firstOrNull { it.layoutId == "Foundation #3" }
+        val foundationClubsTwo = measurables.firstOrNull { it.layoutId == "Foundation #4" }
+        val foundationDiamondsTwo = measurables.firstOrNull { it.layoutId == "Foundation #5" }
+        val foundationHeartsTwo = measurables.firstOrNull { it.layoutId == "Foundation #6" }
+        val foundationSpadesTwo = measurables.firstOrNull { it.layoutId == "Foundation #7" }
+
         val wastePile = measurables.firstOrNull { it.layoutId == "Waste" }
         val stockPile = measurables.firstOrNull { it.layoutId == "Stock" }
 
-        var tableauPile0 = measurables.firstOrNull { it.layoutId == "Tableau #0" }
-        var tableauPile1 = measurables.firstOrNull { it.layoutId == "Tableau #1" }
-        var tableauPile2 = measurables.firstOrNull { it.layoutId == "Tableau #2" }
-        var tableauPile3 = measurables.firstOrNull { it.layoutId == "Tableau #3" }
-        var tableauPile4 = measurables.firstOrNull { it.layoutId == "Tableau #4" }
-        var tableauPile5 = measurables.firstOrNull { it.layoutId == "Tableau #5" }
-        var tableauPile6 = measurables.firstOrNull { it.layoutId == "Tableau #6" }
+        var tableauZero = measurables.firstOrNull { it.layoutId == "Tableau #0" }
+        var tableauOne = measurables.firstOrNull { it.layoutId == "Tableau #1" }
+        var tableauTwo = measurables.firstOrNull { it.layoutId == "Tableau #2" }
+        var tableauThree = measurables.firstOrNull { it.layoutId == "Tableau #3" }
+        var tableauFour = measurables.firstOrNull { it.layoutId == "Tableau #4" }
+        var tableauFive = measurables.firstOrNull { it.layoutId == "Tableau #5" }
+        var tableauSix = measurables.firstOrNull { it.layoutId == "Tableau #6" }
+        var tableauSeven = measurables.firstOrNull { it.layoutId == "Tableau #7" }
+        var tableauEight = measurables.firstOrNull { it.layoutId == "Tableau #8" }
+        var tableauNine = measurables.firstOrNull { it.layoutId == "Tableau #9" }
 
-        val animatedHorizontalPile =
-            measurables.firstOrNull { it.layoutId == "Animated Horizontal Pile" }
         val animatedVerticalPile =
             measurables.firstOrNull { it.layoutId == "Animated Vertical Pile" }
         val animatedMultiPile = measurables.firstOrNull { it.layoutId == "Animated Multi Pile" }
@@ -232,7 +222,6 @@ fun StandardBoard(
 
             if (animatedOffset != IntOffset.Zero) {
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
-                animatedHorizontalPile?.measure(wasteConstraints)?.place(animatedOffset, 2f)
                 animateInfo?.let {
                     it.tableauCardFlipInfo?.let { info ->
                         val pile =
@@ -241,13 +230,16 @@ fun StandardBoard(
                         animatedTableauCard?.measure(tableauConstraints)
                             ?.place(tableauCardFlipPosition, 1f)
                         when (pile) {
-                            GamePiles.TableauZero -> tableauPile0 = null
-                            GamePiles.TableauOne -> tableauPile1 = null
-                            GamePiles.TableauTwo -> tableauPile2 = null
-                            GamePiles.TableauThree -> tableauPile3 = null
-                            GamePiles.TableauFour -> tableauPile4 = null
-                            GamePiles.TableauFive -> tableauPile5 = null
-                            GamePiles.TableauSix -> tableauPile6 = null
+                            GamePiles.TableauZero -> tableauZero = null
+                            GamePiles.TableauOne -> tableauOne = null
+                            GamePiles.TableauTwo -> tableauTwo = null
+                            GamePiles.TableauThree -> tableauThree = null
+                            GamePiles.TableauFour -> tableauFour = null
+                            GamePiles.TableauFive -> tableauFive = null
+                            GamePiles.TableauSix -> tableauSix = null
+                            GamePiles.TableauSeven -> tableauSeven = null
+                            GamePiles.TableauEight -> tableauEight = null
+                            GamePiles.TableauNine -> tableauNine = null
                             else -> { }
                         }
                     }
@@ -255,120 +247,27 @@ fun StandardBoard(
             }
             animatedMultiPile?.measure(constraints)?.place(IntOffset.Zero, 2f)
 
-            clubsFoundation?.measure(cardConstraints)?.place(layout.foundationClubs)
-            diamondsFoundation?.measure(cardConstraints)?.place(layout.foundationDiamonds)
-            heartsFoundation?.measure(cardConstraints)?.place(layout.foundationHearts)
-            spadesFoundation?.measure(cardConstraints)?.place(layout.foundationSpades)
+            foundationClubsOne?.measure(cardConstraints)?.place(layout.foundationClubsOne)
+            foundationDiamondsOne?.measure(cardConstraints)?.place(layout.foundationDiamondsOne)
+            foundationHeartsOne?.measure(cardConstraints)?.place(layout.foundationHeartsOne)
+            foundationSpadesOne?.measure(cardConstraints)?.place(layout.foundationSpadesOne)
+            foundationClubsTwo?.measure(cardConstraints)?.place(layout.foundationClubsTwo)
+            foundationDiamondsTwo?.measure(cardConstraints)?.place(layout.foundationDiamondsTwo)
+            foundationHeartsTwo?.measure(cardConstraints)?.place(layout.foundationHeartsTwo)
+            foundationSpadesTwo?.measure(cardConstraints)?.place(layout.foundationSpadesTwo)
             wastePile?.measure(wasteConstraints)?.place(layout.wastePile)
             stockPile?.measure(cardConstraints)?.place(layout.stockPile)
 
-            tableauPile0?.measure(tableauConstraints)?.place(layout.tableauZero)
-            tableauPile1?.measure(tableauConstraints)?.place(layout.tableauOne)
-            tableauPile2?.measure(tableauConstraints)?.place(layout.tableauTwo)
-            tableauPile3?.measure(tableauConstraints)?.place(layout.tableauThree)
-            tableauPile4?.measure(tableauConstraints)?.place(layout.tableauFour)
-            tableauPile5?.measure(tableauConstraints)?.place(layout.tableauFive)
-            tableauPile6?.measure(tableauConstraints)?.place(layout.tableauSix)
-        }
-    }
-}
-
-@Preview(device = "id:Nexus One")
-@Composable
-fun StandardBoard480Preview() {
-    PreviewUtil().apply {
-        Preview {
-            StandardBoard(
-                layout = Width480(0).sevenWideLayout,
-                animationDurations = animationDurations,
-                animateInfo = animateInfo,
-                undoAnimation = false,
-                drawAmount = DrawAmount.One,
-                stock = Stock(pile),
-                waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
-            )
-        }
-    }
-}
-
-@Preview(device = "id:Nexus 4")
-@Composable
-fun StandardBoard720Preview() {
-    PreviewUtil().apply {
-        Preview {
-            StandardBoard(
-                layout = Width720(24).sevenWideLayout,
-                animationDurations = animationDurations,
-                animateInfo = animateInfo,
-                undoAnimation = false,
-                drawAmount = DrawAmount.One,
-                stock = Stock(pile),
-                waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
-            )
-        }
-    }
-}
-
-@Preview
-@Composable
-fun StandardBoard1080Preview() {
-    PreviewUtil().apply {
-        Preview {
-            StandardBoard(
-                layout = Width1080(0).sevenWideLayout,
-                animationDurations = animationDurations,
-                animateInfo = animateInfo,
-                undoAnimation = false,
-                drawAmount = DrawAmount.One,
-                stock = Stock(pile),
-                waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
-            )
-        }
-    }
-}
-
-@Preview(device = "id:pixel_xl")
-@Composable
-fun StandardBoard1440Preview() {
-    PreviewUtil().apply {
-        Preview {
-            StandardBoard(
-                layout = Width1440(0).sevenWideLayout,
-                animationDurations = animationDurations,
-                animateInfo = animateInfo,
-                undoAnimation = false,
-                drawAmount = DrawAmount.One,
-                stock = Stock(pile),
-                waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
-            )
-        }
-    }
-}
-
-@Preview(device = "spec:width=2160px,height=3840px,dpi=640")
-@Composable
-fun StandardBoard2160Preview() {
-    PreviewUtil().apply {
-        Preview {
-            StandardBoard(
-                layout = Width2160(0).sevenWideLayout,
-                animationDurations = animationDurations,
-                animateInfo = animateInfo,
-                undoAnimation = false,
-                drawAmount = DrawAmount.One,
-                stock = Stock(pile),
-                waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
-                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
-            )
+            tableauZero?.measure(tableauConstraints)?.place(layout.tableauZero)
+            tableauOne?.measure(tableauConstraints)?.place(layout.tableauOne)
+            tableauTwo?.measure(tableauConstraints)?.place(layout.tableauTwo)
+            tableauThree?.measure(tableauConstraints)?.place(layout.tableauThree)
+            tableauFour?.measure(tableauConstraints)?.place(layout.tableauFour)
+            tableauFive?.measure(tableauConstraints)?.place(layout.tableauFive)
+            tableauSix?.measure(tableauConstraints)?.place(layout.tableauSix)
+            tableauSeven?.measure(tableauConstraints)?.place(layout.tableauSeven)
+            tableauEight?.measure(tableauConstraints)?.place(layout.tableauEight)
+            tableauNine?.measure(tableauConstraints)?.place(layout.tableauNine)
         }
     }
 }

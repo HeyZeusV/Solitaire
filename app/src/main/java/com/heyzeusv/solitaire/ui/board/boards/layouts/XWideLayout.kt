@@ -1,10 +1,11 @@
-package com.heyzeusv.solitaire.ui.board.layouts.layouts
+package com.heyzeusv.solitaire.ui.board.boards.layouts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.ui.board.MultiPileCardWithFlip
 import com.heyzeusv.solitaire.util.GamePiles
 
 interface XWideLayout {
@@ -34,4 +35,9 @@ interface XWideLayout {
      */
     @Composable
     fun getCardDpSize(): DpSize
+
+    /**
+     *  Layout ids used by [MultiPileCardWithFlip].
+     */
+    val multiPileLayoutIds: List<String>
 }

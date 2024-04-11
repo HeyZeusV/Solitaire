@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts
+package com.heyzeusv.solitaire.ui.board.boards
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -26,7 +26,7 @@ import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.VerticalCardPile
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.Suits

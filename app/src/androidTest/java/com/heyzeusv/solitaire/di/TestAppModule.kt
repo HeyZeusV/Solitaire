@@ -8,8 +8,8 @@ import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.ScreenLayouts
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width1080
+import com.heyzeusv.solitaire.ui.board.boards.layouts.ScreenLayouts
+import com.heyzeusv.solitaire.ui.board.boards.layouts.Width1080
 import com.heyzeusv.solitaire.util.SettingsSerializer
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module

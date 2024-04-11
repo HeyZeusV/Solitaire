@@ -24,9 +24,11 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
-import com.heyzeusv.solitaire.ui.board.layouts.GolfBoard
-import com.heyzeusv.solitaire.ui.board.layouts.StandardBoard
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.boards.GolfBoard
+import com.heyzeusv.solitaire.ui.board.boards.StandardBoard
+import com.heyzeusv.solitaire.ui.board.boards.TenWideBoard
+import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.boards.layouts.XWideLayout
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
@@ -63,6 +65,29 @@ fun Board(
                 onStockClick = gameVM::onStockClick,
                 stockWasteEmpty = { stockWasteEmpty },
                 foundationList = gameVM.foundation,
+                tableauList = gameVM.tableau,
+                onTableauClick = gameVM::onTableauClick
+            )
+        }
+        R.string.games_family_spider -> {
+            TenWideBoard(
+                modifier = modifier,
+                layout = gameVM.screenLayouts.tenWideLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                updateAnimateInfo = gameVM::updateAnimateInfo,
+                updateUndoEnabled = gameVM::updateUndoEnabled,
+                undoAnimation = undoAnimation,
+                updateUndoAnimation = gameVM::updateUndoAnimation,
+                drawAmount = selectedGame.drawAmount,
+                handleMoveResult = sbVM::handleMoveResult,
+                stock = gameVM.stock,
+                onStockClick = gameVM::onStockClick,
+                waste = gameVM.waste,
+                stockWasteEmpty = { stockWasteEmpty },
+                onWasteClick = gameVM::onWasteClick,
+                foundationList = gameVM.foundation,
+                onFoundationClick = gameVM::onFoundationClick,
                 tableauList = gameVM.tableau,
                 onTableauClick = gameVM::onTableauClick
             )
@@ -240,7 +265,7 @@ fun HorizontalCardPileWithFlip(
  */
 @Composable
 fun MultiPileCardWithFlip(
-    layout: SevenWideLayout,
+    layout: XWideLayout,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
@@ -253,15 +278,18 @@ fun MultiPileCardWithFlip(
         var tFourCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var tFiveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var tSixCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tSevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tEightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tNineCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var flipRotation by remember { mutableFloatStateOf(0f) }
 
         for (i in 0 until it.animatedCards.size) {
             AnimateOffset(
                 animateInfo = it,
                 animationDurations = animationDurations,
-                startOffset = layout.getPilePosition(it.start, tAllPile = GamePiles.entries[i + 6])
+                startOffset = layout.getPilePosition(it.start, tAllPile = GamePiles.entries[i + 10])
                     .plus(layout.getCardsYOffset(it.startTableauIndices[i])),
-                endOffset = layout.getPilePosition(it.end, tAllPile = GamePiles.entries[i + 6])
+                endOffset = layout.getPilePosition(it.end, tAllPile = GamePiles.entries[i + 10])
                     .plus(layout.getCardsYOffset(it.endTableauIndices[i])),
                 updateXOffset = { value ->
                     when (i) {
@@ -272,6 +300,9 @@ fun MultiPileCardWithFlip(
                         4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
                         5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
                         6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
+                        7 -> tSevenCardOffset = tSevenCardOffset.copy(x = value)
+                        8 -> tEightCardOffset = tEightCardOffset.copy(x = value)
+                        9 -> tNineCardOffset = tNineCardOffset.copy(x = value)
                     }
                 },
                 updateYOffset = { value ->
@@ -283,6 +314,9 @@ fun MultiPileCardWithFlip(
                         4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
                         5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
                         6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
+                        7 -> tSevenCardOffset = tSevenCardOffset.copy(y = value)
+                        8 -> tEightCardOffset = tEightCardOffset.copy(y = value)
+                        9 -> tNineCardOffset = tNineCardOffset.copy(y = value)
                     }
                 }
             )
@@ -298,18 +332,7 @@ fun MultiPileCardWithFlip(
         Layout(
             modifier = modifier,
             content = {
-                if (it.animatedCards.size == 7) {
-                    for (i in 3..6) {
-                        FlipCard(
-                            flipCard = it.animatedCards[i],
-                            cardDpSize = layout.getCardDpSize(),
-                            flipRotation = flipRotation,
-                            flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId(layout.multiPileLayoutIds[i])
-                        )
-                    }
-                }
-                for (i in 0..2) {
+                for (i in 0 until it.animatedCards.size) {
                     FlipCard(
                         flipCard = it.animatedCards[i],
                         cardDpSize = layout.getCardDpSize(),
@@ -334,28 +357,43 @@ fun MultiPileCardWithFlip(
                 measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[5] }
             val tSixCard =
                 measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[6] }
+            val tSevenCard =
+                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[7] }
+            val tEightCard =
+                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[8] }
+            val tNineCard =
+                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[9] }
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 if (tZeroCardOffset != IntOffset.Zero) {
-                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset, 6f)
+                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset, 9f)
                 }
                 if (tOneCardOffset != IntOffset.Zero) {
-                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 5f)
+                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 8f)
                 }
                 if (tTwoCardOffset != IntOffset.Zero) {
-                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 4f)
+                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 7f)
                 }
                 if (tThreeCardOffset != IntOffset.Zero) {
-                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 3f)
+                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 6f)
                 }
                 if (tFourCardOffset != IntOffset.Zero) {
-                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 2f)
+                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 5f)
                 }
                 if (tFiveCardOffset != IntOffset.Zero) {
-                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 1f)
+                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 4f)
                 }
                 if (tSixCardOffset != IntOffset.Zero) {
-                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset)
+                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset, 3f)
+                }
+                if (tSevenCardOffset != IntOffset.Zero) {
+                    tSevenCard?.measure(layout.cardConstraints)?.place(tSevenCardOffset, 2f)
+                }
+                if (tEightCardOffset != IntOffset.Zero) {
+                    tEightCard?.measure(layout.cardConstraints)?.place(tEightCardOffset, 1f)
+                }
+                if (tNineCardOffset != IntOffset.Zero) {
+                    tNineCard?.measure(layout.cardConstraints)?.place(tNineCardOffset)
                 }
             }
         }

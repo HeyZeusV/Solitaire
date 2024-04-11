@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts.layouts
+package com.heyzeusv.solitaire.ui.board.boards.layouts
 
 import androidx.compose.ui.unit.IntOffset
 

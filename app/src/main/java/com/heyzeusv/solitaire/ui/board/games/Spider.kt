@@ -35,7 +35,7 @@ data object Spider : Games.SpiderFamily() {
      */
     override val baseDeck: List<Card> = List(104) { Card(it % 13, getSuit(it)) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
-    override val drawAmount: DrawAmount = DrawAmount.One
+    override val drawAmount: DrawAmount = DrawAmount.Ten
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Zero
     override val maxScore: MaxScore = MaxScore.TwoDecks

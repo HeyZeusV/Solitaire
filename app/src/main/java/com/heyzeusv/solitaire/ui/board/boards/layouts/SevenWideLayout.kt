@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts.layouts
+package com.heyzeusv.solitaire.ui.board.boards.layouts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.Layout
@@ -51,8 +51,7 @@ data class SevenWideLayout(
     private val rightCardXOffset: Int = cardWidth + cardSpacing
     val horizontalPileLayoutIds: List<String> = listOf("Right Card", "Middle Card", "Left Card")
 
-    // Easthaven pile ids
-    val multiPileLayoutIds: List<String> = listOf(
+    override val multiPileLayoutIds: List<String> = listOf(
         "Tableau Zero Card",
         "Tableau One Card",
         "Tableau Two Card",

@@ -80,7 +80,8 @@ enum class DrawAmount(val amount: Int) {
     Zero(0),
     One(1),
     Three(3),
-    Seven(7)
+    Seven(7),
+    Ten(10)
 }
 
 /**
