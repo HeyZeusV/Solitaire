@@ -15,8 +15,8 @@ data class AnimateInfo(
     val start: GamePiles,
     val end: GamePiles,
     val animatedCards: List<Card>,
-    val startTableauIndices: List<Int> = List(7) { 0 },
-    val endTableauIndices: List<Int> = List(7) { 0 },
+    val startTableauIndices: List<Int> = List(10) { 0 },
+    val endTableauIndices: List<Int> = List(10) { 0 },
     val flipCardInfo: FlipCardInfo = FlipCardInfo.NoFlip,
     val tableauCardFlipInfo: TableauCardFlipInfo? = null,
     val undoAnimation: Boolean = false

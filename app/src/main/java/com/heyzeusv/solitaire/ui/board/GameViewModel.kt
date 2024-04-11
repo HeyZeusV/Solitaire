@@ -15,10 +15,9 @@ import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.Golf
-import com.heyzeusv.solitaire.ui.board.games.GolfRush
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
-import com.heyzeusv.solitaire.ui.board.games.PuttPutt
 import com.heyzeusv.solitaire.ui.board.boards.layouts.ScreenLayouts
+import com.heyzeusv.solitaire.ui.board.games.Spider
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -144,8 +143,8 @@ class GameViewModel @Inject constructor(
      */
     fun onStockClick(): MoveResult {
         return when (_selectedGame.value) {
-            is Easthaven -> onStockClickEasthaven()
-            is Golf, is PuttPutt, is GolfRush -> onStockClickGolf()
+            is Easthaven, is Spider -> onStockClickMultiPile()
+            is Games.GolfFamily -> onStockClickGolf()
             else -> onStockClickStandard()
         }
     }
@@ -209,11 +208,11 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  Custom onStockClick for [Easthaven] due to [Card]s being move directly from [Stock] to
+     *  Custom onStockClick for [Games] that require [Card]s to be move directly from [Stock] to
      *  [Tableau]. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile. If there
-     *  isn't enough for all 7 [Tableau] piles, it adds from left to right until it runs out.
+     *  isn't enough for all [Tableau] piles, it adds from left to right until it runs out.
      */
-    private fun onStockClickEasthaven(): MoveResult {
+    private fun onStockClickMultiPile(): MoveResult {
         if (_stock.truePile.isNotEmpty()) {
             val stockCards = _stock.getCards(_selectedGame.value.drawAmount.amount)
             val tableauIndices = mutableListOf<Int>()
