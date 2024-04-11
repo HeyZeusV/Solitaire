@@ -14,9 +14,9 @@ interface LayoutPositions {
  *  Used to ensure all Width* classes have [extraWidth], which is the width beyond the class size
  *  divided by 2.
  */
-abstract class ScreenWidths(private val extraWidth: Int)
+abstract class ScreenLayouts(private val extraWidth: Int) : LayoutPositions
 
-class Width480(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPositions {
+class Width480(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val layPos7Wide: SevenWideLayout = SevenWideLayout(
         layoutWidth = 480,
         cardWidth = 64,
@@ -64,7 +64,7 @@ class Width480(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPo
     )
 }
 
-class Width720(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPositions {
+class Width720(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val layPos7Wide: SevenWideLayout = SevenWideLayout(
         layoutWidth = 720,
         cardWidth = 98,
@@ -112,7 +112,7 @@ class Width720(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPo
     )
 }
 
-class Width960(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPositions {
+class Width960(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val layPos7Wide: SevenWideLayout = SevenWideLayout(
         layoutWidth = 960,
         cardWidth = 128,
@@ -160,7 +160,7 @@ class Width960(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPo
     )
 }
 
-class Width1080(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPositions {
+class Width1080(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val layPos7Wide: SevenWideLayout = SevenWideLayout(
         layoutWidth = 1080,
         cardWidth = 148,
@@ -208,7 +208,7 @@ class Width1080(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutP
     )
 }
 
-class Width1440(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPositions {
+class Width1440(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val layPos7Wide: SevenWideLayout = SevenWideLayout(
         layoutWidth = 1440,
         cardWidth = 196,
@@ -256,7 +256,7 @@ class Width1440(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutP
     )
 }
 
-class Width2160(private val extraWidth: Int) : ScreenWidths(extraWidth), LayoutPositions {
+class Width2160(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val layPos7Wide: SevenWideLayout = SevenWideLayout(
         layoutWidth = 2160,
         cardWidth = 296,

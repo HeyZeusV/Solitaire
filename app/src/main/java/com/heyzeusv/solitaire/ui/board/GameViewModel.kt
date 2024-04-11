@@ -6,7 +6,6 @@ import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.TableauCardFlipInfo
-import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.data.pile.Pile
@@ -19,6 +18,7 @@ import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.games.GolfRush
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.games.PuttPutt
+import com.heyzeusv.solitaire.ui.board.layouts.positions.ScreenLayouts
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -43,7 +43,7 @@ import javax.inject.Inject
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val ss: ShuffleSeed,
-    val layoutInfo: LayoutInfo
+    val screenLayouts: ScreenLayouts
 ) : ViewModel() {
 
     // ensures only one actionBefore/AfterAnimation occurs at a time.

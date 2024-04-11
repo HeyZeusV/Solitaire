@@ -3,10 +3,9 @@ package com.heyzeusv.solitaire.ui
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.data.LayoutInfo
-import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.GameViewModel
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1080
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
@@ -39,7 +38,7 @@ class KlondikeAndScoreboardViewModelTest {
         Dispatchers.setMain(StandardTestDispatcher())
         kdVM = GameViewModel(
             ShuffleSeed(Random(10L)),
-            LayoutInfo(LayoutPositions.Width1080, 0)
+            Width1080(0)
         )
         sbVM = ScoreboardViewModel()
     }

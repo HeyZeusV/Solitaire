@@ -1,8 +1,17 @@
 package com.heyzeusv.solitaire.ui.board.layouts.positions
 
+import androidx.compose.runtime.Composable
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.data.FlipCardInfo
+import com.heyzeusv.solitaire.ui.board.HorizontalCardPileWithFlip
+import com.heyzeusv.solitaire.util.GamePiles
+import com.heyzeusv.solitaire.util.plusX
+import com.heyzeusv.solitaire.util.toDp
 
 /**
  *  Data class referring to layouts 7 piles wide. Contains [Card] size in pixels and pile
@@ -29,4 +38,113 @@ data class SevenWideLayout(
     val tableauFour: IntOffset,
     val tableauFive: IntOffset,
     val tableauSix: IntOffset
-)
+) {
+    val cardConstraints: Constraints = Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
+    private val wasteWidth: Int = (cardWidth * 2) + cardSpacing
+    val wasteConstraints: Constraints =Constraints(wasteWidth, wasteWidth, cardHeight, cardHeight)
+
+    // Waste <-> Stock offsets
+    private val leftCardXOffset: Int = cardSpacing
+    private val middleCardXOffset: Int = cardWidth.div(2) + cardSpacing
+    private val rightCardXOffset: Int = cardWidth + cardSpacing
+    val horizontalPileLayoutIds: List<String> = listOf("Right Card", "Middle Card", "Left Card")
+
+    // Easthaven pile ids
+    val multiPileLayoutIds: List<String> = listOf(
+        "Tableau Zero Card",
+        "Tableau One Card",
+        "Tableau Two Card",
+        "Tableau Three Card",
+        "Tableau Four Card",
+        "Tableau Five Card",
+        "Tableau Six Card"
+    )
+
+    /**
+     *  Used by movement animations to determine given [gamePile] offset. Animations between
+     *  Stock and Waste requires a different offset, [stockWasteMove] determines which to use.
+     *  [tAllPile] is used to recursively call this function in order to get the correct offset,
+     *  when [gamePile] is [GamePiles.TableauAll].
+     */
+    fun getPilePosition(
+        gamePile: GamePiles,
+        stockWasteMove: Boolean = false,
+        tAllPile: GamePiles = GamePiles.TableauZero
+    ): IntOffset {
+        return when (gamePile) {
+            GamePiles.Stock -> stockPile
+            GamePiles.Waste -> if (stockWasteMove) {
+                wastePile
+            } else {
+                wastePile.plusX(cardWidth + cardSpacing)
+            }
+            GamePiles.ClubsFoundation -> foundationClubs
+            GamePiles.DiamondsFoundation -> foundationDiamonds
+            GamePiles.HeartsFoundation -> foundationHearts
+            GamePiles.SpadesFoundation -> foundationSpades
+            GamePiles.TableauZero -> tableauZero
+            GamePiles.TableauOne -> tableauOne
+            GamePiles.TableauTwo -> tableauTwo
+            GamePiles.TableauThree -> tableauThree
+            GamePiles.TableauFour -> tableauFour
+            GamePiles.TableauFive -> tableauFive
+            GamePiles.TableauSix -> tableauSix
+            GamePiles.TableauAll -> getPilePosition(tAllPile)
+        }
+    }
+
+    /**
+     *  Used by animations involving Tableau piles in order to determine additional Y offset needed
+     *  since animation could only involve a sublist of Tableau, rather than entire pile.
+     */
+    fun getCardsYOffset(index: Int): IntOffset {
+        return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
+    }
+
+    /**
+     *  Used by [HorizontalCardPileWithFlip] in order to retrieve [HorizontalCardOffsets] which
+     *  contains necessary offsets for animations. [flipCardInfo] determines start/end positions.
+     */
+    fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets {
+        return if (flipCardInfo is FlipCardInfo.FaceDown) {
+            HorizontalCardOffsets(
+                rightCardStartOffset = IntOffset(rightCardXOffset, 0),
+                rightCardEndOffset = IntOffset.Zero,
+                middleCardStartOffset = IntOffset(middleCardXOffset, 0),
+                middleCardEndOffset = IntOffset.Zero,
+                leftCardStartOffset = IntOffset(leftCardXOffset, 0),
+                leftCardEndOffset = IntOffset.Zero
+            )
+        } else {
+            HorizontalCardOffsets(
+                rightCardStartOffset = IntOffset.Zero,
+                rightCardEndOffset = IntOffset(rightCardXOffset, 0),
+                middleCardStartOffset = IntOffset.Zero,
+                middleCardEndOffset = IntOffset(middleCardXOffset, 0),
+                leftCardStartOffset = IntOffset.Zero,
+                leftCardEndOffset = IntOffset(leftCardXOffset, 0)
+            )
+        }
+    }
+
+    /**
+     *  Returns size of [Card] in dp in the form of [DpSize].
+     */
+    @Composable
+    fun getCardDpSize(): DpSize = DpSize(cardWidth.toDp(), cardHeight.toDp())
+}
+
+/**
+ *  Data class containing offsets needed by [HorizontalCardPileWithFlip] animations.
+ */
+data class HorizontalCardOffsets(
+    private val rightCardStartOffset: IntOffset,
+    private val rightCardEndOffset: IntOffset,
+    private val middleCardStartOffset: IntOffset,
+    private val middleCardEndOffset: IntOffset,
+    private val leftCardStartOffset: IntOffset,
+    private val leftCardEndOffset: IntOffset
+) {
+    val startOffsets = listOf(rightCardStartOffset, middleCardStartOffset, leftCardStartOffset)
+    val endOffsets = listOf(rightCardEndOffset, middleCardEndOffset, leftCardEndOffset)
+}

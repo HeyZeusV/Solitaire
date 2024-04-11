@@ -7,9 +7,14 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
-import com.heyzeusv.solitaire.data.LayoutInfo
-import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.ui.board.layouts.positions.ScreenLayouts
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1080
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1440
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width2160
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width480
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width720
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width960
 import com.heyzeusv.solitaire.util.SettingsSerializer
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
@@ -37,21 +42,19 @@ class AppModule {
         context.resources.displayMetrics
 
     /**
-     *  Provides [LayoutInfo] using screen size.
+     *  Provides [ScreenLayouts] using screen size.
      */
     @Provides
-    fun provideLayoutInfo(dm: DisplayMetrics): LayoutInfo {
+    fun provideLayoutInfo(dm: DisplayMetrics): ScreenLayouts {
         val screenWidth = dm.widthPixels
-        val layoutPositions = when {
-            screenWidth >= 2160 -> LayoutPositions.Width2160
-            screenWidth >= 1440 -> LayoutPositions.Width1440
-            screenWidth >= 1080 -> LayoutPositions.Width1080
-            screenWidth >= 960 -> LayoutPositions.Width960
-            screenWidth >= 720 -> LayoutPositions.Width720
-            else -> LayoutPositions.Width480
+        return when {
+            screenWidth >= 2160 -> Width2160((screenWidth - 2160) / 2)
+            screenWidth >= 1440 -> Width1440((screenWidth - 1440) / 2)
+            screenWidth >= 1080 -> Width1080((screenWidth - 1080) / 2)
+            screenWidth >= 960 -> Width960((screenWidth - 960) / 2)
+            screenWidth >= 720 -> Width720((screenWidth - 720) / 2)
+            else -> Width480((screenWidth - 480) / 2)
         }
-        val extraWidth = (screenWidth - layoutPositions.layoutWidth) / 2
-        return LayoutInfo(layoutPositions, extraWidth)
     }
 
     /**

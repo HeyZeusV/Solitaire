@@ -7,9 +7,9 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
-import com.heyzeusv.solitaire.data.LayoutInfo
-import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.ui.board.layouts.positions.ScreenLayouts
+import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1080
 import com.heyzeusv.solitaire.util.SettingsSerializer
 import com.heyzeusv.solitaire.util.StatPreferencesSerializer
 import dagger.Module
@@ -43,10 +43,10 @@ class TestAppModule {
         context.resources.displayMetrics
 
     /**
-     *  Provides [LayoutInfo] using screen size.
+     *  Provides [ScreenLayouts] using screen size.
      */
     @Provides
-    fun provideLayoutInfo(): LayoutInfo = LayoutInfo(LayoutPositions.Width1080, 0)
+    fun provideLayoutInfo(): ScreenLayouts = Width1080(0)
 
     /**
      *  Provides [ShuffleSeed] obj containing [Random] with seed parameter ensuring that every

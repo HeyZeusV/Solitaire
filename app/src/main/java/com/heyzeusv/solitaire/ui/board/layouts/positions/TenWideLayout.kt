@@ -3,6 +3,7 @@ package com.heyzeusv.solitaire.ui.board.layouts.positions
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.data.Card
 
 /**
  *  Data class referring to layouts 10 piles wide. Contains [Card] size in pixels and pile
