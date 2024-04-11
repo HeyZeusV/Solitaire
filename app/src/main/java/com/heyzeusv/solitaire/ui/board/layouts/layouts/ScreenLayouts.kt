@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts.positions
+package com.heyzeusv.solitaire.ui.board.layouts.layouts
 
 import androidx.compose.ui.unit.IntOffset
 
@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.IntOffset
  */
 interface LayoutPositions {
     val layPos7Wide: SevenWideLayout
+    val layPosGolf: GolfLayout
     val layPos10Wide: TenWideLayout
 }
 
@@ -27,6 +28,21 @@ class Width480(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         foundationHearts = IntOffset(140 + extraWidth, 0),
         foundationSpades = IntOffset(208 + extraWidth, 0),
         wastePile = IntOffset(276 + extraWidth, 0),
+        stockPile = IntOffset(412 + extraWidth, 0),
+        tableauZero = IntOffset(4 + extraWidth, 94),
+        tableauOne = IntOffset(72 + extraWidth, 94),
+        tableauTwo = IntOffset(140 + extraWidth, 94),
+        tableauThree = IntOffset(208 + extraWidth, 94),
+        tableauFour = IntOffset(276 + extraWidth, 94),
+        tableauFive = IntOffset(344 + extraWidth, 94),
+        tableauSix = IntOffset(412 + extraWidth, 94)
+    )
+    override val layPosGolf: GolfLayout = GolfLayout(
+        layoutWidth = 480,
+        cardWidth = 64,
+        cardHeight = 92,
+        cardSpacing = 4,
+        foundation = IntOffset(208 + extraWidth, 0),
         stockPile = IntOffset(412 + extraWidth, 0),
         tableauZero = IntOffset(4 + extraWidth, 94),
         tableauOne = IntOffset(72 + extraWidth, 94),
@@ -84,6 +100,21 @@ class Width720(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFive = IntOffset(515 + extraWidth, 141),
         tableauSix = IntOffset(617 + extraWidth, 141)
     )
+    override val layPosGolf: GolfLayout = GolfLayout(
+        layoutWidth = 720,
+        cardWidth = 98,
+        cardHeight = 140,
+        cardSpacing = 4,
+        foundation = IntOffset(311 + extraWidth, 0),
+        stockPile = IntOffset(617 + extraWidth, 0),
+        tableauZero = IntOffset(5 + extraWidth, 141),
+        tableauOne = IntOffset(107 + extraWidth, 141),
+        tableauTwo = IntOffset(209 + extraWidth, 141),
+        tableauThree = IntOffset(311 + extraWidth, 141),
+        tableauFour = IntOffset(413 + extraWidth, 141),
+        tableauFive = IntOffset(515 + extraWidth, 141),
+        tableauSix = IntOffset(617 + extraWidth, 141)
+    )
     override val layPos10Wide: TenWideLayout = TenWideLayout(
         layoutWidth = 720,
         cardWidth = 68,
@@ -123,6 +154,21 @@ class Width960(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         foundationHearts = IntOffset(280 + extraWidth, 0),
         foundationSpades = IntOffset(416 + extraWidth, 0),
         wastePile = IntOffset(552 + extraWidth, 0),
+        stockPile = IntOffset(824 + extraWidth, 0),
+        tableauZero = IntOffset(8 + extraWidth, 187),
+        tableauOne = IntOffset(144 + extraWidth, 187),
+        tableauTwo = IntOffset(280 + extraWidth, 187),
+        tableauThree = IntOffset(416 + extraWidth, 187),
+        tableauFour = IntOffset(552 + extraWidth, 187),
+        tableauFive = IntOffset(688 + extraWidth, 187),
+        tableauSix = IntOffset(824 + extraWidth, 187)
+    )
+    override val layPosGolf: GolfLayout = GolfLayout(
+        layoutWidth = 960,
+        cardWidth = 128,
+        cardHeight = 180,
+        cardSpacing = 8,
+        foundation = IntOffset(416 + extraWidth, 0),
         stockPile = IntOffset(824 + extraWidth, 0),
         tableauZero = IntOffset(8 + extraWidth, 187),
         tableauOne = IntOffset(144 + extraWidth, 187),
@@ -180,6 +226,21 @@ class Width1080(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFive = IntOffset(772 + extraWidth, 212),
         tableauSix = IntOffset(925 + extraWidth, 212)
     )
+    override val layPosGolf: GolfLayout = GolfLayout(
+        layoutWidth = 1080,
+        cardWidth = 148,
+        cardHeight = 208,
+        cardSpacing = 5,
+        foundation = IntOffset(466 + extraWidth, 0),
+        stockPile = IntOffset(925 + extraWidth, 0),
+        tableauZero = IntOffset(7 + extraWidth, 212),
+        tableauOne = IntOffset(160 + extraWidth, 212),
+        tableauTwo = IntOffset(313 + extraWidth, 212),
+        tableauThree = IntOffset(466 + extraWidth, 212),
+        tableauFour = IntOffset(619 + extraWidth, 212),
+        tableauFive = IntOffset(772 + extraWidth, 212),
+        tableauSix = IntOffset(925 + extraWidth, 212)
+    )
     override val layPos10Wide: TenWideLayout = TenWideLayout(
         layoutWidth = 1080,
         cardWidth = 106,
@@ -228,6 +289,21 @@ class Width1440(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFive = IntOffset(1030 + extraWidth, 282),
         tableauSix = IntOffset(1234 + extraWidth, 282)
     )
+    override val layPosGolf: GolfLayout = GolfLayout(
+        layoutWidth = 1440,
+        cardWidth = 196,
+        cardHeight = 276,
+        cardSpacing = 8,
+        foundation = IntOffset(622 + extraWidth, 0),
+        stockPile = IntOffset(1234 + extraWidth, 0),
+        tableauZero = IntOffset(10 + extraWidth, 282),
+        tableauOne = IntOffset(214 + extraWidth, 282),
+        tableauTwo = IntOffset(418 + extraWidth, 282),
+        tableauThree = IntOffset(622 + extraWidth, 282),
+        tableauFour = IntOffset(826 + extraWidth, 282),
+        tableauFive = IntOffset(1030 + extraWidth, 282),
+        tableauSix = IntOffset(1234 + extraWidth, 282)
+    )
     override val layPos10Wide: TenWideLayout = TenWideLayout(
         layoutWidth = 1080,
         cardWidth = 142,
@@ -267,6 +343,21 @@ class Width2160(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         foundationHearts = IntOffset(626 + extraWidth, 0),
         foundationSpades = IntOffset(932 + extraWidth, 0),
         wastePile = IntOffset(1238 + extraWidth, 0),
+        stockPile = IntOffset(1850 + extraWidth, 0),
+        tableauZero = IntOffset(14 + extraWidth, 424),
+        tableauOne = IntOffset(320 + extraWidth, 424),
+        tableauTwo = IntOffset(626 + extraWidth, 424),
+        tableauThree = IntOffset(932 + extraWidth, 424),
+        tableauFour = IntOffset(1238 + extraWidth, 424),
+        tableauFive = IntOffset(1544 + extraWidth, 424),
+        tableauSix = IntOffset(1850 + extraWidth, 424)
+    )
+    override val layPosGolf: GolfLayout = GolfLayout(
+        layoutWidth = 2160,
+        cardWidth = 296,
+        cardHeight = 416,
+        cardSpacing = 10,
+        foundation = IntOffset(932 + extraWidth, 0),
         stockPile = IntOffset(1850 + extraWidth, 0),
         tableauZero = IntOffset(14 + extraWidth, 424),
         tableauOne = IntOffset(320 + extraWidth, 424),

@@ -24,9 +24,9 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
-import com.heyzeusv.solitaire.ui.board.layouts.GolfLayout
-import com.heyzeusv.solitaire.ui.board.layouts.StandardLayout
-import com.heyzeusv.solitaire.ui.board.layouts.positions.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.layouts.GolfBoard
+import com.heyzeusv.solitaire.ui.board.layouts.StandardBoard
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
@@ -49,9 +49,9 @@ fun Board(
 
     when (selectedGame.familyId) {
         R.string.games_family_golf -> {
-            GolfLayout(
+            GolfBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.layPos7Wide,
+                layout = gameVM.screenLayouts.layPosGolf,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
@@ -68,7 +68,7 @@ fun Board(
             )
         }
         else -> {
-            StandardLayout(
+            StandardBoard(
                 modifier = modifier,
                 layout = gameVM.screenLayouts.layPos7Wide,
                 animationDurations = animationDurations,

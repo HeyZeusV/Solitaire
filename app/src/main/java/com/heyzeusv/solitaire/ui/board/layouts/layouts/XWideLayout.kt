@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts.positions
+package com.heyzeusv.solitaire.ui.board.layouts.layouts
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Constraints

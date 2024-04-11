@@ -29,12 +29,12 @@ import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.TableauPileWithFlip
 import com.heyzeusv.solitaire.ui.board.VerticalCardPile
-import com.heyzeusv.solitaire.ui.board.layouts.positions.SevenWideLayout
-import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1080
-import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1440
-import com.heyzeusv.solitaire.ui.board.layouts.positions.Width2160
-import com.heyzeusv.solitaire.ui.board.layouts.positions.Width480
-import com.heyzeusv.solitaire.ui.board.layouts.positions.Width720
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width1080
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width1440
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width2160
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width480
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width720
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
@@ -54,7 +54,7 @@ import kotlinx.coroutines.delay
  *  [Stock] and shown by [Waste].
  */
 @Composable
-fun StandardLayout(
+fun StandardBoard(
     modifier: Modifier = Modifier,
     layout: SevenWideLayout,
     animationDurations: AnimationDurations,
@@ -275,10 +275,10 @@ fun StandardLayout(
 
 @Preview(device = "id:Nexus One")
 @Composable
-fun BoardLayout480Preview() {
+fun StandardBoard480Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
+            StandardBoard(
                 layout = Width480(0).layPos7Wide,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
@@ -295,10 +295,10 @@ fun BoardLayout480Preview() {
 
 @Preview(device = "id:Nexus 4")
 @Composable
-fun BoardLayout720Preview() {
+fun StandardBoard720Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
+            StandardBoard(
                 layout = Width720(24).layPos7Wide,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
@@ -315,10 +315,10 @@ fun BoardLayout720Preview() {
 
 @Preview
 @Composable
-fun BoardLayout1080Preview() {
+fun StandardBoard1080Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
+            StandardBoard(
                 layout = Width1080(0).layPos7Wide,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
@@ -335,10 +335,10 @@ fun BoardLayout1080Preview() {
 
 @Preview(device = "id:pixel_xl")
 @Composable
-fun BoardLayout1440Preview() {
+fun StandardBoard1440Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
+            StandardBoard(
                 layout = Width1440(0).layPos7Wide,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
@@ -355,10 +355,10 @@ fun BoardLayout1440Preview() {
 
 @Preview(device = "spec:width=2160px,height=3840px,dpi=640")
 @Composable
-fun BoardLayout2160Preview() {
+fun StandardBoard2160Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
+            StandardBoard(
                 layout = Width2160(0).layPos7Wide,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,

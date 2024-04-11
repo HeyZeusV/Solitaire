@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1080
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width1080
 import com.heyzeusv.solitaire.util.theme.PreviewBG
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 

@@ -18,7 +18,7 @@ import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.games.GolfRush
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.games.PuttPutt
-import com.heyzeusv.solitaire.ui.board.layouts.positions.ScreenLayouts
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.ScreenLayouts
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -262,7 +262,7 @@ class GameViewModel @Inject constructor(
             val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
-                end = GamePiles.FoundationSpadesOne,
+                end = GamePiles.FoundationClubsOne,
                 animatedCards = cards,
                 flipCardInfo = FlipCardInfo.FaceUp.SinglePile
             )

@@ -26,9 +26,8 @@ import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.VerticalCardPile
-import com.heyzeusv.solitaire.ui.board.layouts.positions.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.GolfLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
-import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
@@ -43,9 +42,9 @@ import kotlinx.coroutines.delay
  *  is updated using [updateUndoAnimation].
  */
 @Composable
-fun GolfLayout(
+fun GolfBoard(
     modifier: Modifier = Modifier,
-    layout: SevenWideLayout,
+    layout: GolfLayout,
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
@@ -93,14 +92,12 @@ fun GolfLayout(
             }
         }
         // end pile correction
-        val endPile =
-            if (it.end == GamePiles.FoundationClubsOne) GamePiles.FoundationSpadesOne else it.end
         AnimateOffset(
             animateInfo = it,
             animationDurations = animationDurations,
             startOffset = layout.getPilePosition(it.start)
                 .plus(layout.getCardsYOffset(it.startTableauIndices.first())),
-            endOffset = layout.getPilePosition(endPile)
+            endOffset = layout.getPilePosition(it.end)
                 .plus(layout.getCardsYOffset(it.endTableauIndices.first())),
             updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
             updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
@@ -144,7 +141,7 @@ fun GolfLayout(
                     .testTag("Foundation #$0"),
                 cardDpSize = layout.getCardDpSize(),
                 pile = foundationList.first().displayPile,
-                emptyIconId = Suits.SPADES.emptyIcon,
+                emptyIconId = Suits.CLUBS.emptyIcon,
                 onClick = { handleMoveResult(onFoundationClick(0)) }
             )
             SolitaireStock(
@@ -168,7 +165,7 @@ fun GolfLayout(
             }
         }
     ) { measurables, constraints ->
-        val spadesFoundation = measurables.firstOrNull { it.layoutId == "Foundation" }
+        val foundation = measurables.firstOrNull { it.layoutId == "Foundation" }
         val stockPile = measurables.firstOrNull { it.layoutId == "Stock" }
 
         val tableauPile0 = measurables.firstOrNull { it.layoutId == "Tableau #0" }
@@ -196,7 +193,7 @@ fun GolfLayout(
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
                 animatedHorizontalPile?.measure(cardConstraints)?.place(animatedOffset, 2f)
             }
-            spadesFoundation?.measure(cardConstraints)?.place(layout.foundationSpades)
+            foundation?.measure(cardConstraints)?.place(layout.foundation)
             stockPile?.measure(cardConstraints)?.place(layout.stockPile)
 
             tableauPile0?.measure(tableauConstraints)?.place(layout.tableauZero)

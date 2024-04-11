@@ -5,7 +5,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.GameViewModel
-import com.heyzeusv.solitaire.ui.board.layouts.positions.Width1080
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.Width1080
 import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
