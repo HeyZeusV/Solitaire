@@ -279,7 +279,7 @@ fun StandardBoard480Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
-                layout = Width480(0).layPos7Wide,
+                layout = Width480(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
@@ -299,7 +299,7 @@ fun StandardBoard720Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
-                layout = Width720(24).layPos7Wide,
+                layout = Width720(24).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
@@ -319,7 +319,7 @@ fun StandardBoard1080Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
-                layout = Width1080(0).layPos7Wide,
+                layout = Width1080(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
@@ -339,7 +339,7 @@ fun StandardBoard1440Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
-                layout = Width1440(0).layPos7Wide,
+                layout = Width1440(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
@@ -359,7 +359,7 @@ fun StandardBoard2160Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
-                layout = Width2160(0).layPos7Wide,
+                layout = Width2160(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,

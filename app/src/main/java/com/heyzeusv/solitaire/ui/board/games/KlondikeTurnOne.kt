@@ -49,8 +49,12 @@ data object KlondikeTurnOne : Games.KlondikeFamily() {
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEachIndexed { index, tableau ->
-            val cards = List(index + 1) { stock.remove() }
-            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            if (index < numOfTableauPiles.amount) {
+                val cards = List(index + 1) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            } else {
+                tableau.reset()
+            }
         }
     }
 

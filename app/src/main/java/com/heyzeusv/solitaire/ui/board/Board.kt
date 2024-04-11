@@ -51,7 +51,7 @@ fun Board(
         R.string.games_family_golf -> {
             GolfBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.layPosGolf,
+                layout = gameVM.screenLayouts.sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
@@ -70,7 +70,7 @@ fun Board(
         else -> {
             StandardBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.layPos7Wide,
+                layout = gameVM.screenLayouts.sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
@@ -482,7 +482,7 @@ fun TableauPileWithFlipPreview() {
 fun HorizontalCardPileWithFlipPreview() {
     PreviewUtil().apply {
         Preview {
-            HorizontalCardPileWithFlip(screenWidth.layPos7Wide, animateInfo, animationDurations)
+            HorizontalCardPileWithFlip(screenWidth.sevenWideLayout, animateInfo, animationDurations)
         }
     }
 }

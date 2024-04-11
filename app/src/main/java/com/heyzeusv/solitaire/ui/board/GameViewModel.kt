@@ -69,10 +69,10 @@ class GameViewModel @Inject constructor(
     private val _stockWasteEmpty = MutableStateFlow(false)
     val stockWasteEmpty: StateFlow<Boolean> get() = _stockWasteEmpty
 
-    private val _foundation = mutableListOf<Foundation>()
+    private val _foundation = initializeFoundation()
     val foundation: List<Foundation> get() = _foundation
 
-    private val _tableau = mutableListOf<Tableau>()
+    private val _tableau = initializeTableau()
     val tableau: List<Tableau> get() = _tableau
 
     private val _historyList = mutableListOf<AnimateInfo>()
@@ -119,8 +119,6 @@ class GameViewModel @Inject constructor(
         }
         // clear the waste pile
         _waste.reset()
-        initializeFoundation()
-        initializeTableau()
         _historyList.clear()
         _undoEnabled.value = false
         _undoAnimation.value = false
@@ -231,12 +229,14 @@ class GameViewModel @Inject constructor(
                 mutex.withLock {
                     _stock.removeMany(stockCards.size)
                     _tableau.forEachIndexed { index, tableau ->
-                        val stockCard: List<Card> = try {
-                            listOf(stockCards[index].copy(faceUp = true))
-                        } catch (e: IndexOutOfBoundsException) {
-                            emptyList()
+                        if (index < _selectedGame.value.numOfTableauPiles.amount) {
+                            val stockCard: List<Card> = try {
+                                listOf(stockCards[index].copy(faceUp = true))
+                            } catch (e: IndexOutOfBoundsException) {
+                                emptyList()
+                            }
+                            tableau.add(stockCard)
                         }
-                        tableau.add(stockCard)
                     }
                     _stock.updateDisplayPile()
                 }
@@ -262,20 +262,20 @@ class GameViewModel @Inject constructor(
             val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
-                end = GamePiles.FoundationClubsOne,
+                end = GamePiles.FoundationSpadesOne,
                 animatedCards = cards,
                 flipCardInfo = FlipCardInfo.FaceUp.SinglePile
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
                     _stock.removeMany(cards.size)
-                    _foundation.first().add(cards)
+                    _foundation[3].add(cards)
                     _stock.updateDisplayPile()
                 }
             }
             aniInfo.actionAfterAnimation = {
                 mutex.withLock {
-                    _foundation.first().updateDisplayPile()
+                    _foundation[3].updateDisplayPile()
                     appendHistory(aniInfo.getUndoAnimateInfo())
                     gameWon()
                 }
@@ -405,8 +405,72 @@ class GameViewModel @Inject constructor(
     ): MoveResult {
         // only one card can be added to Foundation at a time.
         if (cards.size == 1) {
-            _foundation.forEach {
-                if (selectedGame.value.canAddToFoundation(it, cards)) {
+            _foundation.forEachIndexed { index, it ->
+                if (index < _selectedGame.value.numOfFoundationPiles.amount) {
+                    if (selectedGame.value.canAddToFoundation(it, cards)) {
+                        val aniInfo = AnimateInfo(
+                            start = start,
+                            end = it.gamePile,
+                            animatedCards = cards,
+                            startTableauIndices = listOf(startIndex),
+                            tableauCardFlipInfo = tableauCardFlipInfo
+                        )
+                        aniInfo.actionBeforeAnimation = {
+                            mutex.withLock {
+                                ifLegal()
+                                it.add(cards)
+                                actionBeforeAnimation()
+                            }
+                        }
+                        aniInfo.actionAfterAnimation = {
+                            mutex.withLock {
+                                it.updateDisplayPile()
+                                appendHistory(aniInfo.getUndoAnimateInfo())
+                                autoComplete()
+                            }
+                        }
+                        _animateInfo.value = aniInfo
+                        if (_selectedGame.value.autocompleteAvailable) _autoCompleteCorrection++
+                        return MoveScore
+                    }
+                }
+            }
+        }
+        // try to add to non-empty tableau first
+        _tableau.forEachIndexed { index, it ->
+            if (index < _selectedGame.value.numOfTableauPiles.amount) {
+                if (it.truePile.isNotEmpty() && _selectedGame.value.canAddToTableau(it, cards)) {
+                    val endIndex = it.truePile.size
+                    val aniInfo = AnimateInfo(
+                        start = start,
+                        end = it.gamePile,
+                        animatedCards = cards,
+                        startTableauIndices = listOf(startIndex),
+                        endTableauIndices = listOf(endIndex),
+                        tableauCardFlipInfo = tableauCardFlipInfo
+                    )
+                    aniInfo.actionBeforeAnimation = {
+                        mutex.withLock {
+                            ifLegal()
+                            it.add(cards)
+                            actionBeforeAnimation()
+                        }
+                    }
+                    aniInfo.actionAfterAnimation = {
+                        mutex.withLock {
+                            it.updateDisplayPile()
+                            appendHistory(aniInfo.getUndoAnimateInfo())
+                            autoComplete()
+                        }
+                    }
+                    _animateInfo.value = aniInfo
+                    return Move
+                }
+            }
+        }
+        _tableau.forEachIndexed { index, it ->
+            if (index < _selectedGame.value.numOfTableauPiles.amount) {
+                if (it.truePile.isEmpty() && _selectedGame.value.canAddToTableau(it, cards)) {
                     val aniInfo = AnimateInfo(
                         start = start,
                         end = it.gamePile,
@@ -429,66 +493,8 @@ class GameViewModel @Inject constructor(
                         }
                     }
                     _animateInfo.value = aniInfo
-                    if (_selectedGame.value.autocompleteAvailable) _autoCompleteCorrection++
-                    return MoveScore
+                    return Move
                 }
-            }
-        }
-        // try to add to non-empty tableau first
-        _tableau.forEach {
-            val endIndex = it.truePile.size
-            if (it.truePile.isNotEmpty() && _selectedGame.value.canAddToTableau(it, cards)) {
-                val aniInfo = AnimateInfo(
-                    start = start,
-                    end = it.gamePile,
-                    animatedCards = cards,
-                    startTableauIndices = listOf(startIndex),
-                    endTableauIndices = listOf(endIndex),
-                    tableauCardFlipInfo = tableauCardFlipInfo
-                )
-                aniInfo.actionBeforeAnimation = {
-                    mutex.withLock {
-                        ifLegal()
-                        it.add(cards)
-                        actionBeforeAnimation()
-                    }
-                }
-                aniInfo.actionAfterAnimation = {
-                    mutex.withLock {
-                        it.updateDisplayPile()
-                        appendHistory(aniInfo.getUndoAnimateInfo())
-                        autoComplete()
-                    }
-                }
-                _animateInfo.value = aniInfo
-                return Move
-            }
-        }
-        _tableau.forEach {
-            if (it.truePile.isEmpty() && _selectedGame.value.canAddToTableau(it, cards)) {
-                val aniInfo = AnimateInfo(
-                    start = start,
-                    end = it.gamePile,
-                    animatedCards = cards,
-                    startTableauIndices = listOf(startIndex),
-                    tableauCardFlipInfo = tableauCardFlipInfo
-                )
-                aniInfo.actionBeforeAnimation = {
-                    mutex.withLock {
-                        ifLegal()
-                        it.add(cards)
-                        actionBeforeAnimation()
-                    }
-                }
-                aniInfo.actionAfterAnimation = {
-                    mutex.withLock {
-                        it.updateDisplayPile()
-                        appendHistory(aniInfo.getUndoAnimateInfo())
-                        autoComplete()
-                    }
-                }
-                _animateInfo.value = aniInfo
-                return Move
             }
         }
         return Illegal
@@ -566,21 +572,23 @@ class GameViewModel @Inject constructor(
     /**
      *  Initializes [Foundation] piles equal to [Games.numOfFoundationPiles].
      */
-    private fun initializeFoundation() {
-        _foundation.clear()
-        for (i in 0 until _selectedGame.value.numOfFoundationPiles.amount) {
-            _foundation.add(Foundation(Suits.entries[i % 4], GamePiles.foundationPiles[i]))
+    private fun initializeFoundation(): List<Foundation> {
+        val list = mutableListOf<Foundation>()
+        for (i in 0 until 8) {
+            list.add(Foundation(Suits.entries[i % 4], GamePiles.entries[i + 2]))
         }
+        return list
     }
 
     /**
      *  Initializes [Tableau] piles equal to [Games.numOfTableauPiles].
      */
-    private fun initializeTableau() {
-        _tableau.clear()
-        for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
-            _tableau.add(Tableau(GamePiles.tableauPiles[i]))
+    private fun initializeTableau(): List<Tableau> {
+        val list = mutableListOf<Tableau>()
+        for (i in 0 until 10) {
+            list.add(Tableau(GamePiles.entries[i + 10]))
         }
+        return list
     }
 
     /**

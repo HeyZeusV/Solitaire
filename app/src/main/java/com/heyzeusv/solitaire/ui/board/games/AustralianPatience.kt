@@ -48,9 +48,13 @@ data object AustralianPatience : Games.YukonFamily() {
     }
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEach { tableau ->
-            val cards = List(4) { stock.remove() }
-            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+        tableauList.forEachIndexed { index, tableau ->
+            if (index < numOfTableauPiles.amount) {
+                val cards = List(4) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            } else {
+                tableau.reset()
+            }
         }
     }
 

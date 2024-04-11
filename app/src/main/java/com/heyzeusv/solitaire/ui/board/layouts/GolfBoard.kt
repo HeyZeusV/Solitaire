@@ -26,7 +26,7 @@ import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.VerticalCardPile
-import com.heyzeusv.solitaire.ui.board.layouts.layouts.GolfLayout
+import com.heyzeusv.solitaire.ui.board.layouts.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.Suits
@@ -44,7 +44,7 @@ import kotlinx.coroutines.delay
 @Composable
 fun GolfBoard(
     modifier: Modifier = Modifier,
-    layout: GolfLayout,
+    layout: SevenWideLayout,
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
@@ -140,9 +140,9 @@ fun GolfBoard(
                     .layoutId("Foundation")
                     .testTag("Foundation #$0"),
                 cardDpSize = layout.getCardDpSize(),
-                pile = foundationList.first().displayPile,
-                emptyIconId = Suits.CLUBS.emptyIcon,
-                onClick = { handleMoveResult(onFoundationClick(0)) }
+                pile = foundationList[3].displayPile,
+                emptyIconId = Suits.SPADES.emptyIcon,
+                onClick = { handleMoveResult(onFoundationClick(3)) }
             )
             SolitaireStock(
                 modifier = Modifier
@@ -193,7 +193,7 @@ fun GolfBoard(
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
                 animatedHorizontalPile?.measure(cardConstraints)?.place(animatedOffset, 2f)
             }
-            foundation?.measure(cardConstraints)?.place(layout.foundation)
+            foundation?.measure(cardConstraints)?.place(layout.foundationSpades)
             stockPile?.measure(cardConstraints)?.place(layout.stockPile)
 
             tableauPile0?.measure(tableauConstraints)?.place(layout.tableauZero)

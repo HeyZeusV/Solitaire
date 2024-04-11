@@ -49,9 +49,13 @@ data object Easthaven : Games.KlondikeFamily() {
     }
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEach { tableau ->
-            val cards = List(3) { stock.remove() }
-            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+        tableauList.forEachIndexed { index, tableau ->
+            if (index < numOfTableauPiles.amount) {
+                val cards = List(3) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            } else {
+                tableau.reset()
+            }
         }
     }
 

@@ -39,7 +39,7 @@ data object Golf : Games.GolfFamily() {
     override val startingScore: StartingScore = StartingScore.One
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = false
-    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.One
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
     override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     /**
@@ -48,9 +48,13 @@ data object Golf : Games.GolfFamily() {
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean = false
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEach { tableau ->
-            val cards = List(5) { stock.remove() }
-            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+        tableauList.forEachIndexed { index, tableau ->
+            if (index < numOfTableauPiles.amount) {
+                val cards = List(5) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            } else {
+                tableau.reset()
+            }
         }
     }
 
@@ -58,7 +62,13 @@ data object Golf : Games.GolfFamily() {
      *  Start single Foundation pile with a random Card.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.first().reset(listOf(stock.remove()))
+        foundationList.forEachIndexed { index, foundation ->
+            if (index == 3) {
+                foundation.reset(listOf(stock.remove()))
+            } else {
+                foundation.reset()
+            }
+        }
     }
 
     override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {

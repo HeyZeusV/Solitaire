@@ -49,9 +49,13 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     }
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEach { tableau ->
-            val cards = List(3) { stock.remove() }
-            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+        tableauList.forEachIndexed { index, tableau ->
+            if (index < numOfTableauPiles.amount) {
+                val cards = List(3) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            } else {
+                tableau.reset()
+            }
         }
     }
 
@@ -59,7 +63,13 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
      *  Start each pile with its Ace.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.forEach { it.reset(listOf(Card(0, it.suit, true))) }
+        foundationList.forEachIndexed { index, foundation ->
+            if (index < numOfFoundationPiles.amount) {
+                foundation.reset(listOf(Card(0, foundation.suit, true)))
+            } else {
+                foundation.reset()
+            }
+        }
     }
 
     override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {

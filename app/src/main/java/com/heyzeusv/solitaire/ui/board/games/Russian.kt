@@ -51,12 +51,16 @@ data object Russian : Games.YukonFamily() {
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEachIndexed { index, tableau ->
-            if (index != 0) {
-                val cards = List(index + 5) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            if (index < numOfTableauPiles.amount) {
+                if (index != 0) {
+                    val cards = List(index + 5) { stock.remove() }
+                    tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+                } else {
+                    val cards = List(1) { stock.remove() }
+                    tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+                }
             } else {
-                val cards = List(1) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+                tableau.reset()
             }
         }
     }
