@@ -47,10 +47,12 @@
     <string name="games_golf">Golf</string>
     <string name="games_putt_putt">Putt Putt</string>
     <string name="games_golf_rush">Golf Rush</string>
+    <string name="games_spider">Spider</string>
     <string name="games_family">Family: %1$s</string>
     <string name="games_family_klondike">Klondike</string>
     <string name="games_family_yukon">Yukon</string>
     <string name="games_family_golf">Golf</string>
+    <string name="games_family_spider">Spider</string>
     <string name="redeal">Redeals: %1$s</string>
     <string name="redeal_none">None</string>
     <string name="redeal_once">1</string>

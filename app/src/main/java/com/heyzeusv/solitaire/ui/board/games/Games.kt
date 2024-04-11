@@ -27,6 +27,7 @@ sealed class Games : GameInfo, GameRules {
     sealed class KlondikeFamily : Games()
     sealed class YukonFamily : Games()
     sealed class GolfFamily : Games()
+    sealed class SpiderFamily: Games()
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
@@ -85,7 +86,8 @@ sealed class Games : GameInfo, GameRules {
             KlondikeTurnOne, KlondikeTurnThree, ClassicWestcliff,
             Easthaven, Yukon, Alaska,
             Russian, AustralianPatience, Canberra,
-            Golf, PuttPutt, GolfRush
+            Golf, PuttPutt, GolfRush,
+            Spider
         )
 
         /**
@@ -105,6 +107,7 @@ sealed class Games : GameInfo, GameRules {
                 Game.GAME_GOLF -> Golf
                 Game.GAME_PUTT_PUTT -> PuttPutt
                 Game.GAME_GOLF_RUSH -> GolfRush
+                Game.GAME_SPIDER -> Spider
                 Game.UNRECOGNIZED -> KlondikeTurnOne
             }
         }
@@ -193,11 +196,15 @@ interface GameRules {
      *  Cards 13-25 -> Diamonds
      *  Cards 26-38 -> Hearts
      *  Cards 39-51 -> Spades
+     *  Cards 52-64 -> Clubs
+     *  Cards 65-77 -> Diamonds
+     *  Cards 78-90 -> Hearts
+     *  Cards 91-103 -> Spades
      */
      fun getSuit(i: Int) = when (i / 13) {
-        0 -> Suits.CLUBS
-        1 -> Suits.DIAMONDS
-        2 -> Suits.HEARTS
+        0, 4 -> Suits.CLUBS
+        1, 5 -> Suits.DIAMONDS
+        2, 6 -> Suits.HEARTS
         else -> Suits.SPADES
      }
 }

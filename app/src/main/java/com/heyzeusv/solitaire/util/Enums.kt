@@ -113,6 +113,7 @@ enum class StartingScore(val amount: Int) {
  */
 enum class MaxScore(val amount: Int) {
     OneDeck(52),
+    TwoDecks(104)
 }
 
 /**
@@ -130,7 +131,9 @@ enum class ResetFaceUpAmount(val amount: Int) {
  */
 enum class NumberOfPiles(val amount: Int) {
     Four(4),
-    Seven(7)
+    Seven(7),
+    Eight(8),
+    Ten(10)
 }
 
 /**

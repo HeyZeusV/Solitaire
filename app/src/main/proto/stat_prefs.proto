@@ -32,4 +32,5 @@ enum Game {
   GAME_GOLF = 9;
   GAME_PUTT_PUTT = 10;
   GAME_GOLF_RUSH = 11;
+  GAME_SPIDER = 12;
 }
