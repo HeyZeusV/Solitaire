@@ -84,7 +84,7 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards
         foundation.forEachIndexed { index, it ->
-            if (index < numOfTableauPiles.amount) {
+            if (index < numOfFoundationPiles.amount) {
                 if (it.truePile.size != 13) return false
             }
         }
