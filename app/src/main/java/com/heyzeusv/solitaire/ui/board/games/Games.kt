@@ -87,7 +87,7 @@ sealed class Games : GameInfo, GameRules {
             Easthaven, Yukon, Alaska,
             Russian, AustralianPatience, Canberra,
             Golf, PuttPutt, GolfRush,
-            Spider
+            Spider, SpiderTwoSuits, SpiderOneSuit
         )
 
         /**
@@ -108,6 +108,8 @@ sealed class Games : GameInfo, GameRules {
                 Game.GAME_PUTT_PUTT -> PuttPutt
                 Game.GAME_GOLF_RUSH -> GolfRush
                 Game.GAME_SPIDER -> Spider
+                Game.GAME_SPIDER_TWO_SUITS -> SpiderTwoSuits
+                Game.GAME_SPIDER_ONE_SUIT -> SpiderOneSuit
                 Game.UNRECOGNIZED -> KlondikeTurnOne
             }
         }

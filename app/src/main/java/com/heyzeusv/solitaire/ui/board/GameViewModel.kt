@@ -18,7 +18,6 @@ import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.boards.layouts.ScreenLayouts
-import com.heyzeusv.solitaire.ui.board.games.Spider
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -146,7 +145,7 @@ class GameViewModel @Inject constructor(
      */
     fun onStockClick(): MoveResult {
         return when (_selectedGame.value) {
-            is Easthaven, is Spider -> onStockClickMultiPile()
+            is Easthaven, is Games.SpiderFamily -> onStockClickMultiPile()
             is Games.GolfFamily -> onStockClickGolf()
             else -> onStockClickStandard()
         }
@@ -358,8 +357,7 @@ class GameViewModel @Inject constructor(
     private fun autoComplete() {
         if (_autoCompleteActive.value) return
         if (!_selectedGame.value.autocompleteAvailable) {
-            gameWon()
-            return
+            if (!gameWon()) return
         }
         if (_stock.truePile.isEmpty() && _waste.truePile.isEmpty()) {
             if (!_selectedGame.value.autocompleteTableauCheck(tableau)) return
@@ -387,10 +385,13 @@ class GameViewModel @Inject constructor(
      *  Called during [autoComplete] and uses [Games.gameWon] to determine if user has won.
      */
     private fun gameWon(): Boolean {
-        if (!_selectedGame.value.gameWon(foundation)) return false
-        _autoCompleteActive.value = false
-        _gameWon.value = true
-        return true
+        return if (_selectedGame.value.gameWon(foundation)) {
+            _autoCompleteActive.value = false
+            _gameWon.value = true
+            true
+        } else {
+            false
+        }
     }
 
     /**
@@ -515,7 +516,7 @@ class GameViewModel @Inject constructor(
             val first13Card = last13Cards.first()
             _foundation.forEachIndexed { index, foundation ->
                 if (index < _selectedGame.value.numOfFoundationPiles.amount) {
-                    if (first13Card.suit == foundation.suit && foundation.truePile.isEmpty()) {
+                    if (foundation.truePile.isEmpty()) {
                         val tCardIndex = tPile.truePile.indexOf(first13Card)
                         val aniInfo = AnimateInfo(
                             start = tPile.gamePile,
@@ -527,7 +528,7 @@ class GameViewModel @Inject constructor(
                         aniInfo.actionBeforeAnimation = {
                             spiderMutex.withLock {
                                 tPile.remove(tCardIndex)
-                                foundation.add(last13Cards)
+                                foundation.addAll(last13Cards)
                                 tPile.updateDisplayPile()
                             }
                         }
@@ -535,6 +536,7 @@ class GameViewModel @Inject constructor(
                             spiderMutex.withLock {
                                 foundation.updateDisplayPile()
                                 appendHistory(aniInfo.getUndoAnimateInfo())
+                                autoComplete()
                             }
                         }
                         _animateInfo.value = aniInfo

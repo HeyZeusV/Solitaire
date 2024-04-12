@@ -24,6 +24,15 @@ class Foundation(
     }
 
     /**
+     *  Adds all given [cards] to [truePile]
+     */
+    fun addAll(cards: List<Card>) {
+        _truePile.addAll(cards)
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
+    }
+
+    /**
      *  Removes the last [Card] in [truePile] which would refer to the top showing card and
      *  returns it.
      */

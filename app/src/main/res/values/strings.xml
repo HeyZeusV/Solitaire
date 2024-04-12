@@ -48,6 +48,8 @@
     <string name="games_putt_putt">Putt Putt</string>
     <string name="games_golf_rush">Golf Rush</string>
     <string name="games_spider">Spider</string>
+    <string name="games_spider_two_suits">Spider (2 Suits)</string>
+    <string name="games_spider_one_suit">Spider (1 Suit)</string>
     <string name="games_family">Family: %1$s</string>
     <string name="games_family_klondike">Klondike</string>
     <string name="games_family_yukon">Yukon</string>
