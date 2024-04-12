@@ -5,6 +5,7 @@ import com.heyzeusv.solitaire.data.FlipCardInfo
 import com.heyzeusv.solitaire.data.TableauCardFlipInfo
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.isMultiSuit
 import com.heyzeusv.solitaire.util.notInOrder
 
 /**
@@ -92,7 +93,7 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : 
     /**
      *  Used to determine if pile contains more than 1 [Suits] type.
      */
-    fun isMultiSuit(): Boolean = _truePile.map { it.suit }.distinct().size > 1
+    fun isMultiSuit(): Boolean = _truePile.isMultiSuit()
 
     /**
      *  It is possible for pile to be same suit, but out of order. This checks if pile is not in

@@ -79,6 +79,11 @@ data object PuttPutt : Games.GolfFamily() {
         return false
     }
 
+    override fun gameWon(foundation: List<Foundation>): Boolean {
+        // single Foundation pile should have all cards
+        return foundation[3].truePile.size == 52
+    }
+
     /**
      *  Checks if given [cardsToAdd] is one more or less than last card of [foundation] truePile.
      *  Allows for wrapping from King to Ace or Ace to King.
@@ -92,10 +97,5 @@ data object PuttPutt : Games.GolfFamily() {
                firstCard.value == lastFoundationCard.value - 1 ||
                (firstCard.value == 0 && lastFoundationCard.value == 12) ||
                (firstCard.value == 12 && lastFoundationCard.value == 0)
-    }
-
-    override fun gameWon(foundation: List<Foundation>): Boolean {
-        // single Foundation pile should have all cards
-        return foundation.first().truePile.size == 52
     }
 }

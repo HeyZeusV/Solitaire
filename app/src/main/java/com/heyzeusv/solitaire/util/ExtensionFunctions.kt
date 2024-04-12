@@ -84,7 +84,7 @@ fun ButtonColors.getContentColor(enabled: Boolean): Color =
     if (enabled) contentColor else disabledContentColor
 
 /**
- *  Checks if pile is not in order descending.
+ *  Checks if pile is not in descending order.
  */
 fun List<Card>.notInOrder(): Boolean {
     val it = this.iterator()
@@ -97,3 +97,18 @@ fun List<Card>.notInOrder(): Boolean {
         current = next
     }
 }
+
+/**
+ *  Checks if pile is in descending order.
+ */
+fun List<Card>.inOrder(): Boolean = !this.notInOrder()
+
+/**
+ *  Checks if pile contains more than 1 [Suits] type.
+ */
+fun List<Card>.isMultiSuit(): Boolean = this.map { it.suit }.distinct().size > 1
+
+/**
+ *  Checks if piles contains only 1 [Suits] type
+ */
+fun List<Card>.isNotMultiSuit(): Boolean = !this.isMultiSuit()

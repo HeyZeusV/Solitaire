@@ -12,7 +12,7 @@ import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
-import com.heyzeusv.solitaire.util.notInOrder
+import com.heyzeusv.solitaire.util.inOrder
 
 data object Easthaven : Games.KlondikeFamily() {
     /**
@@ -73,7 +73,7 @@ data object Easthaven : Games.KlondikeFamily() {
     }
 
     override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return !cardsToAdd.notInOrder()
+        return cardsToAdd.inOrder()
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {

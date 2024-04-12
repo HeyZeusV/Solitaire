@@ -87,7 +87,6 @@ fun Board(
                 stockWasteEmpty = { stockWasteEmpty },
                 onWasteClick = gameVM::onWasteClick,
                 foundationList = gameVM.foundation,
-                onFoundationClick = gameVM::onFoundationClick,
                 tableauList = gameVM.tableau,
                 onTableauClick = gameVM::onTableauClick
             )

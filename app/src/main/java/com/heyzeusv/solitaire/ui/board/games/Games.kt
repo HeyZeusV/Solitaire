@@ -38,8 +38,8 @@ sealed class Games : GameInfo, GameRules {
 
         val cFirst = cardsToAdd.first()
         tableau.truePile.let {
-            // can't add card to its own pile
-            if (it.contains(cFirst)) return false
+            // can't add card to its own pile in single deck games
+            if (baseDeck.size == 54 && it.contains(cFirst)) return false
             if (it.isNotEmpty()) {
                 if (canAddToTableauNonEmptyRule(tableau, cardsToAdd)) return true
             } else if (canAddToTableauEmptyRule(tableau, cardsToAdd)) {

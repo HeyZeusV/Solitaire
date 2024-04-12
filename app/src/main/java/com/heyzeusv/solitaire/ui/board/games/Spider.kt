@@ -12,7 +12,8 @@ import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
-import com.heyzeusv.solitaire.util.notInOrder
+import com.heyzeusv.solitaire.util.inOrder
+import com.heyzeusv.solitaire.util.isNotMultiSuit
 
 data object Spider : Games.SpiderFamily() {
     /**
@@ -65,16 +66,21 @@ data object Spider : Games.SpiderFamily() {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
-        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1
+        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1 &&
+               cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
     override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return !cardsToAdd.notInOrder()
+        return cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards
         foundation.forEach { if (it.truePile.size != 13) return false }
         return true
+    }
+
+    override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
+        return false
     }
 }

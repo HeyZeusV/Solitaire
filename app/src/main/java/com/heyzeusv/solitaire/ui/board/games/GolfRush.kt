@@ -79,6 +79,11 @@ data object GolfRush : Games.GolfFamily() {
         return false
     }
 
+    override fun gameWon(foundation: List<Foundation>): Boolean {
+        // single Foundation pile should have all cards
+        return foundation[3].truePile.size == 52
+    }
+
     /**
      *  Checks if given [cardsToAdd] is one more or less than last card of [foundation] truePile.
      */
@@ -89,10 +94,5 @@ data object GolfRush : Games.GolfFamily() {
         val lastFoundationCard = foundation.truePile.last()
         return firstCard.value == lastFoundationCard.value + 1 ||
                 firstCard.value == lastFoundationCard.value - 1
-    }
-
-    override fun gameWon(foundation: List<Foundation>): Boolean {
-        // single Foundation pile should have all cards
-        return foundation.first().truePile.size == 52
     }
 }

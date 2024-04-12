@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.ui.board
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
@@ -24,6 +25,7 @@ import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.*
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.inOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +49,7 @@ class GameViewModel @Inject constructor(
 
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     private val mutex = Mutex()
+    private val spiderMutex = Mutex()
 
     private val _selectedGame = MutableStateFlow<Games>(KlondikeTurnOne)
     val selectedGame: StateFlow<Games> get() = _selectedGame
@@ -460,6 +463,7 @@ class GameViewModel @Inject constructor(
                             it.updateDisplayPile()
                             appendHistory(aniInfo.getUndoAnimateInfo())
                             autoComplete()
+                            fullPileToFoundation(index)
                         }
                     }
                     _animateInfo.value = aniInfo
@@ -489,6 +493,7 @@ class GameViewModel @Inject constructor(
                             it.updateDisplayPile()
                             appendHistory(aniInfo.getUndoAnimateInfo())
                             autoComplete()
+                            fullPileToFoundation(index)
                         }
                     }
                     _animateInfo.value = aniInfo
@@ -497,6 +502,46 @@ class GameViewModel @Inject constructor(
             }
         }
         return Illegal
+    }
+
+    private fun fullPileToFoundation(tableauIndex: Int) {
+        // only spider requires it so far
+        if (_selectedGame.value.familyId != R.string.games_family_spider) return
+        val tPile = _tableau[tableauIndex]
+        // A to King is 13 Cards, so no need to check if pile isn't at least 13 Cards
+        if (tPile.truePile.size < 13) return
+        val last13Cards = tPile.truePile.takeLast(13)
+        if (last13Cards.inOrder()) {
+            val first13Card = last13Cards.first()
+            _foundation.forEachIndexed { index, foundation ->
+                if (index < _selectedGame.value.numOfFoundationPiles.amount) {
+                    if (first13Card.suit == foundation.suit && foundation.truePile.isEmpty()) {
+                        val tCardIndex = tPile.truePile.indexOf(first13Card)
+                        val aniInfo = AnimateInfo(
+                            start = tPile.gamePile,
+                            end = foundation.gamePile,
+                            animatedCards = last13Cards,
+                            startTableauIndices = listOf(tCardIndex),
+                            tableauCardFlipInfo = tPile.getTableauCardFlipInfo(tCardIndex)
+                        )
+                        aniInfo.actionBeforeAnimation = {
+                            spiderMutex.withLock {
+                                tPile.remove(tCardIndex)
+                                foundation.add(last13Cards)
+                                tPile.updateDisplayPile()
+                            }
+                        }
+                        aniInfo.actionAfterAnimation = {
+                            spiderMutex.withLock {
+                                foundation.updateDisplayPile()
+                                appendHistory(aniInfo.getUndoAnimateInfo())
+                            }
+                        }
+                        _animateInfo.value = aniInfo
+                    }
+                }
+            }
+        }
     }
 
     /**
