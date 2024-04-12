@@ -77,7 +77,11 @@ data object SpiderOneSuit : Games.SpiderFamily() {
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards
-        foundation.forEach { if (it.truePile.size != 13) return false }
+        foundation.forEachIndexed { index, it ->
+            if (index < numOfTableauPiles.amount) {
+                if (it.truePile.size != 13) return false
+            }
+        }
         return true
     }
 
