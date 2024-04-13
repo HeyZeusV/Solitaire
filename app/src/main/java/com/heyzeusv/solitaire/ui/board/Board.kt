@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
@@ -44,6 +45,7 @@ fun Board(
 ) {
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
+    val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsState()
     val undoAnimation by gameVM.undoAnimation.collectAsState()
     val selectedGame by gameVM.selectedGame.collectAsState()
 
@@ -73,6 +75,8 @@ fun Board(
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
+                spiderAnimateInfo = spiderAnimateInfo,
+                updateSpiderAnimateInfo = gameVM::updateSpiderAnimateInfo,
                 updateUndoEnabled = gameVM::updateUndoEnabled,
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
@@ -117,7 +121,7 @@ fun Board(
  *  [SolitaireCard] and determine their vertical spacing.
  */
 @Composable
-fun VerticalCardPile(
+fun StaticVerticalCardPile(
     cardDpSize: DpSize,
     pile: List<Card>,
     modifier: Modifier = Modifier
@@ -238,9 +242,9 @@ fun HorizontalCardPileWithFlip(
                 }
             }
         ) { measurables, constraints ->
-            val rightCard = measurables.firstOrNull { meas -> meas.layoutId == "Right Card" }
-            val middleCard = measurables.firstOrNull { meas -> meas.layoutId == "Middle Card" }
-            val leftCard = measurables.firstOrNull { meas -> meas.layoutId == "Left Card" }
+            val rightCard = measurables.firstOrNull { m -> m.layoutId == "Right Card" }
+            val middleCard = measurables.firstOrNull { m -> m.layoutId == "Middle Card" }
+            val leftCard = measurables.firstOrNull { m -> m.layoutId == "Left Card" }
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 rightCard?.measure(layout.cardConstraints)?.place(rightCardOffset, 2f)
@@ -252,7 +256,7 @@ fun HorizontalCardPileWithFlip(
 }
 
 /**
- *  Composable that displays up to 7 [FlipCard] each animated to/from different piles. [layout]
+ *  Composable that displays up to 7 [FlipCard], each animated to/from different piles. [layout]
  *  provides animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be
  *  displayed and their flip animation info. [animationDurations] is used to determine length of
  *  animations.
@@ -338,25 +342,30 @@ fun MultiPileCardWithFlip(
             }
         ) { measurables, constraints ->
             val tZeroCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[0] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[0] }
             val tOneCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[1] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[1] }
             val tTwoCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[2] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[2] }
             val tThreeCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[3] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[3] }
             val tFourCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[4] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[4] }
             val tFiveCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[5] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[5] }
             val tSixCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[6] }
-            val tSevenCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[7] }
-            val tEightCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[8] }
-            val tNineCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layout.multiPileLayoutIds[9] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[6] }
+            var tSevenCard: Measurable? = null
+            var tEightCard: Measurable? = null
+            var tNineCard: Measurable? = null
+            if (it.animatedCards.size > 7) {
+                tSevenCard =
+                    measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[7] }
+                tEightCard =
+                    measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[8] }
+                tNineCard =
+                    measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[9] }
+            }
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 if (tZeroCardOffset != IntOffset.Zero) {
@@ -494,7 +503,7 @@ fun AnimateFlip(
 fun VerticalCardPilePreview() {
     PreviewUtil().apply {
         Preview {
-            VerticalCardPile(cardDpSize, pile)
+            StaticVerticalCardPile(cardDpSize, pile)
         }
     }
 }

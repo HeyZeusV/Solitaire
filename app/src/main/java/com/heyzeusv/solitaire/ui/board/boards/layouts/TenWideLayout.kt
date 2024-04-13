@@ -59,6 +59,9 @@ data class TenWideLayout(
         "Tableau Seven Card",
         "Tableau Eight Card",
         "Tableau Nine Card",
+        "Tableau Ten Card",
+        "Tableau Eleven Card",
+        "Tableau Twelve Card"
     )
 
     /**

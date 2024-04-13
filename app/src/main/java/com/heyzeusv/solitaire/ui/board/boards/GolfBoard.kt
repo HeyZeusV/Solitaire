@@ -25,7 +25,7 @@ import com.heyzeusv.solitaire.ui.board.FlipCard
 import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
-import com.heyzeusv.solitaire.ui.board.VerticalCardPile
+import com.heyzeusv.solitaire.ui.board.StaticVerticalCardPile
 import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.Suits
@@ -125,7 +125,7 @@ fun GolfBoard(
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> { }
                     FlipCardInfo.NoFlip -> {
-                        VerticalCardPile(
+                        StaticVerticalCardPile(
                             cardDpSize = layout.getCardDpSize(),
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Vertical Pile")

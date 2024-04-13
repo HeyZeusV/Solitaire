@@ -103,6 +103,10 @@ class GameViewModel @Inject constructor(
     val animateInfo: StateFlow<AnimateInfo?> get() = _animateInfo
     fun updateAnimateInfo(newValue: AnimateInfo?) { _animateInfo.value = newValue }
 
+    private val _spiderAnimateInfo = MutableStateFlow<AnimateInfo?>(null)
+    val spiderAnimateInfo: StateFlow<AnimateInfo?> get() = _spiderAnimateInfo
+    fun updateSpiderAnimateInfo(newValue: AnimateInfo?) { _spiderAnimateInfo.value = newValue }
+
     private var autoCompleteDelay: Long = AnimationDurations.Fast.autoCompleteDelay
     fun updateAutoCompleteDelay(newValue: Long) { autoCompleteDelay = newValue }
 
@@ -620,29 +624,30 @@ class GameViewModel @Inject constructor(
                 if (index < _selectedGame.value.numOfFoundationPiles.amount) {
                     if (foundation.truePile.isEmpty()) {
                         val tCardIndex = tPile.truePile.indexOf(first13Card)
-                        val aniInfo = AnimateInfo(
+                        val spiderAniInfo = AnimateInfo(
                             start = tPile.gamePile,
                             end = foundation.gamePile,
                             animatedCards = last13Cards,
-                            startTableauIndices = listOf(tCardIndex),
+                            startTableauIndices = List(13) { it + tCardIndex },
                             tableauCardFlipInfo = tPile.getTableauCardFlipInfo(tCardIndex)
                         )
-                        aniInfo.actionBeforeAnimation = {
+                        spiderAniInfo.actionBeforeAnimation = {
                             spiderMutex.withLock {
                                 tPile.remove(tCardIndex)
                                 foundation.addAll(last13Cards)
                                 tPile.updateDisplayPile()
                             }
                         }
-                        aniInfo.actionAfterAnimation = {
+                        spiderAniInfo.actionAfterAnimation = {
                             spiderMutex.withLock {
                                 foundation.updateDisplayPile()
-                                appendHistory(aniInfo.getUndoAnimateInfo())
+                                appendHistory(spiderAniInfo.getUndoAnimateInfo())
                                 autoComplete()
                                 sbLogic.handleMoveResult(FullPileScore)
                             }
                         }
-                        _animateInfo.value = aniInfo
+                        _spiderAnimateInfo.value = spiderAniInfo
+                        return
                     }
                 }
             }

@@ -118,7 +118,7 @@ fun List<Card>.isNotMultiSuit(): Boolean = !this.isMultiSuit()
  */
 fun List<Card>.numInOrder(): Int {
     if (this.isEmpty()) return 0
-    var num = 0
+    var num = 1
     val it = this.reversed().iterator()
     var current = it.next()
     while (true) {

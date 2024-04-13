@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.ui.board.boards
 
+import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -22,11 +23,12 @@ import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.data.pile.Waste
 import com.heyzeusv.solitaire.ui.board.AnimateOffset
 import com.heyzeusv.solitaire.ui.board.MultiPileCardWithFlip
+import com.heyzeusv.solitaire.ui.board.SolitaireCard
 import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.TableauPileWithFlip
-import com.heyzeusv.solitaire.ui.board.VerticalCardPile
+import com.heyzeusv.solitaire.ui.board.StaticVerticalCardPile
 import com.heyzeusv.solitaire.ui.board.boards.layouts.TenWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.DrawAmount
@@ -38,7 +40,9 @@ import kotlinx.coroutines.delay
  *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [layout] is
  *  used to determine offsets of every pile. [animationDurations] determines how long each animation
  *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
- *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
+ *  [updateAnimateInfo]. [spiderAnimateInfo] is used specifically for the full Ace to King
+ *  [Tableau] pile to [Foundation] pile or vice versa and can be updated with
+ *  [updateSpiderAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
  *  animations. [undoAnimation] is used to enable/disable all clicks during an undo animation and
  *  is updated using [updateUndoAnimation]. [drawAmount] determines how many cards are drawn from
  *  [Stock] and shown by [Waste].
@@ -50,6 +54,8 @@ fun TenWideBoard(
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
+    spiderAnimateInfo: AnimateInfo?,
+    updateSpiderAnimateInfo: (AnimateInfo?) -> Unit = { },
     updateUndoEnabled: (Boolean) -> Unit = { },
     undoAnimation: Boolean,
     updateUndoAnimation: (Boolean) -> Unit = { },
@@ -107,6 +113,34 @@ fun TenWideBoard(
             )
         }
     }
+    spiderAnimateInfo?.let {
+        // Updating AnimateInfo to null if animation is fully completed
+        LaunchedEffect(key1 = it) {
+            try {
+                if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                delay(animationDurations.fullDelay)
+                updateSpiderAnimateInfo(null)
+            } finally {
+                if (it.undoAnimation) updateUndoAnimation(false)
+            }
+        }
+        // Action Before Animation
+        LaunchedEffect(key1 = it) {
+            try {
+                delay(animationDurations.beforeActionDelay)
+            } finally {
+                it.actionBeforeAnimation()
+            }
+        }
+        // Action After Animation
+        LaunchedEffect(key1 = it) {
+            try {
+                delay(animationDurations.afterActionDelay)
+            } finally {
+                it.actionAfterAnimation()
+            }
+        }
+    }
 
     Layout(
         modifier = modifier.gesturesDisabled(undoAnimation),
@@ -123,10 +157,10 @@ fun TenWideBoard(
                         )
                     }
                     FlipCardInfo.NoFlip -> {
-                        VerticalCardPile(
+                        StaticVerticalCardPile(
                             cardDpSize = layout.getCardDpSize(),
                             pile = it.animatedCards,
-                            modifier = Modifier.layoutId("Animated Vertical Pile")
+                            modifier = Modifier.layoutId("Animated Static Vertical Pile")
                         )
                     }
                 }
@@ -138,6 +172,14 @@ fun TenWideBoard(
                         modifier = Modifier.layoutId("Animated Tableau Card")
                     )
                 }
+            }
+            spiderAnimateInfo?.let {
+                DynamicVerticalCardPile(
+                    layout = layout,
+                    animateInfo = it,
+                    animationDurations = animationDurations,
+                    modifier = Modifier.layoutId("Animated Dynamic Vertical Pile")
+                )
             }
             foundationList.forEachIndexed { index, foundation ->
                 SolitairePile(
@@ -204,9 +246,11 @@ fun TenWideBoard(
         var tableauNine = measurables.firstOrNull { it.layoutId == "Tableau #9" }
 
         val animatedVerticalPile =
-            measurables.firstOrNull { it.layoutId == "Animated Vertical Pile" }
+            measurables.firstOrNull { it.layoutId == "Animated Static Vertical Pile" }
         val animatedMultiPile = measurables.firstOrNull { it.layoutId == "Animated Multi Pile" }
         val animatedTableauCard = measurables.firstOrNull { it.layoutId == "Animated Tableau Card" }
+        val animatedDynamicPile =
+            measurables.firstOrNull { it.layoutId == "Animated Dynamic Vertical Pile" }
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             // card constraints
@@ -243,6 +287,7 @@ fun TenWideBoard(
                 }
             }
             animatedMultiPile?.measure(constraints)?.place(IntOffset.Zero, 2f)
+            animatedDynamicPile?.measure(constraints)?.place(IntOffset.Zero, 3f)
 
             foundationClubsOne?.measure(cardConstraints)?.place(layout.foundationClubsOne)
             foundationDiamondsOne?.measure(cardConstraints)?.place(layout.foundationDiamondsOne)
@@ -265,6 +310,164 @@ fun TenWideBoard(
             tableauSeven?.measure(tableauConstraints)?.place(layout.tableauSeven)
             tableauEight?.measure(tableauConstraints)?.place(layout.tableauEight)
             tableauNine?.measure(tableauConstraints)?.place(layout.tableauNine)
+        }
+    }
+}
+
+/**
+ *  Composable that displays up to 13 [SolitaireCard], each animated to/from a [Tableau] pile
+ *  to/from a [Foundation] pile. [layout] provides animation offsets and Card sizes/constraints.
+ *  [animateInfo] provides the Cards to be  displayed and their flip animation info.
+ *  [animationDurations] is used to determine length of animations.
+ */
+@Composable
+fun DynamicVerticalCardPile(
+    layout: TenWideLayout,
+    animateInfo: AnimateInfo,
+    animationDurations: AnimationDurations,
+    modifier: Modifier = Modifier
+) {
+    animateInfo.let {
+        var tZeroCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tOneCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tTwoCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tThreeCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tFourCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tFiveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tSixCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tSevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tEightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tNineCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tTenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tElevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tTwelveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+
+        for (i in 0 until it.animatedCards.size) {
+            AnimateOffset(
+                animateInfo = it,
+                animationDurations = animationDurations,
+                startOffset = layout.getPilePosition(it.start)
+                    .plus(layout.getCardsYOffset(it.startTableauIndices[i])),
+                endOffset = layout.getPilePosition(it.end)
+                    .plus(layout.getCardsYOffset(it.endTableauIndices[i])),
+                updateXOffset = { value ->
+                    when (i) {
+                        0 -> tZeroCardOffset = tZeroCardOffset.copy(x = value)
+                        1 -> tOneCardOffset = tOneCardOffset.copy(x = value)
+                        2 -> tTwoCardOffset = tTwoCardOffset.copy(x = value)
+                        3 -> tThreeCardOffset = tThreeCardOffset.copy(x = value)
+                        4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
+                        5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
+                        6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
+                        7 -> tSevenCardOffset = tSevenCardOffset.copy(x = value)
+                        8 -> tEightCardOffset = tEightCardOffset.copy(x = value)
+                        9 -> tNineCardOffset = tNineCardOffset.copy(x = value)
+                        10 -> tTenCardOffset = tTenCardOffset.copy(x = value)
+                        11 -> tElevenCardOffset = tElevenCardOffset.copy(x = value)
+                        12 -> tTwelveCardOffset = tTwelveCardOffset.copy(x = value)
+                    }
+                },
+                updateYOffset = { value ->
+                    when (i) {
+                        0 -> tZeroCardOffset = tZeroCardOffset.copy(y = value)
+                        1 -> tOneCardOffset = tOneCardOffset.copy(y = value)
+                        2 -> tTwoCardOffset = tTwoCardOffset.copy(y = value)
+                        3 -> tThreeCardOffset = tThreeCardOffset.copy(y = value)
+                        4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
+                        5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
+                        6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
+                        7 -> tSevenCardOffset = tSevenCardOffset.copy(y = value)
+                        8 -> tEightCardOffset = tEightCardOffset.copy(y = value)
+                        9 -> tNineCardOffset = tNineCardOffset.copy(y = value)
+                        10 -> tTenCardOffset = tTenCardOffset.copy(y = value)
+                        11 -> tElevenCardOffset = tElevenCardOffset.copy(y = value)
+                        12 -> tTwelveCardOffset = tTwelveCardOffset.copy(y = value)
+                    }
+                }
+            )
+        }
+
+        Layout(
+            modifier = modifier,
+            content = {
+                for (i in 0 until it.animatedCards.size) {
+                    SolitaireCard(
+                        card = it.animatedCards[i],
+                        modifier = Modifier
+                            .size(layout.getCardDpSize())
+                            .layoutId(layout.multiPileLayoutIds[i])
+                    )
+                }
+            }
+        ) { measurables, constraints ->
+            val tZeroCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[0] }
+            val tOneCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[1] }
+            val tTwoCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[2] }
+            val tThreeCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[3] }
+            val tFourCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[4] }
+            val tFiveCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[5] }
+            val tSixCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[6] }
+            val tSevenCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[7] }
+            val tEightCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[8] }
+            val tNineCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[9] }
+            val tTenCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[10] }
+            val tElevenCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[11] }
+            val tTwelveCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[12] }
+
+            layout(constraints.maxWidth, constraints.maxHeight) {
+                if (tZeroCardOffset != IntOffset.Zero) {
+                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset)
+                }
+                if (tOneCardOffset != IntOffset.Zero) {
+                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 1f)
+                }
+                if (tTwoCardOffset != IntOffset.Zero) {
+                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 2f)
+                }
+                if (tThreeCardOffset != IntOffset.Zero) {
+                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 3f)
+                }
+                if (tFourCardOffset != IntOffset.Zero) {
+                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 4f)
+                }
+                if (tFiveCardOffset != IntOffset.Zero) {
+                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 5f)
+                }
+                if (tSixCardOffset != IntOffset.Zero) {
+                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset, 6f)
+                }
+                if (tSevenCardOffset != IntOffset.Zero) {
+                    tSevenCard?.measure(layout.cardConstraints)?.place(tSevenCardOffset, 7f)
+                }
+                if (tEightCardOffset != IntOffset.Zero) {
+                    tEightCard?.measure(layout.cardConstraints)?.place(tEightCardOffset, 8f)
+                }
+                if (tNineCardOffset != IntOffset.Zero) {
+                    tNineCard?.measure(layout.cardConstraints)?.place(tNineCardOffset, 9f)
+                }
+                if (tTenCardOffset != IntOffset.Zero) {
+                    tTenCard?.measure(layout.cardConstraints)?.place(tTenCardOffset, 10f)
+                }
+                if (tElevenCardOffset != IntOffset.Zero) {
+                    tElevenCard?.measure(layout.cardConstraints)?.place(tElevenCardOffset, 11f)
+                }
+                if (tTwelveCardOffset != IntOffset.Zero) {
+                    tTwelveCard?.measure(layout.cardConstraints)?.place(tTwelveCardOffset, 12f)
+                }
+            }
         }
     }
 }
