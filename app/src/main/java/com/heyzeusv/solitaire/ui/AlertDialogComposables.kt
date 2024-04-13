@@ -16,7 +16,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.res.stringResource
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.GameViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.formatTimeDisplay
@@ -65,7 +64,7 @@ fun SolitaireAlertDialog(
  */
 @Composable
 fun CloseGameAlertDialog(
-    sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
     menuVM: MenuViewModel,
     finishApp: () -> Unit
 ) {
@@ -78,7 +77,7 @@ fun CloseGameAlertDialog(
         message = stringResource(R.string.close_ad_msg),
         confirmText = stringResource(R.string.close_ad_confirm),
         confirmOnClick = {
-            menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
+            menuVM.checkMovesUpdateStats(gameVM.sbLogic.retrieveLastGameStats(false))
             finishApp()
         },
         dismissText = stringResource(R.string.close_ad_dismiss),
@@ -91,12 +90,11 @@ fun CloseGameAlertDialog(
  */
 @Composable
 fun GameWonAlertDialog(
-    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel
 ) {
     val gameWon by gameVM.gameWon.collectAsState()
-    val lgs = sbVM.retrieveLastGameStats(true, gameVM.autoCompleteCorrection)
+    val lgs = gameVM.sbLogic.retrieveLastGameStats(true)
 
     SolitaireAlertDialog(
         display = gameWon,
@@ -109,12 +107,9 @@ fun GameWonAlertDialog(
             lgs.totalScore
         ),
         confirmText = stringResource(R.string.win_ad_confirm),
-        confirmOnClick = {
-            gameVM.resetAll(ResetOptions.NEW)
-            sbVM.reset()
-        },
+        confirmOnClick = { gameVM.resetAll(ResetOptions.NEW) },
         runOnDisplay = {
-            sbVM.pauseTimer()
+            gameVM.sbLogic.pauseTimer()
             menuVM.updateStats(lgs)
         }
     )

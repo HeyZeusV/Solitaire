@@ -31,7 +31,6 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.BaseButton
 import com.heyzeusv.solitaire.ui.ResetAlertDialog
 import com.heyzeusv.solitaire.ui.board.GameViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.PreviewDevices
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.ResetOptions.NEW
@@ -44,7 +43,6 @@ import com.heyzeusv.solitaire.util.getContentColor
  */
 @Composable
 fun Toolbar(
-    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
@@ -55,20 +53,15 @@ fun Toolbar(
     Toolbar(
         menuOnClick = menuVM::updateDisplayMenuButtonsAndMenuState,
         resetRestartOnConfirm = {
-            menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
+            menuVM.checkMovesUpdateStats(gameVM.sbLogic.retrieveLastGameStats(false))
             gameVM.resetAll(RESTART)
-            sbVM.reset()
         },
         resetNewOnConfirm = {
-            menuVM.checkMovesUpdateStats(sbVM.retrieveLastGameStats(false))
+            menuVM.checkMovesUpdateStats(gameVM.sbLogic.retrieveLastGameStats(false))
             gameVM.resetAll(NEW)
-            sbVM.reset()
         },
         undoEnabled = undoEnabled,
-        undoOnClick = {
-            gameVM.undo()
-            sbVM.undo()
-        },
+        undoOnClick = { gameVM.undo() },
         autoCompleteActive = autoCompleteActive,
         modifier = modifier
     )

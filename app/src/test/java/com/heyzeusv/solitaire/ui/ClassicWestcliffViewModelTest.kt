@@ -4,7 +4,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.ClassicWestcliffViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert
@@ -14,20 +14,20 @@ import org.junit.Test
 import java.util.Random
 
 /**
- *  [ClassicWestcliffViewModel] and [ScoreboardViewModel] are tied very close to each
+ *  [ClassicWestcliffViewModel] and [ScoreboardLogic] are tied very close to each
  *  other, so I have decided to test both at the same time.
  */
 class ClassicWestcliffViewModelTest {
 
     private lateinit var cwVM: ClassicWestcliffViewModel
-    private lateinit var sbVM: ScoreboardViewModel
+    private lateinit var sbVM: ScoreboardLogic
 
     private val tc = TestCards
 
     @Before
     fun setup() {
         cwVM = ClassicWestcliffViewModel(ShuffleSeed(Random(10L)))
-        sbVM = ScoreboardViewModel()
+        sbVM = ScoreboardLogic()
     }
 
     @Test

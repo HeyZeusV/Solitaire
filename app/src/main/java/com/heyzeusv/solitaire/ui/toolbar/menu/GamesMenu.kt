@@ -38,10 +38,10 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.GameSwitchAlertDialog
 import com.heyzeusv.solitaire.ui.board.Board
+import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.games.Yukon
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -54,7 +54,7 @@ import kotlinx.coroutines.launch
  */
 @Composable
 fun GamesMenu(
-    sbVM: ScoreboardViewModel,
+    gameVM: GameViewModel,
     menuVM: MenuViewModel
 ) {
     val settings by menuVM.settings.collectAsState()
@@ -63,19 +63,17 @@ fun GamesMenu(
 
     GamesMenu(
         gameSwitchConfirmOnClick = {
-            val lgs = sbVM.retrieveLastGameStats(false)
+            val lgs = gameVM.sbLogic.retrieveLastGameStats(false)
             if (lgs.moves > 1) {
                 menuVM.updateStats(lgs)
-                sbVM.reset()
             }
         },
-        gameInfoOnClickCheck = { sbVM.retrieveLastGameStats(false).moves > 0 },
+        gameInfoOnClickCheck = { gameVM.sbLogic.moves.value > 0 },
         selectedGame = selectedGame
-    ) { game ->
+    ) { game, gameChanged ->
         scope.launch {
-            if (game != selectedGame) {
+            if (gameChanged) {
                 menuVM.updateSelectedGame(game)
-                sbVM.reset()
                 delay(300)
             }
             menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
@@ -99,11 +97,12 @@ fun GamesMenu(
     gameSwitchConfirmOnClick: () -> Unit,
     gameInfoOnClickCheck: () -> Boolean,
     selectedGame: Games,
-    onBackPress: (Games) -> Unit
+    onBackPress: (Games, Boolean) -> Unit
 ) {
     var displayGameSwitch by remember { mutableStateOf(false) }
     var menuSelectedGame by remember { mutableStateOf(selectedGame) }
     var inProgressSelectedGame by remember { mutableStateOf<Games>(Yukon) }
+    var gameChanged by remember { mutableStateOf(false) }
     val gamesInfoOnClick = { game: Games ->
         if (game != menuSelectedGame) {
             if (gameInfoOnClickCheck()) {
@@ -111,6 +110,7 @@ fun GamesMenu(
                 inProgressSelectedGame = game
             } else {
                 menuSelectedGame = game
+                gameChanged = true
             }
         }
     }
@@ -125,13 +125,14 @@ fun GamesMenu(
             gameSwitchConfirmOnClick()
             menuSelectedGame = inProgressSelectedGame
             displayGameSwitch = false
+            gameChanged = true
         },
         dismissOnClick = { displayGameSwitch = false }
     )
     MenuScreen(
         menu = MenuState.Games,
         modifier = Modifier.testTag("Games Menu"),
-        onBackPress = { onBackPress(menuSelectedGame) }
+        onBackPress = { onBackPress(menuSelectedGame, gameChanged) }
     ) {
         LazyColumn(
             modifier = Modifier.testTag("Games Menu List"),
@@ -212,7 +213,7 @@ fun GamesMenuPreview() {
                 gameSwitchConfirmOnClick = { },
                 gameInfoOnClickCheck = { true },
                 selectedGame = KlondikeTurnOne
-            ) { }
+            ) { _, _ -> }
         }
     }
 }

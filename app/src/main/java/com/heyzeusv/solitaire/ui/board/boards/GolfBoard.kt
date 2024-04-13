@@ -28,7 +28,6 @@ import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.VerticalCardPile
 import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
-import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
@@ -51,15 +50,14 @@ fun GolfBoard(
     updateUndoEnabled: (Boolean) -> Unit = { },
     undoAnimation: Boolean,
     updateUndoAnimation: (Boolean) -> Unit = { },
-    handleMoveResult: (MoveResult) -> Unit = { },
     /** Piles and their onClicks */
     stock: Stock,
-    onStockClick: () -> MoveResult = { MoveResult.Illegal },
+    onStockClick: () -> Unit = { },
     stockWasteEmpty: () -> Boolean = { true },
     foundationList: List<Foundation>,
-    onFoundationClick: (Int) -> MoveResult = { MoveResult.Illegal },
+    onFoundationClick: (Int) -> Unit = { },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal }
+    onTableauClick: (Int, Int) -> Unit = { _, _ ->  }
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
     var flipRotation by remember { mutableFloatStateOf(0f) }
@@ -142,7 +140,7 @@ fun GolfBoard(
                 cardDpSize = layout.getCardDpSize(),
                 pile = foundationList[3].displayPile,
                 emptyIconId = Suits.SPADES.emptyIcon,
-                onClick = { handleMoveResult(onFoundationClick(3)) }
+                onClick = { onFoundationClick(3) }
             )
             SolitaireStock(
                 modifier = Modifier
@@ -151,7 +149,7 @@ fun GolfBoard(
                 cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { handleMoveResult(onStockClick()) }
+                onClick = { onStockClick() }
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
@@ -159,8 +157,7 @@ fun GolfBoard(
                     cardDpSize = layout.getCardDpSize(),
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick,
-                    handleMoveResult = handleMoveResult
+                    onClick = onTableauClick
                 )
             }
         }

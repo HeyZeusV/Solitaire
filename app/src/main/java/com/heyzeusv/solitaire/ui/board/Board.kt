@@ -29,7 +29,6 @@ import com.heyzeusv.solitaire.ui.board.boards.StandardBoard
 import com.heyzeusv.solitaire.ui.board.boards.TenWideBoard
 import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.ui.board.boards.layouts.XWideLayout
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -39,7 +38,6 @@ import com.heyzeusv.solitaire.util.PreviewUtil
  */
 @Composable
 fun Board(
-    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
@@ -60,7 +58,6 @@ fun Board(
                 updateUndoEnabled = gameVM::updateUndoEnabled,
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
-                handleMoveResult = sbVM::handleMoveResult,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 stockWasteEmpty = { stockWasteEmpty },
@@ -80,7 +77,6 @@ fun Board(
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
                 drawAmount = selectedGame.drawAmount,
-                handleMoveResult = sbVM::handleMoveResult,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,
@@ -102,7 +98,6 @@ fun Board(
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
                 drawAmount = selectedGame.drawAmount,
-                handleMoveResult = sbVM::handleMoveResult,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,

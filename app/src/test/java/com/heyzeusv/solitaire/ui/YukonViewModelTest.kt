@@ -4,7 +4,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.YukonViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import kotlinx.coroutines.Dispatchers
@@ -20,7 +20,7 @@ import org.junit.Test
 import java.util.Random
 
 /**
- *  [YukonViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have
+ *  [YukonViewModel] and [ScoreboardLogic] are tied very close to each other, so I have
  *  decided to test both at the same time.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -28,13 +28,13 @@ class YukonViewModelTest {
 
     private val tc = TestCards
     private lateinit var ykVM: YukonViewModel
-    private lateinit var sbVM: ScoreboardViewModel
+    private lateinit var sbVM: ScoreboardLogic
 
     @Before
     fun setup() {
         Dispatchers.setMain(StandardTestDispatcher())
         ykVM = YukonViewModel(ShuffleSeed(Random(10L)))
-        sbVM = ScoreboardViewModel()
+        sbVM = ScoreboardLogic()
     }
 
     @Test

@@ -15,7 +15,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.RulesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
@@ -100,7 +100,7 @@ enum class Redeals(
 
 /**
  *  Enum class that holds possible starting scores a [Game] can have. [amount] will be used by
- *  [ScoreboardViewModel].
+ *  [ScoreboardLogic].
  */
 enum class StartingScore(val amount: Int) {
     Zero(0),
@@ -147,6 +147,7 @@ enum class MoveResult {
     Move,
     MoveScore,
     MoveMinusScore,
+    FullPileScore,
     Illegal
 }
 

@@ -38,7 +38,6 @@ import com.heyzeusv.solitaire.ui.board.boards.layouts.Width720
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
-import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
@@ -64,17 +63,16 @@ fun StandardBoard(
     undoAnimation: Boolean,
     updateUndoAnimation: (Boolean) -> Unit = { },
     drawAmount: DrawAmount,
-    handleMoveResult: (MoveResult) -> Unit = { },
     /** Piles and their onClicks */
     stock: Stock,
-    onStockClick: () -> MoveResult = { MoveResult.Illegal },
+    onStockClick: () -> Unit = { },
     waste: Waste,
     stockWasteEmpty: () -> Boolean = { true },
-    onWasteClick: () -> MoveResult = { MoveResult.Illegal },
+    onWasteClick: () -> Unit = { },
     foundationList: List<Foundation>,
-    onFoundationClick: (Int) -> MoveResult = { MoveResult.Illegal },
+    onFoundationClick: (Int) -> Unit = { },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal }
+    onTableauClick: (Int, Int) -> Unit = { _, _ -> }
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
 
@@ -165,7 +163,7 @@ fun StandardBoard(
                     cardDpSize = layout.getCardDpSize(),
                     pile = foundationList[index].displayPile,
                     emptyIconId = suit.emptyIcon,
-                    onClick = { handleMoveResult(onFoundationClick(index)) }
+                    onClick = { onFoundationClick(index) }
                 )
             }
             SolitairePile(
@@ -175,7 +173,7 @@ fun StandardBoard(
                 cardDpSize = layout.getCardDpSize(),
                 pile = waste.displayPile,
                 emptyIconId = R.drawable.waste_empty,
-                onClick = { handleMoveResult(onWasteClick()) },
+                onClick = { onWasteClick() },
                 drawAmount = drawAmount
             )
             SolitaireStock(
@@ -185,7 +183,7 @@ fun StandardBoard(
                 cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { handleMoveResult(onStockClick()) }
+                onClick = { onStockClick() }
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
@@ -193,8 +191,7 @@ fun StandardBoard(
                     cardDpSize = layout.getCardDpSize(),
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick,
-                    handleMoveResult = handleMoveResult
+                    onClick = onTableauClick
                 )
             }
         }

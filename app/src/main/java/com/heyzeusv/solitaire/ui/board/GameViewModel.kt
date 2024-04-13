@@ -18,6 +18,7 @@ import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.Golf
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.ui.board.boards.layouts.ScreenLayouts
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
@@ -49,6 +50,8 @@ class GameViewModel @Inject constructor(
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     private val mutex = Mutex()
     private val spiderMutex = Mutex()
+
+    val sbLogic: ScoreboardLogic = ScoreboardLogic(viewModelScope)
 
     private val _selectedGame = MutableStateFlow<Games>(KlondikeTurnOne)
     val selectedGame: StateFlow<Games> get() = _selectedGame
@@ -92,9 +95,6 @@ class GameViewModel @Inject constructor(
     private val _autoCompleteActive = MutableStateFlow(false)
     val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
 
-    private var _autoCompleteCorrection: Int = 0
-    val autoCompleteCorrection: Int get() = _autoCompleteCorrection
-
     private val _gameWon = MutableStateFlow(false)
     val gameWon: StateFlow<Boolean> get() = _gameWon
 
@@ -110,6 +110,7 @@ class GameViewModel @Inject constructor(
      *  new game depending on [resetOption].
      */
     private fun reset(resetOption: ResetOptions) {
+        sbLogic.reset(_selectedGame.value.startingScore)
         redealLeft = _selectedGame.value.redeals.amount
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
@@ -126,7 +127,6 @@ class GameViewModel @Inject constructor(
         _gameWon.value = false
         _autoCompleteActive.value = false
         _animateInfo.value = null
-        _autoCompleteCorrection = 0
         _stockWasteEmpty.value = true
     }
 
@@ -143,8 +143,8 @@ class GameViewModel @Inject constructor(
     /**
      *  Checks [selectedGame] value to determine which onStockClick to run.
      */
-    fun onStockClick(): MoveResult {
-        return when (_selectedGame.value) {
+    fun onStockClick() {
+        when (_selectedGame.value) {
             is Easthaven, is Games.SpiderFamily -> onStockClickMultiPile()
             is Games.GolfFamily -> onStockClickGolf()
             else -> onStockClickStandard()
@@ -155,7 +155,7 @@ class GameViewModel @Inject constructor(
      *  Runs when user taps on Stock pile. Either draws Card(s) from Stock if any or resets Stock by
      *  adding Cards back from Waste.
      */
-    private fun onStockClickStandard(): MoveResult {
+    private fun onStockClickStandard() {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.truePile.isNotEmpty()) {
             val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
@@ -180,7 +180,7 @@ class GameViewModel @Inject constructor(
             }
             _animateInfo.value = aniInfo
             checkStockWasteEmpty()
-            return Move
+            sbLogic.handleMoveResult(Move)
         } else if (_waste.truePile.size > 1 && redealLeft != 0) {
             val cards = _waste.truePile.toList()
             val aniInfo = AnimateInfo(
@@ -204,9 +204,8 @@ class GameViewModel @Inject constructor(
             }
             _animateInfo.value = aniInfo
             redealLeft--
-            return Move
+            sbLogic.handleMoveResult(Move)
         }
-        return Illegal
     }
 
     /**
@@ -214,7 +213,7 @@ class GameViewModel @Inject constructor(
      *  [Tableau]. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile. If there
      *  isn't enough for all [Tableau] piles, it adds from left to right until it runs out.
      */
-    private fun onStockClickMultiPile(): MoveResult {
+    private fun onStockClickMultiPile() {
         if (_stock.truePile.isNotEmpty()) {
             val stockCards = _stock.getCards(_selectedGame.value.drawAmount.amount)
             val tableauIndices = mutableListOf<Int>()
@@ -249,16 +248,15 @@ class GameViewModel @Inject constructor(
                 }
             }
             _animateInfo.value = aniInfo
-            return Move
+            sbLogic.handleMoveResult(Move)
         }
-        return Illegal
     }
 
     /**
      *  Custom onStockClick for [Golf] due to [Card]s being move directly from [Stock] to specific
      *  [Foundation] pile. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile.
      */
-    private fun onStockClickGolf(): MoveResult {
+    private fun onStockClickGolf() {
         if (_stock.truePile.isNotEmpty()) {
             val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
             val aniInfo = AnimateInfo(
@@ -282,16 +280,15 @@ class GameViewModel @Inject constructor(
                 }
             }
             _animateInfo.value = aniInfo
-            return MoveScore
+            sbLogic.handleMoveResult(MoveScore)
         }
-        return Illegal
     }
 
     /**
      *  Runs when user taps on Waste pile. Checks to see if top [Card] can be moved to any other
      *  pile except [Stock]. If so, it is removed from [Waste].
      */
-    fun onWasteClick(): MoveResult {
+    fun onWasteClick() {
         _waste.let {
             if (it.truePile.isNotEmpty()) {
                 val result = checkLegalMove(
@@ -302,18 +299,17 @@ class GameViewModel @Inject constructor(
                 // if any move is possible then remove card from waste
                 if (result != Illegal) {
                     checkStockWasteEmpty()
-                    return result
+                    sbLogic.handleMoveResult(result)
                 }
             }
         }
-        return Illegal
     }
 
     /**
      *  Runs when user taps on Foundation with given [fIndex]. Checks to see if top [Card] can be
      *  moved to any [Tableau] pile. If so, it is removed from [foundation] with given [fIndex].
      */
-    fun onFoundationClick(fIndex: Int): MoveResult {
+    fun onFoundationClick(fIndex: Int) {
         val foundationPile = _foundation[fIndex]
         if (foundationPile.truePile.isNotEmpty()) {
             val result = checkLegalMove(
@@ -321,34 +317,31 @@ class GameViewModel @Inject constructor(
                 start = foundationPile.gamePile,
                 ifLegal = { foundationPile.remove() }
             ) { foundationPile.updateDisplayPile() }
-            if (result != Illegal) {
-                // legalMove() doesn't detect removal from Foundation which always results in losing
-                // score.
-                return MoveMinusScore
-            }
+            // legalMove() doesn't detect removal from Foundation which always results in losing
+            // score.
+            if (result != Illegal) { sbLogic.handleMoveResult(MoveMinusScore) }
         }
-        return Illegal
     }
 
     /**
      *  Runs when user taps on Tableau pile with given [tableauIndex] and given [cardIndex]. Checks
      *  to see if tapped sublist of [Card]s can be moved to another [Tableau] pile or a [Foundation].
      */
-    fun onTableauClick(tableauIndex: Int, cardIndex: Int): MoveResult {
+    fun onTableauClick(tableauIndex: Int, cardIndex: Int) {
         val tableauPile = _tableau[tableauIndex]
         val tableauTruePile = tableauPile.truePile.toList()
         val fixedCardIndex = cardIndex.coerceAtMost(tableauTruePile.size - 1)
         if (tableauTruePile.isNotEmpty() && tableauTruePile[fixedCardIndex].faceUp) {
             val tableauCardFlipInfo = tableauPile.getTableauCardFlipInfo(fixedCardIndex)
-            return checkLegalMove(
+            val result = checkLegalMove(
                 cards = tableauTruePile.subList(fixedCardIndex, tableauTruePile.size),
                 start = tableauPile.gamePile,
                 startIndex = fixedCardIndex,
                 tableauCardFlipInfo = tableauCardFlipInfo,
                 ifLegal = { tableauPile.remove(fixedCardIndex) }
             ) { tableauPile.updateDisplayPile() }
+            sbLogic.handleMoveResult(result)
         }
-        return Illegal
     }
 
     /**
@@ -364,15 +357,35 @@ class GameViewModel @Inject constructor(
             viewModelScope.launch {
                 _undoAnimation.value = true
                 _autoCompleteActive.value = true
-                _autoCompleteCorrection = 0
                 while (!gameWon()) {
-                    _tableau.forEachIndexed { i, tableau ->
-                        if (tableau.truePile.isEmpty()) return@forEachIndexed
-                        _foundation.forEach { foundation ->
-                            val lastTCard = tableau.truePile.takeLast(1)
-                            if (_selectedGame.value.canAddToFoundation(foundation, lastTCard)) {
-                                delay(autoCompleteDelay)
-                                onTableauClick(i, tableau.truePile.size - 1)
+                    _tableau.forEach { tableau ->
+                        if (tableau.truePile.isEmpty()) return@forEach
+                        val lastTCard = tableau.truePile.takeLast(1)
+                        _foundation.forEachIndexed { index, foundation ->
+                            if (index < _selectedGame.value.numOfFoundationPiles.amount) {
+                                if (selectedGame.value.canAddToFoundation(foundation, lastTCard)) {
+                                    val aniInfo = AnimateInfo(
+                                        start = tableau.gamePile,
+                                        end = foundation.gamePile,
+                                        animatedCards = lastTCard,
+                                        startTableauIndices = listOf(tableau.truePile.size - 1)
+                                    )
+                                    aniInfo.actionBeforeAnimation = {
+                                        mutex.withLock {
+                                            tableau.remove(tableau.truePile.size - 1)
+                                            foundation.add(lastTCard)
+                                            tableau.updateDisplayPile()
+                                        }
+                                    }
+                                    aniInfo.actionAfterAnimation = {
+                                        mutex.withLock {
+                                            foundation.updateDisplayPile()
+                                            sbLogic.handleMoveResult(MoveScore)
+                                        }
+                                    }
+                                    _animateInfo.value = aniInfo
+                                    delay(autoCompleteDelay)
+                                }
                             }
                         }
                     }
@@ -433,7 +446,6 @@ class GameViewModel @Inject constructor(
                             }
                         }
                         _animateInfo.value = aniInfo
-                        if (_selectedGame.value.autocompleteAvailable) _autoCompleteCorrection++
                         return MoveScore
                     }
                 }
@@ -537,6 +549,7 @@ class GameViewModel @Inject constructor(
                                 foundation.updateDisplayPile()
                                 appendHistory(aniInfo.getUndoAnimateInfo())
                                 autoComplete()
+                                sbLogic.handleMoveResult(FullPileScore)
                             }
                         }
                         _animateInfo.value = aniInfo
@@ -563,6 +576,7 @@ class GameViewModel @Inject constructor(
      */
     fun undo() {
         if (_historyList.isNotEmpty()) {
+            sbLogic.undo()
             val step = _historyList.removeLast()
             val startPiles = undoPiles(step.start)
             val endPiles = undoPiles(step.end)
@@ -646,5 +660,10 @@ class GameViewModel @Inject constructor(
         } else {
             _waste.truePile.size <= 1 && _stock.truePile.isEmpty()
         }
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        sbLogic.onCleared()
     }
 }

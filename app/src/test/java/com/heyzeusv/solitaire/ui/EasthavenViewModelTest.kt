@@ -4,7 +4,7 @@ import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.PileHistory
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.EasthavenViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import kotlinx.coroutines.Dispatchers
@@ -18,7 +18,7 @@ import org.junit.Test
 import java.util.Random
 
 /**
- *  [EasthavenViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have
+ *  [EasthavenViewModel] and [ScoreboardLogic] are tied very close to each other, so I have
  *  decided to test both at the same time.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -26,13 +26,13 @@ class EasthavenViewModelTest {
 
     private val tc = TestCards
     private lateinit var ehVM: EasthavenViewModel
-    private lateinit var sbVM: ScoreboardViewModel
+    private lateinit var sbVM: ScoreboardLogic
 
     @Before
     fun setup() {
         Dispatchers.setMain(StandardTestDispatcher())
         ehVM = EasthavenViewModel(ShuffleSeed(Random(10L)))
-        sbVM = ScoreboardViewModel()
+        sbVM = ScoreboardLogic()
     }
 
     @Test

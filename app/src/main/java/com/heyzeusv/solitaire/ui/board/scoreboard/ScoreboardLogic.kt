@@ -1,21 +1,19 @@
-package com.heyzeusv.solitaire.ui.scoreboard
+package com.heyzeusv.solitaire.ui.board.scoreboard
 
 import androidx.compose.runtime.snapshots.Snapshot
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.data.LastGameStats
 import com.heyzeusv.solitaire.data.ScoreHistory
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.*
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.heyzeusv.solitaire.util.StartingScore
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  *  Data manager for Scoreboard
@@ -23,14 +21,9 @@ import javax.inject.Inject
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
  */
-@HiltViewModel
-class ScoreboardViewModel @Inject constructor() : ViewModel() {
+class ScoreboardLogic(private val viewModelScope: CoroutineScope) {
     var selectedGame: Games = KlondikeTurnOne
         private set
-    fun updateSelectedGame(newGame: Games) {
-        selectedGame = newGame
-        reset()
-    }
 
     // increases whenever a card/s moves
     private val _moves = MutableStateFlow(0)
@@ -109,10 +102,10 @@ class ScoreboardViewModel @Inject constructor() : ViewModel() {
     /**
      *  Resets stats for next game.
      */
-    fun reset() {
+    fun reset(startingScore: StartingScore) {
         _moves.value = 0
         resetTimer()
-        _score.value = selectedGame.startingScore.amount
+        _score.value = startingScore.amount
         _historyList.clear()
         recordHistory()
     }
@@ -131,6 +124,7 @@ class ScoreboardViewModel @Inject constructor() : ViewModel() {
                 _moves.value++
                 _score.value--
             }
+            FullPileScore -> _score.value += 13
             Illegal -> return
         }
         appendHistory()
@@ -138,28 +132,18 @@ class ScoreboardViewModel @Inject constructor() : ViewModel() {
 
     /**
      *  Returns [LastGameStats] with given [gameWon] and most updated stat values.
-     *  [autoCompleteCorrection] determines how many moves and score should be added due to auto
-     *  complete.
      */
-    fun retrieveLastGameStats(
-        gameWon: Boolean,
-        autoCompleteCorrection: Int = 0
-    ): LastGameStats {
+    fun retrieveLastGameStats(gameWon: Boolean): LastGameStats {
         return LastGameStats(
             gameWon,
-            _moves.value + autoCompleteCorrection,
+            _moves.value,
             _time.value,
-            _score.value + autoCompleteCorrection
+            _score.value
         )
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        // cancel coroutine
-        timerJob?.cancel()
-    }
-
-    init {
-        reset()
-    }
+    /**
+     *  Cancel Timer coroutine
+     */
+    fun onCleared() { timerJob?.cancel() }
 }

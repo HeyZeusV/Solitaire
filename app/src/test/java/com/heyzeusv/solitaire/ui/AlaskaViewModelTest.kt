@@ -3,7 +3,7 @@ package com.heyzeusv.solitaire.ui
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.AlaskaViewModel
 import com.heyzeusv.solitaire.ui.board.YukonViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.util.TestCards
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -18,7 +18,7 @@ import org.junit.Test
 import java.util.Random
 
 /**
- *  [AlaskaViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have
+ *  [AlaskaViewModel] and [ScoreboardLogic] are tied very close to each other, so I have
  *  decided to test both at the same time.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -26,13 +26,13 @@ class AlaskaViewModelTest {
 
     private val tc = TestCards
     private lateinit var akVM: AlaskaViewModel
-    private lateinit var sbVM: ScoreboardViewModel
+    private lateinit var sbVM: ScoreboardLogic
 
     @Before
     fun setup() {
         Dispatchers.setMain(StandardTestDispatcher())
         akVM = AlaskaViewModel(ShuffleSeed(Random(10L)))
-        sbVM = ScoreboardViewModel()
+        sbVM = ScoreboardLogic()
     }
 
     /**
