@@ -112,3 +112,20 @@ fun List<Card>.isMultiSuit(): Boolean = this.map { it.suit }.distinct().size > 1
  *  Checks if piles contains only 1 [Suits] type
  */
 fun List<Card>.isNotMultiSuit(): Boolean = !this.isMultiSuit()
+
+/**
+ *  Returns the number of cards in order ascending and face up starting from the end of [List].
+ */
+fun List<Card>.numInOrder(): Int {
+    if (this.isEmpty()) return 0
+    var num = 0
+    val it = this.reversed().iterator()
+    var current = it.next()
+    while (true) {
+        if (!it.hasNext()) return num
+        val next = it.next()
+        if (current.value + 1 != next.value || current.suit != next.suit || !next.faceUp) return num
+        current = next
+        num++
+    }
+}

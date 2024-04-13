@@ -2,7 +2,6 @@ package com.heyzeusv.solitaire.ui.board
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
@@ -26,6 +25,8 @@ import com.heyzeusv.solitaire.util.MoveResult.*
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.inOrder
+import com.heyzeusv.solitaire.util.isNotMultiSuit
+import com.heyzeusv.solitaire.util.numInOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -419,6 +420,38 @@ class GameViewModel @Inject constructor(
         ifLegal: () -> Unit,
         actionBeforeAnimation: () -> Unit
     ): MoveResult {
+        return when (_selectedGame.value) {
+            is Games.SpiderFamily -> checkLegalMoveSpider(
+                cards = cards,
+                start = start,
+                startIndex = startIndex,
+                tableauCardFlipInfo = tableauCardFlipInfo,
+                ifLegal = ifLegal,
+                actionBeforeAnimation = actionBeforeAnimation
+            )
+            else -> checkLegalMoveStandard(
+                cards = cards,
+                start = start,
+                startIndex = startIndex,
+                tableauCardFlipInfo = tableauCardFlipInfo,
+                ifLegal = ifLegal,
+                actionBeforeAnimation = actionBeforeAnimation
+            )
+        }
+    }
+
+    /**
+     *  Checks if move is possible by attempting to add [cards] to piles using canAdd(). If possible,
+     *  uses rest of parameters to create [AnimateInfo].
+     */
+    private fun checkLegalMoveStandard(
+        cards: List<Card>,
+        start: GamePiles,
+        startIndex: Int = 0,
+        tableauCardFlipInfo: TableauCardFlipInfo?,
+        ifLegal: () -> Unit,
+        actionBeforeAnimation: () -> Unit
+    ): MoveResult {
         // only one card can be added to Foundation at a time.
         if (cards.size == 1) {
             _foundation.forEachIndexed { index, it ->
@@ -476,7 +509,6 @@ class GameViewModel @Inject constructor(
                             it.updateDisplayPile()
                             appendHistory(aniInfo.getUndoAnimateInfo())
                             autoComplete()
-                            fullPileToFoundation(index)
                         }
                     }
                     _animateInfo.value = aniInfo
@@ -506,7 +538,6 @@ class GameViewModel @Inject constructor(
                             it.updateDisplayPile()
                             appendHistory(aniInfo.getUndoAnimateInfo())
                             autoComplete()
-                            fullPileToFoundation(index)
                         }
                     }
                     _animateInfo.value = aniInfo
@@ -517,14 +548,73 @@ class GameViewModel @Inject constructor(
         return Illegal
     }
 
-    private fun fullPileToFoundation(tableauIndex: Int) {
-        // only spider requires it so far
-        if (_selectedGame.value.familyId != R.string.games_family_spider) return
-        val tPile = _tableau[tableauIndex]
+    /**
+     *  Checks if given [cards] can be added to any [Tableau] pile. If there are multiple valid
+     *  piles to add to, the pile with most valid cards past top card (ascending order, same suit,
+     *  face up) will receive [cards]. If possible, uses rest of parameters to create [AnimateInfo].
+     */
+    private fun checkLegalMoveSpider(
+        cards: List<Card>,
+        start: GamePiles,
+        startIndex: Int = 0,
+        tableauCardFlipInfo: TableauCardFlipInfo?,
+        ifLegal: () -> Unit,
+        actionBeforeAnimation: () -> Unit
+    ): MoveResult {
+        var validTableau: Tableau? = null
+        _tableau.forEachIndexed { index, it ->
+            if (start != it.gamePile) {
+                if (index < _selectedGame.value.numOfTableauPiles.amount) {
+                    if (_selectedGame.value.canAddToTableau(it, cards)) {
+                        if (validTableau == null) {
+                            validTableau = it
+                        } else {
+                            val validFaceUp = validTableau!!.truePile.numInOrder()
+                            val currentFaceUp = it.truePile.numInOrder()
+                            if (currentFaceUp > validFaceUp) validTableau = it
+                        }
+                    }
+                }
+            }
+        }
+        validTableau?.let {
+            val aniInfo = AnimateInfo(
+                start = start,
+                end = it.gamePile,
+                animatedCards = cards,
+                startTableauIndices = listOf(startIndex),
+                endTableauIndices = listOf(it.truePile.size),
+                tableauCardFlipInfo = tableauCardFlipInfo
+            )
+            aniInfo.actionBeforeAnimation = {
+                mutex.withLock {
+                    ifLegal()
+                    it.add(cards)
+                    actionBeforeAnimation()
+                }
+            }
+            aniInfo.actionAfterAnimation = {
+                mutex.withLock {
+                    it.updateDisplayPile()
+                    appendHistory(aniInfo.getUndoAnimateInfo())
+                    fullPileToFoundation(it)
+                }
+            }
+            _animateInfo.value = aniInfo
+            return Move
+        }
+        return Illegal
+    }
+
+    /**
+     *  Adds 13 cards (Ace to King) from [Tableau] to [Foundation] if they are correctly ranked
+     *  and the same suit.
+     */
+    private fun fullPileToFoundation(tPile: Tableau) {
         // A to King is 13 Cards, so no need to check if pile isn't at least 13 Cards
         if (tPile.truePile.size < 13) return
         val last13Cards = tPile.truePile.takeLast(13)
-        if (last13Cards.inOrder()) {
+        if (last13Cards.inOrder() && last13Cards.isNotMultiSuit()) {
             val first13Card = last13Cards.first()
             _foundation.forEachIndexed { index, foundation ->
                 if (index < _selectedGame.value.numOfFoundationPiles.amount) {
