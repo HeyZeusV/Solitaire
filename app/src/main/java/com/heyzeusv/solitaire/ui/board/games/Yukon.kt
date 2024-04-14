@@ -81,10 +81,8 @@ data object Yukon : Games.YukonFamily() {
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards
-        foundation.forEachIndexed { index, it ->
-            if (index < numOfFoundationPiles.amount) {
-                if (it.truePile.size != 13) return false
-            }
+        for (i in 0 until numOfFoundationPiles.amount) {
+            if (foundation[i].truePile.size != 13) return false
         }
         return true
     }
