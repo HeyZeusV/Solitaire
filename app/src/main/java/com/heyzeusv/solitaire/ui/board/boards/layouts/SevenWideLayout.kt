@@ -51,6 +51,8 @@ data class SevenWideLayout(
     private val rightCardXOffset: Int = cardWidth + cardSpacing
     val horizontalPileLayoutIds: List<String> = listOf("Right Card", "Middle Card", "Left Card")
 
+    override val vPileSpacedByPercent: Float = 0.75f
+
     override val multiPileLayoutIds: List<String> = listOf(
         "Tableau Zero Card",
         "Tableau One Card",
@@ -100,7 +102,7 @@ data class SevenWideLayout(
      *  since animation could only involve a sublist of Tableau, rather than entire pile.
      */
     override fun getCardsYOffset(index: Int): IntOffset {
-        return IntOffset(x = 0, y = (index * (cardHeight * 0.25f)).toInt())
+        return IntOffset(x = 0, y = (index * (cardHeight * (1 - vPileSpacedByPercent))).toInt())
     }
 
     /**

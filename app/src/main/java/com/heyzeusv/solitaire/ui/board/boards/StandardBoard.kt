@@ -141,6 +141,7 @@ fun StandardBoard(
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
                             cardDpSize = layout.getCardDpSize(),
+                            spacedByPercent = layout.vPileSpacedByPercent,
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Vertical Pile")
                         )
@@ -149,6 +150,7 @@ fun StandardBoard(
                 it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
                         cardDpSize = layout.getCardDpSize(),
+                        spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
                         animationDurations = animationDurations,
                         modifier = Modifier.layoutId("Animated Tableau Card")
@@ -189,6 +191,7 @@ fun StandardBoard(
                 SolitaireTableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
                     cardDpSize = layout.getCardDpSize(),
+                    spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
                     onClick = onTableauClick

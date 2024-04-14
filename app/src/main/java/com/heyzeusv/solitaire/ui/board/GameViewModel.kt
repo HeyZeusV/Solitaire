@@ -24,6 +24,7 @@ import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.*
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.allFaceUp
 import com.heyzeusv.solitaire.util.inOrder
 import com.heyzeusv.solitaire.util.isNotMultiSuit
 import com.heyzeusv.solitaire.util.numInOrder
@@ -107,8 +108,8 @@ class GameViewModel @Inject constructor(
     val spiderAnimateInfo: StateFlow<AnimateInfo?> get() = _spiderAnimateInfo
     fun updateSpiderAnimateInfo(newValue: AnimateInfo?) { _spiderAnimateInfo.value = newValue }
 
-    private var autoCompleteDelay: Long = AnimationDurations.Fast.autoCompleteDelay
-    fun updateAutoCompleteDelay(newValue: Long) { autoCompleteDelay = newValue }
+    private var animationDurations: AnimationDurations = AnimationDurations.Fast
+    fun updateAutoComplete(newValue: AnimationDurations) { animationDurations = newValue }
 
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
@@ -389,7 +390,7 @@ class GameViewModel @Inject constructor(
                                         }
                                     }
                                     _animateInfo.value = aniInfo
-                                    delay(autoCompleteDelay)
+                                    delay(animationDurations.autoCompleteDelay)
                                 }
                             }
                         }
@@ -618,18 +619,18 @@ class GameViewModel @Inject constructor(
         // A to King is 13 Cards, so no need to check if pile isn't at least 13 Cards
         if (tPile.truePile.size < 13) return
         val last13Cards = tPile.truePile.takeLast(13)
-        if (last13Cards.inOrder() && last13Cards.isNotMultiSuit()) {
-            val first13Card = last13Cards.first()
+        if (last13Cards.inOrder() && last13Cards.isNotMultiSuit() && last13Cards.allFaceUp()) {
             _foundation.forEachIndexed { index, foundation ->
                 if (index < _selectedGame.value.numOfFoundationPiles.amount) {
                     if (foundation.truePile.isEmpty()) {
-                        val tCardIndex = tPile.truePile.indexOf(first13Card)
+                        val tCardIndex = tPile.truePile.indexOfLast { it == last13Cards.first() }
                         val spiderAniInfo = AnimateInfo(
                             start = tPile.gamePile,
                             end = foundation.gamePile,
                             animatedCards = last13Cards,
                             startTableauIndices = List(13) { it + tCardIndex },
-                            tableauCardFlipInfo = tPile.getTableauCardFlipInfo(tCardIndex)
+                            tableauCardFlipInfo = tPile.getTableauCardFlipInfo(tCardIndex),
+                            spiderPile = true
                         )
                         spiderAniInfo.actionBeforeAnimation = {
                             spiderMutex.withLock {
@@ -671,7 +672,6 @@ class GameViewModel @Inject constructor(
      */
     fun undo() {
         if (_historyList.isNotEmpty()) {
-            sbLogic.undo()
             val step = _historyList.removeLast()
             val startPiles = undoPiles(step.start)
             val endPiles = undoPiles(step.end)
@@ -685,7 +685,18 @@ class GameViewModel @Inject constructor(
             step.actionAfterAnimation = {
                 mutex.withLock { endPiles.forEach { it.updateDisplayPile() } }
             }
-            _animateInfo.value = step
+            if (step.spiderPile) {
+                viewModelScope.launch {
+                    _undoEnabled.value = false
+                    _spiderAnimateInfo.value = step
+                    delay(animationDurations.fullDelay)
+                    undo()
+                    _undoEnabled.value = true
+                }
+            } else {
+                sbLogic.undo()
+                _animateInfo.value = step
+            }
         }
     }
 

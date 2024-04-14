@@ -129,3 +129,11 @@ fun List<Card>.numInOrder(): Int {
         num++
     }
 }
+
+/**
+ *  Checks if entire pile is face up.
+ */
+fun List<Card>.allFaceUp(): Boolean {
+    this.forEach { if (!it.faceUp) return false }
+    return true
+}

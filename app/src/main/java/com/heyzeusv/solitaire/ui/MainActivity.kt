@@ -83,7 +83,7 @@ fun SolitaireApp(
     var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
     LaunchedEffect(key1 = settings.animationDurations) {
         animationDurations = AnimationDurations from settings.animationDurations
-        gameVM.updateAutoCompleteDelay(animationDurations.autoCompleteDelay)
+        gameVM.updateAutoComplete(animationDurations)
     }
     LaunchedEffect(key1 = settings.selectedGame) {
         gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))

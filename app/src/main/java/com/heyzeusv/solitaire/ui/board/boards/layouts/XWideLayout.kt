@@ -1,6 +1,8 @@
 package com.heyzeusv.solitaire.ui.board.boards.layouts
 
 import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
@@ -11,6 +13,16 @@ import com.heyzeusv.solitaire.util.GamePiles
 interface XWideLayout {
     val cardConstraints: Constraints
     val wasteConstraints: Constraints
+
+    /**
+     *  This is used in any [Column] [Arrangement.spacedBy] involving [Card]s.
+     */
+    val vPileSpacedByPercent: Float
+
+    /**
+     *  Layout ids used by [MultiPileCardWithFlip].
+     */
+    val multiPileLayoutIds: List<String>
 
     /**
      *  Used by movement animations to determine given [gamePile] offset. Animations between
@@ -35,9 +47,4 @@ interface XWideLayout {
      */
     @Composable
     fun getCardDpSize(): DpSize
-
-    /**
-     *  Layout ids used by [MultiPileCardWithFlip].
-     */
-    val multiPileLayoutIds: List<String>
 }

@@ -118,17 +118,20 @@ fun Board(
 
 /**
  *  Composable that displays given [pile] in vertical orientation. [cardDpSize] is used to size each
- *  [SolitaireCard] and determine their vertical spacing.
+ *  [SolitaireCard] and determine their vertical spacing. [spacedByPercent] is used to determine
+ *  distance between cards vertically.
  */
 @Composable
 fun StaticVerticalCardPile(
     cardDpSize: DpSize,
+    spacedByPercent: Float,
     pile: List<Card>,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
+        verticalArrangement =
+            Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
     ) {
         pile.forEach { card ->
             SolitaireCard(
@@ -142,12 +145,14 @@ fun StaticVerticalCardPile(
 /**
  *  Composable that displays a Tableau pile with the bottom most card having a flip animation.
  *  [cardDpSize] is used to size each [SolitaireCard] and determine their vertical spacing.
- *  [animateInfo] contains the cards to be displayed and rotation details. [animationDurations] is
- *  used to determine length of animation.
+ *  [spacedByPercent] is used to determine distance between cards vertically. [animateInfo]
+ *  contains the cards to be displayed and rotation details. [animationDurations] is used to
+ *  determine length of animation.
  */
 @Composable
 fun TableauPileWithFlip(
     cardDpSize: DpSize,
+    spacedByPercent: Float,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
@@ -165,7 +170,8 @@ fun TableauPileWithFlip(
 
         Column(
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
+            verticalArrangement =
+                Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
         ) {
             it.remainingPile.forEach { card ->
                 SolitaireCard(
@@ -503,7 +509,7 @@ fun AnimateFlip(
 fun VerticalCardPilePreview() {
     PreviewUtil().apply {
         Preview {
-            StaticVerticalCardPile(cardDpSize, pile)
+            StaticVerticalCardPile(cardDpSize, spacedByPercent,  pile)
         }
     }
 }
@@ -513,7 +519,7 @@ fun VerticalCardPilePreview() {
 fun TableauPileWithFlipPreview() {
     PreviewUtil().apply {
         Preview {
-            TableauPileWithFlip(cardDpSize, animateInfo, animationDurations)
+            TableauPileWithFlip(cardDpSize, spacedByPercent, animateInfo, animationDurations)
         }
     }
 }

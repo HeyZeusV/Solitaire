@@ -72,6 +72,8 @@ fun TenWideBoard(
     onTableauClick: (Int, Int) -> Unit = { _, _ -> }
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
+    // not used to animate per se, but instead to ensure Composable does not blink in and out
+    var spiderAnimatedOffset by remember(spiderAnimateInfo) { mutableStateOf(IntOffset.Zero) }
 
     animateInfo?.let {
         // Updating AnimateInfo to null if animation is fully completed
@@ -135,9 +137,11 @@ fun TenWideBoard(
         // Action After Animation
         LaunchedEffect(key1 = it) {
             try {
+                spiderAnimatedOffset = IntOffset(1, 1)
                 delay(animationDurations.afterActionDelay)
             } finally {
                 it.actionAfterAnimation()
+                spiderAnimatedOffset = IntOffset.Zero
             }
         }
     }
@@ -159,6 +163,7 @@ fun TenWideBoard(
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
                             cardDpSize = layout.getCardDpSize(),
+                            spacedByPercent = layout.vPileSpacedByPercent,
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Static Vertical Pile")
                         )
@@ -167,6 +172,7 @@ fun TenWideBoard(
                 it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
                         cardDpSize = layout.getCardDpSize(),
+                        spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
                         animationDurations = animationDurations,
                         modifier = Modifier.layoutId("Animated Tableau Card")
@@ -180,6 +186,15 @@ fun TenWideBoard(
                     animationDurations = animationDurations,
                     modifier = Modifier.layoutId("Animated Dynamic Vertical Pile")
                 )
+                it.tableauCardFlipInfo?.let { _ ->
+                    TableauPileWithFlip(
+                        cardDpSize = layout.getCardDpSize(),
+                        spacedByPercent = layout.vPileSpacedByPercent,
+                        animateInfo = it,
+                        animationDurations = animationDurations,
+                        modifier = Modifier.layoutId("Animated Spider Tableau Card")
+                    )
+                }
             }
             foundationList.forEachIndexed { index, foundation ->
                 SolitairePile(
@@ -215,6 +230,7 @@ fun TenWideBoard(
                 SolitaireTableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
                     cardDpSize = layout.getCardDpSize(),
+                    spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
                     onClick = onTableauClick
@@ -249,6 +265,8 @@ fun TenWideBoard(
             measurables.firstOrNull { it.layoutId == "Animated Static Vertical Pile" }
         val animatedMultiPile = measurables.firstOrNull { it.layoutId == "Animated Multi Pile" }
         val animatedTableauCard = measurables.firstOrNull { it.layoutId == "Animated Tableau Card" }
+        val animatedSpiderTableauCard =
+            measurables.firstOrNull { it.layoutId == "Animated Spider Tableau Card" }
         val animatedDynamicPile =
             measurables.firstOrNull { it.layoutId == "Animated Dynamic Vertical Pile" }
 
@@ -286,8 +304,32 @@ fun TenWideBoard(
                     }
                 }
             }
-            animatedMultiPile?.measure(constraints)?.place(IntOffset.Zero, 2f)
+            if (spiderAnimatedOffset != IntOffset.Zero) {
+                spiderAnimateInfo?.let {
+                    it.tableauCardFlipInfo?.let { info ->
+                        val pile =
+                            if (info.flipCardInfo is FlipCardInfo.FaceDown) it.end else it.start
+                        val tableauCardFlipPosition = layout.getPilePosition(pile)
+                        animatedSpiderTableauCard?.measure(tableauConstraints)
+                            ?.place(tableauCardFlipPosition, 1f)
+                        when (pile) {
+                            GamePiles.TableauZero -> tableauZero = null
+                            GamePiles.TableauOne -> tableauOne = null
+                            GamePiles.TableauTwo -> tableauTwo = null
+                            GamePiles.TableauThree -> tableauThree = null
+                            GamePiles.TableauFour -> tableauFour = null
+                            GamePiles.TableauFive -> tableauFive = null
+                            GamePiles.TableauSix -> tableauSix = null
+                            GamePiles.TableauSeven -> tableauSeven = null
+                            GamePiles.TableauEight -> tableauEight = null
+                            GamePiles.TableauNine -> tableauNine = null
+                            else -> {}
+                        }
+                    }
+                }
+            }
             animatedDynamicPile?.measure(constraints)?.place(IntOffset.Zero, 3f)
+            animatedMultiPile?.measure(constraints)?.place(IntOffset.Zero, 2f)
 
             foundationClubsOne?.measure(cardConstraints)?.place(layout.foundationClubsOne)
             foundationDiamondsOne?.measure(cardConstraints)?.place(layout.foundationDiamondsOne)
@@ -429,43 +471,43 @@ fun DynamicVerticalCardPile(
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 if (tZeroCardOffset != IntOffset.Zero) {
-                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset)
+                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset, 10f)
                 }
                 if (tOneCardOffset != IntOffset.Zero) {
-                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 1f)
+                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 11f)
                 }
                 if (tTwoCardOffset != IntOffset.Zero) {
-                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 2f)
+                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 12f)
                 }
                 if (tThreeCardOffset != IntOffset.Zero) {
-                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 3f)
+                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 13f)
                 }
                 if (tFourCardOffset != IntOffset.Zero) {
-                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 4f)
+                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 14f)
                 }
                 if (tFiveCardOffset != IntOffset.Zero) {
-                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 5f)
+                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 15f)
                 }
                 if (tSixCardOffset != IntOffset.Zero) {
-                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset, 6f)
+                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset, 16f)
                 }
                 if (tSevenCardOffset != IntOffset.Zero) {
-                    tSevenCard?.measure(layout.cardConstraints)?.place(tSevenCardOffset, 7f)
+                    tSevenCard?.measure(layout.cardConstraints)?.place(tSevenCardOffset, 17f)
                 }
                 if (tEightCardOffset != IntOffset.Zero) {
-                    tEightCard?.measure(layout.cardConstraints)?.place(tEightCardOffset, 8f)
+                    tEightCard?.measure(layout.cardConstraints)?.place(tEightCardOffset, 18f)
                 }
                 if (tNineCardOffset != IntOffset.Zero) {
-                    tNineCard?.measure(layout.cardConstraints)?.place(tNineCardOffset, 9f)
+                    tNineCard?.measure(layout.cardConstraints)?.place(tNineCardOffset, 19f)
                 }
                 if (tTenCardOffset != IntOffset.Zero) {
-                    tTenCard?.measure(layout.cardConstraints)?.place(tTenCardOffset, 10f)
+                    tTenCard?.measure(layout.cardConstraints)?.place(tTenCardOffset, 20f)
                 }
                 if (tElevenCardOffset != IntOffset.Zero) {
-                    tElevenCard?.measure(layout.cardConstraints)?.place(tElevenCardOffset, 11f)
+                    tElevenCard?.measure(layout.cardConstraints)?.place(tElevenCardOffset, 21f)
                 }
                 if (tTwelveCardOffset != IntOffset.Zero) {
-                    tTwelveCard?.measure(layout.cardConstraints)?.place(tTwelveCardOffset, 12f)
+                    tTwelveCard?.measure(layout.cardConstraints)?.place(tTwelveCardOffset, 22f)
                 }
             }
         }

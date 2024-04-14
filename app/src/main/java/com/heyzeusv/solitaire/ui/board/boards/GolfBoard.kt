@@ -127,6 +127,7 @@ fun GolfBoard(
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
                             cardDpSize = layout.getCardDpSize(),
+                            spacedByPercent = layout.vPileSpacedByPercent,
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Vertical Pile")
                         )
@@ -155,6 +156,7 @@ fun GolfBoard(
                 SolitaireTableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
                     cardDpSize = layout.getCardDpSize(),
+                    spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
                     onClick = onTableauClick

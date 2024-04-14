@@ -39,7 +39,7 @@ class Width480(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 480,
         cardWidth = 44,
-        cardHeight = 68,
+        cardHeight = 65,
         cardSpacing = 4,
         foundationClubsOne = IntOffset(2 + extraWidth, 0),
         foundationDiamondsOne = IntOffset(50 + extraWidth, 0),
@@ -135,7 +135,7 @@ class Width960(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 960,
         cardWidth = 92,
-        cardHeight = 136,
+        cardHeight = 135,
         cardSpacing = 4,
         foundationClubsOne = IntOffset(2 + extraWidth, 0),
         foundationDiamondsOne = IntOffset(98 + extraWidth, 0),
@@ -183,7 +183,7 @@ class Width1080(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 1080,
         cardWidth = 104,
-        cardHeight = 156,
+        cardHeight = 155,
         cardSpacing = 4,
         foundationClubsOne = IntOffset(2 + extraWidth, 0),
         foundationDiamondsOne = IntOffset(110 + extraWidth, 0),
@@ -231,7 +231,7 @@ class Width1440(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 1080,
         cardWidth = 140,
-        cardHeight = 208,
+        cardHeight = 205,
         cardSpacing = 4,
         foundationClubsOne = IntOffset(2 + extraWidth, 0),
         foundationDiamondsOne = IntOffset(146 + extraWidth, 0),
@@ -279,7 +279,7 @@ class Width2160(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 2160,
         cardWidth = 212,
-        cardHeight = 312,
+        cardHeight = 310,
         cardSpacing = 4,
         foundationClubsOne = IntOffset(2 + extraWidth, 0),
         foundationDiamondsOne = IntOffset(218 + extraWidth, 0),

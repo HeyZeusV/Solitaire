@@ -22,6 +22,7 @@ class PreviewUtil {
     val pile = List(3) { Card(10, Suits.CLUBS, true) }
 
     val cardDpSize = DpSize(148.dp, 208.dp)
+    val spacedByPercent = 0.75f
     val screenWidth = Width1080(0)
     val animateInfo = AnimateInfo(
         start = GamePiles.Stock,
