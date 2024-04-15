@@ -591,10 +591,11 @@ class GameViewModel @Inject constructor(
                 endTableauIndices = listOf(it.truePile.size),
                 tableauCardFlipInfo = tableauCardFlipInfo
             )
+            ifLegal()
+            it.add(cards)
+            val spiderAniInfo = fullPileToFoundation(it)
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
-                    ifLegal()
-                    it.add(cards)
                     actionBeforeAnimation()
                 }
             }
@@ -602,10 +603,15 @@ class GameViewModel @Inject constructor(
                 mutex.withLock {
                     it.updateDisplayPile()
                     appendHistory(aniInfo.getUndoAnimateInfo())
-                    fullPileToFoundation(it)
                 }
             }
             _animateInfo.value = aniInfo
+            spiderAniInfo?.let {
+                viewModelScope.launch {
+                    delay(animationDurations.fullDelay)
+                    _spiderAnimateInfo.value = it
+                }
+            }
             return Move
         }
         return Illegal
@@ -613,11 +619,11 @@ class GameViewModel @Inject constructor(
 
     /**
      *  Adds 13 cards (Ace to King) from [Tableau] to [Foundation] if they are correctly ranked
-     *  and the same suit.
+     *  and the same suit in given [tPile].
      */
-    private fun fullPileToFoundation(tPile: Tableau) {
+    private fun fullPileToFoundation(tPile: Tableau): AnimateInfo? {
         // A to King is 13 Cards, so no need to check if pile isn't at least 13 Cards
-        if (tPile.truePile.size < 13) return
+        if (tPile.truePile.size < 13) return null
         val last13Cards = tPile.truePile.takeLast(13)
         if (last13Cards.inOrder() && last13Cards.isNotMultiSuit() && last13Cards.allFaceUp()) {
             _foundation.forEachIndexed { index, foundation ->
@@ -647,12 +653,12 @@ class GameViewModel @Inject constructor(
                                 sbLogic.handleMoveResult(FullPileScore)
                             }
                         }
-                        _spiderAnimateInfo.value = spiderAniInfo
-                        return
+                        return spiderAniInfo
                     }
                 }
             }
         }
+        return null
     }
 
     /**
