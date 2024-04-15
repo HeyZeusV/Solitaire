@@ -1,3 +1,6 @@
+v4.0.0
+-New: Spider and 2 of its variants, Two Suits and One Suit, are now available to play!
+
 v3.3.0
 -New: Rules Screen, displays rules for each pile specific to the currently selected game.
 -New: Putt Putt and Golf Rush, 2 easier variants of Golf.
