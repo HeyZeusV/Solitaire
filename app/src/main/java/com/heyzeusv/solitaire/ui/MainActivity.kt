@@ -41,8 +41,7 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.ui.board.*
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.ui.board.Board
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.SolitaireScoreboard
+import com.heyzeusv.solitaire.ui.board.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.ui.toolbar.menu.MenuContainer
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.ui.toolbar.MenuViewModel
@@ -76,7 +75,6 @@ fun SolitaireApp(
      */
     Games.orderedSubclasses
 
-    val sbVM = hiltViewModel<ScoreboardViewModel>()
     val menuVM = hiltViewModel<MenuViewModel>()
     val gameVM = hiltViewModel<GameViewModel>()
 
@@ -85,18 +83,17 @@ fun SolitaireApp(
     var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
     LaunchedEffect(key1 = settings.animationDurations) {
         animationDurations = AnimationDurations from settings.animationDurations
-        gameVM.updateAutoCompleteDelay(animationDurations.autoCompleteDelay)
+        gameVM.updateAutoComplete(animationDurations)
     }
     LaunchedEffect(key1 = settings.selectedGame) {
         gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
-        sbVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
     }
     LaunchedEffect(key1 = stats) {
         menuVM.updateClassicWestcliffScore()
     }
     LifecycleResumeEffect {
-        if (sbVM.moves.value != 0) sbVM.startTimer()
-        onPauseOrDispose { sbVM.pauseTimer() }
+        if (gameVM.sbLogic.moves.value != 0) gameVM.sbLogic.startTimer()
+        onPauseOrDispose { gameVM.sbLogic.pauseTimer() }
     }
 
     NavHost(
@@ -110,7 +107,6 @@ fun SolitaireApp(
         }
         composable(route = NavScreens.Game.route) {
             GameScreen(
-                sbVM = sbVM,
                 gameVM = gameVM,
                 menuVM = menuVM,
                 animationDurations = animationDurations
@@ -125,7 +121,6 @@ fun SolitaireApp(
  */
 @Composable
 fun GameScreen(
-    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
     animationDurations: AnimationDurations,
@@ -144,31 +139,28 @@ fun GameScreen(
     ) {
         Column(Modifier.fillMaxSize()) {
             SolitaireScoreboard(
-                sbVM = sbVM,
                 gameVM = gameVM,
                 modifier = Modifier
             )
             Board(
-                sbVM = sbVM,
                 gameVM = gameVM,
                 animationDurations = animationDurations,
                 modifier = Modifier.weight(1f)
             )
             Toolbar(
-                sbVM = sbVM,
                 gameVM = gameVM,
                 menuVM = menuVM,
                 modifier = Modifier
             )
         }
         MenuContainer(
-            sbVM = sbVM,
+            gameVM = gameVM,
             menuVM = menuVM,
             modifier = Modifier.align(Alignment.BottomStart)
         )
     }
-    CloseGameAlertDialog(sbVM = sbVM, menuVM = menuVM, finishApp = finishApp)
-    GameWonAlertDialog(sbVM = sbVM, gameVM = gameVM, menuVM = menuVM)
+    CloseGameAlertDialog(gameVM = gameVM, menuVM = menuVM, finishApp = finishApp)
+    GameWonAlertDialog(gameVM = gameVM, menuVM = menuVM)
 }
 
 /**

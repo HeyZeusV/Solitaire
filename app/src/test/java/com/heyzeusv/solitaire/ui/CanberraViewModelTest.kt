@@ -3,25 +3,25 @@ package com.heyzeusv.solitaire.ui
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.CanberraViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
 import java.util.Random
 
 /**
- *  [CanberraViewModel] and [ScoreboardViewModel] are tied very close to each
+ *  [CanberraViewModel] and [ScoreboardLogic] are tied very close to each
  *  other, so I have decided to test both at the same time.
  */
 class CanberraAndScoreboardViewModelTest {
 
     private lateinit var canVM: CanberraViewModel
-    private lateinit var sbVM: ScoreboardViewModel
+    private lateinit var sbVM: ScoreboardLogic
 
     @Before
     fun setup() {
         canVM = CanberraViewModel(ShuffleSeed(Random(10L)))
-        sbVM = ScoreboardViewModel()
+        sbVM = ScoreboardLogic()
     }
 
     @Test

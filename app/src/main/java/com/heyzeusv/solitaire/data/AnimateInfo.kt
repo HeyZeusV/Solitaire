@@ -9,17 +9,19 @@ import com.heyzeusv.solitaire.util.GamePiles
  *  moving to/from a Tableau pile. [flipCardInfo] is used for flip animation for cards moving
  *  from one pile to another. [tableauCardFlipInfo] contains data needed to animate a Tableau pile
  *  that has its bottom most [Card] revealed. [undoAnimation] is used to disable all clicks on
- *  game board during an animation started by Undo Button.
+ *  game board during an animation started by Undo Button. [spiderPile] is used to determine if
+ *  [animatedCards] contains Ace to King ranked correctly and same suit as required in Spider games.
  */
 data class AnimateInfo(
     val start: GamePiles,
     val end: GamePiles,
     val animatedCards: List<Card>,
-    val startTableauIndices: List<Int> = List(7) { 0 },
-    val endTableauIndices: List<Int> = List(7) { 0 },
+    val startTableauIndices: List<Int> = List(13) { 0 },
+    val endTableauIndices: List<Int> = List(13) { 0 },
     val flipCardInfo: FlipCardInfo = FlipCardInfo.NoFlip,
     val tableauCardFlipInfo: TableauCardFlipInfo? = null,
-    val undoAnimation: Boolean = false
+    val undoAnimation: Boolean = false,
+    val spiderPile: Boolean = false
 ) {
     // determines if animation is between Stock and Waste
     val stockWasteMove = (start == GamePiles.Stock && end == GamePiles.Waste) ||
@@ -41,7 +43,8 @@ data class AnimateInfo(
         tableauCardFlipInfo = tableauCardFlipInfo?.copy(
             flipCardInfo = tableauCardFlipInfo.flipCardInfo.getUndoFlipCardInfo()
         ),
-        undoAnimation = true
+        undoAnimation = true,
+        spiderPile = spiderPile
     )
 
     /**

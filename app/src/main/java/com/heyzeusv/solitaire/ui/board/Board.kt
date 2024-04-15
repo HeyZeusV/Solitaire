@@ -16,6 +16,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.Layout
+import androidx.compose.ui.layout.Measurable
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
@@ -24,10 +25,11 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
-import com.heyzeusv.solitaire.data.LayoutInfo
-import com.heyzeusv.solitaire.ui.board.layouts.GolfLayout
-import com.heyzeusv.solitaire.ui.board.layouts.StandardLayout
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.boards.GolfBoard
+import com.heyzeusv.solitaire.ui.board.boards.StandardBoard
+import com.heyzeusv.solitaire.ui.board.boards.TenWideBoard
+import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.boards.layouts.XWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -37,28 +39,27 @@ import com.heyzeusv.solitaire.util.PreviewUtil
  */
 @Composable
 fun Board(
-    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
 ) {
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
+    val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsState()
     val undoAnimation by gameVM.undoAnimation.collectAsState()
     val selectedGame by gameVM.selectedGame.collectAsState()
 
     when (selectedGame.familyId) {
         R.string.games_family_golf -> {
-            GolfLayout(
+            GolfBoard(
                 modifier = modifier,
-                layInfo = gameVM.layoutInfo,
+                layout = gameVM.screenLayouts.sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateUndoEnabled = gameVM::updateUndoEnabled,
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
-                handleMoveResult = sbVM::handleMoveResult,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 stockWasteEmpty = { stockWasteEmpty },
@@ -67,10 +68,33 @@ fun Board(
                 onTableauClick = gameVM::onTableauClick
             )
         }
-        else -> {
-            StandardLayout(
+        R.string.games_family_spider -> {
+            TenWideBoard(
                 modifier = modifier,
-                layInfo = gameVM.layoutInfo,
+                layout = gameVM.screenLayouts.tenWideLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                updateAnimateInfo = gameVM::updateAnimateInfo,
+                spiderAnimateInfo = spiderAnimateInfo,
+                updateSpiderAnimateInfo = gameVM::updateSpiderAnimateInfo,
+                updateUndoEnabled = gameVM::updateUndoEnabled,
+                undoAnimation = undoAnimation,
+                updateUndoAnimation = gameVM::updateUndoAnimation,
+                drawAmount = selectedGame.drawAmount,
+                stock = gameVM.stock,
+                onStockClick = gameVM::onStockClick,
+                waste = gameVM.waste,
+                stockWasteEmpty = { stockWasteEmpty },
+                onWasteClick = gameVM::onWasteClick,
+                foundationList = gameVM.foundation,
+                tableauList = gameVM.tableau,
+                onTableauClick = gameVM::onTableauClick
+            )
+        }
+        else -> {
+            StandardBoard(
+                modifier = modifier,
+                layout = gameVM.screenLayouts.sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
@@ -78,7 +102,6 @@ fun Board(
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
                 drawAmount = selectedGame.drawAmount,
-                handleMoveResult = sbVM::handleMoveResult,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,
@@ -95,17 +118,20 @@ fun Board(
 
 /**
  *  Composable that displays given [pile] in vertical orientation. [cardDpSize] is used to size each
- *  [SolitaireCard] and determine their vertical spacing.
+ *  [SolitaireCard] and determine their vertical spacing. [spacedByPercent] is used to determine
+ *  distance between cards vertically.
  */
 @Composable
-fun VerticalCardPile(
+fun StaticVerticalCardPile(
     cardDpSize: DpSize,
+    spacedByPercent: Float,
     pile: List<Card>,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
+        verticalArrangement =
+            Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
     ) {
         pile.forEach { card ->
             SolitaireCard(
@@ -119,12 +145,14 @@ fun VerticalCardPile(
 /**
  *  Composable that displays a Tableau pile with the bottom most card having a flip animation.
  *  [cardDpSize] is used to size each [SolitaireCard] and determine their vertical spacing.
- *  [animateInfo] contains the cards to be displayed and rotation details. [animationDurations] is
- *  used to determine length of animation.
+ *  [spacedByPercent] is used to determine distance between cards vertically. [animateInfo]
+ *  contains the cards to be displayed and rotation details. [animationDurations] is used to
+ *  determine length of animation.
  */
 @Composable
 fun TableauPileWithFlip(
     cardDpSize: DpSize,
+    spacedByPercent: Float,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
@@ -142,7 +170,8 @@ fun TableauPileWithFlip(
 
         Column(
             modifier = modifier,
-            verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
+            verticalArrangement =
+                Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
         ) {
             it.remainingPile.forEach { card ->
                 SolitaireCard(
@@ -161,13 +190,13 @@ fun TableauPileWithFlip(
 }
 
 /**
- *  Composable that displays up to 3 [FlipCard] overlapping horizontally. [layInfo] provides
+ *  Composable that displays up to 3 [FlipCard] overlapping horizontally. [layout] provides
  *  animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be displayed
  *  and their flip animation info. [animationDurations] is used to determine length of animations.
  */
 @Composable
 fun HorizontalCardPileWithFlip(
-    layInfo: LayoutInfo,
+    layout: SevenWideLayout,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
@@ -176,7 +205,7 @@ fun HorizontalCardPileWithFlip(
         var rightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var middleCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var leftCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        val offsets = layInfo.getHorizontalCardOffsets(it.flipCardInfo)
+        val offsets = layout.getHorizontalCardOffsets(it.flipCardInfo)
         var flipRotation by remember { mutableFloatStateOf(0f) }
 
         for (i in 0 until it.animatedCards.size) {
@@ -210,37 +239,37 @@ fun HorizontalCardPileWithFlip(
                     cards.reversed().forEachIndexed { i, card ->
                         FlipCard(
                             flipCard = card,
-                            cardDpSize = layInfo.getCardDpSize(),
+                            cardDpSize = layout.getCardDpSize(),
                             flipRotation = flipRotation,
                             flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId(layInfo.horizontalPileLayoutIds[i])
+                            modifier = Modifier.layoutId(layout.horizontalPileLayoutIds[i])
                         )
                     }
                 }
             }
         ) { measurables, constraints ->
-            val rightCard = measurables.firstOrNull { meas -> meas.layoutId == "Right Card" }
-            val middleCard = measurables.firstOrNull { meas -> meas.layoutId == "Middle Card" }
-            val leftCard = measurables.firstOrNull { meas -> meas.layoutId == "Left Card" }
+            val rightCard = measurables.firstOrNull { m -> m.layoutId == "Right Card" }
+            val middleCard = measurables.firstOrNull { m -> m.layoutId == "Middle Card" }
+            val leftCard = measurables.firstOrNull { m -> m.layoutId == "Left Card" }
 
             layout(constraints.maxWidth, constraints.maxHeight) {
-                rightCard?.measure(layInfo.cardConstraints)?.place(rightCardOffset, 2f)
-                middleCard?.measure(layInfo.cardConstraints)?.place(middleCardOffset, 1f)
-                leftCard?.measure(layInfo.cardConstraints)?.place(leftCardOffset)
+                rightCard?.measure(layout.cardConstraints)?.place(rightCardOffset, 2f)
+                middleCard?.measure(layout.cardConstraints)?.place(middleCardOffset, 1f)
+                leftCard?.measure(layout.cardConstraints)?.place(leftCardOffset)
             }
         }
     }
 }
 
 /**
- *  Composable that displays up to 7 [FlipCard] each animated to/from different piles. [layInfo]
+ *  Composable that displays up to 7 [FlipCard], each animated to/from different piles. [layout]
  *  provides animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be
  *  displayed and their flip animation info. [animationDurations] is used to determine length of
  *  animations.
  */
 @Composable
 fun MultiPileCardWithFlip(
-    layInfo: LayoutInfo,
+    layout: XWideLayout,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier
@@ -253,16 +282,19 @@ fun MultiPileCardWithFlip(
         var tFourCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var tFiveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var tSixCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tSevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tEightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tNineCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var flipRotation by remember { mutableFloatStateOf(0f) }
 
         for (i in 0 until it.animatedCards.size) {
             AnimateOffset(
                 animateInfo = it,
                 animationDurations = animationDurations,
-                startOffset = layInfo.getPilePosition(it.start, tAllPile = GamePiles.entries[i + 6])
-                    .plus(layInfo.getCardsYOffset(it.startTableauIndices[i])),
-                endOffset = layInfo.getPilePosition(it.end, tAllPile = GamePiles.entries[i + 6])
-                    .plus(layInfo.getCardsYOffset(it.endTableauIndices[i])),
+                startOffset = layout.getPilePosition(it.start, tAllPile = GamePiles.entries[i + 10])
+                    .plus(layout.getCardsYOffset(it.startTableauIndices[i])),
+                endOffset = layout.getPilePosition(it.end, tAllPile = GamePiles.entries[i + 10])
+                    .plus(layout.getCardsYOffset(it.endTableauIndices[i])),
                 updateXOffset = { value ->
                     when (i) {
                         0 -> tZeroCardOffset = tZeroCardOffset.copy(x = value)
@@ -272,6 +304,9 @@ fun MultiPileCardWithFlip(
                         4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
                         5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
                         6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
+                        7 -> tSevenCardOffset = tSevenCardOffset.copy(x = value)
+                        8 -> tEightCardOffset = tEightCardOffset.copy(x = value)
+                        9 -> tNineCardOffset = tNineCardOffset.copy(x = value)
                     }
                 },
                 updateYOffset = { value ->
@@ -283,6 +318,9 @@ fun MultiPileCardWithFlip(
                         4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
                         5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
                         6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
+                        7 -> tSevenCardOffset = tSevenCardOffset.copy(y = value)
+                        8 -> tEightCardOffset = tEightCardOffset.copy(y = value)
+                        9 -> tNineCardOffset = tNineCardOffset.copy(y = value)
                     }
                 }
             )
@@ -298,64 +336,73 @@ fun MultiPileCardWithFlip(
         Layout(
             modifier = modifier,
             content = {
-                if (it.animatedCards.size == 7) {
-                    for (i in 3..6) {
-                        FlipCard(
-                            flipCard = it.animatedCards[i],
-                            cardDpSize = layInfo.getCardDpSize(),
-                            flipRotation = flipRotation,
-                            flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId(layInfo.multiPileLayoutIds[i])
-                        )
-                    }
-                }
-                for (i in 0..2) {
+                for (i in 0 until it.animatedCards.size) {
                     FlipCard(
                         flipCard = it.animatedCards[i],
-                        cardDpSize = layInfo.getCardDpSize(),
+                        cardDpSize = layout.getCardDpSize(),
                         flipRotation = flipRotation,
                         flipCardInfo = it.flipCardInfo,
-                        modifier = Modifier.layoutId(layInfo.multiPileLayoutIds[i])
+                        modifier = Modifier.layoutId(layout.multiPileLayoutIds[i])
                     )
                 }
             }
         ) { measurables, constraints ->
             val tZeroCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layInfo.multiPileLayoutIds[0] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[0] }
             val tOneCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layInfo.multiPileLayoutIds[1] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[1] }
             val tTwoCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layInfo.multiPileLayoutIds[2] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[2] }
             val tThreeCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layInfo.multiPileLayoutIds[3] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[3] }
             val tFourCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layInfo.multiPileLayoutIds[4] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[4] }
             val tFiveCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layInfo.multiPileLayoutIds[5] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[5] }
             val tSixCard =
-                measurables.firstOrNull { meas -> meas.layoutId == layInfo.multiPileLayoutIds[6] }
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[6] }
+            var tSevenCard: Measurable? = null
+            var tEightCard: Measurable? = null
+            var tNineCard: Measurable? = null
+            if (it.animatedCards.size > 7) {
+                tSevenCard =
+                    measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[7] }
+                tEightCard =
+                    measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[8] }
+                tNineCard =
+                    measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[9] }
+            }
 
             layout(constraints.maxWidth, constraints.maxHeight) {
                 if (tZeroCardOffset != IntOffset.Zero) {
-                    tZeroCard?.measure(layInfo.cardConstraints)?.place(tZeroCardOffset, 6f)
+                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset, 9f)
                 }
                 if (tOneCardOffset != IntOffset.Zero) {
-                    tOneCard?.measure(layInfo.cardConstraints)?.place(tOneCardOffset, 5f)
+                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 8f)
                 }
                 if (tTwoCardOffset != IntOffset.Zero) {
-                    tTwoCard?.measure(layInfo.cardConstraints)?.place(tTwoCardOffset, 4f)
+                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 7f)
                 }
                 if (tThreeCardOffset != IntOffset.Zero) {
-                    tThreeCard?.measure(layInfo.cardConstraints)?.place(tThreeCardOffset, 3f)
+                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 6f)
                 }
                 if (tFourCardOffset != IntOffset.Zero) {
-                    tFourCard?.measure(layInfo.cardConstraints)?.place(tFourCardOffset, 2f)
+                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 5f)
                 }
                 if (tFiveCardOffset != IntOffset.Zero) {
-                    tFiveCard?.measure(layInfo.cardConstraints)?.place(tFiveCardOffset, 1f)
+                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 4f)
                 }
                 if (tSixCardOffset != IntOffset.Zero) {
-                    tSixCard?.measure(layInfo.cardConstraints)?.place(tSixCardOffset)
+                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset, 3f)
+                }
+                if (tSevenCardOffset != IntOffset.Zero) {
+                    tSevenCard?.measure(layout.cardConstraints)?.place(tSevenCardOffset, 2f)
+                }
+                if (tEightCardOffset != IntOffset.Zero) {
+                    tEightCard?.measure(layout.cardConstraints)?.place(tEightCardOffset, 1f)
+                }
+                if (tNineCardOffset != IntOffset.Zero) {
+                    tNineCard?.measure(layout.cardConstraints)?.place(tNineCardOffset)
                 }
             }
         }
@@ -462,7 +509,7 @@ fun AnimateFlip(
 fun VerticalCardPilePreview() {
     PreviewUtil().apply {
         Preview {
-            VerticalCardPile(cardDpSize, pile)
+            StaticVerticalCardPile(cardDpSize, spacedByPercent,  pile)
         }
     }
 }
@@ -472,7 +519,7 @@ fun VerticalCardPilePreview() {
 fun TableauPileWithFlipPreview() {
     PreviewUtil().apply {
         Preview {
-            TableauPileWithFlip(cardDpSize, animateInfo, animationDurations)
+            TableauPileWithFlip(cardDpSize, spacedByPercent, animateInfo, animationDurations)
         }
     }
 }
@@ -482,7 +529,7 @@ fun TableauPileWithFlipPreview() {
 fun HorizontalCardPileWithFlipPreview() {
     PreviewUtil().apply {
         Preview {
-            HorizontalCardPileWithFlip(layInfo, animateInfo, animationDurations)
+            HorizontalCardPileWithFlip(screenWidth.sevenWideLayout, animateInfo, animationDurations)
         }
     }
 }

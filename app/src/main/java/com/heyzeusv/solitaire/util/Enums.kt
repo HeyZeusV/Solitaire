@@ -10,11 +10,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Easthaven
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.RulesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.StatsMenu
@@ -29,43 +30,37 @@ import com.heyzeusv.solitaire.util.theme.WasteRules
 /**
  *  Enum class containing the 4 possible suits in a game of Solitaire with additional information.
  *  Includes [suit] in String Resource form, [color] of Suit, drawable id of its [icon], the
- *  drawable id of [emptyIcon] which is shown when its Foundation pile is empty, and the [GamePiles]
- *  associated to it by given [gamePile].
+ *  drawable id of [emptyIcon] which is shown when its Foundation pile is empty.
  */
 enum class Suits(
     @StringRes val suit: Int,
     val color: Color,
     @DrawableRes val icon: Int,
-    @DrawableRes val emptyIcon: Int,
-    val gamePile: GamePiles
+    @DrawableRes val emptyIcon: Int
 ) {
     CLUBS(
         R.string.suits_clubs,
         Color.Black,
         R.drawable.suit_club,
-        R.drawable.foundation_club_empty,
-        GamePiles.ClubsFoundation
+        R.drawable.foundation_club_empty
     ),
     DIAMONDS(
         R.string.suits_diamonds,
         Color.Red,
         R.drawable.suit_diamond,
-        R.drawable.foundation_diamond_empty,
-        GamePiles.DiamondsFoundation
+        R.drawable.foundation_diamond_empty
     ),
     HEARTS(
         R.string.suits_hearts,
         Color.Red,
         R.drawable.suit_heart,
-        R.drawable.foundation_heart_empty,
-        GamePiles.HeartsFoundation
+        R.drawable.foundation_heart_empty
     ),
     SPADES(
         R.string.suits_spades,
         Color.Black,
         R.drawable.suit_spade,
-        R.drawable.foundation_spade_empty,
-        GamePiles.SpadesFoundation
+        R.drawable.foundation_spade_empty
     )
 }
 
@@ -85,7 +80,8 @@ enum class DrawAmount(val amount: Int) {
     Zero(0),
     One(1),
     Three(3),
-    Seven(7)
+    Seven(7),
+    Ten(10)
 }
 
 /**
@@ -104,7 +100,7 @@ enum class Redeals(
 
 /**
  *  Enum class that holds possible starting scores a [Game] can have. [amount] will be used by
- *  [ScoreboardViewModel].
+ *  [ScoreboardLogic].
  */
 enum class StartingScore(val amount: Int) {
     Zero(0),
@@ -118,6 +114,7 @@ enum class StartingScore(val amount: Int) {
  */
 enum class MaxScore(val amount: Int) {
     OneDeck(52),
+    TwoDecks(104)
 }
 
 /**
@@ -131,6 +128,16 @@ enum class ResetFaceUpAmount(val amount: Int) {
 }
 
 /**
+ *  Used to tell how many [Foundation] and [Tableau] piles currently selected [Games] uses.
+ */
+enum class NumberOfPiles(val amount: Int) {
+    Four(4),
+    Seven(7),
+    Eight(8),
+    Ten(10)
+}
+
+/**
  *  Enum class that will be used to determine Scoreboard action after user makes a move. [Move] will
  *  only increase moves value, [MoveScore] will increase both moves and score values,
  *  [MoveMinusScore] increases moves but decreases score, and nothing
@@ -140,6 +147,7 @@ enum class MoveResult {
     Move,
     MoveScore,
     MoveMinusScore,
+    FullPileScore,
     Illegal
 }
 
@@ -172,10 +180,14 @@ enum class MenuState(
 enum class GamePiles {
     Stock,
     Waste,
-    ClubsFoundation,
-    DiamondsFoundation,
-    HeartsFoundation,
-    SpadesFoundation,
+    FoundationClubsOne,
+    FoundationDiamondsOne,
+    FoundationHeartsOne,
+    FoundationSpadesOne,
+    FoundationClubsTwo,
+    FoundationDiamondsTwo,
+    FoundationHeartsTwo,
+    FoundationSpadesTwo,
     TableauZero,
     TableauOne,
     TableauTwo,
@@ -183,6 +195,9 @@ enum class GamePiles {
     TableauFour,
     TableauFive,
     TableauSix,
+    TableauSeven,
+    TableauEight,
+    TableauNine,
     TableauAll
 }
 

@@ -1,19 +1,33 @@
 package com.heyzeusv.solitaire.data.pile
 
 import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
 
 /**
  *  In Solitaire, Foundation refers to the pile where players have to build up a specific [suit]
  *  from Ace to King.
  */
-class Foundation(val suit: Suits, initialPile: List<Card> = emptyList()) : Pile(initialPile) {
+class Foundation(
+    val suit: Suits,
+    val gamePile: GamePiles,
+    initialPile: List<Card> = emptyList()
+) : Pile(initialPile) {
 
     /**
      *  Adds first card of given [cards] to [truePile].
      */
     override fun add(cards: List<Card>) {
         _truePile.add(cards.first().copy(faceUp = true))
+        animatedPiles.add(_truePile.toList())
+        appendHistory(_truePile.toList())
+    }
+
+    /**
+     *  Adds all given [cards] to [truePile]
+     */
+    fun addAll(cards: List<Card>) {
+        _truePile.addAll(cards)
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }

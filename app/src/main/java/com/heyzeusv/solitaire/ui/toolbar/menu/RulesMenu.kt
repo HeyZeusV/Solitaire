@@ -10,6 +10,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -20,10 +22,23 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.games.Games
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PileInfo
 
+/**
+ *  Composable that displays Rules Menu Screen where users can get info of currently game.
+ */
+@Composable
+fun RulesMenu(
+    gameVM: GameViewModel,
+    onBackPress: () -> Unit
+) {
+    val selectedGame by gameVM.selectedGame.collectAsState()
+
+    RulesMenu(selectedGame = selectedGame) { onBackPress() }
+}
 /**
  *  Composable that displays Rules Menu Screen where users can get info of currently [selectedGame].
  *  [onBackPress] navigates user away from [RulesMenu].

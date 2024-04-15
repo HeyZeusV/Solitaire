@@ -8,6 +8,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
+import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
@@ -39,6 +40,8 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val startingScore: StartingScore = StartingScore.Four
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = true
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
+    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach { if (it.faceDownExists()) return false }
@@ -46,9 +49,13 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     }
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEach { tableau ->
-            val cards = List(3) { stock.remove() }
-            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+        tableauList.forEachIndexed { index, tableau ->
+            if (index < numOfTableauPiles.amount) {
+                val cards = List(3) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            } else {
+                tableau.reset()
+            }
         }
     }
 
@@ -56,7 +63,13 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
      *  Start each pile with its Ace.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.forEach { it.reset(listOf(Card(0, it.suit, true))) }
+        foundationList.forEachIndexed { index, foundation ->
+            if (index < numOfFoundationPiles.amount) {
+                foundation.reset(listOf(Card(0, foundation.suit, true)))
+            } else {
+                foundation.reset()
+            }
+        }
     }
 
     override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
@@ -70,7 +83,9 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards
-        foundation.forEach { if (it.truePile.size != 13) return false }
+        for (i in 0 until numOfFoundationPiles.amount) {
+            if (foundation[i].truePile.size != 13) return false
+        }
         return true
     }
 

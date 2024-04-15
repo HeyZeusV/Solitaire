@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.scoreboard
+package com.heyzeusv.solitaire.ui.board.scoreboard
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
@@ -28,22 +28,23 @@ import com.heyzeusv.solitaire.util.theme.scoreboardText
  */
 @Composable
 fun SolitaireScoreboard(
-    sbVM: ScoreboardViewModel,
     gameVM: GameViewModel,
     modifier: Modifier = Modifier
 ) {
     // stats
-    val moves by sbVM.moves.collectAsState()
-    val timer by sbVM.time.collectAsState()
-    val score by sbVM.score.collectAsState()
+    val moves by gameVM.sbLogic.moves.collectAsState()
+    val timer by gameVM.sbLogic.time.collectAsState()
+    val score by gameVM.sbLogic.score.collectAsState()
 
     val autoCompleteActive by gameVM.autoCompleteActive.collectAsState()
 
     // start timer once user makes a move
-    if (moves == 1 && sbVM.jobIsCancelled()) sbVM.startTimer()
+    if (moves == 1 && gameVM.sbLogic.jobIsCancelled()) gameVM.sbLogic.startTimer()
 
     // stop time once autocomplete starts
-    LaunchedEffect(key1 = autoCompleteActive) { if (autoCompleteActive) sbVM.pauseTimer() }
+    LaunchedEffect(key1 = autoCompleteActive) {
+        if (autoCompleteActive) gameVM.sbLogic.pauseTimer()
+    }
 
     SolitaireScoreboard(
         modifier = modifier,

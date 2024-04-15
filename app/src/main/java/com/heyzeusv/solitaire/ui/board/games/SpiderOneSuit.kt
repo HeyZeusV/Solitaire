@@ -12,48 +12,49 @@ import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
+import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.inOrder
+import com.heyzeusv.solitaire.util.isNotMultiSuit
 
-data object KlondikeTurnOne : Games.KlondikeFamily() {
+data object SpiderOneSuit : Games.SpiderFamily() {
     /**
      *  [GameInfo]
      */
-    override val nameId: Int = R.string.games_klondike_turn_one
-    override val familyId: Int = R.string.games_family_klondike
-    override val previewId: Int = R.drawable.preview_klondike_turn_one
+    override val nameId: Int = R.string.games_spider_one_suit
+    override val familyId: Int = R.string.games_family_spider
+    override val previewId: Int = R.drawable.preview_spider
     override val gamePileRules: GamePileRules = GamePileRules(
-        rulesId = R.drawable.rules_klondike_turn_one,
-        stockRulesId = R.string.klondike_turn_one_stock_rules,
-        wasteRulesId = R.string.klondike_turn_one_waste_rules,
-        foundationRulesId = R.string.klondike_turn_one_foundation_rules,
-        tableauRulesId = R.string.klondike_turn_one_tableau_rules
+        rulesId = R.drawable.rules_spider,
+        stockRulesId = R.string.spider_stock_rules,
+        wasteRulesId = null,
+        foundationRulesId = R.string.spider_foundation_rules,
+        tableauRulesId = R.string.spider_tableau_rules
     )
-    override val dataStoreEnum: Game = Game.GAME_KLONDIKETURNONE
+    override val dataStoreEnum: Game = Game.GAME_SPIDER_ONE_SUIT
 
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<Card> = List(52) { Card(it % 13, getSuit(it)) }
+    override val baseDeck: List<Card> = List(104) { Card(it % 13, Suits.SPADES) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
-    override val drawAmount: DrawAmount = DrawAmount.One
-    override val redeals: Redeals = Redeals.Unlimited
+    override val drawAmount: DrawAmount = DrawAmount.Ten
+    override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Zero
-    override val maxScore: MaxScore = MaxScore.OneDeck
-    override val autocompleteAvailable: Boolean = true
-    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
-    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
+    override val maxScore: MaxScore = MaxScore.TwoDecks
+    override val autocompleteAvailable: Boolean = false
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Eight
+    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Ten
 
-    override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
-        tableauList.forEach { if (it.faceDownExists()) return false }
-        return true
-    }
+    override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean = false
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEachIndexed { index, tableau ->
-            if (index < numOfTableauPiles.amount) {
-                val cards = List(index + 1) { stock.remove() }
+            if (index < 4) {
+                val cards = List(6) { stock.remove() }
                 tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
             } else {
-                tableau.reset()
+                val cards = List(5) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
             }
         }
     }
@@ -66,12 +67,12 @@ data object KlondikeTurnOne : Games.KlondikeFamily() {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
-        return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
+        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1 &&
+               cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
     override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        val cFirst = cardsToAdd.first()
-        return cFirst.value == 12
+        return cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
@@ -80,5 +81,9 @@ data object KlondikeTurnOne : Games.KlondikeFamily() {
             if (foundation[i].truePile.size != 13) return false
         }
         return true
+    }
+
+    override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
+        return false
     }
 }

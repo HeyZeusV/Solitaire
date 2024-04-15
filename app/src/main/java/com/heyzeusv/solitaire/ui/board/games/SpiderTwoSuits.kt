@@ -12,49 +12,49 @@ import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
+import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.inOrder
+import com.heyzeusv.solitaire.util.isNotMultiSuit
 
-data object Easthaven : Games.KlondikeFamily() {
+data object SpiderTwoSuits : Games.SpiderFamily() {
     /**
      *  [GameInfo]
      */
-    override val nameId: Int = R.string.games_easthaven
-    override val familyId: Int = R.string.games_family_klondike
-    override val previewId: Int = R.drawable.preview_easthaven
+    override val nameId: Int = R.string.games_spider_two_suits
+    override val familyId: Int = R.string.games_family_spider
+    override val previewId: Int = R.drawable.preview_spider
     override val gamePileRules: GamePileRules = GamePileRules(
-        rulesId = R.drawable.rules_easthaven,
-        stockRulesId = R.string.easthaven_stock_rules,
+        rulesId = R.drawable.rules_spider,
+        stockRulesId = R.string.spider_stock_rules,
         wasteRulesId = null,
-        foundationRulesId = R.string.easthaven_foundation_rules,
-        tableauRulesId = R.string.easthaven_tableau_rules
+        foundationRulesId = R.string.spider_foundation_rules,
+        tableauRulesId = R.string.spider_tableau_rules
     )
-    override val dataStoreEnum: Game = Game.GAME_EASTHAVEN
+    override val dataStoreEnum: Game = Game.GAME_SPIDER_TWO_SUITS
 
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<Card> = List(52) { Card(it % 13, getSuit(it)) }
+    override val baseDeck: List<Card> = List(104) { Card(it % 13, getSuit(it)) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
-    override val drawAmount: DrawAmount = DrawAmount.Seven
+    override val drawAmount: DrawAmount = DrawAmount.Ten
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Zero
-    override val maxScore: MaxScore = MaxScore.OneDeck
-    override val autocompleteAvailable: Boolean = true
-    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
-    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
+    override val maxScore: MaxScore = MaxScore.TwoDecks
+    override val autocompleteAvailable: Boolean = false
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Eight
+    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Ten
 
-    override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
-        tableauList.forEach { if (it.faceDownExists() || it.notInOrderOrAltColor()) return false }
-        return true
-    }
+    override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean = false
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEachIndexed { index, tableau ->
-            if (index < numOfTableauPiles.amount) {
-                val cards = List(3) { stock.remove() }
+            if (index < 4) {
+                val cards = List(6) { stock.remove() }
                 tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
             } else {
-                tableau.reset()
+                val cards = List(5) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
             }
         }
     }
@@ -67,13 +67,12 @@ data object Easthaven : Games.KlondikeFamily() {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
-        return cFirst.suit.color != tLast.suit.color &&
-                cFirst.value == tLast.value - 1 &&
-                !tableau.notInOrderOrAltColor(cardsToAdd)
+        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1 &&
+               cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
     override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return cardsToAdd.inOrder()
+        return cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
@@ -82,5 +81,14 @@ data object Easthaven : Games.KlondikeFamily() {
             if (foundation[i].truePile.size != 13) return false
         }
         return true
+    }
+
+    override fun getSuit(i: Int) = when (i / 13) {
+        0, 2, 4, 6 -> Suits.SPADES
+        else -> Suits.DIAMONDS
+    }
+
+    override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
+        return false
     }
 }

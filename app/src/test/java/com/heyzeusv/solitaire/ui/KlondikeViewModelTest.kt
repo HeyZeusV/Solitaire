@@ -3,11 +3,10 @@ package com.heyzeusv.solitaire.ui
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.data.LayoutInfo
-import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.GameViewModel
-import com.heyzeusv.solitaire.ui.scoreboard.ScoreboardViewModel
+import com.heyzeusv.solitaire.ui.board.boards.layouts.Width1080
+import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.TestCards
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +23,7 @@ import org.junit.Test
 import java.util.Random
 
 /**
- *  [GameViewModel] and [ScoreboardViewModel] are tied very close to each other, so I have
+ *  [GameViewModel] and [ScoreboardLogic] are tied very close to each other, so I have
  *  decided to test both at the same time.
  */
 @OptIn(ExperimentalCoroutinesApi::class)
@@ -32,16 +31,16 @@ class KlondikeAndScoreboardViewModelTest {
 
     private val tc = TestCards
     private lateinit var kdVM: GameViewModel
-    private lateinit var sbVM: ScoreboardViewModel
+    private lateinit var sbVM: ScoreboardLogic
 
     @Before
     fun setup() {
         Dispatchers.setMain(StandardTestDispatcher())
         kdVM = GameViewModel(
             ShuffleSeed(Random(10L)),
-            LayoutInfo(LayoutPositions.Width1080, 0)
+            Width1080(0)
         )
-        sbVM = ScoreboardViewModel()
+        sbVM = ScoreboardLogic()
     }
 
     @Test

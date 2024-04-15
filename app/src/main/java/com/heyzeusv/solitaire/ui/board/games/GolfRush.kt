@@ -8,6 +8,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
+import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
@@ -38,6 +39,8 @@ data object GolfRush : Games.GolfFamily() {
     override val startingScore: StartingScore = StartingScore.One
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = false
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
+    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     /**
      *  Autocomplete is not available for this game.
@@ -46,8 +49,12 @@ data object GolfRush : Games.GolfFamily() {
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEachIndexed { index, tableau ->
-            val cards = List(index + 1) { stock.remove() }
-            tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            if (index < numOfTableauPiles.amount) {
+                val cards = List(index + 1) { stock.remove() }
+                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            } else {
+                tableau.reset()
+            }
         }
     }
 
@@ -55,7 +62,13 @@ data object GolfRush : Games.GolfFamily() {
      *  Start single Foundation pile with a random Card.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList[3].reset(listOf(stock.remove()))
+        foundationList.forEachIndexed { index, foundation ->
+            if (index == 3) {
+                foundation.reset(listOf(stock.remove()))
+            } else {
+                foundation.reset()
+            }
+        }
     }
 
     override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
@@ -66,20 +79,20 @@ data object GolfRush : Games.GolfFamily() {
         return false
     }
 
+    override fun gameWon(foundation: List<Foundation>): Boolean {
+        // single Foundation pile should have all cards
+        return foundation[3].truePile.size == 52
+    }
+
     /**
      *  Checks if given [cardsToAdd] is one more or less than last card of [foundation] truePile.
      */
     override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
         if (cardsToAdd.isEmpty()) return false
         if (foundation.truePile.isEmpty()) return false
-        val firstCard = cardsToAdd[0]
+        val firstCard = cardsToAdd.first()
         val lastFoundationCard = foundation.truePile.last()
         return firstCard.value == lastFoundationCard.value + 1 ||
                 firstCard.value == lastFoundationCard.value - 1
-    }
-
-    override fun gameWon(foundation: List<Foundation>): Boolean {
-        // single Foundation pile should have all cards
-        return foundation[3].truePile.size == 52
     }
 }

@@ -18,28 +18,28 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.Suits
 
 /**
  *  Composable that displays Tableau [pile] with [tableauIndex]. [cardDpSize] is used size the Cards
- *  and to shift each card in [pile], after the first, upwards so they overlap. [onClick] triggers
- *  when any card within [pile] is clicked and is passed [tableauIndex]. Displays static image if
- *  [pile] is empty.
+ *  and to shift each card in [pile], after the first, upwards so they overlap. [spacedByPercent]
+ *  is used to determine distance between cards vertically. [onClick] triggers when any card within
+ *  [pile] is clicked and is passed [tableauIndex]. Displays static image if [pile] is empty.
  */
 @Composable
 fun SolitaireTableau(
     modifier: Modifier = Modifier,
     cardDpSize: DpSize = DpSize(56.dp, 79.dp),
+    spacedByPercent: Float,
     tableauIndex: Int = 0,
     pile: List<Card> = emptyList(),
-    onClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal},
-    handleMoveResult: (MoveResult) -> Unit = { }
+    onClick: (Int, Int) -> Unit = { _, _ -> }
 ) {
     Column(
         modifier = modifier.testTag("Tableau #$tableauIndex"),
-        verticalArrangement = Arrangement.spacedBy(space = -(cardDpSize.height.times(0.75f)))
+        verticalArrangement =
+            Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
     ) {
         if (pile.isEmpty()) {
             Image(
@@ -54,7 +54,7 @@ fun SolitaireTableau(
                     modifier = Modifier
                         .size(cardDpSize)
                         .clip(RoundedCornerShape(4.dp)) // makes click surface have round edges
-                        .clickable { handleMoveResult(onClick(tableauIndex, cardIndex)) },
+                        .clickable { onClick(tableauIndex, cardIndex) },
                     card = card
                 )
             }
@@ -66,7 +66,7 @@ fun SolitaireTableau(
 @Composable
 fun SolitaireTableauEmptyPreview() {
     SolitairePreview {
-        SolitaireTableau()
+        SolitaireTableau(spacedByPercent = 0.75f)
     }
 }
 
@@ -75,6 +75,7 @@ fun SolitaireTableauEmptyPreview() {
 fun SolitaireTableauPreview() {
     SolitairePreview {
         SolitaireTableau(
+            spacedByPercent = 0.75f,
             pile = listOf(
                 Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES),
                 Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES)

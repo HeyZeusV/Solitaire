@@ -13,6 +13,7 @@ import com.heyzeusv.solitaire.ui.toolbar.menu.GamesMenu
 import com.heyzeusv.solitaire.ui.toolbar.menu.RulesMenu
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
+import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
@@ -26,6 +27,7 @@ sealed class Games : GameInfo, GameRules {
     sealed class KlondikeFamily : Games()
     sealed class YukonFamily : Games()
     sealed class GolfFamily : Games()
+    sealed class SpiderFamily: Games()
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
@@ -36,8 +38,8 @@ sealed class Games : GameInfo, GameRules {
 
         val cFirst = cardsToAdd.first()
         tableau.truePile.let {
-            // can't add card to its own pile
-            if (it.contains(cFirst)) return false
+            // can't add card to its own pile in single deck games
+            if (baseDeck.size == 54 && it.contains(cFirst)) return false
             if (it.isNotEmpty()) {
                 if (canAddToTableauNonEmptyRule(tableau, cardsToAdd)) return true
             } else if (canAddToTableauEmptyRule(tableau, cardsToAdd)) {
@@ -84,7 +86,8 @@ sealed class Games : GameInfo, GameRules {
             KlondikeTurnOne, KlondikeTurnThree, ClassicWestcliff,
             Easthaven, Yukon, Alaska,
             Russian, AustralianPatience, Canberra,
-            Golf, PuttPutt, GolfRush
+            Golf, PuttPutt, GolfRush,
+            Spider, SpiderTwoSuits, SpiderOneSuit
         )
 
         /**
@@ -104,6 +107,9 @@ sealed class Games : GameInfo, GameRules {
                 Game.GAME_GOLF -> Golf
                 Game.GAME_PUTT_PUTT -> PuttPutt
                 Game.GAME_GOLF_RUSH -> GolfRush
+                Game.GAME_SPIDER -> Spider
+                Game.GAME_SPIDER_TWO_SUITS -> SpiderTwoSuits
+                Game.GAME_SPIDER_ONE_SUIT -> SpiderOneSuit
                 Game.UNRECOGNIZED -> KlondikeTurnOne
             }
         }
@@ -134,6 +140,8 @@ interface GameInfo {
  *  to the score a game starts with due to starting with cards in [Foundation]. [maxScore] refers
  *  to the max score users can get from just placing Cards in [Foundation]. [autocompleteAvailable]
  *  determines if game offers autocomplete if [autocompleteTableauCheck] passes.
+ *  [numOfFoundationPiles] refers to the number of Foundation piles the game uses.
+ *  [numOfTableauPiles] refers to the number of Tableau piles the game uses.
  */
 interface GameRules {
     val baseDeck: List<Card>
@@ -143,6 +151,8 @@ interface GameRules {
     val startingScore: StartingScore
     val maxScore: MaxScore
     val autocompleteAvailable: Boolean
+    val numOfFoundationPiles: NumberOfPiles
+    val numOfTableauPiles: NumberOfPiles
 
     /**
      *  Each game has its own rules to determine if user has progressed far enough to activate
@@ -188,11 +198,15 @@ interface GameRules {
      *  Cards 13-25 -> Diamonds
      *  Cards 26-38 -> Hearts
      *  Cards 39-51 -> Spades
+     *  Cards 52-64 -> Clubs
+     *  Cards 65-77 -> Diamonds
+     *  Cards 78-90 -> Hearts
+     *  Cards 91-103 -> Spades
      */
      fun getSuit(i: Int) = when (i / 13) {
-        0 -> Suits.CLUBS
-        1 -> Suits.DIAMONDS
-        2 -> Suits.HEARTS
+        0, 4 -> Suits.CLUBS
+        1, 5 -> Suits.DIAMONDS
+        2, 6 -> Suits.HEARTS
         else -> Suits.SPADES
      }
 }

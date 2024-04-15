@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts
+package com.heyzeusv.solitaire.ui.board.boards
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -17,8 +17,6 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
-import com.heyzeusv.solitaire.data.LayoutInfo
-import com.heyzeusv.solitaire.data.LayoutPositions
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
@@ -30,18 +28,23 @@ import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
 import com.heyzeusv.solitaire.ui.board.TableauPileWithFlip
-import com.heyzeusv.solitaire.ui.board.VerticalCardPile
+import com.heyzeusv.solitaire.ui.board.StaticVerticalCardPile
+import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
+import com.heyzeusv.solitaire.ui.board.boards.layouts.Width1080
+import com.heyzeusv.solitaire.ui.board.boards.layouts.Width1440
+import com.heyzeusv.solitaire.ui.board.boards.layouts.Width2160
+import com.heyzeusv.solitaire.ui.board.boards.layouts.Width480
+import com.heyzeusv.solitaire.ui.board.boards.layouts.Width720
 import com.heyzeusv.solitaire.util.AnimationDurations
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
-import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
 /**
- *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [layInfo] is
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [layout] is
  *  used to determine offsets of every pile. [animationDurations] determines how long each animation
  *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
  *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
@@ -50,9 +53,9 @@ import kotlinx.coroutines.delay
  *  [Stock] and shown by [Waste].
  */
 @Composable
-fun StandardLayout(
+fun StandardBoard(
     modifier: Modifier = Modifier,
-    layInfo: LayoutInfo,
+    layout: SevenWideLayout,
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
@@ -60,17 +63,16 @@ fun StandardLayout(
     undoAnimation: Boolean,
     updateUndoAnimation: (Boolean) -> Unit = { },
     drawAmount: DrawAmount,
-    handleMoveResult: (MoveResult) -> Unit = { },
     /** Piles and their onClicks */
     stock: Stock,
-    onStockClick: () -> MoveResult = { MoveResult.Illegal },
+    onStockClick: () -> Unit = { },
     waste: Waste,
     stockWasteEmpty: () -> Boolean = { true },
-    onWasteClick: () -> MoveResult = { MoveResult.Illegal },
+    onWasteClick: () -> Unit = { },
     foundationList: List<Foundation>,
-    onFoundationClick: (Int) -> MoveResult = { MoveResult.Illegal },
+    onFoundationClick: (Int) -> Unit = { },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal }
+    onTableauClick: (Int, Int) -> Unit = { _, _ -> }
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
 
@@ -105,10 +107,10 @@ fun StandardLayout(
             AnimateOffset(
                 animateInfo = it,
                 animationDurations = animationDurations,
-                startOffset = layInfo.getPilePosition(it.start, it.stockWasteMove)
-                    .plus(layInfo.getCardsYOffset(it.startTableauIndices.first())),
-                endOffset = layInfo.getPilePosition(it.end, it.stockWasteMove)
-                    .plus(layInfo.getCardsYOffset(it.endTableauIndices.first())),
+                startOffset = layout.getPilePosition(it.start, it.stockWasteMove)
+                    .plus(layout.getCardsYOffset(it.startTableauIndices.first())),
+                endOffset = layout.getPilePosition(it.end, it.stockWasteMove)
+                    .plus(layout.getCardsYOffset(it.endTableauIndices.first())),
                 updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
                 updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
             )
@@ -122,7 +124,7 @@ fun StandardLayout(
                 when (it.flipCardInfo) {
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
                         HorizontalCardPileWithFlip(
-                            layInfo = layInfo,
+                            layout = layout,
                             animateInfo = it,
                             animationDurations = animationDurations,
                             modifier = Modifier.layoutId("Animated Horizontal Pile")
@@ -130,15 +132,16 @@ fun StandardLayout(
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
                         MultiPileCardWithFlip(
-                            layInfo = layInfo,
+                            layout = layout,
                             animateInfo = it,
                             animationDurations = animationDurations,
                             modifier = Modifier.layoutId("Animated Multi Pile")
                         )
                     }
                     FlipCardInfo.NoFlip -> {
-                        VerticalCardPile(
-                            cardDpSize = layInfo.getCardDpSize(),
+                        StaticVerticalCardPile(
+                            cardDpSize = layout.getCardDpSize(),
+                            spacedByPercent = layout.vPileSpacedByPercent,
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Vertical Pile")
                         )
@@ -146,7 +149,8 @@ fun StandardLayout(
                 }
                 it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
-                        cardDpSize = layInfo.getCardDpSize(),
+                        cardDpSize = layout.getCardDpSize(),
+                        spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
                         animationDurations = animationDurations,
                         modifier = Modifier.layoutId("Animated Tableau Card")
@@ -158,39 +162,39 @@ fun StandardLayout(
                     modifier = Modifier
                         .layoutId("${suit.name} Foundation")
                         .testTag("Foundation #$index"),
-                    cardDpSize = layInfo.getCardDpSize(),
+                    cardDpSize = layout.getCardDpSize(),
                     pile = foundationList[index].displayPile,
                     emptyIconId = suit.emptyIcon,
-                    onClick = { handleMoveResult(onFoundationClick(index)) }
+                    onClick = { onFoundationClick(index) }
                 )
             }
             SolitairePile(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
-                cardDpSize = layInfo.getCardDpSize(),
+                cardDpSize = layout.getCardDpSize(),
                 pile = waste.displayPile,
                 emptyIconId = R.drawable.waste_empty,
-                onClick = { handleMoveResult(onWasteClick()) },
+                onClick = { onWasteClick() },
                 drawAmount = drawAmount
             )
             SolitaireStock(
                 modifier = Modifier
                     .layoutId("Stock")
                     .testTag("Stock"),
-                cardDpSize = layInfo.getCardDpSize(),
+                cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { handleMoveResult(onStockClick()) }
+                onClick = { onStockClick() }
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
-                    cardDpSize = layInfo.getCardDpSize(),
+                    cardDpSize = layout.getCardDpSize(),
+                    spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick,
-                    handleMoveResult = handleMoveResult
+                    onClick = onTableauClick
                 )
             }
         }
@@ -219,11 +223,11 @@ fun StandardLayout(
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             // card constraints
-            val cardWidth = layInfo.cardWidth
-            val cardHeight = layInfo.cardHeight
-            val cardConstraints = layInfo.cardConstraints
-            val wasteConstraints = layInfo.wasteConstraints
-            val tableauHeight = constraints.maxHeight - layInfo.tableauZero.y
+            val cardWidth = layout.cardWidth
+            val cardHeight = layout.cardHeight
+            val cardConstraints = layout.cardConstraints
+            val wasteConstraints = layout.wasteConstraints
+            val tableauHeight = constraints.maxHeight - layout.tableauZero.y
             val tableauConstraints = Constraints(cardWidth, cardWidth, cardHeight, tableauHeight)
 
             if (animatedOffset != IntOffset.Zero) {
@@ -233,7 +237,7 @@ fun StandardLayout(
                     it.tableauCardFlipInfo?.let { info ->
                         val pile =
                             if (info.flipCardInfo is FlipCardInfo.FaceDown) it.end else it.start
-                        val tableauCardFlipPosition = layInfo.getPilePosition(pile)
+                        val tableauCardFlipPosition = layout.getPilePosition(pile)
                         animatedTableauCard?.measure(tableauConstraints)
                             ?.place(tableauCardFlipPosition, 1f)
                         when (pile) {
@@ -251,38 +255,38 @@ fun StandardLayout(
             }
             animatedMultiPile?.measure(constraints)?.place(IntOffset.Zero, 2f)
 
-            clubsFoundation?.measure(cardConstraints)?.place(layInfo.clubsFoundation)
-            diamondsFoundation?.measure(cardConstraints)?.place(layInfo.diamondsFoundation)
-            heartsFoundation?.measure(cardConstraints)?.place(layInfo.heartsFoundation)
-            spadesFoundation?.measure(cardConstraints)?.place(layInfo.spadesFoundation)
-            wastePile?.measure(wasteConstraints)?.place(layInfo.wastePile)
-            stockPile?.measure(cardConstraints)?.place(layInfo.stockPile)
+            clubsFoundation?.measure(cardConstraints)?.place(layout.foundationClubs)
+            diamondsFoundation?.measure(cardConstraints)?.place(layout.foundationDiamonds)
+            heartsFoundation?.measure(cardConstraints)?.place(layout.foundationHearts)
+            spadesFoundation?.measure(cardConstraints)?.place(layout.foundationSpades)
+            wastePile?.measure(wasteConstraints)?.place(layout.wastePile)
+            stockPile?.measure(cardConstraints)?.place(layout.stockPile)
 
-            tableauPile0?.measure(tableauConstraints)?.place(layInfo.tableauZero)
-            tableauPile1?.measure(tableauConstraints)?.place(layInfo.tableauOne)
-            tableauPile2?.measure(tableauConstraints)?.place(layInfo.tableauTwo)
-            tableauPile3?.measure(tableauConstraints)?.place(layInfo.tableauThree)
-            tableauPile4?.measure(tableauConstraints)?.place(layInfo.tableauFour)
-            tableauPile5?.measure(tableauConstraints)?.place(layInfo.tableauFive)
-            tableauPile6?.measure(tableauConstraints)?.place(layInfo.tableauSix)
+            tableauPile0?.measure(tableauConstraints)?.place(layout.tableauZero)
+            tableauPile1?.measure(tableauConstraints)?.place(layout.tableauOne)
+            tableauPile2?.measure(tableauConstraints)?.place(layout.tableauTwo)
+            tableauPile3?.measure(tableauConstraints)?.place(layout.tableauThree)
+            tableauPile4?.measure(tableauConstraints)?.place(layout.tableauFour)
+            tableauPile5?.measure(tableauConstraints)?.place(layout.tableauFive)
+            tableauPile6?.measure(tableauConstraints)?.place(layout.tableauSix)
         }
     }
 }
 
 @Preview(device = "id:Nexus One")
 @Composable
-fun BoardLayout480Preview() {
+fun StandardBoard480Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
-                layInfo = LayoutInfo(LayoutPositions.Width480, 0),
+            StandardBoard(
+                layout = Width480(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -291,18 +295,18 @@ fun BoardLayout480Preview() {
 
 @Preview(device = "id:Nexus 4")
 @Composable
-fun BoardLayout720Preview() {
+fun StandardBoard720Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
-                layInfo = LayoutInfo(LayoutPositions.Width720, 24),
+            StandardBoard(
+                layout = Width720(24).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -311,18 +315,18 @@ fun BoardLayout720Preview() {
 
 @Preview
 @Composable
-fun BoardLayout1080Preview() {
+fun StandardBoard1080Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
-                layInfo = LayoutInfo(LayoutPositions.Width1080, 0),
+            StandardBoard(
+                layout = Width1080(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -331,18 +335,18 @@ fun BoardLayout1080Preview() {
 
 @Preview(device = "id:pixel_xl")
 @Composable
-fun BoardLayout1440Preview() {
+fun StandardBoard1440Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
-                layInfo = LayoutInfo(LayoutPositions.Width1440, 0),
+            StandardBoard(
+                layout = Width1440(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
@@ -351,18 +355,18 @@ fun BoardLayout1440Preview() {
 
 @Preview(device = "spec:width=2160px,height=3840px,dpi=640")
 @Composable
-fun BoardLayout2160Preview() {
+fun StandardBoard2160Preview() {
     PreviewUtil().apply {
         Preview {
-            StandardLayout(
-                layInfo = LayoutInfo(LayoutPositions.Width2160, 0),
+            StandardBoard(
+                layout = Width2160(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 undoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
-                foundationList = Suits.entries.map { Foundation(it) },
+                foundationList = Suits.entries.map { Foundation(it, GamePiles.FoundationSpadesOne) },
                 tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }

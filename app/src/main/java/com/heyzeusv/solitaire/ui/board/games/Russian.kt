@@ -8,6 +8,7 @@ import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.MaxScore
+import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
@@ -38,6 +39,8 @@ data object Russian : Games.YukonFamily() {
     override val startingScore: StartingScore = StartingScore.Zero
     override val maxScore: MaxScore = MaxScore.OneDeck
     override val autocompleteAvailable: Boolean = true
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
+    override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
         tableauList.forEach {
@@ -48,12 +51,16 @@ data object Russian : Games.YukonFamily() {
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
         tableauList.forEachIndexed { index, tableau ->
-            if (index != 0) {
-                val cards = List(index + 5) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+            if (index < numOfTableauPiles.amount) {
+                if (index != 0) {
+                    val cards = List(index + 5) { stock.remove() }
+                    tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+                } else {
+                    val cards = List(1) { stock.remove() }
+                    tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+                }
             } else {
-                val cards = List(1) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+                tableau.reset()
             }
         }
     }
@@ -76,7 +83,9 @@ data object Russian : Games.YukonFamily() {
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards
-        foundation.forEach { if (it.truePile.size != 13) return false }
+        for (i in 0 until numOfFoundationPiles.amount) {
+            if (foundation[i].truePile.size != 13) return false
+        }
         return true
     }
 }

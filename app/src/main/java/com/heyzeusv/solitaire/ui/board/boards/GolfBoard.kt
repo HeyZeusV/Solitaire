@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.ui.board.layouts
+package com.heyzeusv.solitaire.ui.board.boards
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.data.AnimateInfo
 import com.heyzeusv.solitaire.data.Card
 import com.heyzeusv.solitaire.data.FlipCardInfo
-import com.heyzeusv.solitaire.data.LayoutInfo
 import com.heyzeusv.solitaire.data.pile.Foundation
 import com.heyzeusv.solitaire.data.pile.Stock
 import com.heyzeusv.solitaire.data.pile.Tableau
@@ -26,15 +25,15 @@ import com.heyzeusv.solitaire.ui.board.FlipCard
 import com.heyzeusv.solitaire.ui.board.SolitairePile
 import com.heyzeusv.solitaire.ui.board.SolitaireStock
 import com.heyzeusv.solitaire.ui.board.SolitaireTableau
-import com.heyzeusv.solitaire.ui.board.VerticalCardPile
+import com.heyzeusv.solitaire.ui.board.StaticVerticalCardPile
+import com.heyzeusv.solitaire.ui.board.boards.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.util.AnimationDurations
-import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
 /**
- *  Composable that displays all [Card] piles, Stock, Foundation, and Tableau. [layInfo] is
+ *  Composable that displays all [Card] piles, Stock, Foundation, and Tableau. [layout] is
  *  used to determine offsets of every pile. [animationDurations] determines how long each animation
  *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
  *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
@@ -42,24 +41,23 @@ import kotlinx.coroutines.delay
  *  is updated using [updateUndoAnimation].
  */
 @Composable
-fun GolfLayout(
+fun GolfBoard(
     modifier: Modifier = Modifier,
-    layInfo: LayoutInfo,
+    layout: SevenWideLayout,
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
     updateUndoEnabled: (Boolean) -> Unit = { },
     undoAnimation: Boolean,
     updateUndoAnimation: (Boolean) -> Unit = { },
-    handleMoveResult: (MoveResult) -> Unit = { },
     /** Piles and their onClicks */
     stock: Stock,
-    onStockClick: () -> MoveResult = { MoveResult.Illegal },
+    onStockClick: () -> Unit = { },
     stockWasteEmpty: () -> Boolean = { true },
     foundationList: List<Foundation>,
-    onFoundationClick: (Int) -> MoveResult = { MoveResult.Illegal },
+    onFoundationClick: (Int) -> Unit = { },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> MoveResult = { _, _ -> MoveResult.Illegal }
+    onTableauClick: (Int, Int) -> Unit = { _, _ ->  }
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
     var flipRotation by remember { mutableFloatStateOf(0f) }
@@ -91,13 +89,14 @@ fun GolfLayout(
                 it.actionAfterAnimation()
             }
         }
+        // end pile correction
         AnimateOffset(
             animateInfo = it,
             animationDurations = animationDurations,
-            startOffset = layInfo.getPilePosition(it.start)
-                .plus(layInfo.getCardsYOffset(it.startTableauIndices.first())),
-            endOffset = layInfo.getPilePosition(it.end)
-                .plus(layInfo.getCardsYOffset(it.endTableauIndices.first())),
+            startOffset = layout.getPilePosition(it.start)
+                .plus(layout.getCardsYOffset(it.startTableauIndices.first())),
+            endOffset = layout.getPilePosition(it.end)
+                .plus(layout.getCardsYOffset(it.endTableauIndices.first())),
             updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
             updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
         )
@@ -118,7 +117,7 @@ fun GolfLayout(
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
                         FlipCard(
                             flipCard = it.animatedCards.first(),
-                            cardDpSize = layInfo.getCardDpSize(),
+                            cardDpSize = layout.getCardDpSize(),
                             flipRotation = flipRotation,
                             flipCardInfo = it.flipCardInfo,
                             modifier = Modifier.layoutId("Animated Horizontal Pile")
@@ -126,8 +125,9 @@ fun GolfLayout(
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> { }
                     FlipCardInfo.NoFlip -> {
-                        VerticalCardPile(
-                            cardDpSize = layInfo.getCardDpSize(),
+                        StaticVerticalCardPile(
+                            cardDpSize = layout.getCardDpSize(),
+                            spacedByPercent = layout.vPileSpacedByPercent,
                             pile = it.animatedCards,
                             modifier = Modifier.layoutId("Animated Vertical Pile")
                         )
@@ -136,35 +136,35 @@ fun GolfLayout(
             }
             SolitairePile(
                 modifier = Modifier
-                    .layoutId("${Suits.SPADES.name} Foundation")
-                    .testTag("Foundation #$3"),
-                cardDpSize = layInfo.getCardDpSize(),
+                    .layoutId("Foundation")
+                    .testTag("Foundation #$0"),
+                cardDpSize = layout.getCardDpSize(),
                 pile = foundationList[3].displayPile,
                 emptyIconId = Suits.SPADES.emptyIcon,
-                onClick = { handleMoveResult(onFoundationClick(3)) }
+                onClick = { onFoundationClick(3) }
             )
             SolitaireStock(
                 modifier = Modifier
                     .layoutId("Stock")
                     .testTag("Stock"),
-                cardDpSize = layInfo.getCardDpSize(),
+                cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { handleMoveResult(onStockClick()) }
+                onClick = { onStockClick() }
             )
             tableauList.forEachIndexed { index, tableau ->
                 SolitaireTableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
-                    cardDpSize = layInfo.getCardDpSize(),
+                    cardDpSize = layout.getCardDpSize(),
+                    spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick,
-                    handleMoveResult = handleMoveResult
+                    onClick = onTableauClick
                 )
             }
         }
     ) { measurables, constraints ->
-        val spadesFoundation = measurables.firstOrNull { it.layoutId == "SPADES Foundation" }
+        val foundation = measurables.firstOrNull { it.layoutId == "Foundation" }
         val stockPile = measurables.firstOrNull { it.layoutId == "Stock" }
 
         val tableauPile0 = measurables.firstOrNull { it.layoutId == "Tableau #0" }
@@ -182,26 +182,26 @@ fun GolfLayout(
 
         layout(constraints.maxWidth, constraints.maxHeight) {
             // card constraints
-            val cardWidth = layInfo.cardWidth
-            val cardHeight = layInfo.cardHeight
-            val cardConstraints = layInfo.cardConstraints
-            val tableauHeight = constraints.maxHeight - layInfo.tableauZero.y
+            val cardWidth = layout.cardWidth
+            val cardHeight = layout.cardHeight
+            val cardConstraints = layout.cardConstraints
+            val tableauHeight = constraints.maxHeight - layout.tableauZero.y
             val tableauConstraints = Constraints(cardWidth, cardWidth, cardHeight, tableauHeight)
 
             if (animatedOffset != IntOffset.Zero) {
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
                 animatedHorizontalPile?.measure(cardConstraints)?.place(animatedOffset, 2f)
             }
-            spadesFoundation?.measure(cardConstraints)?.place(layInfo.spadesFoundation)
-            stockPile?.measure(cardConstraints)?.place(layInfo.stockPile)
+            foundation?.measure(cardConstraints)?.place(layout.foundationSpades)
+            stockPile?.measure(cardConstraints)?.place(layout.stockPile)
 
-            tableauPile0?.measure(tableauConstraints)?.place(layInfo.tableauZero)
-            tableauPile1?.measure(tableauConstraints)?.place(layInfo.tableauOne)
-            tableauPile2?.measure(tableauConstraints)?.place(layInfo.tableauTwo)
-            tableauPile3?.measure(tableauConstraints)?.place(layInfo.tableauThree)
-            tableauPile4?.measure(tableauConstraints)?.place(layInfo.tableauFour)
-            tableauPile5?.measure(tableauConstraints)?.place(layInfo.tableauFive)
-            tableauPile6?.measure(tableauConstraints)?.place(layInfo.tableauSix)
+            tableauPile0?.measure(tableauConstraints)?.place(layout.tableauZero)
+            tableauPile1?.measure(tableauConstraints)?.place(layout.tableauOne)
+            tableauPile2?.measure(tableauConstraints)?.place(layout.tableauTwo)
+            tableauPile3?.measure(tableauConstraints)?.place(layout.tableauThree)
+            tableauPile4?.measure(tableauConstraints)?.place(layout.tableauFour)
+            tableauPile5?.measure(tableauConstraints)?.place(layout.tableauFive)
+            tableauPile6?.measure(tableauConstraints)?.place(layout.tableauSix)
         }
     }
 }
