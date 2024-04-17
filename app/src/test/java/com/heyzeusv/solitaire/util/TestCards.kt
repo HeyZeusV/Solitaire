@@ -1,6 +1,6 @@
 package com.heyzeusv.solitaire.util
 
-import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.board.piles.Card
 
 @Suppress("MemberVisibilityCanBePrivate")
 object TestCards {

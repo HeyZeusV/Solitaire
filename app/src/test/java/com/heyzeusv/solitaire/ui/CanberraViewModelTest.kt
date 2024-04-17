@@ -1,7 +1,7 @@
 package com.heyzeusv.solitaire.ui
 
-import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.CanberraViewModel
 import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 import org.junit.Assert.assertEquals

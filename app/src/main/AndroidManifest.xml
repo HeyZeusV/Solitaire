@@ -14,11 +14,11 @@
         android:theme="@style/Theme.Solitaire"
         tools:targetApi="31">
         <activity
-            android:name=".ui.MainActivity"
+            android:name=".MainActivity"
             android:screenOrientation="portrait"
             android:exported="true"
             android:theme="@style/Theme.Solitaire"
-            tools:ignore="LockedOrientationActivity">
+            tools:ignore="DiscouragedApi,LockedOrientationActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

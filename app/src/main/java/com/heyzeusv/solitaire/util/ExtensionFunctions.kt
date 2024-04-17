@@ -10,7 +10,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
-import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.board.piles.Card
 import java.text.DecimalFormat
 
 fun Long.formatTimeDisplay(): String {

@@ -2,8 +2,8 @@ package com.heyzeusv.solitaire.ui
 //
 //import com.heyzeusv.solitaire.data.Card
 //import com.heyzeusv.solitaire.data.PileHistory
-//import com.heyzeusv.solitaire.data.LastGameStats
-//import com.heyzeusv.solitaire.data.ShuffleSeed
+//import com.heyzeusv.solitaire.scoreboard.LastGameStats
+//import com.heyzeusv.solitaire.board.piles.ShuffleSeed
 //import com.heyzeusv.solitaire.ui.board.AustralianPatienceViewModel
 //import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
 //import com.heyzeusv.solitaire.util.ResetOptions

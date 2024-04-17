@@ -1,6 +1,6 @@
 package com.heyzeusv.solitaire.data.tableau
 
-import com.heyzeusv.solitaire.data.pile.Tableau.YukonTableau
+import com.heyzeusv.solitaire.board.piles.Tableau.YukonTableau
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Before

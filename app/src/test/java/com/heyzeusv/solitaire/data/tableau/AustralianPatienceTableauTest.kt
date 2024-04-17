@@ -1,7 +1,7 @@
 package com.heyzeusv.solitaire.data.tableau
 
-import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.pile.Tableau.AustralianPatienceTableau
+import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.Tableau.AustralianPatienceTableau
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Before

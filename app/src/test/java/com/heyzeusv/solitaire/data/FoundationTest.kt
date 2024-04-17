@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.data
 
-import com.heyzeusv.solitaire.data.pile.Foundation
+import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals

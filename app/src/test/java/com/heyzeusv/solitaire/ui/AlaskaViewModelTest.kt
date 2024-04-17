@@ -1,6 +1,6 @@
 package com.heyzeusv.solitaire.ui
 
-import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.board.piles.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.AlaskaViewModel
 import com.heyzeusv.solitaire.ui.board.YukonViewModel
 import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic

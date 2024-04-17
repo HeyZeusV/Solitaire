@@ -1,9 +1,9 @@
 package com.heyzeusv.solitaire.ui
 
-import com.heyzeusv.solitaire.data.AnimateInfo
-import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.data.LastGameStats
-import com.heyzeusv.solitaire.data.ShuffleSeed
+import com.heyzeusv.solitaire.board.animation.AnimateInfo
+import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.scoreboard.LastGameStats
+import com.heyzeusv.solitaire.board.piles.ShuffleSeed
 import com.heyzeusv.solitaire.ui.board.GameViewModel
 import com.heyzeusv.solitaire.ui.board.boards.layouts.Width1080
 import com.heyzeusv.solitaire.ui.board.scoreboard.ScoreboardLogic
