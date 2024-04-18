@@ -5,8 +5,8 @@ import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.di.AppTestScope
-import com.heyzeusv.solitaire.util.StatManager
-import com.heyzeusv.solitaire.util.getStatsDefaultInstance
+import com.heyzeusv.solitaire.menu.stats.StatManager
+import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import dagger.hilt.android.testing.HiltAndroidRule
 import dagger.hilt.android.testing.HiltAndroidTest
 import kotlinx.coroutines.flow.first

@@ -7,11 +7,11 @@ import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
-import com.heyzeusv.solitaire.data.ShuffleSeed
-import com.heyzeusv.solitaire.ui.board.boards.layouts.ScreenLayouts
-import com.heyzeusv.solitaire.ui.board.boards.layouts.Width1080
-import com.heyzeusv.solitaire.util.SettingsSerializer
-import com.heyzeusv.solitaire.util.StatPreferencesSerializer
+import com.heyzeusv.solitaire.board.layouts.ScreenLayouts
+import com.heyzeusv.solitaire.board.layouts.Width1080
+import com.heyzeusv.solitaire.board.piles.ShuffleSeed
+import com.heyzeusv.solitaire.menu.settings.SettingsSerializer
+import com.heyzeusv.solitaire.menu.stats.StatPreferencesSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.android.qualifiers.ApplicationContext

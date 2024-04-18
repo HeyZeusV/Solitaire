@@ -7,7 +7,7 @@ import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.board.SolitaireTableau
+import com.heyzeusv.solitaire.board.piles.SolitaireTableau
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onCard
@@ -28,7 +28,7 @@ class TableauTest {
     fun tableau_empty() {
         composeRule.setContent {
             SolitaireTheme {
-                SolitaireTableau()
+                SolitaireTableau(spacedByPercent = 0.75f)
             }
         }
 
@@ -43,6 +43,7 @@ class TableauTest {
             setContent {
                 SolitaireTheme {
                     SolitaireTableau(
+                        spacedByPercent = 0.75f,
                         pile = listOf(
                             tc.card5SFU, tc.card4DFU, tc.card3DFU, tc.card13DFU,
                             tc.card11HFU, tc.card9CFU, tc.card7SFU

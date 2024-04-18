@@ -18,8 +18,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-//import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.board.piles.Card
 
 /**
  *  Looks for node with text that matches given String resource [id] with [args] (if any).

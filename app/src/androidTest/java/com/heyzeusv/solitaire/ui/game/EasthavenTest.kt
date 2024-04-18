@@ -5,8 +5,8 @@ import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
+import com.heyzeusv.solitaire.MainActivity
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.MainActivity
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onNodeWithTextId
 //import com.heyzeusv.solitaire.util.switchGame

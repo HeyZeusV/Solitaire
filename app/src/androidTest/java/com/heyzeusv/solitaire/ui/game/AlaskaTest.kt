@@ -2,8 +2,8 @@ package com.heyzeusv.solitaire.ui.game
 
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import com.heyzeusv.solitaire.MainActivity
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.MainActivity
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.clickOnPileTT
 import com.heyzeusv.solitaire.util.clickOnTableauCard
