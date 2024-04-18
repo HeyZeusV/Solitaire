@@ -56,17 +56,26 @@ class FoundationTest : BehaviorSpec({
                 foundation.displayPile shouldBe cards.map { it.copy(faceUp = true) }
             }
         }
-        When("Calling reset without cards") {
-             foundation.reset()
+        When("Adding all cards and calling undo") {
+            foundation.addAll(cards)
+            foundation.undo()
+            Then("Piles should be empty") {
+                foundation.truePile shouldBe emptyList()
+                foundation.displayPile shouldBe emptyList()
+            }
+        }
+    }
+    Given("Foundation with no cards") {
+        When("Calling reset") {
+            foundation.reset()
             Then("No cards should exist in Foundation") {
                 foundation.truePile shouldBe emptyList()
                 foundation.displayPile shouldBe emptyList()
             }
         }
-        When("Adding all cards and calling undo") {
-            foundation.addAll(cards)
+        When("Calling undo") {
             foundation.undo()
-            Then("Piles should be empty") {
+            Then("No cards should exist in Foundation") {
                 foundation.truePile shouldBe emptyList()
                 foundation.displayPile shouldBe emptyList()
             }
