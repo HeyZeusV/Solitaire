@@ -157,3 +157,5 @@ object TestCards {
         card8HFU, card9SFU, card10HFU, card11SFU, card12HFU, card13SFU
     )
 }
+
+typealias tc = TestCards

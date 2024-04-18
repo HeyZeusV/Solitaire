@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.data.tableau
 
-import com.heyzeusv.solitaire.board.piles.Tableau.YukonTableau
+import com.heyzeusv.solitaire.board.piles.Tableau
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -9,11 +10,11 @@ import org.junit.Test
 class YukonTableauTest {
 
     private val tc = TestCards
-    private lateinit var tableau: YukonTableau
+    private lateinit var tableau: Tableau
 
     @Before
     fun setUp() {
-        tableau = YukonTableau()
+        tableau = Tableau(GamePiles.TableauNine)
     }
 
     /**

@@ -1,7 +1,8 @@
 package com.heyzeusv.solitaire.data.tableau
 
 import com.heyzeusv.solitaire.board.piles.Card
-import com.heyzeusv.solitaire.board.piles.Tableau.KlondikeTableau
+import com.heyzeusv.solitaire.board.piles.Tableau
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -10,11 +11,11 @@ import org.junit.Test
 class KlondikeTableauTest {
 
     private val tc = TestCards
-    private lateinit var tableau: KlondikeTableau
+    private lateinit var tableau: Tableau
 
     @Before
     fun setUp() {
-        tableau = KlondikeTableau()
+        tableau = Tableau(GamePiles.TableauNine)
     }
 
     @Test
@@ -24,18 +25,18 @@ class KlondikeTableauTest {
         val expectedMixedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU, tc.card5CFU, tc.card4HFU)
 
         // add solo King card then 3 that should follow
-        val emptyKingTableau = KlondikeTableau()
+        val emptyKingTableau = Tableau(GamePiles.TableauNine)
         emptyKingTableau.add(listOf(tc.card13DFU))
         emptyKingTableau.add(listOf(tc.card12CFU, tc.card11HFU, tc.card10SFU))
         assertEquals(expectedKingPile, emptyKingTableau.truePile.toList())
 
         // add cards without king
-        val emptyTableau = KlondikeTableau()
+        val emptyTableau = Tableau(GamePiles.TableauNine)
         emptyTableau.add(listOf(tc.card12C, tc.card11H, tc.card10S))
         assertEquals(expectedEmptyPile, emptyTableau.truePile)
 
         // add cards to Tableau with existing cards
-        val mixedTableau = KlondikeTableau()
+        val mixedTableau = Tableau(GamePiles.TableauNine)
         // reset is used to fill Tableau with existing cards
         mixedTableau.reset(listOf(tc.card1H, tc.card12C, tc.card6D))
         mixedTableau.add(listOf(tc.card5CFU, tc.card4HFU))
@@ -47,7 +48,7 @@ class KlondikeTableauTest {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6DFU)
         val expectedFaceDownExists = true
 
-        tableau.undo(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5CFU, tc.card4HFU))
+        tableau.undo()
         tableau.remove(3)
 
         assertEquals(expectedPile, tableau.truePile.toList())
@@ -70,7 +71,7 @@ class KlondikeTableauTest {
         val expectedPile = emptyList<Card>()
         val expectedFaceDownExists = false
 
-        tableau.undo(emptyList())
+        tableau.undo()
 
         assertEquals(expectedPile, tableau.truePile)
         assertEquals(expectedFaceDownExists, tableau.faceDownExists())
@@ -81,7 +82,7 @@ class KlondikeTableauTest {
         val expectedPile = listOf(tc.card1HFU)
         val expectedFaceDownExists = false
 
-        tableau.undo(listOf(tc.card1HFU))
+        tableau.undo()
 
         assertEquals(expectedPile, tableau.truePile)
         assertEquals(expectedFaceDownExists, tableau.faceDownExists())
@@ -92,7 +93,7 @@ class KlondikeTableauTest {
         val expectedPile = listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU)
         val expectedFaceDownExists = true
 
-        tableau.undo(listOf(tc.card1H, tc.card12C, tc.card6D, tc.card5C, tc.card4HFU))
+        tableau.undo()
 
         assertEquals(expectedPile, tableau.truePile.toList())
         assertEquals(expectedFaceDownExists, tableau.faceDownExists())

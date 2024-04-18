@@ -25,7 +25,7 @@ class WasteTest {
         val expectedPile = listOf(tc.card1CFU, tc.card1HFU, tc.card12CFU)
         waste.add(listOf(tc.card1C))
 
-        waste.undo(listOf(tc.card1C, tc.card1H, tc.card12C))
+        waste.undo()
 
         assertEquals(expectedPile, waste.truePile)
     }
@@ -34,7 +34,7 @@ class WasteTest {
         val expectedPile = emptyList<Card>()
         waste.add(listOf(tc.card1C))
 
-        waste.undo(emptyList())
+        waste.undo()
 
         assertEquals(expectedPile, waste.truePile)
     }

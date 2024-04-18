@@ -1,6 +1,7 @@
 package com.heyzeusv.solitaire.data.tableau
 
-import com.heyzeusv.solitaire.board.piles.Tableau.EasthavenTableau
+import com.heyzeusv.solitaire.board.piles.Tableau
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
 import org.junit.Before
@@ -9,11 +10,11 @@ import org.junit.Test
 class EasthavenTableauTest {
 
     private val tc = TestCards
-    private lateinit var tableau: EasthavenTableau
+    private lateinit var tableau: Tableau
 
     @Before
     fun setUp() {
-        tableau = EasthavenTableau()
+        tableau = Tableau(GamePiles.TableauNine)
     }
 
     @Test
@@ -51,7 +52,7 @@ class EasthavenTableauTest {
         val expectedList = listOf(tc.card7CFU, tc.card6DFU, tc.card13DFU)
 
         tableau.reset(listOf(tc.card7CFU, tc.card6DFU))
-        tableau.addFromStock(listOf(tc.card13DFU))
+//        tableau.addFromStock(listOf(tc.card13DFU))
 
         assertEquals(expectedList, tableau.truePile.toList())
     }

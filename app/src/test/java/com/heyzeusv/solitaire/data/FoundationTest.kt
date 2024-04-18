@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.data
 
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.Foundation
+import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.TestCards
 import org.junit.Assert.assertEquals
@@ -9,7 +10,7 @@ import org.junit.Test
 
 class FoundationTest {
 
-    private val foundation = Foundation(Suits.DIAMONDS)
+    private val foundation = Foundation(Suits.DIAMONDS, GamePiles.FoundationClubsOne)
     private val tc = TestCards
 
     @Test
@@ -64,7 +65,7 @@ class FoundationTest {
     fun foundationUndo() {
         val expectedFoundation = listOf(tc.card1D, tc.card2D, tc.card3D)
 
-        foundation.undo(listOf(tc.card1D, tc.card2D, tc.card3D))
+        foundation.undo()
 
         assertEquals(expectedFoundation, foundation.truePile)
     }
@@ -75,7 +76,7 @@ class FoundationTest {
 
         foundation.add(listOf(tc.card1D))
 
-        foundation.undo(emptyList())
+        foundation.undo()
 
         assertEquals(expectedFoundation, foundation.truePile)
     }

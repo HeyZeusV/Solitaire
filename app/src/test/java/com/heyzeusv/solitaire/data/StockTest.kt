@@ -55,7 +55,7 @@ class StockTest {
         stock.reset(tc.deck)
         val expectedStock = mutableListOf(tc.card1C, tc.card12C, tc.card5S)
 
-        stock.undo(expectedStock)
+        stock.undo()
 
         assertEquals(expectedStock, stock.truePile)
     }
@@ -64,7 +64,7 @@ class StockTest {
     fun stockUndoNoCards() {
         stock.reset(emptyList())
 
-        stock.undo(emptyList())
+        stock.undo()
 
         assert(stock.truePile.isEmpty())
     }
