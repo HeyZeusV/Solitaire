@@ -5,6 +5,7 @@ import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.layouts.Width1080
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.ShuffleSeed
+import com.heyzeusv.solitaire.games.Alaska
 import com.heyzeusv.solitaire.games.AustralianPatience
 import com.heyzeusv.solitaire.games.Easthaven
 import com.heyzeusv.solitaire.games.Golf
@@ -253,6 +254,57 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 0
                     vm.waste pilesShouldBe emptyList()
+                }
+            }
+        }
+    }
+    Given("onFoundationClick call") {
+        When("selectedGame is Alaska") {
+            beforeContainer {
+                vm.updateSelectedGame(Alaska)
+            }
+            And("Result is legal") {
+                onPileClick { vm.onTableauClick(1, 5) }
+                onPileClick { vm.onFoundationClick(2) }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.FoundationHeartsOne,
+                    end = GamePiles.TableauTwo,
+                    animatedCards = listOf(tc.oneDeckUp[6]),
+                    startTableauIndices = listOf(0),
+                    endTableauIndices = listOf(7)
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.sbLogic.moves valueShouldBe 2
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.foundation[2] pilesShouldBe emptyList()
+                    tc.apply {
+                        vm.tableau[2] pilesShouldBe listOf(
+                            card10C, card7S, card3CFU, card9SFU,
+                            card7HFU, card9CFU, card2HFU, card1HFU
+                        )
+                    }
+                }
+            }
+            And("Result is illegal") {
+                onPileClick { vm.onTableauClick(1, 5) }
+                onPileClick { vm.onTableauClick(2, 6) }
+                vm.updateAnimateInfo(null)
+                onPileClick { vm.onFoundationClick(2) }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 2
+                    vm.sbLogic.score valueShouldBe 2
+                    vm.foundation[2] pilesShouldBe listOf(tc.card1HFU, tc.card2HFU)
+                }
+            }
+            And("Foundation is empty") {
+                onPileClick { vm.onFoundationClick(2) }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 0
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.foundation[2] pilesShouldBe emptyList()
                 }
             }
         }
