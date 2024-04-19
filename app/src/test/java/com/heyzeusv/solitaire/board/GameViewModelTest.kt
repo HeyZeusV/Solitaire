@@ -95,7 +95,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 endTableauIndices = List(7) { 7 },
                 flipCardInfo = FlipCardInfo.FaceUp.MultiPile
             )
-            Then("AnimateInfo should be") {
+            Then("State should be") {
                 vm.animateInfo valueShouldBe expectedAnimateInfo
                 vm.stockWasteEmpty valueShouldBe true
                 vm.sbLogic.moves valueShouldBe 5
@@ -114,7 +114,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 endTableauIndices = listOf(10, 10, 10, 10, 9, 9, 9, 9, 9, 9),
                 flipCardInfo = FlipCardInfo.FaceUp.MultiPile
             )
-            Then("AnimateInfo should be") {
+            Then("State should be") {
                 vm.animateInfo valueShouldBe expectedAnimateInfo
                 vm.stockWasteEmpty valueShouldBe true
                 vm.sbLogic.moves valueShouldBe 5
@@ -132,7 +132,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 animatedCards = listOf(tc.oneDeckDown[36]),
                 flipCardInfo = FlipCardInfo.FaceUp.SinglePile
             )
-            Then("AnimateInfo should be") {
+            Then("State should be") {
                 vm.animateInfo valueShouldBe expectedAnimateInfo
                 vm.stockWasteEmpty valueShouldBe true
                 vm.sbLogic.moves valueShouldBe 1
@@ -152,7 +152,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     animatedCards = listOf(tc.oneDeckDown[28]),
                     flipCardInfo = FlipCardInfo.FaceUp.SinglePile
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.stockWasteEmpty valueShouldBe true
                     vm.sbLogic.moves valueShouldBe 1
@@ -164,7 +164,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 repeat(24) { onPileClick { vm.onStockClick() } }
                 vm.updateAnimateInfo(null)
                 onPileClick { vm.onStockClick() }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.stockWasteEmpty valueShouldBe true
                     vm.sbLogic.moves valueShouldBe 24
@@ -187,7 +187,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     animatedCards = tc.oneDeckUp.takeLast(1),
                     flipCardInfo = FlipCardInfo.FaceDown.SinglePile
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.stockWasteEmpty valueShouldBe false
                     vm.sbLogic.moves valueShouldBe 25
@@ -212,7 +212,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     startTableauIndices = listOf(0),
                     endTableauIndices = listOf(4)
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.stockWasteEmpty valueShouldBe false
                     vm.sbLogic.moves valueShouldBe 4
@@ -232,7 +232,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     animatedCards = listOf(tc.oneDeckUp[31]),
                     startTableauIndices = listOf(0)
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.stockWasteEmpty valueShouldBe false
                     vm.sbLogic.moves valueShouldBe 5
@@ -245,7 +245,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 onPileClick { vm.onStockClick() }
                 vm.updateAnimateInfo(null)
                 onPileClick { vm.onWasteClick() }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 1
                     vm.waste pilesShouldBe listOf(tc.card2SFU)
@@ -253,7 +253,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
             }
             And("Waste is empty") {
                 onPileClick { vm.onWasteClick() }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 0
                     vm.waste pilesShouldBe emptyList()
@@ -276,7 +276,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     startTableauIndices = listOf(0),
                     endTableauIndices = listOf(7)
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.sbLogic.moves valueShouldBe 2
                     vm.sbLogic.score valueShouldBe 0
@@ -294,7 +294,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 onPileClick { vm.onTableauClick(2, 6) }
                 vm.updateAnimateInfo(null)
                 onPileClick { vm.onFoundationClick(2) }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 2
                     vm.sbLogic.score valueShouldBe 2
@@ -303,7 +303,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
             }
             And("Foundation is empty") {
                 onPileClick { vm.onFoundationClick(2) }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 0
                     vm.sbLogic.score valueShouldBe 0
@@ -326,7 +326,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     startTableauIndices = listOf(8),
                     endTableauIndices = listOf(11)
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.sbLogic.moves valueShouldBe 1
                     vm.sbLogic.score valueShouldBe 0
@@ -348,7 +348,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                         remainingPile = emptyList()
                     )
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.sbLogic.moves valueShouldBe 1
                     vm.sbLogic.score valueShouldBe 0
@@ -364,7 +364,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     animatedCards = listOf(tc.oneDeckUp[6]),
                     startTableauIndices = listOf(5)
                 )
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo
                     vm.sbLogic.moves valueShouldBe 1
                     vm.sbLogic.score valueShouldBe 1
@@ -374,7 +374,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
             }
             And("Result is illegal") {
                 onPileClick { vm.onTableauClick(0, 0) }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 0
                     vm.sbLogic.score valueShouldBe 0
@@ -384,7 +384,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
             }
             And("Card is face down") {
                 onPileClick { vm.onTableauClick(1, 0) }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 0
                     vm.sbLogic.score valueShouldBe 0
@@ -400,7 +400,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 onPileClick { vm.onTableauClick(1, 0) }
                 vm.updateAnimateInfo(null)
                 onPileClick { vm.onTableauClick(1, 0) }
-                Then("AnimateInfo should be") {
+                Then("State should be") {
                     vm.animateInfo valueShouldBe null
                     vm.sbLogic.moves valueShouldBe 1
                     vm.sbLogic.score valueShouldBe 0
@@ -440,7 +440,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     ),
                     spiderPile = true
                 )
-                Then("Spider AnimatePile should be") {
+                Then("State should be") {
                     vm.spiderAnimateInfo valueShouldBe expectedSpiderAnimateInfo
                     vm.spiderAnimateInfo.value!!.actionBeforeAnimation.invoke()
                     vm.spiderAnimateInfo.value!!.actionAfterAnimation.invoke()
@@ -449,6 +449,22 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     vm.foundation[0] pilesShouldBe tc.spades.reversed()
                     vm.tableau[0] pileSizesShouldBe 3
                 }
+            }
+        }
+    }
+    Given("undo call") {
+        When("selectedGame is Yukon") {
+            vm.updateSelectedGame(Yukon)
+            val originalTableauOnePile = vm.tableau[1].truePile.toList()
+            onPileClick { vm.onTableauClick(1, 5) }
+            vm.undo()
+            vm.animateInfo.value!!.actionBeforeAnimation.invoke()
+            vm.animateInfo.value!!.actionAfterAnimation.invoke()
+            Then("State should be") {
+                vm.sbLogic.moves valueShouldBe 2
+                vm.sbLogic.score valueShouldBe 0
+                vm.tableau[1] pilesShouldBe originalTableauOnePile
+                vm.foundation[2] pilesShouldBe emptyList()
             }
         }
     }
