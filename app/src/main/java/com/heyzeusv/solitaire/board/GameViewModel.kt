@@ -223,12 +223,14 @@ class GameViewModel @Inject constructor(
         if (_stock.truePile.isNotEmpty()) {
             val stockCards = _stock.getCards(_selectedGame.value.drawAmount.amount)
             val tableauIndices = mutableListOf<Int>()
-            _tableau.forEach { tableau -> tableauIndices.add(tableau.truePile.size) }
+            for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
+                tableauIndices.add(_tableau[i].truePile.size)
+            }
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
                 end = GamePiles.TableauAll,
-                endTableauIndices = tableauIndices,
                 animatedCards = stockCards,
+                endTableauIndices = tableauIndices,
                 flipCardInfo = FlipCardInfo.FaceUp.MultiPile
             )
             aniInfo.actionBeforeAnimation = {
