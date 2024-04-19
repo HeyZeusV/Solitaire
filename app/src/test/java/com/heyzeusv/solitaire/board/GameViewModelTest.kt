@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.board
 
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
+import com.heyzeusv.solitaire.board.animation.TableauCardFlipInfo
 import com.heyzeusv.solitaire.board.layouts.Width1080
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.ShuffleSeed
@@ -11,6 +12,8 @@ import com.heyzeusv.solitaire.games.Easthaven
 import com.heyzeusv.solitaire.games.Golf
 import com.heyzeusv.solitaire.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.games.Spider
+import com.heyzeusv.solitaire.games.SpiderOneSuit
+import com.heyzeusv.solitaire.games.Yukon
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.ResetOptions
 import com.heyzeusv.solitaire.util.ViewModelBehaviorSpec
@@ -305,6 +308,146 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     vm.sbLogic.moves valueShouldBe 0
                     vm.sbLogic.score valueShouldBe 0
                     vm.foundation[2] pilesShouldBe emptyList()
+                }
+            }
+        }
+    }
+    Given("onTableauClick call") {
+        When("selectedGame is Yukon") {
+            beforeContainer {
+                vm.updateSelectedGame(Yukon)
+            }
+            And("Result is legal with single card") {
+                onPileClick { vm.onTableauClick(4, 8) }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.TableauFour,
+                    end = GamePiles.TableauSix,
+                    animatedCards = listOf(tc.oneDeckUp[30]),
+                    startTableauIndices = listOf(8),
+                    endTableauIndices = listOf(11)
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.sbLogic.moves valueShouldBe 1
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.tableau[4] pileSizesShouldBe 8
+                    vm.tableau[6] pileSizesShouldBe 12
+                }
+            }
+            And("Result is legal with multiple cards") {
+                onPileClick { vm.onTableauClick(1, 1) }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.TableauOne,
+                    end = GamePiles.TableauThree,
+                    animatedCards = tc.oneDeckUp.subList(2, 7),
+                    startTableauIndices = listOf(1),
+                    endTableauIndices = listOf(8),
+                    tableauCardFlipInfo = TableauCardFlipInfo(
+                        flipCard = tc.oneDeckDown[1],
+                        flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
+                        remainingPile = emptyList()
+                    )
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.sbLogic.moves valueShouldBe 1
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.tableau[1] pileSizesShouldBe 1
+                    vm.tableau[3] pileSizesShouldBe 13
+                }
+            }
+            And("Result is legal with score") {
+                onPileClick { vm.onTableauClick(1, 5) }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.TableauOne,
+                    end = GamePiles.FoundationHeartsOne,
+                    animatedCards = listOf(tc.oneDeckUp[6]),
+                    startTableauIndices = listOf(5)
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.sbLogic.moves valueShouldBe 1
+                    vm.sbLogic.score valueShouldBe 1
+                    vm.tableau[1] pileSizesShouldBe 5
+                    vm.foundation[2] pilesShouldBe listOf(tc.card1HFU)
+                }
+            }
+            And("Result is illegal") {
+                onPileClick { vm.onTableauClick(0, 0) }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 0
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.tableau[0] pileSizesShouldBe 1
+                    vm.tableau[0] pilesShouldBe tc.oneDeckUp.take(1)
+                }
+            }
+            And("Card is face down") {
+                onPileClick { vm.onTableauClick(1, 0) }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 0
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.tableau[1] pileSizesShouldBe 6
+                }
+            }
+        }
+        When("selectedGame is Australian Patience") {
+            beforeContainer {
+                vm.updateSelectedGame(AustralianPatience)
+            }
+            And("Tableau is empty") {
+                onPileClick { vm.onTableauClick(1, 0) }
+                vm.updateAnimateInfo(null)
+                onPileClick { vm.onTableauClick(1, 0) }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 1
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.tableau[1] pilesShouldBe emptyList()
+                }
+            }
+        }
+        When("selectedGame is Spider (1 Suit)") {
+            beforeContainer {
+                vm.updateSelectedGame(SpiderOneSuit)
+            }
+            And("Full pile (A to K) is moved to Foundation") {
+                onPileClick { vm.onTableauClick(2, 5) }
+                onPileClick { vm.onTableauClick(0, 5) }
+                onPileClick { vm.onTableauClick(3, 5) }
+                onPileClick { vm.onTableauClick(1, 5) }
+                onPileClick { vm.onTableauClick(1, 4) }
+                onPileClick { vm.onTableauClick(2, 4) }
+                onPileClick { vm.onTableauClick(2, 3) }
+                onPileClick { vm.onTableauClick(3, 4) }
+                onPileClick { vm.onTableauClick(1, 3) }
+                onPileClick { vm.onTableauClick(1, 2) }
+                onPileClick { vm.onTableauClick(9, 4) }
+                onPileClick { vm.onTableauClick(1, 1) }
+                onPileClick { vm.onTableauClick(0, 4) }
+                onPileClick { vm.onTableauClick(1, 0) }
+                onPileClick { vm.onTableauClick(7, 4) }
+                val expectedSpiderAnimateInfo = AnimateInfo(
+                    start = GamePiles.TableauZero,
+                    end = GamePiles.FoundationClubsOne,
+                    animatedCards = tc.spades.reversed(),
+                    startTableauIndices = List(13) { it + 3 },
+                    tableauCardFlipInfo = TableauCardFlipInfo(
+                        flipCard = tc.card2S,
+                        flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
+                        remainingPile = listOf(tc.card12S, tc.card12S)
+                    ),
+                    spiderPile = true
+                )
+                Then("Spider AnimatePile should be") {
+                    vm.spiderAnimateInfo valueShouldBe expectedSpiderAnimateInfo
+                    vm.spiderAnimateInfo.value!!.actionBeforeAnimation.invoke()
+                    vm.spiderAnimateInfo.value!!.actionAfterAnimation.invoke()
+                    vm.sbLogic.moves valueShouldBe 15
+                    vm.sbLogic.score valueShouldBe 13
+                    vm.foundation[0] pilesShouldBe tc.spades.reversed()
+                    vm.tableau[0] pileSizesShouldBe 3
                 }
             }
         }

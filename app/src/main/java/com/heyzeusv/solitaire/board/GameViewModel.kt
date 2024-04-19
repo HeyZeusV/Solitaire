@@ -108,7 +108,7 @@ class GameViewModel @Inject constructor(
     val spiderAnimateInfo: StateFlow<AnimateInfo?> get() = _spiderAnimateInfo
     fun updateSpiderAnimateInfo(newValue: AnimateInfo?) { _spiderAnimateInfo.value = newValue }
 
-    private var animationDurations: AnimationDurations = AnimationDurations.Fast
+    private var animationDurations: AnimationDurations = AnimationDurations.None
     fun updateAutoComplete(newValue: AnimationDurations) { animationDurations = newValue }
 
     /**
