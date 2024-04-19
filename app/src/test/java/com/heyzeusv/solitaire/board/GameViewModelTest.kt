@@ -80,67 +80,9 @@ class GameViewModelTest : ViewModelBehaviorSpec({
             }
         }
     }
-    Given("Klondike Turn One as selectedGame") {
-        beforeContainer {
-            vm.updateSelectedGame(KlondikeTurnOne)
-        }
-        When("Calling onStockClick on empty Stock with redeals") {
-            repeat(24) { onPileClick { vm.onStockClick() } }
-            vm.updateAnimateInfo(null)
-            onPileClick { vm.onStockClick() }
-            val expectedAnimateInfo = AnimateInfo(
-                start = GamePiles.Waste,
-                end = GamePiles.Stock,
-                animatedCards = tc.oneDeckUp.takeLast(1),
-                flipCardInfo = FlipCardInfo.FaceDown.SinglePile
-            )
-            Then("AnimateInfo should be") {
-                vm.animateInfo valueShouldBe expectedAnimateInfo
-                vm.stockWasteEmpty valueShouldBe false
-                vm.sbLogic.moves valueShouldBe 25
-                vm.stock pilesShouldBe tc.oneDeckDown.subList(28, 52)
-                vm.waste pilesShouldBe emptyList()
-            }
-        }
-    }
-    Given("Australian Patience as selectedGame") {
-        beforeContainer {
-            vm.updateSelectedGame(AustralianPatience)
-        }
-        When("Calling onStockClick on non-empty Stock") {
-            onPileClick { vm.onStockClick() }
-            val expectedAnimateInfo = AnimateInfo(
-                start = GamePiles.Stock,
-                end = GamePiles.Waste,
-                animatedCards = listOf(tc.oneDeckDown[28]),
-                flipCardInfo = FlipCardInfo.FaceUp.SinglePile
-            )
-            Then("AnimateInfo should be") {
-                vm.animateInfo valueShouldBe expectedAnimateInfo
-                vm.stockWasteEmpty valueShouldBe true
-                vm.sbLogic.moves valueShouldBe 1
-                vm.stock pilesShouldBe tc.oneDeckDown.subList(29, 52)
-                vm.waste pilesShouldBe listOf(tc.oneDeckUp[28])
-            }
-        }
-        When("Calling onStockClick on empty Stock with no redeals") {
-            repeat(24) { onPileClick { vm.onStockClick() } }
-            vm.updateAnimateInfo(null)
-            onPileClick { vm.onStockClick() }
-            Then("AnimateInfo should be") {
-                vm.animateInfo valueShouldBe null
-                vm.stockWasteEmpty valueShouldBe true
-                vm.sbLogic.moves valueShouldBe 24
-                vm.stock pilesShouldBe emptyList()
-                vm.waste pilesShouldBe tc.oneDeckUp.subList(28, 52)
-            }
-        }
-    }
-    Given("Easthaven (7 pile game) as selectedGame") {
-        beforeContainer {
+    Given("onStockClick call") {
+        When("selectedGame is Easthaven") {
             vm.updateSelectedGame(Easthaven)
-        }
-        When("Calling onStockClick on non-empty Stock") {
             repeat(5) { onPileClick { vm.onStockClick() } }
             val expectedAnimateInfo = AnimateInfo(
                 start = GamePiles.Stock,
@@ -158,12 +100,8 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 for (i in 3..6) vm.tableau[i] pileSizesShouldBe 7
             }
         }
-    }
-    Given("Spider (10 pile game) as selectedGame") {
-        beforeContainer {
+        When("selectedGame is Spider") {
             vm.updateSelectedGame(Spider)
-        }
-        When("Calling onStockClick on non-empty Stock") {
             repeat(5) { onPileClick { vm.onStockClick() } }
             val expectedAnimateInfo = AnimateInfo(
                 start = GamePiles.Stock,
@@ -181,12 +119,8 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 for (i in 4..9) vm.tableau[i] pileSizesShouldBe 10
             }
         }
-    }
-    Given("Golf (7 pile game) as selectedGame") {
-        beforeContainer {
+        When("selectedGame is Golf") {
             vm.updateSelectedGame(Golf)
-        }
-        When("Calling onStockClick on non-empty Stock") {
             onPileClick { vm.onStockClick() }
             val expectedAnimateInfo = AnimateInfo(
                 start = GamePiles.Stock,
@@ -200,6 +134,126 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 vm.sbLogic.moves valueShouldBe 1
                 vm.stock pilesShouldBe tc.oneDeckDown.subList(37, 52)
                 vm.foundation[3] pilesShouldBe listOf(tc.oneDeckUp[0], tc.oneDeckUp[36])
+            }
+        }
+        When("selectedGame is Australian Patience") {
+            beforeContainer {
+                vm.updateSelectedGame(AustralianPatience)
+            }
+            And("Stock is not empty") {
+                onPileClick { vm.onStockClick() }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.Stock,
+                    end = GamePiles.Waste,
+                    animatedCards = listOf(tc.oneDeckDown[28]),
+                    flipCardInfo = FlipCardInfo.FaceUp.SinglePile
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.stockWasteEmpty valueShouldBe true
+                    vm.sbLogic.moves valueShouldBe 1
+                    vm.stock pilesShouldBe tc.oneDeckDown.subList(29, 52)
+                    vm.waste pilesShouldBe listOf(tc.oneDeckUp[28])
+                }
+            }
+            And("Stock is empty with no redeals") {
+                repeat(24) { onPileClick { vm.onStockClick() } }
+                vm.updateAnimateInfo(null)
+                onPileClick { vm.onStockClick() }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.stockWasteEmpty valueShouldBe true
+                    vm.sbLogic.moves valueShouldBe 24
+                    vm.stock pilesShouldBe emptyList()
+                    vm.waste pilesShouldBe tc.oneDeckUp.subList(28, 52)
+                }
+            }
+        }
+        When("Klondike is selectedGame") {
+            beforeContainer {
+                vm.updateSelectedGame(KlondikeTurnOne)
+            }
+            And("Stock is empty with redeals") {
+                repeat(24) { onPileClick { vm.onStockClick() } }
+                vm.updateAnimateInfo(null)
+                onPileClick { vm.onStockClick() }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.Waste,
+                    end = GamePiles.Stock,
+                    animatedCards = tc.oneDeckUp.takeLast(1),
+                    flipCardInfo = FlipCardInfo.FaceDown.SinglePile
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.stockWasteEmpty valueShouldBe false
+                    vm.sbLogic.moves valueShouldBe 25
+                    vm.stock pilesShouldBe tc.oneDeckDown.subList(28, 52)
+                    vm.waste pilesShouldBe emptyList()
+                }
+            }
+        }
+    }
+    Given("onWasteClick call") {
+        When("selectedGame is Klondike Turn One") {
+            beforeContainer {
+                vm.updateSelectedGame(KlondikeTurnOne)
+            }
+            And("Result is legal with no score") {
+                repeat(3) { onPileClick { vm.onStockClick() } }
+                onPileClick { vm.onWasteClick() }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.Waste,
+                    end = GamePiles.TableauThree,
+                    animatedCards = listOf(tc.oneDeckUp[30]),
+                    startTableauIndices = listOf(0),
+                    endTableauIndices = listOf(4)
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.stockWasteEmpty valueShouldBe false
+                    vm.sbLogic.moves valueShouldBe 4
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.waste pilesShouldBe tc.oneDeckUp.subList(28, 30)
+                    tc.apply {
+                        vm.tableau[3] pilesShouldBe listOf(card1H, card10C, card7S, card3CFU, card2DFU)
+                    }
+                }
+            }
+            And("Result is legal with score") {
+                repeat(4) { onPileClick { vm.onStockClick() } }
+                onPileClick { vm.onWasteClick() }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.Waste,
+                    end = GamePiles.FoundationClubsOne,
+                    animatedCards = listOf(tc.oneDeckUp[31]),
+                    startTableauIndices = listOf(0)
+                )
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.stockWasteEmpty valueShouldBe false
+                    vm.sbLogic.moves valueShouldBe 5
+                    vm.sbLogic.score valueShouldBe 1
+                    vm.waste pilesShouldBe tc.oneDeckUp.subList(28, 31)
+                    vm.foundation[0] pilesShouldBe listOf(tc.card1CFU)
+                }
+            }
+            And("Result is illegal") {
+                onPileClick { vm.onStockClick() }
+                vm.updateAnimateInfo(null)
+                onPileClick { vm.onWasteClick() }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 1
+                    vm.waste pilesShouldBe listOf(tc.card2SFU)
+                }
+            }
+            And("Waste is empty") {
+                onPileClick { vm.onWasteClick() }
+                Then("AnimateInfo should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 0
+                    vm.waste pilesShouldBe emptyList()
+                }
             }
         }
     }
