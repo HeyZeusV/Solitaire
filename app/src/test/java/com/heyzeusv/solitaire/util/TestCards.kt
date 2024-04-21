@@ -123,6 +123,13 @@ object TestCards {
         card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H ,
         card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
     )
+
+    val deckNoAces = mutableListOf(
+        card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
+        card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H ,
+        card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+    )
     
     val clubs = listOf(
         card1CFU, card2CFU, card3CFU, card4CFU, card5CFU, card6CFU, card7CFU,
@@ -160,8 +167,8 @@ object TestCards {
     val sameSuitInOrder = listOf(card5SFU, card4SFU, card3SFU, card2SFU, card1SFU)
     val sameSuitInOrderAsc = listOf(card7SFU, card8SFU, card9SFU, card10SFU, card11SFU)
     val sameSuitNotInOrder = listOf(card10SFU, card6SFU, card3SFU, card9SFU, card8SFU)
-    val altColorInOrder = listOf(card5SFU, card4DFU, card3CFU, card2HFU, card1SFU)
-    val altColorNotInOrder = listOf(card10SFU, card6DFU, card3CFU, card9HFU, card8SFU)
+    val altColorInOrder = listOf(card5DFU, card4SFU, card3HFU, card2CFU, card1DFU)
+    val altColorNotInOrder = listOf(card10DFU, card6SFU, card3HFU, card9CFU, card8DFU)
     val multiSuitInOrder = listOf(card5SFU, card4CFU, card3HFU, card2DFU, card1SFU)
     val multiSuitNotInOrder = listOf(card10SFU, card6CFU, card3HFU, card9DFU, card8SFU)
 

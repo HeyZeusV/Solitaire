@@ -16,6 +16,18 @@ import com.heyzeusv.solitaire.util.Suits
 
 data object ClassicWestcliff : Games.KlondikeFamily() {
     /**
+     *  [BaseGame]
+     */
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
+    }
+
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean = true
+
+    /**
      *  [GameInfo]
      */
     override val nameId: Int = R.string.games_classic_westcliff
@@ -44,18 +56,16 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
     override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
-        tableauList.forEach { if (it.faceDownExists()) return false }
+        for (i in 0 until numOfTableauPiles.amount) {
+            if (tableauList[i].faceDownExists()) return false
+        }
         return true
     }
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEachIndexed { index, tableau ->
-            if (index < numOfTableauPiles.amount) {
-                val cards = List(3) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
-            } else {
-                tableau.reset()
-            }
+        for (i in 0 until numOfTableauPiles.amount) {
+            val cards = List(3) { stock.remove() }
+            tableauList[i].reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 
@@ -63,23 +73,10 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
      *  Start each pile with its Ace.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.forEachIndexed { index, foundation ->
-            if (index < numOfFoundationPiles.amount) {
-                foundation.reset(listOf(Card(0, foundation.suit, true)))
-            } else {
-                foundation.reset()
-            }
+        for (i in 0 until numOfFoundationPiles.amount) {
+            foundationList[i].reset(listOf(Card(0, foundationList[i].suit, true)))
         }
     }
-
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        val tLast = tableau.truePile.last()
-        val cFirst = cardsToAdd.first()
-
-        return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
-    }
-
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean = true
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards
