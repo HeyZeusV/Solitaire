@@ -141,7 +141,18 @@ object TestCards {
         card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
         card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S
     )
-    
+
+    val twoDeckOneSuit = mutableListOf(
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+    )
+
     val clubs = listOf(
         card1CFU, card2CFU, card3CFU, card4CFU, card5CFU, card6CFU, card7CFU,
         card8CFU, card9CFU, card10CFU, card11CFU, card12CFU, card13CFU
