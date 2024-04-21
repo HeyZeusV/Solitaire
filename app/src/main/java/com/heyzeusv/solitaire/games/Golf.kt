@@ -15,6 +15,27 @@ import com.heyzeusv.solitaire.util.StartingScore
 
 data object Golf : Games.GolfFamily() {
     /**
+     *  Checks if given [cardToAdd] is one more or less than last card of [foundation] truePile.
+     */
+    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
+        if (foundation.truePile.isEmpty()) return false
+        val lastFoundationCard = foundation.truePile.last()
+        return cardToAdd.value == lastFoundationCard.value + 1 ||
+                cardToAdd.value == lastFoundationCard.value - 1
+    }
+
+    /**
+     *  [BaseGame]
+     */
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        return false
+    }
+
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        return false
+    }
+
+    /**
      *  [GameInfo]
      */
     override val nameId: Int = R.string.games_golf
@@ -48,13 +69,9 @@ data object Golf : Games.GolfFamily() {
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean = false
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEachIndexed { index, tableau ->
-            if (index < numOfTableauPiles.amount) {
-                val cards = List(5) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
-            } else {
-                tableau.reset()
-            }
+        for (i in 0 until numOfTableauPiles.amount) {
+            val cards = List(5) { stock.remove() }
+            tableauList[i].reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 
@@ -62,35 +79,11 @@ data object Golf : Games.GolfFamily() {
      *  Start single Foundation pile with a random Card.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.forEachIndexed { index, foundation ->
-            if (index == 3) {
-                foundation.reset(listOf(stock.remove()))
-            } else {
-                foundation.reset()
-            }
-        }
-    }
-
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return false
-    }
-
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return false
+        foundationList[3].reset(listOf(stock.remove()))
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // single Foundation pile should have all cards
         return foundation[3].truePile.size == 52
-    }
-
-    /**
-     *  Checks if given [cardToAdd] is one more or less than last card of [foundation] truePile.
-     */
-    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
-        if (foundation.truePile.isEmpty()) return false
-        val lastFoundationCard = foundation.truePile.last()
-        return cardToAdd.value == lastFoundationCard.value + 1 ||
-                cardToAdd.value == lastFoundationCard.value - 1
     }
 }
