@@ -16,6 +16,25 @@ import com.heyzeusv.solitaire.util.inOrder
 import com.heyzeusv.solitaire.util.isNotMultiSuit
 
 data object Spider : Games.SpiderFamily() {
+    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
+        return false
+    }
+
+    /**
+     *  [BaseGame]
+     */
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1 &&
+                cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
+    }
+
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        return cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
+    }
+
     /**
      *  [GameInfo]
      */
@@ -47,31 +66,20 @@ data object Spider : Games.SpiderFamily() {
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean = false
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEachIndexed { index, tableau ->
-            if (index < 4) {
-                val cards = List(6) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+        for (i in 0 until numOfTableauPiles.amount) {
+            val cards = if (i < 4) {
+                List(6) { stock.remove() }
             } else {
-                val cards = List(5) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
+                List(5) { stock.remove() }
             }
+            tableauList[i].reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.forEach { it.reset() }
-    }
-
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        val tLast = tableau.truePile.last()
-        val cFirst = cardsToAdd.first()
-
-        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1 &&
-               cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
-    }
-
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
+        for (i in 0 until numOfFoundationPiles.amount) {
+            foundationList[i].reset()
+        }
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
@@ -80,9 +88,5 @@ data object Spider : Games.SpiderFamily() {
             if (foundation[i].truePile.size != 13) return false
         }
         return true
-    }
-
-    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
-        return false
     }
 }

@@ -120,15 +120,26 @@ object TestCards {
     val deck = mutableListOf(
         card1C, card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
         card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
-        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H ,
-        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S
     )
 
     val deckNoAces = mutableListOf(
         card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
         card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
-        card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H ,
-        card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S
+    )
+
+    val twoDeck = mutableListOf(
+        card1C, card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1C, card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S
     )
     
     val clubs = listOf(
