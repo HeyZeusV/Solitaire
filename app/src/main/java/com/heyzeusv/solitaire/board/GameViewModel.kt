@@ -368,20 +368,20 @@ class GameViewModel @Inject constructor(
                 while (!gameWon()) {
                     _tableau.forEach { tableau ->
                         if (tableau.truePile.isEmpty()) return@forEach
-                        val lastTCard = tableau.truePile.takeLast(1)
+                        val lastTCard = tableau.truePile.last()
                         _foundation.forEachIndexed { index, foundation ->
                             if (index < _selectedGame.value.numOfFoundationPiles.amount) {
                                 if (selectedGame.value.canAddToFoundation(foundation, lastTCard)) {
                                     val aniInfo = AnimateInfo(
                                         start = tableau.gamePile,
                                         end = foundation.gamePile,
-                                        animatedCards = lastTCard,
+                                        animatedCards = listOf(lastTCard),
                                         startTableauIndices = listOf(tableau.truePile.size - 1)
                                     )
                                     aniInfo.actionBeforeAnimation = {
                                         mutex.withLock {
                                             tableau.remove(tableau.truePile.size - 1)
-                                            foundation.add(lastTCard)
+                                            foundation.add(listOf(lastTCard))
                                             tableau.updateDisplayPile()
                                         }
                                     }
@@ -463,7 +463,7 @@ class GameViewModel @Inject constructor(
         if (cards.size == 1) {
             _foundation.forEachIndexed { index, it ->
                 if (index < _selectedGame.value.numOfFoundationPiles.amount) {
-                    if (selectedGame.value.canAddToFoundation(it, cards)) {
+                    if (selectedGame.value.canAddToFoundation(it, cards.first())) {
                         val aniInfo = AnimateInfo(
                             start = start,
                             end = it.gamePile,

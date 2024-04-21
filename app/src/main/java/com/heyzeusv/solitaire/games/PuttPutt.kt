@@ -71,11 +71,11 @@ data object PuttPutt : Games.GolfFamily() {
         }
     }
 
-    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return false
     }
 
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return false
     }
 
@@ -85,17 +85,15 @@ data object PuttPutt : Games.GolfFamily() {
     }
 
     /**
-     *  Checks if given [cardsToAdd] is one more or less than last card of [foundation] truePile.
+     *  Checks if given [cardToAdd] is one more or less than last card of [foundation] truePile.
      *  Allows for wrapping from King to Ace or Ace to King.
      */
-    override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
-        if (cardsToAdd.isEmpty()) return false
+    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
         if (foundation.truePile.isEmpty()) return false
-        val firstCard = cardsToAdd.first()
         val lastFoundationCard = foundation.truePile.last()
-        return firstCard.value == lastFoundationCard.value + 1 ||
-               firstCard.value == lastFoundationCard.value - 1 ||
-               (firstCard.value == 0 && lastFoundationCard.value == 12) ||
-               (firstCard.value == 12 && lastFoundationCard.value == 0)
+        return cardToAdd.value == lastFoundationCard.value + 1 ||
+                cardToAdd.value == lastFoundationCard.value - 1 ||
+               (cardToAdd.value == 0 && lastFoundationCard.value == 12) ||
+               (cardToAdd.value == 12 && lastFoundationCard.value == 0)
     }
 }

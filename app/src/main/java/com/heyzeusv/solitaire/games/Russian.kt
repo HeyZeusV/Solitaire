@@ -69,14 +69,14 @@ data object Russian : Games.YukonFamily() {
         foundationList.forEach { it.reset() }
     }
 
-    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
         return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1
     }
 
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val cFirst = cardsToAdd.first()
         return cFirst.value == 12
     }

@@ -157,6 +157,14 @@ object TestCards {
         card8HFU, card9SFU, card10HFU, card11SFU, card12HFU, card13SFU
     )
 
+    val sameSuitInOrder = listOf(card5SFU, card4SFU, card3SFU, card2SFU, card1SFU)
+    val sameSuitInOrderAsc = listOf(card7SFU, card8SFU, card9SFU, card10SFU, card11SFU)
+    val sameSuitNotInOrder = listOf(card10SFU, card6SFU, card3SFU, card9SFU, card8SFU)
+    val altColorInOrder = listOf(card5SFU, card4DFU, card3CFU, card2HFU, card1SFU)
+    val altColorNotInOrder = listOf(card10SFU, card6DFU, card3CFU, card9HFU, card8SFU)
+    val multiSuitInOrder = listOf(card5SFU, card4CFU, card3HFU, card2DFU, card1SFU)
+    val multiSuitNotInOrder = listOf(card10SFU, card6CFU, card3HFU, card9DFU, card8SFU)
+
     /**
      *  Following lists rely on ShuffleSeed(Random(10L)).
      */

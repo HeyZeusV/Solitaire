@@ -72,14 +72,14 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
         }
     }
 
-    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
         return cFirst.suit.color != tLast.suit.color && cFirst.value == tLast.value - 1
     }
 
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean = true
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean = true
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // each foundation should have Ace to King which is 13 cards

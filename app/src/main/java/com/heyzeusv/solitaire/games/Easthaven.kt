@@ -63,7 +63,7 @@ data object Easthaven : Games.KlondikeFamily() {
         foundationList.forEach { it.reset() }
     }
 
-    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
@@ -72,7 +72,7 @@ data object Easthaven : Games.KlondikeFamily() {
                 !tableau.notInOrderOrAltColor(cardsToAdd)
     }
 
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return cardsToAdd.inOrder()
     }
 

@@ -71,11 +71,11 @@ data object Golf : Games.GolfFamily() {
         }
     }
 
-    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return false
     }
 
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return false
     }
 
@@ -85,14 +85,12 @@ data object Golf : Games.GolfFamily() {
     }
 
     /**
-     *  Checks if given [cardsToAdd] is one more or less than last card of [foundation] truePile.
+     *  Checks if given [cardToAdd] is one more or less than last card of [foundation] truePile.
      */
-    override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
-        if (cardsToAdd.isEmpty()) return false
+    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
         if (foundation.truePile.isEmpty()) return false
-        val firstCard = cardsToAdd.first()
         val lastFoundationCard = foundation.truePile.last()
-        return firstCard.value == lastFoundationCard.value + 1 ||
-               firstCard.value == lastFoundationCard.value - 1
+        return cardToAdd.value == lastFoundationCard.value + 1 ||
+                cardToAdd.value == lastFoundationCard.value - 1
     }
 }

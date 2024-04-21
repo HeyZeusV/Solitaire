@@ -15,6 +15,22 @@ import com.heyzeusv.solitaire.util.StartingScore
 
 data object Alaska : Games.YukonFamily() {
     /**
+     *  [BaseGame]
+     */
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit == tLast.suit &&
+                (cFirst.value == tLast.value - 1 || cFirst.value == tLast.value + 1)
+    }
+
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val cFirst = cardsToAdd.first()
+        return cFirst.value == 12
+    }
+
+    /**
      *  [GameInfo]
      */
     override val nameId: Int = R.string.games_alaska
@@ -67,19 +83,6 @@ data object Alaska : Games.YukonFamily() {
 
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
         foundationList.forEach { it.reset() }
-    }
-
-    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        val tLast = tableau.truePile.last()
-        val cFirst = cardsToAdd.first()
-
-        return cFirst.suit == tLast.suit &&
-               (cFirst.value == tLast.value - 1 || cFirst.value == tLast.value + 1)
-    }
-
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        val cFirst = cardsToAdd.first()
-        return cFirst.value == 12
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {

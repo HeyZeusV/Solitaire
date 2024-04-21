@@ -23,7 +23,7 @@ import com.heyzeusv.solitaire.util.Suits
  *  Subclasses of this will not be games exactly, but instead the families the game belongs to in
  *  order to have an extra layer of organization.
  */
-sealed class Games : GameInfo, GameRules {
+sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class KlondikeFamily : Games()
     sealed class YukonFamily : Games()
     sealed class GolfFamily : Games()
@@ -31,7 +31,7 @@ sealed class Games : GameInfo, GameRules {
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
-     *  [canAddToTableauNonEmptyRule] and [canAddToTableauNonEmptyRule].
+     *  [canAddToNonEmptyTableau] and [canAddToEmptyTableau].
      */
     fun canAddToTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         if (cardsToAdd.isEmpty()) return false
@@ -41,8 +41,8 @@ sealed class Games : GameInfo, GameRules {
             // can't add card to its own pile in single deck games
             if (baseDeck.size == 54 && it.contains(cFirst)) return false
             if (it.isNotEmpty()) {
-                if (canAddToTableauNonEmptyRule(tableau, cardsToAdd)) return true
-            } else if (canAddToTableauEmptyRule(tableau, cardsToAdd)) {
+                if (canAddToNonEmptyTableau(tableau, cardsToAdd)) return true
+            } else if (canAddToEmptyTableau(tableau, cardsToAdd)) {
                 return true
             }
             return false
@@ -50,13 +50,11 @@ sealed class Games : GameInfo, GameRules {
     }
 
     /**
-     *  Checks if given [cardsToAdd] matches this [Foundation.suit] and its value matches the size
+     *  Checks if given [cardToAdd] matches this [Foundation.suit] and its value matches the size
      *  of [foundation] truePile.
      */
-    open fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
-        if (cardsToAdd.isEmpty()) return false
-        val firstCard = cardsToAdd[0]
-        return firstCard.suit == foundation.suit && firstCard.value == foundation.truePile.size
+    open fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
+        return cardToAdd.suit == foundation.suit && cardToAdd.value == foundation.truePile.size
     }
 
     /**
@@ -117,6 +115,23 @@ sealed class Games : GameInfo, GameRules {
 }
 
 /**
+ *  Primarily used to control visibility.
+ */
+abstract class BaseGame {
+    /**
+     *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile
+     *  when truePile is not empty.
+     */
+    protected abstract fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean
+
+    /**
+     *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile
+     *  when truePile is empty.
+     */
+    protected abstract fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean
+}
+
+/**
  *  Info that each game requires. Each game has its own unique [nameId] and belongs to a family
  *  which is retrieved using [familyId]. Each game on [GamesMenu] has a small preview image,
  *  [previewId], to give users an idea of the type of game it is. [dataStoreEnum] is used to ensure
@@ -174,18 +189,6 @@ interface GameRules {
      *  [stock] is used if a random card is needed at start.
      */
     fun resetFoundation(foundationList: List<Foundation>, stock: Stock)
-
-    /**
-     *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile
-     *  when truePile is not empty.
-     */
-    fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean
-
-    /**
-     *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile
-     *  when truePile is empty.
-     */
-    fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean
 
     /**
      *  Checks if game has been won depending on [foundation] truePile condition.

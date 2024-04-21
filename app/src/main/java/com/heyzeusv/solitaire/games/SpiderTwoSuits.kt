@@ -63,7 +63,7 @@ data object SpiderTwoSuits : Games.SpiderFamily() {
         foundationList.forEach { it.reset() }
     }
 
-    override fun canAddToTableauNonEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
@@ -71,7 +71,7 @@ data object SpiderTwoSuits : Games.SpiderFamily() {
                cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
-    override fun canAddToTableauEmptyRule(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
@@ -88,7 +88,7 @@ data object SpiderTwoSuits : Games.SpiderFamily() {
         else -> Suits.DIAMONDS
     }
 
-    override fun canAddToFoundation(foundation: Foundation, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
         return false
     }
 }

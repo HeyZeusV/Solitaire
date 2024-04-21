@@ -21,7 +21,7 @@ import org.junit.Test
  *  Tests ties to Alaska.
  */
 @HiltAndroidTest
-class AlaskaTest {
+class AlaskaUITest {
 
     @get:Rule(order = 1)
     var hiltRule = HiltAndroidRule(this)
