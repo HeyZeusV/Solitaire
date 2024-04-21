@@ -6,7 +6,7 @@ import com.heyzeusv.solitaire.util.tc
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
-class FoundationTest : BehaviorSpec({
+class FoundationLogicTest : BehaviorSpec({
     lateinit var foundation: Foundation
     beforeContainer {
         foundation = Foundation(Suits.CLUBS, GamePiles.FoundationClubsOne)

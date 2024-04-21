@@ -6,7 +6,7 @@ import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 import io.kotest.matchers.shouldNotBe
 
-class TableauTest : BehaviorSpec({
+class TableauLogicTest : BehaviorSpec({
     lateinit var tableau: Tableau
     val cards = listOf(tc.card1C, tc.card2D, tc.card3H, tc.card4S)
     beforeContainer {

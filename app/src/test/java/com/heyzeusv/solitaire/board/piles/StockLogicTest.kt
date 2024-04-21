@@ -4,7 +4,7 @@ import com.heyzeusv.solitaire.util.tc
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
-class StockTest : BehaviorSpec({
+class StockLogicTest : BehaviorSpec({
     lateinit var stock: Stock
     beforeContainer {
         stock = Stock()
