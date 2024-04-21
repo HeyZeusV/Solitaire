@@ -153,6 +153,17 @@ object TestCards {
         card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
     )
 
+    val twoDeckTwoSuits = mutableListOf(
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+    )
+
     val clubs = listOf(
         card1CFU, card2CFU, card3CFU, card4CFU, card5CFU, card6CFU, card7CFU,
         card8CFU, card9CFU, card10CFU, card11CFU, card12CFU, card13CFU
