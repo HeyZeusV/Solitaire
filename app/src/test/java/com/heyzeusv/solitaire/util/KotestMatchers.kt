@@ -29,3 +29,13 @@ infix fun Pile.pilesShouldNotBe(expected: List<Card>) {
     this.truePile shouldNotBe expected
     this.displayPile shouldNotBe expected
 }
+
+infix fun Pile.pilesNumFaceDownCardsShouldBe(expectedFaceDown: Int) {
+    this.truePile.filter { !it.faceUp }.size shouldBe expectedFaceDown
+    this.displayPile.filter { !it.faceUp }.size shouldBe expectedFaceDown
+}
+
+infix fun Pile.pilesNumFaceUpCardsShouldBe(expectedFaceUp: Int) {
+    this.truePile.filter { it.faceUp }.size shouldBe expectedFaceUp
+    this.displayPile.filter { it.faceUp }.size shouldBe expectedFaceUp
+}

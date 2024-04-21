@@ -50,11 +50,16 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     }
 
     /**
-     *  Checks if given [cardToAdd] matches this [Foundation.suit] and its value matches the size
-     *  of [foundation] truePile.
+     *  Checks if given [cardToAdd] matches this [Foundation.suit] and its is one more than last
+     *  value of [foundation] truePile.
      */
     open fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
-        return cardToAdd.suit == foundation.suit && cardToAdd.value == foundation.truePile.size
+        val canAddValue = if (foundation.truePile.isEmpty()) {
+            cardToAdd.value == 0
+        } else {
+            cardToAdd.value == foundation.truePile.last().value + 1
+        }
+        return cardToAdd.suit == foundation.suit && canAddValue
     }
 
     /**

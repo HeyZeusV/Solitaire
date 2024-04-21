@@ -59,30 +59,32 @@ data object Alaska : Games.YukonFamily() {
     override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
-        tableauList.forEach {
-            if (it.faceDownExists() || it.isMultiSuit() || it.notInOrder()) return false
+        for (i in 0 until numOfTableauPiles.amount) {
+            if (
+                tableauList[i].faceDownExists() ||
+                tableauList[i].isMultiSuit() ||
+                tableauList[i].notInOrder()
+            ) return false
         }
         return true
     }
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEachIndexed { index, tableau ->
-            if (index < numOfTableauPiles.amount) {
-                if (index != 0) {
-                    val cards = List(index + 5) { stock.remove() }
-                    tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
-                } else {
-                    val cards = List(1) { stock.remove() }
-                    tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
-                }
+        for (i in 0 until numOfTableauPiles.amount) {
+            if (i != 0) {
+                val cards = List(i + 5) { stock.remove() }
+                tableauList[i].reset(resetFlipCard(cards, resetFaceUpAmount))
             } else {
-                tableau.reset()
+                val cards = List(1) { stock.remove() }
+                tableauList[i].reset(resetFlipCard(cards, resetFaceUpAmount))
             }
         }
     }
 
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.forEach { it.reset() }
+        for (i in 0 until numOfFoundationPiles.amount) {
+            foundationList[i].reset()
+        }
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
