@@ -12,9 +12,25 @@ import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
-import com.heyzeusv.solitaire.util.inOrder
+import com.heyzeusv.solitaire.util.inOrderAndAltColor
 
 data object Easthaven : Games.KlondikeFamily() {
+    /**
+     *  [BaseGame]
+     */
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        val tLast = tableau.truePile.last()
+        val cFirst = cardsToAdd.first()
+
+        return cFirst.suit.color != tLast.suit.color &&
+                cFirst.value == tLast.value - 1 &&
+                cardsToAdd.inOrderAndAltColor()
+    }
+
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+        return cardsToAdd.inOrderAndAltColor()
+    }
+
     /**
      *  [GameInfo]
      */
@@ -44,36 +60,26 @@ data object Easthaven : Games.KlondikeFamily() {
     override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Seven
 
     override fun autocompleteTableauCheck(tableauList: List<Tableau>): Boolean {
-        tableauList.forEach { if (it.faceDownExists() || it.notInOrderOrAltColor()) return false }
+        for (i in 0 until numOfTableauPiles.amount) {
+            if (
+                tableauList[i].faceDownExists() ||
+                tableauList[i].notInOrderOrAltColor()
+            ) return false
+        }
         return true
     }
 
     override fun resetTableau(tableauList: List<Tableau>, stock: Stock) {
-        tableauList.forEachIndexed { index, tableau ->
-            if (index < numOfTableauPiles.amount) {
-                val cards = List(3) { stock.remove() }
-                tableau.reset(resetFlipCard(cards, resetFaceUpAmount))
-            } else {
-                tableau.reset()
-            }
+        for (i in 0 until numOfTableauPiles.amount) {
+            val cards = List(3) { stock.remove() }
+            tableauList[i].reset(resetFlipCard(cards, resetFaceUpAmount))
         }
     }
 
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList.forEach { it.reset() }
-    }
-
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        val tLast = tableau.truePile.last()
-        val cFirst = cardsToAdd.first()
-
-        return cFirst.suit.color != tLast.suit.color &&
-                cFirst.value == tLast.value - 1 &&
-                !tableau.notInOrderOrAltColor(cardsToAdd)
-    }
-
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return cardsToAdd.inOrder()
+        for (i in 0 until numOfFoundationPiles.amount) {
+            foundationList[i].reset()
+        }
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {

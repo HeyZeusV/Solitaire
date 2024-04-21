@@ -6,6 +6,7 @@ import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.isMultiSuit
 import com.heyzeusv.solitaire.util.notInOrder
+import com.heyzeusv.solitaire.util.notInOrderOrAltColor
 
 /**
  *  Sealed class containing all possible options of [Tableau] piles. Each game has its own set of
@@ -102,18 +103,8 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : 
 
     /**
      *  It is possible for pile to be different suits, but out of order or not alternating colors.
-     *  This checks if given [cards] is not in order descending and not alternating color, this way
+     *  This checks if [truePile] is not in order descending and not alternating color, this way
      *  autocomplete will not be stuck in an infinite loop.
      */
-    fun notInOrderOrAltColor(cards: List<Card> = truePile.toList()): Boolean {
-        val it = cards.iterator()
-        if (!it.hasNext()) return false
-        var current = it.next()
-        while (true) {
-            if (!it.hasNext()) return false
-            val next = it.next()
-            if (current.value - 1 != next.value || current.suit.color == next.suit.color) return true
-            current = next
-        }
-    }
+    fun notInOrderOrAltColor(): Boolean = _truePile.notInOrderOrAltColor()
 }
