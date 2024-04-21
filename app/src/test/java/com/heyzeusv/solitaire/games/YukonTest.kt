@@ -13,70 +13,64 @@ import com.heyzeusv.solitaire.util.tc
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.matchers.shouldBe
 
-class RussianTest : BehaviorSpec({
+class YukonTest : BehaviorSpec({
     var tableau: Tableau
     var foundation: Foundation
-    Given("Russian game") {
-        val russian = Russian
+    Given("Yukon game") {
+        val yukon = Yukon
         When("Initialized") {
             Then("baseDeck should contain 52 cards by suit") {
-                russian.baseDeck shouldBe tc.deck
+                yukon.baseDeck shouldBe tc.deck
             }
         }
         When("canAddToTableau is called") {
             And("cardsToAdd is empty") {
                 tableau = Tableau(TableauZero)
-                val result = russian.canAddToTableau(tableau, emptyList())
+                val result = yukon.canAddToTableau(tableau, emptyList())
                 Then("Result should be false") {
                     result shouldBe false
                 }
             }
             And("Tableau contains card trying to be added") {
                 tableau = Tableau(TableauZero, tc.sameSuitInOrder)
-                val result = russian.canAddToTableau(tableau, listOf(tc.card5SFU))
+                val result = yukon.canAddToTableau(tableau, listOf(tc.card5SFU))
                 Then("Result should be false") {
                     result shouldBe false
                 }
             }
             And("Tableau is not empty") {
                 tableau = Tableau(TableauZero, listOf(tc.card6SFU))
-                And("The first card of cardsToAdd is the same suit as last card of Tableau") {
-                    And("Descending") {
-                        val result = russian.canAddToTableau(tableau, tc.multiSuitInOrder)
+                And("The first card of cardsToAdd is the same suit color as last card of Tableau") {
+                    val result = yukon.canAddToTableau(tableau, listOf(tc.card5CFU))
+                    Then("Result should be false") {
+                        result shouldBe false
+                    }
+                }
+                And("The first card of cardsToAdd is not the same suit color as last card of Tableau") {
+                    And("In order") {
+                        val result = yukon.canAddToTableau(tableau, tc.altColorInOrder)
                         Then("Result should be true") {
                             result shouldBe true
                         }
                     }
-                    And("Ascending") {
-                        val result = russian.canAddToTableau(tableau, tc.sameSuitInOrderAsc)
-                        Then("Result should be false") {
-                            result shouldBe false
-                        }
-                    }
                     And("Not in order") {
-                        val result = russian.canAddToTableau(tableau, tc.sameSuitNotInOrder)
+                        val result = yukon.canAddToTableau(tableau, tc.altColorNotInOrder)
                         Then("Result should be false") {
                             result shouldBe false
                         }
-                    }
-                }
-                And("The first card of cardsToAdd is not the same suit as last card of Tableau") {
-                    val result = russian.canAddToTableau(tableau, listOf(tc.card7HFU))
-                    Then("Result should be false") {
-                        result shouldBe false
                     }
                 }
             }
             And("Tableau is empty") {
                 tableau = Tableau(TableauZero)
                 And("cardToAdd starts with a King") {
-                    val result = russian.canAddToTableau(tableau, listOf(tc.card13HFU))
+                    val result = yukon.canAddToTableau(tableau, listOf(tc.card13HFU))
                     Then("Result should be true") {
                         result shouldBe true
                     }
                 }
                 And("cardToAdd does not start with a King") {
-                    val result = russian.canAddToTableau(tableau, listOf(tc.card10HFU))
+                    val result = yukon.canAddToTableau(tableau, listOf(tc.card10HFU))
                     Then("Result should be false") {
                         result shouldBe false
                     }
@@ -87,13 +81,13 @@ class RussianTest : BehaviorSpec({
             foundation = Foundation(CLUBS, FoundationClubsOne, listOf(tc.card6CFU))
             And("cardToAdd is the correct Suit") {
                 And("The correct next value") {
-                    val result = russian.canAddToFoundation(foundation, tc.card7CFU)
+                    val result = yukon.canAddToFoundation(foundation, tc.card7CFU)
                     Then("Result should be true") {
                         result shouldBe true
                     }
                 }
                 And("Not the correct next value") {
-                    val result = russian.canAddToFoundation(foundation, tc.card8CFU)
+                    val result = yukon.canAddToFoundation(foundation, tc.card8CFU)
                     Then("Result should be false") {
                         result shouldBe false
                     }
@@ -101,13 +95,13 @@ class RussianTest : BehaviorSpec({
             }
             And("cardToAdd is not the correct Suit") {
                 And("The correct next value") {
-                    val result = russian.canAddToFoundation(foundation, tc.card7HFU)
+                    val result = yukon.canAddToFoundation(foundation, tc.card7HFU)
                     Then("Result should be false") {
                         result shouldBe false
                     }
                 }
                 And("Not the correct next value") {
-                    val result = russian.canAddToFoundation(foundation, tc.card8HFU)
+                    val result = yukon.canAddToFoundation(foundation, tc.card8HFU)
                     Then("Result should be false") {
                         result shouldBe false
                     }
@@ -117,28 +111,21 @@ class RussianTest : BehaviorSpec({
         When("autocompleteTableauCheck is called") {
             And("Tableau contains face down cards") {
                 tableau = Tableau(TableauZero, listOf(tc.card8H, tc.card7H))
-                val result = russian.autocompleteTableauCheck(List(7) { tableau })
-                Then("Result should be false") {
-                    result shouldBe false
-                }
-            }
-            And("Tableau contains multiple Suits") {
-                tableau = Tableau(TableauZero, listOf(tc.card8HFU, tc.card7SFU))
-                val result = russian.autocompleteTableauCheck(List(7) { tableau })
+                val result = yukon.autocompleteTableauCheck(List(7) { tableau })
                 Then("Result should be false") {
                     result shouldBe false
                 }
             }
             And("Tableau contains cards not in order") {
                 tableau = Tableau(TableauZero, listOf(tc.card8HFU, tc.card9HFU))
-                val result = russian.autocompleteTableauCheck(List(7) { tableau })
+                val result = yukon.autocompleteTableauCheck(List(7) { tableau })
                 Then("Result should be false") {
                     result shouldBe false
                 }
             }
-            And("Tableau contains all face up cards, is single suit, and in order") {
+            And("Tableau contains all face up cards and in order") {
                 tableau = Tableau(TableauZero, listOf(tc.card8HFU, tc.card7HFU))
-                val result = russian.autocompleteTableauCheck(List(7) { tableau })
+                val result = yukon.autocompleteTableauCheck(List(7) { tableau })
                 Then("Result should be true") {
                     result shouldBe true
                 }
@@ -146,7 +133,7 @@ class RussianTest : BehaviorSpec({
         }
         When("resetTableau is called") {
             val tableauList = List(10) { Tableau(TableauZero, tc.clubs) }
-            russian.resetTableau(tableauList, Stock(tc.deck))
+            yukon.resetTableau(tableauList, Stock(tc.deck))
             Then("Piles should be") {
                 tableauList[0] pilesNumFaceDownCardsShouldBe 0
                 tableauList[0] pilesNumFaceUpCardsShouldBe 1
@@ -159,7 +146,7 @@ class RussianTest : BehaviorSpec({
         }
         When("resetFoundation is called") {
             val foundationList = List(8) { Foundation(CLUBS, FoundationClubsOne, tc.clubs)}
-            russian.resetFoundation(foundationList, Stock())
+            yukon.resetFoundation(foundationList, Stock())
             Then("Piles should be") {
                 for (i in 0 until 4) foundationList[i] pilesShouldBe emptyList()
                 for (i in 4 until 8) foundationList[i] pilesShouldBe tc.clubs
@@ -170,7 +157,7 @@ class RussianTest : BehaviorSpec({
             val inValidFoundation = Foundation(CLUBS, FoundationClubsOne)
             And("Not all 4 counted piles are valid") {
                 val foundationList = listOf(validFoundation, validFoundation, validFoundation, inValidFoundation)
-                val result = russian.gameWon(foundationList)
+                val result = yukon.gameWon(foundationList)
                 Then("Result should be false") {
                     result shouldBe false
                 }
@@ -178,7 +165,7 @@ class RussianTest : BehaviorSpec({
             And("All 4 counted piles are valid") {
                 val validList = List(4) { validFoundation }
                 val invalidList = List(4) { inValidFoundation }
-                val result = russian.gameWon(validList + invalidList)
+                val result = yukon.gameWon(validList + invalidList)
                 Then("Result should be true") {
                     result shouldBe true
                 }
