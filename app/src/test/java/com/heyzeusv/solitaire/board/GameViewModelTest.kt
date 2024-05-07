@@ -436,8 +436,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     start = GamePiles.TableauOne,
                     end = GamePiles.TableauTwo,
                     animatedCards = listOf(tc.oneDeckUp[1]),
-                    startTableauIndices = listOf(0),
-                    endTableauIndices = listOf(0)
+                    startTableauIndices = listOf(0)
                 )
                 Then("State should be") {
                     vm.animateInfo valueShouldBe expectedAnimateInfo2
