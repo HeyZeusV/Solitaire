@@ -56,7 +56,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
     /**
      *  [GameInfo]
      */
-    override val nameId: Int = R.string.games_aces_up
+    override val nameId: Int = R.string.games_aces_up_hard
     override val familyId: Int = R.string.games_family_other
     override val previewId: Int = R.drawable.preview_aces_up
     override val gamePileRules: GamePileRules = GamePileRules(

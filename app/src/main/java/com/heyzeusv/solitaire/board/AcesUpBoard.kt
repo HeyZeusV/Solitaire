@@ -110,16 +110,15 @@ fun AcesUpBoard(
         content = {
             animateInfo?.let {
                 when (it.flipCardInfo) {
-                    FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
-                        FlipCard(
-                            flipCard = it.animatedCards.first(),
-                            cardDpSize = layout.getCardDpSize(),
-                            flipRotation = flipRotation,
-                            flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId("Animated Horizontal Pile")
+                    FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> { }
+                    FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
+                        MultiPileCardWithFlip(
+                            layout = layout,
+                            animateInfo = it,
+                            animationDurations = animationDurations,
+                            modifier = Modifier.layoutId("Animated Multi Pile")
                         )
                     }
-                    FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> { }
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
                             cardDpSize = layout.getCardDpSize(),
@@ -168,8 +167,7 @@ fun AcesUpBoard(
         val tableauPile2 = measurables.firstOrNull { it.layoutId == "Tableau #2" }
         val tableauPile3 = measurables.firstOrNull { it.layoutId == "Tableau #3" }
 
-        val animatedHorizontalPile =
-            measurables.firstOrNull { it.layoutId == "Animated Horizontal Pile" }
+        val animatedMultiPile = measurables.firstOrNull { it.layoutId == "Animated Multi Pile" }
         val animatedVerticalPile =
             measurables.firstOrNull { it.layoutId == "Animated Vertical Pile" }
 
@@ -183,8 +181,9 @@ fun AcesUpBoard(
 
             if (animatedOffset != IntOffset.Zero) {
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
-                animatedHorizontalPile?.measure(cardConstraints)?.place(animatedOffset, 2f)
             }
+            animatedMultiPile?.measure(constraints)?.place(IntOffset.Zero, 2f)
+
             foundation?.measure(cardConstraints)?.place(layout.foundationSpades)
             stockPile?.measure(cardConstraints)?.place(layout.stockPile)
 

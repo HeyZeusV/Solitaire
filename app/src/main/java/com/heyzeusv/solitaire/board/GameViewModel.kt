@@ -151,7 +151,7 @@ class GameViewModel @Inject constructor(
      */
     fun onStockClick() {
         when (_selectedGame.value) {
-            is Easthaven, is Games.SpiderFamily -> onStockClickMultiPile()
+            is Easthaven, is Games.SpiderFamily, is Games.AcesUpVariants -> onStockClickMultiPile()
             is Games.GolfFamily -> onStockClickGolf()
             else -> onStockClickStandard()
         }
