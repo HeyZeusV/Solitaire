@@ -12,11 +12,10 @@ import com.heyzeusv.solitaire.util.NumberOfPiles
 import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
-import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.inOrder
 import com.heyzeusv.solitaire.util.isNotMultiSuit
 
-data object SpiderOneSuit : Games.SpiderFamily() {
+data object Beetle : Games.SpiderFamily() {
     override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
         return false
     }
@@ -35,27 +34,27 @@ data object SpiderOneSuit : Games.SpiderFamily() {
     override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
-    
+
     /**
      *  [GameInfo]
      */
-    override val nameId: Int = R.string.games_spider_one_suit
+    override val nameId: Int = R.string.games_beetle
     override val familyId: Int = R.string.games_family_spider
-    override val previewId: Int = R.drawable.preview_spider
+    override val previewId: Int = R.drawable.preview_beetle
     override val gamePileRules: GamePileRules = GamePileRules(
-        rulesId = R.drawable.rules_spider,
+        rulesId = R.drawable.rules_beetle,
         stockRulesId = R.string.spider_stock_rules,
         wasteRulesId = null,
         foundationRulesId = R.string.spider_foundation_rules,
         tableauRulesId = R.string.spider_tableau_rules
     )
-    override val dataStoreEnum: Game = Game.GAME_SPIDER_ONE_SUIT
+    override val dataStoreEnum: Game = Game.GAME_BEETLE
 
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<Card> = List(104) { Card(it % 13, Suits.SPADES) }
-    override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
+    override val baseDeck: List<Card> = List(104) { Card(it % 13, getSuit(it)) }
+    override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.Six
     override val drawAmount: DrawAmount = DrawAmount.Ten
     override val redeals: Redeals = Redeals.None
     override val startingScore: StartingScore = StartingScore.Zero

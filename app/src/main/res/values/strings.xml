@@ -50,6 +50,7 @@
     <string name="games_spider">Spider</string>
     <string name="games_spider_two_suits">Spider (2 Suits)</string>
     <string name="games_spider_one_suit">Spider (1 Suit)</string>
+    <string name="games_beetle">Beetle</string>
     <string name="games_aces_up">Aces Up</string>
     <string name="games_aces_up_relaxed">Aces Up (Relaxed)</string>
     <string name="games_aces_up_hard">Aces Up (Hard)</string>
@@ -95,7 +96,7 @@
     <string name="about_license">License</string>
     <string name="about_special_thanks">Special thanks to family, friends, and pets for all their support!</string>
     <string name="about_translation_warning">Google Translate was used for localization. Please let me know of any mistakes, thank you!</string>
-    <string name="about_version">v4.0.0</string>
+    <string name="about_version">v4.1.0</string>
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_privacy_policy_link">https://doc-hosting.flycricket.io/klondike-solitaire/b4a088cc-badf-42f7-b9eb-e196ca220b1b/privacy</string>
     <string name="about_icon_credit">Card Suits by Amethyst Studio (CC BY 3.0)</string>

@@ -1,3 +1,8 @@
+v4.1.0
+-New: Aces Up and 2 variants, an easier and much harder versions.
+-New: Beetle, a variant of Spider.
+-Fixed: Spider rules.
+
 v4.0.0
 -New: Spider and 2 of its variants, Two Suits and One Suit, are now available to play!
 

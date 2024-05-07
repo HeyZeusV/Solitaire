@@ -62,9 +62,9 @@
     <string name="golf_rush_tableau_rules">• Only one card, the top card, can be moved to the Foundation at a time</string>
 
 
-    <string name="spider_stock_rules">• Click to move 1 card, face up, to each pile in Tableau</string>
+    <string name="spider_stock_rules">• Click to move 1 card, face up, to each pile in Tableau\n• Only works if there are no empty spots in Tableau</string>
     <string name="spider_foundation_rules">"• A pile of the same suit from King to Ace is automatically moved from Tableau to Foundation "</string>
-    <string name="spider_tableau_rules">• Build down by rank and by suit\n• Any amount of cards can be moved as long as they are ranked correctly and the same suit\n• Any card or a valid pile can be placed on an empty spot</string>
+    <string name="spider_tableau_rules">• Build down by rank\n• Any amount of cards can be moved as long as they are ranked correctly and the same suit\n• Any card or a valid pile can be placed on an empty spot</string>
 
     <string name="aces_up_stock_rules">• Click to move 1 card, face up, to each pile in Tableau</string>
     <string name="aces_up_foundation_rules">• All cards, except Aces, must be moved here to win</string>

@@ -93,7 +93,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
             Easthaven, Yukon, Alaska,
             Russian, AustralianPatience, Canberra,
             Golf, PuttPutt, GolfRush,
-            Spider, SpiderTwoSuits, SpiderOneSuit,
+            Spider, SpiderTwoSuits, SpiderOneSuit, Beetle,
             AcesUp, AcesUpRelaxed, AcesUpHard
         )
 
@@ -120,6 +120,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
                 Game.GAME_ACES_UP -> AcesUp
                 Game.GAME_ACES_UP_RELAXED -> AcesUpRelaxed
                 Game.GAME_ACES_UP_HARD -> AcesUpHard
+                Game.GAME_BEETLE -> Beetle
                 else -> KlondikeTurnOne
             }
         }

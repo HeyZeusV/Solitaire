@@ -151,7 +151,8 @@ class GameViewModel @Inject constructor(
      */
     fun onStockClick() {
         when (_selectedGame.value) {
-            is Easthaven, is Games.SpiderFamily, is Games.AcesUpVariants -> onStockClickMultiPile()
+            is Games.SpiderFamily -> onStockClickSpider()
+            is Easthaven, is Games.AcesUpVariants -> onStockClickMultiPile()
             is Games.GolfFamily -> onStockClickGolf()
             else -> onStockClickStandard()
         }
@@ -212,6 +213,17 @@ class GameViewModel @Inject constructor(
             redealLeft--
             sbLogic.handleMoveResult(Move)
         }
+    }
+
+    /**
+     *  Custom onStockClick for [Games.SpiderFamily]. Checks to make sure there are no empty
+     *  Tableau piles, if so, calls [onStockClickMultiPile].
+     */
+    private fun onStockClickSpider() {
+        for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
+            if (_tableau[i].truePile.isEmpty()) return
+        }
+        onStockClickMultiPile()
     }
 
     /**
