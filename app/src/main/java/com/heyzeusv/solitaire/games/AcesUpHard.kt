@@ -50,7 +50,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
 
     override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val cFirst = cardsToAdd.first()
-        return cFirst.value == 0
+        return cFirst.value == 0 && cardsToAdd.size == 1
     }
 
     /**

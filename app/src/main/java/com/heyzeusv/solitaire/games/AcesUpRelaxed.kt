@@ -60,7 +60,7 @@ data object AcesUpRelaxed : Games.AcesUpVariants() {
     }
 
     override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
-        return true
+       return cardsToAdd.size == 1
     }
 
     /**
