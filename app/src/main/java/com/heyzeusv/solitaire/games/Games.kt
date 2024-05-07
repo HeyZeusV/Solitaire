@@ -28,7 +28,9 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class YukonFamily : Games()
     sealed class GolfFamily : Games()
     sealed class SpiderFamily: Games()
-    sealed class OtherFamily: Games()
+    sealed class AcesUpVariants: Games() {
+        abstract fun canAddToFoundation(tableauList: List<Tableau>, tableauIndex: Int): Boolean
+    }
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using

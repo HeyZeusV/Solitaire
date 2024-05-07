@@ -13,7 +13,7 @@ import com.heyzeusv.solitaire.util.Redeals
 import com.heyzeusv.solitaire.util.ResetFaceUpAmount
 import com.heyzeusv.solitaire.util.StartingScore
 
-data object AcesUpRelaxed : Games.OtherFamily() {
+data object AcesUpRelaxed : Games.AcesUpVariants() {
     /**
      *  Checks if given [cardToAdd] is one more or less than last card of [foundation] truePile.
      */
@@ -26,7 +26,7 @@ data object AcesUpRelaxed : Games.OtherFamily() {
      *  Foundation by checking the remaining top cards in [tableauList]. Also checks card beneath
      *  top card of [tableauIndex].
      */
-    fun canAddToFoundation(tableauList: List<Tableau>, tableauIndex: Int): Boolean {
+    override fun canAddToFoundation(tableauList: List<Tableau>, tableauIndex: Int): Boolean {
         if (tableauList[tableauIndex].truePile.isEmpty()) return false
         val cardToAdd = tableauList[tableauIndex].truePile.last()
         val lastIndex = tableauList[tableauIndex].truePile.lastIndex
