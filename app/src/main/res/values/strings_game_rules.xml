@@ -65,4 +65,10 @@
     <string name="spider_stock_rules">• Click to move 1 card, face up, to each pile in Tableau</string>
     <string name="spider_foundation_rules">"• A pile of the same suit from King to Ace is automatically moved from Tableau to Foundation "</string>
     <string name="spider_tableau_rules">• Build down by rank and by suit\n• Any amount of cards can be moved as long as they are ranked correctly and the same suit\n• Any card or a valid pile can be placed on an empty spot</string>
+
+    <string name="aces_up_stock_rules">• Click to move 1 card, face up, to each pile in Tableau</string>
+    <string name="aces_up_foundation_rules">• All cards, except Aces, must be moved here to win</string>
+    <string name="aces_up_tableau_rules">• The top card can be moved to Foundation if it is the same suit and lower rank of a top card of another Tableau pile\n• Any card can be placed on an empty spot\n• Aces are highest rank</string>
+    <string name="aces_up_relaxed_tableau_rules">• The top card can be moved to Foundation if it is the same suit and lower rank of a top card of another Tableau pile\n• The top card can be moved to Foundation if it is the same suit and lower rank of the card directly beneath it\n• Any card can be placed on an empty spot\n• Aces are highest rank</string>
+    <string name="aces_up_hard_tableau_rules">• The top card can be moved to Foundation if it is the same suit and lower rank of a top card of another Tableau pile\n• Only Aces can be placed on an empty spot\n• Aces are highest rank</string>
 </resources>
