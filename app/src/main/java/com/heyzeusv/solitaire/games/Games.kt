@@ -113,7 +113,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
                 Game.GAME_SPIDER -> Spider
                 Game.GAME_SPIDER_TWO_SUITS -> SpiderTwoSuits
                 Game.GAME_SPIDER_ONE_SUIT -> SpiderOneSuit
-                Game.UNRECOGNIZED -> KlondikeTurnOne
+                else -> KlondikeTurnOne
             }
         }
     }
