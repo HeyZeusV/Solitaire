@@ -80,6 +80,7 @@ enum class DrawAmount(val amount: Int) {
     Zero(0),
     One(1),
     Three(3),
+    Four(4),
     Seven(7),
     Ten(10)
 }
@@ -114,6 +115,7 @@ enum class StartingScore(val amount: Int) {
  */
 enum class MaxScore(val amount: Int) {
     OneDeck(52),
+    OneDeckNoAces(48),
     TwoDecks(104)
 }
 

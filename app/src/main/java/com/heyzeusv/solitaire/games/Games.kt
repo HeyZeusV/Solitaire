@@ -28,6 +28,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class YukonFamily : Games()
     sealed class GolfFamily : Games()
     sealed class SpiderFamily: Games()
+    sealed class OtherFamily: Games()
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
@@ -113,6 +114,9 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
                 Game.GAME_SPIDER -> Spider
                 Game.GAME_SPIDER_TWO_SUITS -> SpiderTwoSuits
                 Game.GAME_SPIDER_ONE_SUIT -> SpiderOneSuit
+                Game.GAME_ACES_UP -> AcesUp
+                Game.GAME_ACES_UP_RELAXED -> AcesUpRelaxed
+                Game.GAME_ACES_UP_HARD -> AcesUpHard
                 else -> KlondikeTurnOne
             }
         }
