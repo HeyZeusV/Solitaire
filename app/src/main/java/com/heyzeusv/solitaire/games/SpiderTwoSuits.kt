@@ -28,8 +28,8 @@ data object SpiderTwoSuits : Games.SpiderFamily() {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
-        return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1 &&
-                cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
+        return cFirst.value == tLast.value - 1 &&
+               cardsToAdd.inOrder() && cardsToAdd.isNotMultiSuit()
     }
 
     override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
