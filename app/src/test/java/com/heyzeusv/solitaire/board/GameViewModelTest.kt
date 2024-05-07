@@ -6,6 +6,7 @@ import com.heyzeusv.solitaire.board.animation.TableauCardFlipInfo
 import com.heyzeusv.solitaire.board.layouts.Width1080
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.ShuffleSeed
+import com.heyzeusv.solitaire.games.AcesUp
 import com.heyzeusv.solitaire.games.Alaska
 import com.heyzeusv.solitaire.games.AustralianPatience
 import com.heyzeusv.solitaire.games.Easthaven
@@ -405,6 +406,55 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                     vm.sbLogic.moves valueShouldBe 1
                     vm.sbLogic.score valueShouldBe 0
                     vm.tableau[1] pilesShouldBe emptyList()
+                }
+            }
+        }
+        When("selectedGame is Aces Up") {
+            beforeContainer {
+                vm.updateSelectedGame(AcesUp)
+            }
+            And("Result is legal with score") {
+                onPileClick { vm.onTableauClick(2, 0) }
+                val expectedAnimateInfo = AnimateInfo(
+                    start = GamePiles.TableauTwo,
+                    end = GamePiles.FoundationClubsOne,
+                    animatedCards = listOf(tc.oneDeckUp[2]),
+                    startTableauIndices = listOf(0)
+                )
+                Then("State should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo
+                    vm.sbLogic.moves valueShouldBe 1
+                    vm.sbLogic.score valueShouldBe 1
+                    vm.tableau[2] pileSizesShouldBe 0
+                    vm.foundation[0] pileSizesShouldBe 1
+                }
+            }
+            And("Result is legal with no score") {
+                onPileClick { vm.onTableauClick(2, 0) }
+                onPileClick { vm.onTableauClick(1, 0) }
+                val expectedAnimateInfo2 = AnimateInfo(
+                    start = GamePiles.TableauOne,
+                    end = GamePiles.TableauTwo,
+                    animatedCards = listOf(tc.oneDeckUp[1]),
+                    startTableauIndices = listOf(0)
+                )
+                Then("State should be") {
+                    vm.animateInfo valueShouldBe expectedAnimateInfo2
+                    vm.sbLogic.moves valueShouldBe 2
+                    vm.sbLogic.score valueShouldBe 1
+                    vm.tableau[1] pileSizesShouldBe 0
+                    vm.tableau[2] pileSizesShouldBe 1
+                    vm.tableau[2] pilesShouldBe listOf(tc.oneDeckUp[1])
+                }
+            }
+            And("Result is illegal") {
+                onPileClick { vm.onTableauClick(0, 0) }
+                Then("State should be") {
+                    vm.animateInfo valueShouldBe null
+                    vm.sbLogic.moves valueShouldBe 0
+                    vm.sbLogic.score valueShouldBe 0
+                    vm.tableau[0] pileSizesShouldBe 1
+                    vm.tableau[0] pilesShouldBe tc.oneDeckUp.take(1)
                 }
             }
         }

@@ -151,7 +151,7 @@ class GameViewModel @Inject constructor(
      */
     fun onStockClick() {
         when (_selectedGame.value) {
-            is Easthaven, is Games.SpiderFamily -> onStockClickMultiPile()
+            is Easthaven, is Games.SpiderFamily, is Games.AcesUpVariants -> onStockClickMultiPile()
             is Games.GolfFamily -> onStockClickGolf()
             else -> onStockClickStandard()
         }
@@ -436,6 +436,14 @@ class GameViewModel @Inject constructor(
                 ifLegal = ifLegal,
                 actionBeforeAnimation = actionBeforeAnimation
             )
+            is Games.AcesUpVariants -> checkLegalMoveAcesUp(
+                cards = cards,
+                start = start,
+                startIndex = startIndex,
+                tableauCardFlipInfo = tableauCardFlipInfo,
+                ifLegal = ifLegal,
+                actionBeforeAnimation = actionBeforeAnimation
+            )
             else -> checkLegalMoveStandard(
                 cards = cards,
                 start = start,
@@ -550,6 +558,78 @@ class GameViewModel @Inject constructor(
                     _animateInfo.value = aniInfo
                     return Move
                 }
+            }
+        }
+        return Illegal
+    }
+
+    /**
+     *  Checks if move is possible by attempting to add [cards] to piles using canAdd(). If possible,
+     *  uses rest of parameters to create [AnimateInfo].
+     */
+    private fun checkLegalMoveAcesUp(
+        cards: List<Card>,
+        start: GamePiles,
+        startIndex: Int = 0,
+        tableauCardFlipInfo: TableauCardFlipInfo?,
+        ifLegal: () -> Unit,
+        actionBeforeAnimation: () -> Unit
+    ): MoveResult {
+        // only one card can be added to Foundation at a time.
+        if (cards.size == 1) {
+            val card = cards.first()
+            if ((_selectedGame.value as Games.AcesUpVariants).canAddToFoundation(_tableau, card)) {
+                val aniInfo = AnimateInfo(
+                    start = start,
+                    end = _foundation[0].gamePile,
+                    animatedCards = cards,
+                    startTableauIndices = listOf(startIndex),
+                    tableauCardFlipInfo = tableauCardFlipInfo
+                )
+                aniInfo.actionBeforeAnimation = {
+                    mutex.withLock {
+                        ifLegal()
+                        _foundation[0].add(cards)
+                        actionBeforeAnimation()
+                    }
+                }
+                aniInfo.actionAfterAnimation = {
+                    mutex.withLock {
+                        _foundation[0].updateDisplayPile()
+                        appendHistory(aniInfo.getUndoAnimateInfo())
+                        autoComplete()
+                    }
+                }
+                _animateInfo.value = aniInfo
+                return MoveScore
+            }
+        }
+        for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
+            val tmpTab = _tableau[i]
+            if (tmpTab.truePile.isEmpty() && _selectedGame.value.canAddToTableau(tmpTab, cards)) {
+                val aniInfo = AnimateInfo(
+                    start = start,
+                    end = tmpTab.gamePile,
+                    animatedCards = cards,
+                    startTableauIndices = listOf(startIndex),
+                    tableauCardFlipInfo = tableauCardFlipInfo
+                )
+                aniInfo.actionBeforeAnimation = {
+                    mutex.withLock {
+                        ifLegal()
+                        tmpTab.add(cards)
+                        actionBeforeAnimation()
+                    }
+                }
+                aniInfo.actionAfterAnimation = {
+                    mutex.withLock {
+                        tmpTab.updateDisplayPile()
+                        appendHistory(aniInfo.getUndoAnimateInfo())
+                        autoComplete()
+                    }
+                }
+                _animateInfo.value = aniInfo
+                return Move
             }
         }
         return Illegal

@@ -7,6 +7,7 @@ import androidx.compose.ui.unit.IntOffset
  */
 interface LayoutPositions {
     val sevenWideLayout: SevenWideLayout
+    val sevenWideFourTableauLayout: SevenWideLayout
     val tenWideLayout: TenWideLayout
 }
 
@@ -35,6 +36,25 @@ class Width480(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFour = IntOffset(276 + extraWidth, 94),
         tableauFive = IntOffset(344 + extraWidth, 94),
         tableauSix = IntOffset(412 + extraWidth, 94)
+    )
+    override val sevenWideFourTableauLayout: SevenWideLayout = SevenWideLayout(
+        layoutWidth = 480,
+        cardWidth = 64,
+        cardHeight = 92,
+        cardSpacing = 4,
+        foundationClubs = IntOffset(4 + extraWidth, 0),
+        foundationDiamonds = IntOffset(72 + extraWidth, 0),
+        foundationHearts = IntOffset(140 + extraWidth, 0),
+        foundationSpades = IntOffset(208 + extraWidth, 0),
+        wastePile = IntOffset(276 + extraWidth, 0),
+        stockPile = IntOffset(412 + extraWidth, 0),
+        tableauZero = IntOffset(106 + extraWidth, 94),
+        tableauOne = IntOffset(174 + extraWidth, 94),
+        tableauTwo = IntOffset(242 + extraWidth, 94),
+        tableauThree = IntOffset(310 + extraWidth, 94),
+        tableauFour = IntOffset(0 + extraWidth, 94),
+        tableauFive = IntOffset(0 + extraWidth, 94),
+        tableauSix = IntOffset(0 + extraWidth, 94)
     )
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 480,
@@ -84,6 +104,25 @@ class Width720(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFive = IntOffset(515 + extraWidth, 141),
         tableauSix = IntOffset(617 + extraWidth, 141)
     )
+    override val sevenWideFourTableauLayout: SevenWideLayout = SevenWideLayout(
+        layoutWidth = 720,
+        cardWidth = 98,
+        cardHeight = 140,
+        cardSpacing = 4,
+        foundationClubs = IntOffset(5 + extraWidth, 0),
+        foundationDiamonds = IntOffset(107 + extraWidth, 0),
+        foundationHearts = IntOffset(209 + extraWidth, 0),
+        foundationSpades = IntOffset(311 + extraWidth, 0),
+        wastePile = IntOffset(413 + extraWidth, 0),
+        stockPile = IntOffset(617 + extraWidth, 0),
+        tableauZero = IntOffset(158 + extraWidth, 141),
+        tableauOne = IntOffset(260 + extraWidth, 141),
+        tableauTwo = IntOffset(362 + extraWidth, 141),
+        tableauThree = IntOffset(464 + extraWidth, 141),
+        tableauFour = IntOffset(0 + extraWidth, 141),
+        tableauFive = IntOffset(0 + extraWidth, 141),
+        tableauSix = IntOffset(0 + extraWidth, 141)
+    )
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 720,
         cardWidth = 68,
@@ -131,6 +170,25 @@ class Width960(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFour = IntOffset(552 + extraWidth, 187),
         tableauFive = IntOffset(688 + extraWidth, 187),
         tableauSix = IntOffset(824 + extraWidth, 187)
+    )
+    override val sevenWideFourTableauLayout: SevenWideLayout = SevenWideLayout(
+        layoutWidth = 960,
+        cardWidth = 128,
+        cardHeight = 180,
+        cardSpacing = 8,
+        foundationClubs = IntOffset(8 + extraWidth, 0),
+        foundationDiamonds = IntOffset(144 + extraWidth, 0),
+        foundationHearts = IntOffset(280 + extraWidth, 0),
+        foundationSpades = IntOffset(416 + extraWidth, 0),
+        wastePile = IntOffset(552 + extraWidth, 0),
+        stockPile = IntOffset(824 + extraWidth, 0),
+        tableauZero = IntOffset(212 + extraWidth, 187),
+        tableauOne = IntOffset(348 + extraWidth, 187),
+        tableauTwo = IntOffset(484 + extraWidth, 187),
+        tableauThree = IntOffset(620 + extraWidth, 187),
+        tableauFour = IntOffset(0 + extraWidth, 187),
+        tableauFive = IntOffset(0 + extraWidth, 187),
+        tableauSix = IntOffset(0 + extraWidth, 187)
     )
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 960,
@@ -180,6 +238,25 @@ class Width1080(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFive = IntOffset(772 + extraWidth, 212),
         tableauSix = IntOffset(925 + extraWidth, 212)
     )
+    override val sevenWideFourTableauLayout: SevenWideLayout = SevenWideLayout(
+        layoutWidth = 1080,
+        cardWidth = 148,
+        cardHeight = 208,
+        cardSpacing = 4,
+        foundationClubs = IntOffset(466 + extraWidth, 0),
+        foundationDiamonds = IntOffset(0 + extraWidth, 0),
+        foundationHearts = IntOffset(0 + extraWidth, 0),
+        foundationSpades = IntOffset(0 + extraWidth, 0),
+        wastePile = IntOffset(618 + extraWidth, 0),
+        stockPile = IntOffset(922 + extraWidth, 0),
+        tableauZero = IntOffset(238 + extraWidth, 212),
+        tableauOne = IntOffset(390 + extraWidth, 212),
+        tableauTwo = IntOffset(543 + extraWidth, 212),
+        tableauThree = IntOffset(696 + extraWidth, 212),
+        tableauFour = IntOffset(0 + extraWidth, 212),
+        tableauFive = IntOffset(0 + extraWidth, 212),
+        tableauSix = IntOffset(0 + extraWidth, 212)
+    )
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 1080,
         cardWidth = 104,
@@ -228,6 +305,25 @@ class Width1440(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFive = IntOffset(1030 + extraWidth, 282),
         tableauSix = IntOffset(1234 + extraWidth, 282)
     )
+    override val sevenWideFourTableauLayout: SevenWideLayout = SevenWideLayout(
+        layoutWidth = 1440,
+        cardWidth = 196,
+        cardHeight = 276,
+        cardSpacing = 8,
+        foundationClubs = IntOffset(10 + extraWidth, 0),
+        foundationDiamonds = IntOffset(214 + extraWidth, 0),
+        foundationHearts = IntOffset(418 + extraWidth, 0),
+        foundationSpades = IntOffset(622 + extraWidth, 0),
+        wastePile = IntOffset(826 + extraWidth, 0),
+        stockPile = IntOffset(1234 + extraWidth, 0),
+        tableauZero = IntOffset(316 + extraWidth, 282),
+        tableauOne = IntOffset(520 + extraWidth, 282),
+        tableauTwo = IntOffset(724 + extraWidth, 282),
+        tableauThree = IntOffset(928 + extraWidth, 282),
+        tableauFour = IntOffset(0 + extraWidth, 282),
+        tableauFive = IntOffset(0 + extraWidth, 282),
+        tableauSix = IntOffset(0 + extraWidth, 282)
+    )
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 1080,
         cardWidth = 140,
@@ -275,6 +371,25 @@ class Width2160(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauFour = IntOffset(1238 + extraWidth, 424),
         tableauFive = IntOffset(1544 + extraWidth, 424),
         tableauSix = IntOffset(1850 + extraWidth, 424)
+    )
+    override val sevenWideFourTableauLayout: SevenWideLayout = SevenWideLayout(
+        layoutWidth = 2160,
+        cardWidth = 296,
+        cardHeight = 416,
+        cardSpacing = 10,
+        foundationClubs = IntOffset(14 + extraWidth, 0),
+        foundationDiamonds = IntOffset(320 + extraWidth, 0),
+        foundationHearts = IntOffset(626 + extraWidth, 0),
+        foundationSpades = IntOffset(932 + extraWidth, 0),
+        wastePile = IntOffset(1238 + extraWidth, 0),
+        stockPile = IntOffset(1850 + extraWidth, 0),
+        tableauZero = IntOffset(473 + extraWidth, 424),
+        tableauOne = IntOffset(779 + extraWidth, 424),
+        tableauTwo = IntOffset(1085 + extraWidth, 424),
+        tableauThree = IntOffset(1391 + extraWidth, 424),
+        tableauFour = IntOffset(0 + extraWidth, 424),
+        tableauFive = IntOffset(0 + extraWidth, 424),
+        tableauSix = IntOffset(0 + extraWidth, 424)
     )
     override val tenWideLayout: TenWideLayout = TenWideLayout(
         layoutWidth = 2160,
