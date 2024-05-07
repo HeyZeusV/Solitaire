@@ -67,7 +67,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
         foundationRulesId = R.string.aces_up_foundation_rules,
         tableauRulesId = R.string.aces_up_tableau_rules
     )
-    override val dataStoreEnum: Game = Game.GAME_ACES_UP
+    override val dataStoreEnum: Game = Game.GAME_ACES_UP_HARD
 
     /**
      *  [GameRules]
