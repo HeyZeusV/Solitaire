@@ -93,7 +93,8 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
             Easthaven, Yukon, Alaska,
             Russian, AustralianPatience, Canberra,
             Golf, PuttPutt, GolfRush,
-            Spider, SpiderTwoSuits, SpiderOneSuit
+            Spider, SpiderTwoSuits, SpiderOneSuit,
+            AcesUp, AcesUpRelaxed, AcesUpHard
         )
 
         /**
