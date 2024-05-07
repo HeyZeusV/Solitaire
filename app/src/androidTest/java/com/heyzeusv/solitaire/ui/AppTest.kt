@@ -7,6 +7,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.espresso.Espresso
+import com.heyzeusv.solitaire.MainActivity
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.TestCards

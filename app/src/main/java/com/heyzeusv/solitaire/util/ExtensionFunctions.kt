@@ -10,7 +10,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
-import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.board.piles.Card
 import java.text.DecimalFormat
 
 fun Long.formatTimeDisplay(): String {
@@ -137,3 +137,23 @@ fun List<Card>.allFaceUp(): Boolean {
     this.forEach { if (!it.faceUp) return false }
     return true
 }
+
+/**
+ *  Checks if list is not in order or not alternating color
+ */
+fun List<Card>.notInOrderOrAltColor(): Boolean {
+    val it = this.iterator()
+    if (!it.hasNext()) return false
+    var current = it.next()
+    while (true) {
+        if (!it.hasNext()) return false
+        val next = it.next()
+        if (current.value - 1 != next.value || current.suit.color == next.suit.color) return true
+        current = next
+    }
+}
+
+/**
+ *  Checks if list is in order and alternating color
+ */
+fun List<Card>.inOrderAndAltColor(): Boolean = !this.notInOrderOrAltColor()

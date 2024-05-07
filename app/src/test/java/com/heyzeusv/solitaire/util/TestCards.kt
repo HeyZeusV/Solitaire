@@ -1,6 +1,6 @@
 package com.heyzeusv.solitaire.util
 
-import com.heyzeusv.solitaire.data.Card
+import com.heyzeusv.solitaire.board.piles.Card
 
 @Suppress("MemberVisibilityCanBePrivate")
 object TestCards {
@@ -120,10 +120,50 @@ object TestCards {
     val deck = mutableListOf(
         card1C, card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
         card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
-        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H ,
+        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S
+    )
+
+    val deckNoAces = mutableListOf(
+        card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
+        card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S
+    )
+
+    val twoDeck = mutableListOf(
+        card1C, card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1C, card2C, card3C, card4C, card5C, card6C, card7C, card8C, card9C, card10C, card11C, card12C, card13C,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1H, card2H, card3H, card4H, card5H, card6H, card7H, card8H, card9H, card10H, card11H, card12H, card13H,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S
+    )
+
+    val twoDeckOneSuit = mutableListOf(
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
         card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
     )
-    
+
+    val twoDeckTwoSuits = mutableListOf(
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+        card1S, card2S, card3S, card4S, card5S, card6S, card7S, card8S, card9S, card10S, card11S, card12S, card13S,
+        card1D, card2D, card3D, card4D, card5D, card6D, card7D, card8D, card9D, card10D, card11D, card12D, card13D,
+    )
+
     val clubs = listOf(
         card1CFU, card2CFU, card3CFU, card4CFU, card5CFU, card6CFU, card7CFU,
         card8CFU, card9CFU, card10CFU, card11CFU, card12CFU, card13CFU
@@ -156,4 +196,66 @@ object TestCards {
         card1SFU, card2HFU, card3SFU, card4HFU, card5SFU, card6HFU, card7SFU,
         card8HFU, card9SFU, card10HFU, card11SFU, card12HFU, card13SFU
     )
+
+    val sameSuitInOrder = listOf(card5SFU, card4SFU, card3SFU, card2SFU, card1SFU)
+    val sameSuitInOrderAsc = listOf(card7SFU, card8SFU, card9SFU, card10SFU, card11SFU)
+    val sameSuitNotInOrder = listOf(card10SFU, card6SFU, card3SFU, card9SFU, card8SFU)
+    val altColorInOrder = listOf(card5DFU, card4SFU, card3HFU, card2CFU, card1DFU)
+    val altColorNotInOrder = listOf(card10DFU, card6SFU, card3HFU, card9CFU, card8DFU)
+    val multiSuitInOrder = listOf(card5SFU, card4CFU, card3HFU, card2DFU, card1SFU)
+    val multiSuitNotInOrder = listOf(card10SFU, card6CFU, card3HFU, card9DFU, card8SFU)
+
+    /**
+     *  Following lists rely on ShuffleSeed(Random(10L)).
+     */
+    val oneDeckUp = listOf(
+        card5HFU, card11DFU, card4DFU, card7CFU, card9DFU, card7DFU, card1HFU, card10CFU,
+        card7SFU, card3CFU, card9SFU, card7HFU, card9CFU, card2HFU, card13DFU, card12HFU,
+        card11SFU, card8CFU, card4SFU, card10DFU, card10SFU, card5CFU, card13CFU, card12SFU,
+        card13HFU, card6DFU, card2CFU, card12CFU, card2SFU, card3DFU, card2DFU, card1CFU,
+        card13SFU, card5DFU, card3HFU, card11CFU, card9HFU, card4CFU, card11HFU, card6HFU,
+        card8DFU, card6SFU, card10HFU, card4HFU, card1DFU, card1SFU, card6CFU, card8SFU,
+        card8HFU, card5SFU, card12DFU, card3SFU
+    )
+    val oneDeckDown = listOf(
+        card5H, card11D, card4D, card7C, card9D, card7D, card1H, card10C,
+        card7S, card3C, card9S, card7H, card9C, card2H, card13D, card12H,
+        card11S, card8C, card4S, card10D, card10S, card5C, card13C, card12S,
+        card13H, card6D, card2C, card12C, card2S, card3D, card2D, card1C,
+        card13S, card5D, card3H, card11C, card9H, card4C, card11H, card6H,
+        card8D, card6S, card10H, card4H, card1D, card1S, card6C, card8S,
+        card8H, card5S, card12D, card3S
+    )
+    val twoDeckUp = listOf(
+        card12CFU, card12HFU, card2SFU, card13CFU, card4DFU, card7HFU, card5HFU, card1CFU,
+        card9HFU, card11HFU, card7DFU, card3DFU, card9SFU, card4HFU, card11SFU, card6DFU,
+        card10HFU, card8CFU, card8HFU, card6SFU, card3CFU, card10DFU, card6DFU, card9DFU,
+        card7DFU, card7SFU, card13HFU, card4HFU, card3SFU, card13SFU, card2CFU, card1DFU,
+        card1SFU, card7SFU, card11DFU, card8DFU, card13DFU, card10CFU, card9CFU, card9HFU,
+        card13SFU, card10DFU, card6HFU, card12HFU, card1SFU, card8DFU, card4SFU, card13CFU,
+        card8HFU, card6HFU, card3CFU, card10HFU, card8CFU, card2CFU, card13HFU, card3HFU,
+        card7CFU, card10SFU, card2SFU, card3HFU, card10CFU, card11CFU, card11CFU, card1HFU,
+        card9CFU, card2HFU, card9SFU, card12DFU, card5SFU, card11SFU, card8SFU, card12DFU,
+        card12CFU, card5HFU, card12SFU, card5CFU, card7CFU, card6SFU, card7HFU, card3DFU,
+        card5DFU, card13DFU, card10SFU, card6CFU, card1DFU, card5SFU, card12SFU, card2DFU,
+        card5CFU, card11DFU, card11HFU, card4CFU, card1HFU, card4CFU, card4SFU, card5DFU,
+        card2DFU, card2HFU, card9DFU, card8SFU, card1CFU, card6CFU, card4DFU, card3SFU
+    )
+    val twoDeckDown = listOf(
+        card12C, card12H, card2S, card13C, card4D, card7H, card5H, card1C,
+        card9H, card11H, card7D, card3D, card9S, card4H, card11S, card6D,
+        card10H, card8C, card8H, card6S, card3C, card10D, card6D, card9D,
+        card7D, card7S, card13H, card4H, card3S, card13S, card2C, card1D,
+        card1S, card7S, card11D, card8D, card13D, card10C, card9C, card9H,
+        card13S, card10D, card6H, card12H, card1S, card8D, card4S, card13C,
+        card8H, card6H, card3C, card10H, card8C, card2C, card13H, card3H,
+        card7C, card10S, card2S, card3H, card10C, card11C, card11C, card1H,
+        card9C, card2H, card9S, card12D, card5S, card11S, card8S, card12D,
+        card12C, card5H, card12S, card5C, card7C, card6S, card7H, card3D,
+        card5D, card13D, card10S, card6C, card1D, card5S, card12S, card2D,
+        card5C, card11D, card11H, card4C, card1H, card4C, card4S, card5D,
+        card2D, card2H, card9D, card8S, card1C, card6C, card4D, card3S
+    )
 }
+
+typealias tc = TestCards

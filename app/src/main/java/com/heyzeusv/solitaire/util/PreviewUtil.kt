@@ -9,9 +9,10 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.heyzeusv.solitaire.data.AnimateInfo
-import com.heyzeusv.solitaire.data.Card
-import com.heyzeusv.solitaire.ui.board.boards.layouts.Width1080
+import com.heyzeusv.solitaire.board.layouts.Width1080
+import com.heyzeusv.solitaire.board.animation.AnimateInfo
+import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.util.theme.PreviewBG
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 

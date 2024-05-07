@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.ui.board.SolitairePile
+import com.heyzeusv.solitaire.board.piles.SolitairePile
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.TestCards
