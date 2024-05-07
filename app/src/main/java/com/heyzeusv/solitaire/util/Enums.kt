@@ -133,6 +133,7 @@ enum class ResetFaceUpAmount(val amount: Int) {
  *  Used to tell how many [Foundation] and [Tableau] piles currently selected [Games] uses.
  */
 enum class NumberOfPiles(val amount: Int) {
+    One(1),
     Four(4),
     Seven(7),
     Eight(8),

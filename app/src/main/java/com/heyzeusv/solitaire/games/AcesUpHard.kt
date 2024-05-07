@@ -22,19 +22,20 @@ data object AcesUpHard : Games.AcesUpVariants() {
     }
 
     /**
-     *  Checks if the last card belonging to Tableau represented by [tableauIndex] can be added to
-     *  Foundation by checking the remaining top cards in [tableauList].
+     *  Checks if [cardToAdd] can be added to Foundation by checking the remaining top cards in
+     *  [tableauList].
      */
-    override fun canAddToFoundation(tableauList: List<Tableau>, tableauIndex: Int): Boolean {
-        if (tableauList[tableauIndex].truePile.isEmpty()) return false
-        val cardToAdd = tableauList[tableauIndex].truePile.last()
-        tableauList.forEachIndexed { index, tableau ->
-            if (index != tableauIndex) {
-                val tableauLast = tableau.truePile.last()
-                if (tableauLast.suit == cardToAdd.suit &&
-                    (tableauLast.value == 0 || tableauLast.value > cardToAdd.value)
-                ) {
-                    return true
+    override fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: Card): Boolean {
+        for (i in 0 until numOfTableauPiles.amount) {
+            if (tableauList[i].truePile.isNotEmpty()) {
+                if (!tableauList[i].truePile.contains(cardToAdd)) {
+                    val tableauLast = tableauList[i].truePile.last()
+                    if (tableauLast.suit == cardToAdd.suit &&
+                        cardToAdd.value != 0 &&
+                        (tableauLast.value == 0 || tableauLast.value > cardToAdd.value)
+                    ) {
+                        return true
+                    }
                 }
             }
         }
@@ -78,7 +79,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
     override val startingScore: StartingScore = StartingScore.Zero
     override val maxScore: MaxScore = MaxScore.OneDeckNoAces
     override val autocompleteAvailable: Boolean = false
-    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.Four
+    override val numOfFoundationPiles: NumberOfPiles = NumberOfPiles.One
     override val numOfTableauPiles: NumberOfPiles = NumberOfPiles.Four
 
     /**
@@ -97,11 +98,11 @@ data object AcesUpHard : Games.AcesUpVariants() {
      *  Start single Foundation pile with a random Card.
      */
     override fun resetFoundation(foundationList: List<Foundation>, stock: Stock) {
-        foundationList[3].reset(listOf(stock.remove()))
+        foundationList[0].reset()
     }
 
     override fun gameWon(foundation: List<Foundation>): Boolean {
         // single Foundation pile should have all cards
-        return foundation[3].truePile.size == 48
+        return foundation[0].truePile.size == 48
     }
 }

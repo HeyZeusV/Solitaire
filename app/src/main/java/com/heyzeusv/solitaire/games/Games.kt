@@ -29,7 +29,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class GolfFamily : Games()
     sealed class SpiderFamily: Games()
     sealed class AcesUpVariants: Games() {
-        abstract fun canAddToFoundation(tableauList: List<Tableau>, tableauIndex: Int): Boolean
+        abstract fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: Card): Boolean
     }
 
     /**
