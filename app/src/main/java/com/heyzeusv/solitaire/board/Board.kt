@@ -21,13 +21,14 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
-import com.heyzeusv.solitaire.board.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.board.layouts.XWideLayout
 import com.heyzeusv.solitaire.board.piles.SolitaireCard
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.games.FortyAndEight
+import com.heyzeusv.solitaire.games.FortyThieves
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -84,7 +85,7 @@ fun Board(
                 onTableauClick = gameVM::onTableauClick
             )
         }
-        is Games.SpiderFamily -> {
+        is Games.SpiderFamily, is FortyThieves -> {
             TenWideBoard(
                 modifier = modifier,
                 layout = gameVM.screenLayouts.tenWideLayout,
@@ -93,6 +94,27 @@ fun Board(
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 spiderAnimateInfo = spiderAnimateInfo,
                 updateSpiderAnimateInfo = gameVM::updateSpiderAnimateInfo,
+                updateUndoEnabled = gameVM::updateUndoEnabled,
+                undoAnimation = undoAnimation,
+                updateUndoAnimation = gameVM::updateUndoAnimation,
+                drawAmount = selectedGame.drawAmount,
+                stock = gameVM.stock,
+                onStockClick = gameVM::onStockClick,
+                waste = gameVM.waste,
+                stockWasteEmpty = { stockWasteEmpty },
+                onWasteClick = gameVM::onWasteClick,
+                foundationList = gameVM.foundation,
+                tableauList = gameVM.tableau,
+                onTableauClick = gameVM::onTableauClick
+            )
+        }
+        is FortyAndEight -> {
+            TenWideEightTableauBoard(
+                modifier = modifier,
+                layout = gameVM.screenLayouts.tenWideEightTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateUndoEnabled = gameVM::updateUndoEnabled,
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
@@ -212,7 +234,7 @@ fun TableauPileWithFlip(
  */
 @Composable
 fun HorizontalCardPileWithFlip(
-    layout: SevenWideLayout,
+    layout: XWideLayout,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier

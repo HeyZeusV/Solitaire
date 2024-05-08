@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.board.HorizontalCardPileWithFlip
 import com.heyzeusv.solitaire.board.MultiPileCardWithFlip
+import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.util.GamePiles
 
@@ -18,6 +20,11 @@ interface XWideLayout {
      *  This is used in any [Column] [Arrangement.spacedBy] involving [Card]s.
      */
     val vPileSpacedByPercent: Float
+
+    /**
+     *  Layout ids used by [HorizontalCardPileWithFlip]
+     */
+    val horizontalPileLayoutIds: List<String>
 
     /**
      *  Layout ids used by [MultiPileCardWithFlip].
@@ -41,6 +48,12 @@ interface XWideLayout {
      *  since animation could only involve a sublist of Tableau, rather than entire pile.
      */
     fun getCardsYOffset(index: Int): IntOffset
+
+    /**
+     *  Used by [HorizontalCardPileWithFlip] in order to retrieve [HorizontalCardOffsets] which
+     *  contains necessary offsets for animations. [flipCardInfo] determines start/end positions.
+     */
+    fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets
 
     /**
      *  Returns size of [Card] in dp in the form of [DpSize].

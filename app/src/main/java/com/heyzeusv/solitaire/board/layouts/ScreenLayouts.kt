@@ -9,6 +9,7 @@ interface LayoutPositions {
     val sevenWideLayout: SevenWideLayout
     val sevenWideFourTableauLayout: SevenWideLayout
     val tenWideLayout: TenWideLayout
+    val tenWideEightTableauLayout: TenWideLayout
 }
 
 /**
@@ -82,6 +83,32 @@ class Width480(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauEight = IntOffset(386 + extraWidth, 69),
         tableauNine = IntOffset(434 + extraWidth, 69),
     )
+    override val tenWideEightTableauLayout: TenWideLayout = TenWideLayout(
+        layoutWidth = 480,
+        cardWidth = 44,
+        cardHeight = 65,
+        cardSpacing = 4,
+        foundationClubsOne = IntOffset(2 + extraWidth, 0),
+        foundationDiamondsOne = IntOffset(50 + extraWidth, 0),
+        foundationHeartsOne = IntOffset(98 + extraWidth, 0),
+        foundationSpadesOne = IntOffset(146 + extraWidth, 0),
+        foundationClubsTwo = IntOffset(194 + extraWidth, 0),
+        foundationDiamondsTwo = IntOffset(242 + extraWidth, 0),
+        foundationHeartsTwo = IntOffset(290 + extraWidth, 0),
+        foundationSpadesTwo = IntOffset(338 + extraWidth, 0),
+        wastePile = IntOffset(386 + extraWidth, 0),
+        stockPile = IntOffset(434 + extraWidth, 0),
+        tableauZero = IntOffset(50 + extraWidth, 69),
+        tableauOne = IntOffset(98 + extraWidth, 69),
+        tableauTwo = IntOffset(146 + extraWidth, 69),
+        tableauThree = IntOffset(194 + extraWidth, 69),
+        tableauFour = IntOffset(242 + extraWidth, 69),
+        tableauFive = IntOffset(290 + extraWidth, 69),
+        tableauSix = IntOffset(338 + extraWidth, 69),
+        tableauSeven = IntOffset(386 + extraWidth, 69),
+        tableauEight = IntOffset(0 + extraWidth, 69),
+        tableauNine = IntOffset(0 + extraWidth, 69),
+    )
 }
 
 class Width720(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
@@ -148,6 +175,32 @@ class Width720(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauSeven = IntOffset(506 + extraWidth, 101),
         tableauEight = IntOffset(578 + extraWidth, 101),
         tableauNine = IntOffset(650 + extraWidth, 101),
+    )
+    override val tenWideEightTableauLayout: TenWideLayout = TenWideLayout(
+        layoutWidth = 720,
+        cardWidth = 68,
+        cardHeight = 100,
+        cardSpacing = 4,
+        foundationClubsOne = IntOffset(2 + extraWidth, 0),
+        foundationDiamondsOne = IntOffset(74 + extraWidth, 0),
+        foundationHeartsOne = IntOffset(146 + extraWidth, 0),
+        foundationSpadesOne = IntOffset(218 + extraWidth, 0),
+        foundationClubsTwo = IntOffset(290 + extraWidth, 0),
+        foundationDiamondsTwo = IntOffset(362 + extraWidth, 0),
+        foundationHeartsTwo = IntOffset(434 + extraWidth, 0),
+        foundationSpadesTwo = IntOffset(506 + extraWidth, 0),
+        wastePile = IntOffset(578 + extraWidth, 0),
+        stockPile = IntOffset(650 + extraWidth, 0),
+        tableauZero = IntOffset(74 + extraWidth, 101),
+        tableauOne = IntOffset(146 + extraWidth, 101),
+        tableauTwo = IntOffset(218 + extraWidth, 101),
+        tableauThree = IntOffset(290 + extraWidth, 101),
+        tableauFour = IntOffset(362 + extraWidth, 101),
+        tableauFive = IntOffset(434 + extraWidth, 101),
+        tableauSix = IntOffset(506 + extraWidth, 101),
+        tableauSeven = IntOffset(578 + extraWidth, 101),
+        tableauEight = IntOffset(0 + extraWidth, 101),
+        tableauNine = IntOffset(0 + extraWidth, 101),
     )
 }
 
@@ -216,6 +269,32 @@ class Width960(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauEight = IntOffset(770 + extraWidth, 137),
         tableauNine = IntOffset(866 + extraWidth, 137),
     )
+    override val tenWideEightTableauLayout: TenWideLayout = TenWideLayout(
+        layoutWidth = 960,
+        cardWidth = 92,
+        cardHeight = 135,
+        cardSpacing = 4,
+        foundationClubsOne = IntOffset(2 + extraWidth, 0),
+        foundationDiamondsOne = IntOffset(98 + extraWidth, 0),
+        foundationHeartsOne = IntOffset(194 + extraWidth, 0),
+        foundationSpadesOne = IntOffset(290 + extraWidth, 0),
+        foundationClubsTwo = IntOffset(386 + extraWidth, 0),
+        foundationDiamondsTwo = IntOffset(482 + extraWidth, 0),
+        foundationHeartsTwo = IntOffset(578 + extraWidth, 0),
+        foundationSpadesTwo = IntOffset(674 + extraWidth, 0),
+        wastePile = IntOffset(770 + extraWidth, 0),
+        stockPile = IntOffset(866 + extraWidth, 0),
+        tableauZero = IntOffset(98 + extraWidth, 137),
+        tableauOne = IntOffset(194 + extraWidth, 137),
+        tableauTwo = IntOffset(290 + extraWidth, 137),
+        tableauThree = IntOffset(386 + extraWidth, 137),
+        tableauFour = IntOffset(482 + extraWidth, 137),
+        tableauFive = IntOffset(578 + extraWidth, 137),
+        tableauSix = IntOffset(674 + extraWidth, 137),
+        tableauSeven = IntOffset(770 + extraWidth, 137),
+        tableauEight = IntOffset(0 + extraWidth, 137),
+        tableauNine = IntOffset(0 + extraWidth, 137),
+    )
 }
 
 class Width1080(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
@@ -282,6 +361,32 @@ class Width1080(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauSeven = IntOffset(758 + extraWidth, 161),
         tableauEight = IntOffset(866 + extraWidth, 161),
         tableauNine = IntOffset(974 + extraWidth, 161),
+    )
+    override val tenWideEightTableauLayout: TenWideLayout = TenWideLayout(
+        layoutWidth = 1080,
+        cardWidth = 104,
+        cardHeight = 155,
+        cardSpacing = 4,
+        foundationClubsOne = IntOffset(2 + extraWidth, 0),
+        foundationDiamondsOne = IntOffset(110 + extraWidth, 0),
+        foundationHeartsOne = IntOffset(218 + extraWidth, 0),
+        foundationSpadesOne = IntOffset(326 + extraWidth, 0),
+        foundationClubsTwo = IntOffset(434 + extraWidth, 0),
+        foundationDiamondsTwo = IntOffset(542 + extraWidth, 0),
+        foundationHeartsTwo = IntOffset(650 + extraWidth, 0),
+        foundationSpadesTwo = IntOffset(758 + extraWidth, 0),
+        wastePile = IntOffset(866 + extraWidth, 0),
+        stockPile = IntOffset(974 + extraWidth, 0),
+        tableauZero = IntOffset(110 + extraWidth, 161),
+        tableauOne = IntOffset(218 + extraWidth, 161),
+        tableauTwo = IntOffset(326 + extraWidth, 161),
+        tableauThree = IntOffset(434 + extraWidth, 161),
+        tableauFour = IntOffset(542 + extraWidth, 161),
+        tableauFive = IntOffset(650 + extraWidth, 161),
+        tableauSix = IntOffset(758 + extraWidth, 161),
+        tableauSeven = IntOffset(866 + extraWidth, 161),
+        tableauEight = IntOffset(0 + extraWidth, 161),
+        tableauNine = IntOffset(0 + extraWidth, 161),
     )
 }
 
@@ -350,6 +455,32 @@ class Width1440(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauEight = IntOffset(1154 + extraWidth, 205),
         tableauNine = IntOffset(1298 + extraWidth, 205),
     )
+    override val tenWideEightTableauLayout: TenWideLayout = TenWideLayout(
+        layoutWidth = 1080,
+        cardWidth = 140,
+        cardHeight = 205,
+        cardSpacing = 4,
+        foundationClubsOne = IntOffset(2 + extraWidth, 0),
+        foundationDiamondsOne = IntOffset(146 + extraWidth, 0),
+        foundationHeartsOne = IntOffset(290 + extraWidth, 0),
+        foundationSpadesOne = IntOffset(434 + extraWidth, 0),
+        foundationClubsTwo = IntOffset(578 + extraWidth, 0),
+        foundationDiamondsTwo = IntOffset(722 + extraWidth, 0),
+        foundationHeartsTwo = IntOffset(866 + extraWidth, 0),
+        foundationSpadesTwo = IntOffset(1010 + extraWidth, 0),
+        wastePile = IntOffset(1154 + extraWidth, 0),
+        stockPile = IntOffset(1298 + extraWidth, 0),
+        tableauZero = IntOffset(146 + extraWidth, 205),
+        tableauOne = IntOffset(290 + extraWidth, 205),
+        tableauTwo = IntOffset(434 + extraWidth, 205),
+        tableauThree = IntOffset(578 + extraWidth, 205),
+        tableauFour = IntOffset(722 + extraWidth, 205),
+        tableauFive = IntOffset(866 + extraWidth, 205),
+        tableauSix = IntOffset(1010 + extraWidth, 205),
+        tableauSeven = IntOffset(1154 + extraWidth, 205),
+        tableauEight = IntOffset(0 + extraWidth, 205),
+        tableauNine = IntOffset(0 + extraWidth, 205),
+    )
 }
 
 class Width2160(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
@@ -416,5 +547,31 @@ class Width2160(extraWidth: Int) : ScreenLayouts(extraWidth), LayoutPositions {
         tableauSeven = IntOffset(1514 + extraWidth, 305),
         tableauEight = IntOffset(1730 + extraWidth, 305),
         tableauNine = IntOffset(1946 + extraWidth, 305),
+    )
+    override val tenWideEightTableauLayout: TenWideLayout = TenWideLayout(
+        layoutWidth = 2160,
+        cardWidth = 212,
+        cardHeight = 310,
+        cardSpacing = 4,
+        foundationClubsOne = IntOffset(2 + extraWidth, 0),
+        foundationDiamondsOne = IntOffset(218 + extraWidth, 0),
+        foundationHeartsOne = IntOffset(434 + extraWidth, 0),
+        foundationSpadesOne = IntOffset(650 + extraWidth, 0),
+        foundationClubsTwo = IntOffset(866 + extraWidth, 0),
+        foundationDiamondsTwo = IntOffset(1082 + extraWidth, 0),
+        foundationHeartsTwo = IntOffset(1298 + extraWidth, 0),
+        foundationSpadesTwo = IntOffset(1514 + extraWidth, 0),
+        wastePile = IntOffset(1730 + extraWidth, 0),
+        stockPile = IntOffset(1946 + extraWidth, 0),
+        tableauZero = IntOffset(218 + extraWidth, 305),
+        tableauOne = IntOffset(434 + extraWidth, 305),
+        tableauTwo = IntOffset(650 + extraWidth, 305),
+        tableauThree = IntOffset(866 + extraWidth, 305),
+        tableauFour = IntOffset(1082 + extraWidth, 305),
+        tableauFive = IntOffset(1298 + extraWidth, 305),
+        tableauSix = IntOffset(1514 + extraWidth, 305),
+        tableauSeven = IntOffset(1730 + extraWidth, 305),
+        tableauEight = IntOffset(0 + extraWidth, 305),
+        tableauNine = IntOffset(0 + extraWidth, 305),
     )
 }

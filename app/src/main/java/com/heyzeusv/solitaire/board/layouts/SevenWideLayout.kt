@@ -49,9 +49,11 @@ data class SevenWideLayout(
     private val leftCardXOffset: Int = cardSpacing
     private val middleCardXOffset: Int = cardWidth.div(2) + cardSpacing
     private val rightCardXOffset: Int = cardWidth + cardSpacing
-    val horizontalPileLayoutIds: List<String> = listOf("Right Card", "Middle Card", "Left Card")
 
     override val vPileSpacedByPercent: Float = 0.75f
+
+    override val horizontalPileLayoutIds: List<String> =
+        listOf("Right Card", "Middle Card", "Left Card")
 
     override val multiPileLayoutIds: List<String> = listOf(
         "Tableau Zero Card",
@@ -109,7 +111,7 @@ data class SevenWideLayout(
      *  Used by [HorizontalCardPileWithFlip] in order to retrieve [HorizontalCardOffsets] which
      *  contains necessary offsets for animations. [flipCardInfo] determines start/end positions.
      */
-    fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets {
+    override fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets {
         return if (flipCardInfo is FlipCardInfo.FaceDown) {
             HorizontalCardOffsets(
                 rightCardStartOffset = IntOffset(rightCardXOffset, 0),

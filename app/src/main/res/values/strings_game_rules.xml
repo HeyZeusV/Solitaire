@@ -66,6 +66,13 @@
     <string name="spider_foundation_rules">"• A pile of the same suit from King to Ace is automatically moved from Tableau to Foundation "</string>
     <string name="spider_tableau_rules">• Build down by rank\n• Any amount of cards can be moved as long as they are ranked correctly and the same suit\n• Any card or a valid pile can be placed on an empty spot</string>
 
+
+    <string name="forty_thieves_stock_rules">• Click to move 1 card, face up, to Waste</string>
+    <string name="forty_thieves_waste_rules">• Click to move top card to valid pile in either Foundation or Tableau</string>
+    <string name="forty_thieves_foundation_rules">• Build up by suit and rank, starting from Ace and ending at King</string>
+    <string name="forty_thieves_tableau_rules">• Build down by suit and rank\n• Only a single card, the top card, can be moved at a time\n• Any card can be placed on an empty spot</string>
+    <string name="forty_and_eight_stock_rules">• Click to move 1 card, face up, to Waste\n• Just once when empty, click redeals all cards, face down, from Waste to Stock</string>
+
     <string name="aces_up_stock_rules">• Click to move 1 card, face up, to each pile in Tableau</string>
     <string name="aces_up_foundation_rules">• All cards, except Aces, must be moved here to win</string>
     <string name="aces_up_tableau_rules">• The top card can be moved to Foundation if it is the same suit and lower rank of a top card of another Tableau pile\n• Any card can be placed on an empty spot\n• Aces are highest rank</string>

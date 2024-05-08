@@ -147,7 +147,14 @@ fun TenWideBoard(
         content = {
             animateInfo?.let {
                 when (it.flipCardInfo) {
-                    FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> { }
+                    FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
+                        HorizontalCardPileWithFlip(
+                            layout = layout,
+                            animateInfo = it,
+                            animationDurations = animationDurations,
+                            modifier = Modifier.layoutId("Animated Horizontal Pile")
+                        )
+                    }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
                         MultiPileCardWithFlip(
                             layout = layout,
@@ -257,6 +264,8 @@ fun TenWideBoard(
         var tableauEight = measurables.firstOrNull { it.layoutId == "Tableau #8" }
         var tableauNine = measurables.firstOrNull { it.layoutId == "Tableau #9" }
 
+        val animatedHorizontalPile =
+            measurables.firstOrNull { it.layoutId == "Animated Horizontal Pile" }
         val animatedVerticalPile =
             measurables.firstOrNull { it.layoutId == "Animated Static Vertical Pile" }
         val animatedMultiPile = measurables.firstOrNull { it.layoutId == "Animated Multi Pile" }
@@ -276,6 +285,7 @@ fun TenWideBoard(
             val tableauConstraints = Constraints(cardWidth, cardWidth, cardHeight, tableauHeight)
 
             if (animatedOffset != IntOffset.Zero) {
+                animatedHorizontalPile?.measure(wasteConstraints)?.place(animatedOffset, 2f)
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
                 animateInfo?.let {
                     it.tableauCardFlipInfo?.let { info ->
