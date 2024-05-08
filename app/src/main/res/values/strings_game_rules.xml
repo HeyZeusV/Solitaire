@@ -71,7 +71,7 @@
     <string name="forty_thieves_waste_rules">• Click to move top card to valid pile in either Foundation or Tableau</string>
     <string name="forty_thieves_foundation_rules">• Build up by suit and rank, starting from Ace and ending at King</string>
     <string name="forty_thieves_tableau_rules">• Build down by suit and rank\n• Only a single card, the top card, can be moved at a time\n• Any card can be placed on an empty spot</string>
-
+    <string name="forty_and_eight_stock_rules">• Click to move 1 card, face up, to Waste\n• Just once when empty, click redeals all cards, face down, from Waste to Stock</string>
 
     <string name="aces_up_stock_rules">• Click to move 1 card, face up, to each pile in Tableau</string>
     <string name="aces_up_foundation_rules">• All cards, except Aces, must be moved here to win</string>
