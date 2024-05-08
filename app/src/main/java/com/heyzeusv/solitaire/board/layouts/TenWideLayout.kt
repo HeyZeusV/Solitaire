@@ -53,7 +53,7 @@ data class TenWideLayout(
     // Waste <-> Stock offsets
     private val leftCardXOffset: Int = cardSpacing
     private val middleCardXOffset: Int = cardWidth.div(2) + cardSpacing
-    private val rightCardXOffset: Int = cardWidth + cardSpacing
+    private val rightCardXOffset: Int = cardSpacing
 
     override val vPileSpacedByPercent: Float = 0.60f
 

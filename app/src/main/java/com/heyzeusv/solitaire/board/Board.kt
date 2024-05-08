@@ -27,6 +27,7 @@ import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.games.FortyAndEight
 import com.heyzeusv.solitaire.games.FortyThieves
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.util.GamePiles
@@ -93,6 +94,27 @@ fun Board(
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 spiderAnimateInfo = spiderAnimateInfo,
                 updateSpiderAnimateInfo = gameVM::updateSpiderAnimateInfo,
+                updateUndoEnabled = gameVM::updateUndoEnabled,
+                undoAnimation = undoAnimation,
+                updateUndoAnimation = gameVM::updateUndoAnimation,
+                drawAmount = selectedGame.drawAmount,
+                stock = gameVM.stock,
+                onStockClick = gameVM::onStockClick,
+                waste = gameVM.waste,
+                stockWasteEmpty = { stockWasteEmpty },
+                onWasteClick = gameVM::onWasteClick,
+                foundationList = gameVM.foundation,
+                tableauList = gameVM.tableau,
+                onTableauClick = gameVM::onTableauClick
+            )
+        }
+        is FortyAndEight -> {
+            TenWideEightTableauBoard(
+                modifier = modifier,
+                layout = gameVM.screenLayouts.tenWideEightTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateUndoEnabled = gameVM::updateUndoEnabled,
                 undoAnimation = undoAnimation,
                 updateUndoAnimation = gameVM::updateUndoAnimation,
