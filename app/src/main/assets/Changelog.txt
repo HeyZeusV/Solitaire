@@ -1,3 +1,6 @@
+v4.2.0
+-New: Forty Thieves and 1 of its variants, Forty and Eight, are now available to play!
+
 v4.1.0
 -New: Aces Up and 2 variants, an easier and much harder versions.
 -New: Beetle, a variant of Spider.
