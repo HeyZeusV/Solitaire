@@ -95,7 +95,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
             Russian, AustralianPatience, Canberra,
             Golf, PuttPutt, GolfRush,
             Spider, SpiderTwoSuits, SpiderOneSuit, Beetle,
-            FortyThieves,
+            FortyThieves, FortyAndEight,
             AcesUp, AcesUpRelaxed, AcesUpHard
         )
 
@@ -124,6 +124,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
                 Game.GAME_ACES_UP_HARD -> AcesUpHard
                 Game.GAME_BEETLE -> Beetle
                 Game.GAME_FORTY_THIEVES -> FortyThieves
+                Game.GAME_FORTY_AND_EIGHT -> FortyAndEight
                 else -> KlondikeTurnOne
             }
         }
