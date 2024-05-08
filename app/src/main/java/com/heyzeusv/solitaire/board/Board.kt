@@ -21,13 +21,13 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
-import com.heyzeusv.solitaire.board.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.board.layouts.XWideLayout
 import com.heyzeusv.solitaire.board.piles.SolitaireCard
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.games.FortyThieves
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -84,7 +84,7 @@ fun Board(
                 onTableauClick = gameVM::onTableauClick
             )
         }
-        is Games.SpiderFamily -> {
+        is Games.SpiderFamily, is FortyThieves -> {
             TenWideBoard(
                 modifier = modifier,
                 layout = gameVM.screenLayouts.tenWideLayout,
@@ -212,7 +212,7 @@ fun TableauPileWithFlip(
  */
 @Composable
 fun HorizontalCardPileWithFlip(
-    layout: SevenWideLayout,
+    layout: XWideLayout,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
     modifier: Modifier = Modifier

@@ -6,6 +6,8 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.board.HorizontalCardPileWithFlip
+import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.toDp
@@ -48,7 +50,15 @@ data class TenWideLayout(
     override val wasteConstraints: Constraints =
         Constraints(cardWidth, cardWidth, cardHeight, cardHeight)
 
+    // Waste <-> Stock offsets
+    private val leftCardXOffset: Int = cardSpacing
+    private val middleCardXOffset: Int = cardWidth.div(2) + cardSpacing
+    private val rightCardXOffset: Int = cardWidth + cardSpacing
+
     override val vPileSpacedByPercent: Float = 0.60f
+
+    override val horizontalPileLayoutIds: List<String> =
+        listOf("Right Card", "Middle Card", "Left Card")
 
     override val multiPileLayoutIds: List<String> = listOf(
         "Tableau Zero Card",
@@ -108,6 +118,32 @@ data class TenWideLayout(
      */
     override fun getCardsYOffset(index: Int): IntOffset {
         return IntOffset(x = 0, y = (index * (cardHeight * (1 - vPileSpacedByPercent))).toInt())
+    }
+
+    /**
+     *  Used by [HorizontalCardPileWithFlip] in order to retrieve [HorizontalCardOffsets] which
+     *  contains necessary offsets for animations. [flipCardInfo] determines start/end positions.
+     */
+    override fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets {
+        return if (flipCardInfo is FlipCardInfo.FaceDown) {
+            HorizontalCardOffsets(
+                rightCardStartOffset = IntOffset(rightCardXOffset, 0),
+                rightCardEndOffset = IntOffset.Zero,
+                middleCardStartOffset = IntOffset(middleCardXOffset, 0),
+                middleCardEndOffset = IntOffset.Zero,
+                leftCardStartOffset = IntOffset(leftCardXOffset, 0),
+                leftCardEndOffset = IntOffset.Zero
+            )
+        } else {
+            HorizontalCardOffsets(
+                rightCardStartOffset = IntOffset.Zero,
+                rightCardEndOffset = IntOffset(rightCardXOffset, 0),
+                middleCardStartOffset = IntOffset.Zero,
+                middleCardEndOffset = IntOffset(middleCardXOffset, 0),
+                leftCardStartOffset = IntOffset.Zero,
+                leftCardEndOffset = IntOffset(leftCardXOffset, 0)
+            )
+        }
     }
 
     /**

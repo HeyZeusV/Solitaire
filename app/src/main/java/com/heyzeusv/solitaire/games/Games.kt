@@ -28,6 +28,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class YukonFamily : Games()
     sealed class GolfFamily : Games()
     sealed class SpiderFamily: Games()
+    sealed class FortyThievesFamily: Games()
     sealed class AcesUpVariants: Games() {
         abstract fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: Card): Boolean
     }
@@ -94,6 +95,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
             Russian, AustralianPatience, Canberra,
             Golf, PuttPutt, GolfRush,
             Spider, SpiderTwoSuits, SpiderOneSuit, Beetle,
+            FortyThieves,
             AcesUp, AcesUpRelaxed, AcesUpHard
         )
 
@@ -121,6 +123,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
                 Game.GAME_ACES_UP_RELAXED -> AcesUpRelaxed
                 Game.GAME_ACES_UP_HARD -> AcesUpHard
                 Game.GAME_BEETLE -> Beetle
+                Game.GAME_FORTY_THIEVES -> FortyThieves
                 else -> KlondikeTurnOne
             }
         }
