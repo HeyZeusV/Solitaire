@@ -8,6 +8,7 @@ plugins {
     id("com.google.protobuf") version "0.9.4"
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -83,6 +84,7 @@ dependencies {
     val compose = "2024.02.02"
     val hiltVersion = "2.50"
     val lifecycleVersion = "2.7.0"
+    val firebase = "33.0.0"
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.20")
 
@@ -95,6 +97,11 @@ dependencies {
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:33.0.0"))
+    implementation("com.google.firebase:firebase-analytics")
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     // Proto Datastore
