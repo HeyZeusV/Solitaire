@@ -218,3 +218,10 @@ enum class PileInfo(
     Foundation(R.string.rules_foundation, FoundationRules),
     Tableau(R.string.rules_tableau, TableauRules)
 }
+
+enum class AccountTabs(
+    @StringRes val nameId: Int
+) {
+    Create(R.string.account_create),
+    LogIn(R.string.account_log_in)
+}

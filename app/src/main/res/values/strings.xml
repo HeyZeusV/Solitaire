@@ -109,6 +109,12 @@
     <string name="animation_duration_slow">Slow - 500ms</string>
     <string name="animation_duration_fast">Fast - 250ms</string>
     <string name="animation_duration_fastest">Fastest - 100ms</string>
+    <string name="account_create">Create</string>
+    <string name="account_log_in">Log In</string>
+    <string name="account_username">Username</string>
+    <string name="account_email">Email</string>
+    <string name="account_password">Password</string>
+    <string name="settings_account">Account</string>
     <string name="settings_animation_duration">Animation Speed</string>
     <string name="rules_stock">Stock</string>
     <string name="rules_waste">Waste</string>
