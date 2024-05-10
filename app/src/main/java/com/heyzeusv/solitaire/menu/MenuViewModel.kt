@@ -184,7 +184,7 @@ class MenuViewModel @Inject constructor(
 
             launchCatching {
                 accountService.createAccount(it.email, it.password)
-                accountService.updateDisplayName(it.username)
+                accountService.updateDisplayName(it.username.trim())
             }
         }
     }

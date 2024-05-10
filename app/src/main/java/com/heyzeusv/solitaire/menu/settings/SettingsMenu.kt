@@ -222,6 +222,7 @@ fun AccountSetting(
                         AccountTextField(
                             value = uiState.username,
                             onValueChange = { updateUsername(it) },
+                            maxLength = 20,
                             placeholder = R.string.account_username
                         ) {
                             Icon(
@@ -324,12 +325,13 @@ fun AccountSetting(
 fun AccountTextField(
     value: String,
     onValueChange: (String) -> Unit,
+    maxLength: Int = Int.MAX_VALUE,
     @StringRes placeholder: Int,
     leadingIcon: @Composable (() -> Unit)
 ) {
     TextField(
         value = value,
-        onValueChange = { onValueChange(it) },
+        onValueChange = { if (it.length <= maxLength) onValueChange(it) },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(stringResource(placeholder))},
         leadingIcon = { leadingIcon() },
@@ -357,7 +359,7 @@ fun PasswordTextField(
 
     TextField(
         value = value,
-        onValueChange = { onValueChange(it) },
+        onValueChange = { if (it.length <= 20) onValueChange(it) },
         modifier = Modifier.fillMaxWidth(),
         placeholder = { Text(text = stringResource(placeholder)) },
         leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
