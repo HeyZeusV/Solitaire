@@ -158,6 +158,7 @@ fun AccountSetting() {
                             unfocusedContainerColor = Color.Transparent
                         )
                     )
+                    // TODO: Add password visibility button
                     TextField(
                         value = "",
                         onValueChange = { },
