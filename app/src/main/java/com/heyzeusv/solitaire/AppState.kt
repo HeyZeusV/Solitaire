@@ -5,6 +5,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Stable
 import androidx.navigation.NavHostController
 import com.heyzeusv.solitaire.util.SnackbarManager
+import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toMessage
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.launch

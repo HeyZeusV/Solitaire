@@ -11,15 +11,18 @@ import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.menu.settings.AccountService
 import com.heyzeusv.solitaire.menu.settings.AccountUiState
 import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.SnackbarManager
+import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
 import com.heyzeusv.solitaire.util.isConnected
 import com.heyzeusv.solitaire.util.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -37,7 +40,8 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(
     private val settingsManager: SettingsManager,
     private val statManager: StatManager,
-    private val connectManager: ConnectivityManager
+    private val connectManager: ConnectivityManager,
+    private val accountService: AccountService
 ) : ViewModel() {
     private val _displayMenuButtons = MutableStateFlow(false)
     val displayMenuButtons: StateFlow<Boolean> get() = _displayMenuButtons
@@ -164,5 +168,19 @@ class MenuViewModel @Inject constructor(
             return
         }
 
+        if (uiState.value.password.isBlank()) {
+            SnackbarManager.showMessage(R.string.empty_password_error)
+            return
+        }
+
+        viewModelScope.launch(
+            CoroutineExceptionHandler { _, throwable ->
+                SnackbarManager.showMessage(throwable.toSnackbarMessage())
+            }
+        ) {
+            uiState.value.let {
+                accountService.authenticate(it.email, it.password)
+            }
+        }
     }
 }

@@ -41,6 +41,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
@@ -145,6 +146,7 @@ fun AccountSetting(
     updatePassword: (String) -> Unit = { },
     logInOnClick: () -> Unit = { },
     ) {
+    val keyboardController = LocalSoftwareKeyboardController.current
     var connected by remember { mutableStateOf(isConnected()) }
     var selectedTab by remember { mutableIntStateOf(0) }
 
@@ -212,7 +214,10 @@ fun AccountSetting(
                         }
                     } else {
                         Button(
-                            onClick = { logInOnClick() },
+                            onClick = {
+                                logInOnClick()
+                                keyboardController?.hide()
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 4.dp),
