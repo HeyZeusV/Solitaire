@@ -21,8 +21,11 @@ import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
 import com.heyzeusv.solitaire.util.isConnected
 import com.heyzeusv.solitaire.util.isValidEmail
+import com.heyzeusv.solitaire.util.isValidPassword
+import com.heyzeusv.solitaire.util.isValidUsername
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -54,6 +57,8 @@ class MenuViewModel @Inject constructor(
         updateDisplayMenuButtons()
         updateMenuState(newMenuState)
     }
+
+    val currentUser = accountService.currentUser
 
     private val _uiState = MutableStateFlow(AccountUiState())
     val uiState: StateFlow<AccountUiState> get() = _uiState
@@ -162,25 +167,58 @@ class MenuViewModel @Inject constructor(
 
     fun isConnected(): Boolean = connectManager.isConnected()
 
-    fun onLogInClick() {
-        if (!uiState.value.email.isValidEmail()) {
-            SnackbarManager.showMessage(R.string.email_error)
-            return
-        }
-
-        if (uiState.value.password.isBlank()) {
-            SnackbarManager.showMessage(R.string.empty_password_error)
-            return
-        }
-
-        viewModelScope.launch(
-            CoroutineExceptionHandler { _, throwable ->
-                SnackbarManager.showMessage(throwable.toSnackbarMessage())
+    fun signUpOnClick() {
+        uiState.value.let {
+            if (!it.username.isValidUsername()) {
+                SnackbarManager.showMessage(R.string.username_error)
+                return
             }
-        ) {
-            uiState.value.let {
+            if (!it.email.isValidEmail()) {
+                SnackbarManager.showMessage(R.string.email_error)
+                return
+            }
+            if (!it.password.isValidPassword()) {
+                SnackbarManager.showMessage(R.string.password_error)
+                return
+            }
+
+            launchCatching {
+                accountService.createAccount(it.email, it.password)
+                accountService.updateDisplayName(it.username)
+            }
+        }
+    }
+
+    fun logInOnClick() {
+        uiState.value.let {
+            if (!it.email.isValidEmail()) {
+                SnackbarManager.showMessage(R.string.email_error)
+                return
+            }
+            if (it.password.isBlank()) {
+                SnackbarManager.showMessage(R.string.empty_password_error)
+                return
+            }
+
+            launchCatching {
                 accountService.authenticate(it.email, it.password)
             }
         }
     }
+
+    fun signOutOnClick() {
+        launchCatching {
+            accountService.signOut()
+        }
+    }
+
+    /**
+     *  Attempts to run [block], if exception is caught, displays message as Snackbar.
+     */
+    private fun launchCatching(block: suspend CoroutineScope.() -> Unit) =
+        viewModelScope.launch(
+            CoroutineExceptionHandler { _, throwable ->
+                SnackbarManager.showMessage(throwable.toSnackbarMessage())
+            }
+        ) { block() }
 }

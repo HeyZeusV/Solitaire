@@ -70,16 +70,20 @@ import com.heyzeusv.solitaire.util.theme.Purple80
 @Composable
 fun SettingsMenu(menuVM: MenuViewModel) {
     val settings by menuVM.settings.collectAsState()
+    val currentUser by menuVM.currentUser.collectAsState(initial = User())
     val uiState by menuVM.uiState.collectAsState()
     val selectedAnimationDurations = AnimationDurations from settings.animationDurations
 
     SettingsMenu(
+        user = currentUser,
         isConnected = menuVM::isConnected,
         uiState = uiState,
         updateUsername = menuVM::updateUsername,
         updateEmail = menuVM::updateEmail,
         updatePassword = menuVM::updatePassword,
-        logInOnClick = menuVM::onLogInClick,
+        signUpOnClick = menuVM::signUpOnClick,
+        logInOnClick = menuVM::logInOnClick,
+        signOutOnClick = menuVM::signOutOnClick,
         selectedAnimationDurations = selectedAnimationDurations,
         updateAnimationDurations = menuVM::updateAnimationDurations
     ) {
@@ -103,11 +107,14 @@ fun SettingsMenu(menuVM: MenuViewModel) {
 @Composable
 fun SettingsMenu(
     isConnected: () -> Boolean = { false },
+    user: User,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
     updatePassword: (String) -> Unit = { },
+    signUpOnClick: () -> Unit = { },
     logInOnClick: () -> Unit = { },
+    signOutOnClick: () -> Unit = { },
     selectedAnimationDurations: AnimationDurations,
     updateAnimationDurations: (AnimationDurations) -> Unit = { },
     onBackPress: () -> Unit = { }
@@ -120,11 +127,14 @@ fun SettingsMenu(
         Setting(title = R.string.settings_account) {
             AccountSetting(
                 isConnected = isConnected,
+                user = user,
                 uiState = uiState,
                 updateUsername = updateUsername,
                 updateEmail = updateEmail,
                 updatePassword = updatePassword,
+                signUpOnClick = signUpOnClick,
                 logInOnClick = logInOnClick,
+                signOutOnClick = signOutOnClick
             )
         }
         Setting(title = R.string.settings_animation_duration) {
@@ -140,11 +150,14 @@ fun SettingsMenu(
 @Composable
 fun AccountSetting(
     isConnected: () -> Boolean = { false },
+    user: User,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
     updatePassword: (String) -> Unit = { },
+    signUpOnClick: () -> Unit = { },
     logInOnClick: () -> Unit = { },
+    signOutOnClick: () -> Unit = { }
     ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var connected by remember { mutableStateOf(isConnected()) }
@@ -156,7 +169,37 @@ fun AccountSetting(
             .height(272.dp),
         shape = RoundedCornerShape(4.dp)
     ) {
-        if (connected) {
+        if (connected && !user.isAnonymous) {
+            val displayName = user.displayName ?: ""
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.AccountCircle,
+                    contentDescription = stringResource(R.string.account_logged_in),
+                    modifier = Modifier
+                        .weight(.4f)
+                        .fillMaxSize()
+                )
+                Text(
+                    text = stringResource(R.string.hello_user, displayName),
+                    modifier = Modifier.weight(.1f)
+                )
+                Button(
+                    onClick = { signOutOnClick() },
+                    modifier = Modifier
+                        .weight(.12f)
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(4.dp)
+                ) {
+                    Text(text = stringResource(R.string.account_sign_out))
+                }
+            }
+        } else if (connected) {
             Column(modifier = Modifier.padding(bottom = 4.dp)) {
                 TabRow(selectedTabIndex = selectedTab) {
                     AccountTabs.entries.forEachIndexed { index, tab ->
@@ -204,7 +247,10 @@ fun AccountSetting(
                     )
                     if (selectedTab == AccountTabs.SignUp.ordinal) {
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = {
+                                signUpOnClick()
+                                keyboardController?.hide()
+                            },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 4.dp),
@@ -257,7 +303,11 @@ fun AccountSetting(
                 )
                 Button(
                     onClick = { connected = isConnected() },
-                    modifier = Modifier.weight(.12f),
+                    modifier = Modifier
+                        .weight(.12f)
+                        .padding(horizontal = 16.dp)
+                        .fillMaxWidth(),
+                    shape = RoundedCornerShape(4.dp),
                     colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.error,
                         contentColor = MaterialTheme.colorScheme.onError
@@ -407,6 +457,7 @@ fun SettingsMenuPreview() {
         Preview {
             SettingsMenu(
                 isConnected = { true },
+                user = User(),
                 uiState = AccountUiState(),
                 selectedAnimationDurations = AnimationDurations.None
             )
@@ -421,6 +472,7 @@ fun AccountSettingPreview() {
         Preview {
             AccountSetting(
                 isConnected = { true },
+                user = User(),
                 uiState = AccountUiState()
             )
         }
@@ -434,6 +486,7 @@ fun AccountSettingErrorPreview() {
         Preview {
             AccountSetting(
                 isConnected = { false },
+                user = User(),
                 uiState = AccountUiState()
             )
         }

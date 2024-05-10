@@ -183,9 +183,23 @@ fun NetworkCapabilities?.isNetworkCapabilitiesValid(): Boolean = when {
 }
 
 private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\\p{P}|.*\\p{S}).{6,}\$"
+private val profanityList = listOf("anal", "anus", "ballsack", "blowjob", "blow job", "boner",
+    "clitoris", "cock", "cunt", "dick", "dildo", "dyke", "fag", "fuck", "jizz", "labia", "muff",
+    "nigger", "nigga", "penis", "piss", "pussy", "scrotum", "sex", "shit", "slut", "smegma",
+    "spunk", "twat", "vagina", "wank", "whore"
+)
 
 /**
- *  Uses pre-made [Patterns.EMAIL_ADDRESS] to check if email is valid
+ *  Checks if entered username contains any of the string from [profanityList].
+ */
+fun String.isValidUsername(): Boolean {
+    if (this.isBlank()) return false
+    profanityList.forEach { if (this.contains(it, ignoreCase = true)) return false }
+    return true
+}
+
+/**
+ *  Uses pre-made [Patterns.EMAIL_ADDRESS] to check if email is valid.
  */
 fun String.isValidEmail(): Boolean {
     return this.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
