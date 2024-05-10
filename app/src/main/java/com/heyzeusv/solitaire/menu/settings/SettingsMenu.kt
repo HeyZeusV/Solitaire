@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.menu.settings
 
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,6 +16,7 @@ import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -125,7 +127,7 @@ fun AccountSetting(
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(228.dp),
+                .height(272.dp),
             shape = RoundedCornerShape(4.dp)
         ) {
             if (connected) {
@@ -142,69 +144,68 @@ fun AccountSetting(
                         }
                     }
                     Column(
-                        modifier = Modifier.height(168.dp),
+                        modifier = Modifier
+                            .height(212.dp)
+                            .padding(horizontal = 4.dp),
                         verticalArrangement = Arrangement.SpaceEvenly
                     ) {
-                        if (selectedTab == AccountTabs.Create.ordinal) {
-                            TextField(
+                        if (selectedTab == AccountTabs.SignUp.ordinal) {
+                            AccountTextField(
                                 value = "",
                                 onValueChange = { },
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp)
-                                    .fillMaxWidth(),
-                                placeholder = { Text(stringResource(R.string.account_username)) },
-                                leadingIcon = {
-                                    Icon(
-                                        imageVector = Icons.Default.AccountCircle,
-                                        contentDescription = stringResource(id = R.string.account_username)
-                                    )
-                                },
-                                singleLine = true,
-                                colors = TextFieldDefaults.colors(
-                                    focusedContainerColor = Color.Transparent,
-                                    unfocusedContainerColor = Color.Transparent
+                                placeHolder = R.string.account_username
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.AccountCircle,
+                                    contentDescription = stringResource(id = R.string.account_username)
                                 )
+                            }
+                        }
+                        AccountTextField(
+                            value = "",
+                            onValueChange = { },
+                            placeHolder = R.string.account_email
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Email,
+                                contentDescription = stringResource(id = R.string.account_username)
                             )
                         }
-                        TextField(
-                            value = "",
-                            onValueChange = { },
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .fillMaxWidth(),
-                            placeholder = { Text(stringResource(R.string.account_email)) },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Email,
-                                    contentDescription = stringResource(id = R.string.account_username)
-                                )
-                            },
-                            singleLine = true,
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent
-                            )
-                        )
                         // TODO: Add password visibility button
-                        TextField(
+                        AccountTextField(
                             value = "",
                             onValueChange = { },
-                            modifier = Modifier
-                                .padding(horizontal = 4.dp)
-                                .fillMaxWidth(),
-                            placeholder = { Text(stringResource(R.string.account_password)) },
-                            leadingIcon = {
-                                Icon(
-                                    imageVector = Icons.Default.Lock,
-                                    contentDescription = stringResource(id = R.string.account_username)
-                                )
-                            },
-                            singleLine = true,
-                            colors = TextFieldDefaults.colors(
-                                focusedContainerColor = Color.Transparent,
-                                unfocusedContainerColor = Color.Transparent
+                            placeHolder = R.string.account_password
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Lock,
+                                contentDescription = stringResource(id = R.string.account_username)
                             )
-                        )
+                        }
+                        if (selectedTab == AccountTabs.SignUp.ordinal) {
+                            Button(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(text = stringResource(R.string.account_sign_up))
+                            }
+                        } else {
+                            Button(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(text = stringResource(R.string.account_log_in))
+                            }
+                            FilledTonalButton(
+                                onClick = { /*TODO*/ },
+                                modifier = Modifier.fillMaxWidth(),
+                                shape = RoundedCornerShape(4.dp)
+                            ) {
+                                Text(text = stringResource(R.string.account_forgot_password))
+                            }
+                        }
                     }
                 }
             } else {
@@ -245,6 +246,27 @@ fun AccountSetting(
             color = MaterialTheme.colorScheme.onSurface
         )
     }
+}
+
+@Composable
+fun AccountTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    @StringRes placeHolder: Int,
+    leadingIcon: @Composable (() -> Unit)
+) {
+    TextField(
+        value = value,
+        onValueChange = { onValueChange(it) },
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = { Text(stringResource(placeHolder))},
+        leadingIcon = { leadingIcon() },
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent
+        )
+    )
 }
 
 /**

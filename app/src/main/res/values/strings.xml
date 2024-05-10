@@ -109,11 +109,12 @@
     <string name="animation_duration_slow">Slow - 500ms</string>
     <string name="animation_duration_fast">Fast - 250ms</string>
     <string name="animation_duration_fastest">Fastest - 100ms</string>
-    <string name="account_create">Create</string>
+    <string name="account_sign_up">Sign Up</string>
     <string name="account_log_in">Log In</string>
     <string name="account_username">Username</string>
     <string name="account_email">Email</string>
     <string name="account_password">Password</string>
+    <string name="account_forgot_password">Forgot Password</string>
     <string name="account_error">No internet connection</string>
     <string name="account_error_button">Check connection</string>
     <string name="settings_account">Account</string>
