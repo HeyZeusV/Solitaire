@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.Email
@@ -19,6 +20,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -43,6 +45,9 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
@@ -100,10 +105,14 @@ fun SettingsMenu(
         modifier = Modifier.testTag("Settings Menu"),
         onBackPress = onBackPress
     ) {
-        AccountSetting(
-            isConnected = isConnected
-        )
-        AnimationDurationSetting(selectedAnimationDurations) { updateAnimationDurations(it) }
+        Setting(title = R.string.settings_account) {
+            AccountSetting(
+                isConnected = isConnected
+            )
+        }
+        Setting(title = R.string.settings_animation_duration) {
+            AnimationDurationSetting(selectedAnimationDurations) { updateAnimationDurations(it) }
+        }
     }
 }
 
@@ -117,134 +126,121 @@ fun AccountSetting(
 ) {
     var connected by remember { mutableStateOf(isConnected()) }
     var selectedTab by remember { mutableIntStateOf(0) }
-    Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.sColumnSpacedBy))) {
-        Text(
-            text = stringResource(R.string.settings_account),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                textDecoration = TextDecoration.Underline
-            )
-        )
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(272.dp),
-            shape = RoundedCornerShape(4.dp)
-        ) {
-            if (connected) {
-                Column(modifier = Modifier.padding(bottom = 4.dp)) {
-                    TabRow(selectedTabIndex = selectedTab) {
-                        AccountTabs.entries.forEachIndexed { index, tab ->
-                            Tab(
-                                selected = selectedTab == index,
-                                onClick = { selectedTab = index },
-                                modifier = Modifier.height(56.dp)
-                            ) {
-                                Text(stringResource(tab.nameId))
-                            }
-                        }
-                    }
-                    Column(
-                        modifier = Modifier
-                            .height(212.dp)
-                            .padding(horizontal = 4.dp),
-                        verticalArrangement = Arrangement.SpaceEvenly
-                    ) {
-                        if (selectedTab == AccountTabs.SignUp.ordinal) {
-                            AccountTextField(
-                                value = "",
-                                onValueChange = { },
-                                placeHolder = R.string.account_username
-                            ) {
-                                Icon(
-                                    imageVector = Icons.Default.AccountCircle,
-                                    contentDescription = stringResource(id = R.string.account_username)
-                                )
-                            }
-                        }
-                        AccountTextField(
-                            value = "",
-                            onValueChange = { },
-                            placeHolder = R.string.account_email
+
+    Surface(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(272.dp),
+        shape = RoundedCornerShape(4.dp)
+    ) {
+        if (connected) {
+            Column(modifier = Modifier.padding(bottom = 4.dp)) {
+                TabRow(selectedTabIndex = selectedTab) {
+                    AccountTabs.entries.forEachIndexed { index, tab ->
+                        Tab(
+                            selected = selectedTab == index,
+                            onClick = { selectedTab = index },
+                            modifier = Modifier.height(56.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Email,
-                                contentDescription = stringResource(id = R.string.account_username)
-                            )
-                        }
-                        // TODO: Add password visibility button
-                        AccountTextField(
-                            value = "",
-                            onValueChange = { },
-                            placeHolder = R.string.account_password
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Lock,
-                                contentDescription = stringResource(id = R.string.account_username)
-                            )
-                        }
-                        if (selectedTab == AccountTabs.SignUp.ordinal) {
-                            Button(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-                                shape = RoundedCornerShape(4.dp)
-                            ) {
-                                Text(text = stringResource(R.string.account_sign_up))
-                            }
-                        } else {
-                            Button(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
-                                shape = RoundedCornerShape(4.dp)
-                            ) {
-                                Text(text = stringResource(R.string.account_log_in))
-                            }
-                            FilledTonalButton(
-                                onClick = { /*TODO*/ },
-                                modifier = Modifier.fillMaxWidth(),
-                                shape = RoundedCornerShape(4.dp)
-                            ) {
-                                Text(text = stringResource(R.string.account_forgot_password))
-                            }
+                            Text(stringResource(tab.nameId))
                         }
                     }
                 }
-            } else {
                 Column(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 12.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
+                        .height(212.dp)
+                        .padding(horizontal = 4.dp),
+                    verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.Warning,
-                        contentDescription = stringResource(R.string.account_error),
-                        modifier = Modifier
-                            .weight(.4f)
-                            .fillMaxSize(),
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                    Text(
-                        text = stringResource(R.string.account_error),
-                        modifier = Modifier.weight(.1f),
-                        color = MaterialTheme.colorScheme.error
-                    )
-                    Button(
-                        onClick = { connected = isConnected() },
-                        modifier = Modifier.weight(.12f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.error,
-                            contentColor = MaterialTheme.colorScheme.onError
-                        )
+                    if (selectedTab == AccountTabs.SignUp.ordinal) {
+                        AccountTextField(
+                            value = "",
+                            onValueChange = { },
+                            placeholder = R.string.account_username
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = stringResource(id = R.string.account_username)
+                            )
+                        }
+                    }
+                    AccountTextField(
+                        value = "",
+                        onValueChange = { },
+                        placeholder = R.string.account_email
                     ) {
-                        Text(text = stringResource(R.string.account_error_button))
+                        Icon(
+                            imageVector = Icons.Default.Email,
+                            contentDescription = stringResource(id = R.string.account_username)
+                        )
+                    }
+                    PasswordTextField(
+                        value = "",
+                        onValueChange = { },
+                        placeholder = R.string.account_password
+                    )
+                    if (selectedTab == AccountTabs.SignUp.ordinal) {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(text = stringResource(R.string.account_sign_up))
+                        }
+                    } else {
+                        Button(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(top = 4.dp),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(text = stringResource(R.string.account_log_in))
+                        }
+                        FilledTonalButton(
+                            onClick = { /*TODO*/ },
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(4.dp)
+                        ) {
+                            Text(text = stringResource(R.string.account_forgot_password))
+                        }
                     }
                 }
             }
+        } else {
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(bottom = 12.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Warning,
+                    contentDescription = stringResource(R.string.account_error),
+                    modifier = Modifier
+                        .weight(.4f)
+                        .fillMaxSize(),
+                    tint = MaterialTheme.colorScheme.error
+                )
+                Text(
+                    text = stringResource(R.string.account_error),
+                    modifier = Modifier.weight(.1f),
+                    color = MaterialTheme.colorScheme.error
+                )
+                Button(
+                    onClick = { connected = isConnected() },
+                    modifier = Modifier.weight(.12f),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.error,
+                        contentColor = MaterialTheme.colorScheme.onError
+                    )
+                ) {
+                    Text(text = stringResource(R.string.account_error_button))
+                }
+            }
         }
-        HorizontalDivider(
-            modifier = Modifier.fillMaxWidth(),
-            color = MaterialTheme.colorScheme.onSurface
-        )
     }
 }
 
@@ -252,15 +248,53 @@ fun AccountSetting(
 fun AccountTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    @StringRes placeHolder: Int,
+    @StringRes placeholder: Int,
     leadingIcon: @Composable (() -> Unit)
 ) {
     TextField(
         value = value,
         onValueChange = { onValueChange(it) },
         modifier = Modifier.fillMaxWidth(),
-        placeholder = { Text(stringResource(placeHolder))},
+        placeholder = { Text(stringResource(placeholder))},
         leadingIcon = { leadingIcon() },
+        singleLine = true,
+        colors = TextFieldDefaults.colors(
+            focusedContainerColor = Color.Transparent,
+            unfocusedContainerColor = Color.Transparent
+        )
+    )
+}
+
+@Composable
+fun PasswordTextField(
+    value: String,
+    onValueChange: (String) -> Unit,
+    @StringRes placeholder: Int,
+) {
+    var isVisible by remember { mutableStateOf(false) }
+
+    val icon = if (isVisible) painterResource(R.drawable.password_visibility_on)
+    else painterResource(R.drawable.password_visibility_off)
+
+    val visualTransformation =
+        if (isVisible) VisualTransformation.None else PasswordVisualTransformation()
+
+    TextField(
+        value = value,
+        onValueChange = { onValueChange(it) },
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = { Text(text = stringResource(placeholder)) },
+        leadingIcon = { Icon(imageVector = Icons.Default.Lock, contentDescription = "Lock") },
+        trailingIcon = {
+            IconButton(onClick = { isVisible = !isVisible }) {
+                Icon(
+                    painter = icon,
+                    contentDescription = stringResource(R.string.account_password_visibility)
+                )
+            }
+        },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
+        visualTransformation = visualTransformation,
         singleLine = true,
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
@@ -281,12 +315,6 @@ fun AnimationDurationSetting(
     updateAnimationDurations: (AnimationDurations) -> Unit = { }
 ) {
     Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.sColumnSpacedBy))) {
-        Text(
-            text = stringResource(R.string.settings_animation_duration),
-            style = MaterialTheme.typography.headlineSmall.copy(
-                textDecoration = TextDecoration.Underline
-            )
-        )
         SingleChoiceSegmentedButtonRow {
             AnimationDurations.entries.forEachIndexed { index, ad ->
                 SegmentedButton(
@@ -319,6 +347,26 @@ fun AnimationDurationSetting(
                 )
             )
         )
+    }
+}
+
+/**
+ *  Template for any Setting. Provides [Text] to displays [title] at the top, [content] in the
+ *  middle, and a [HorizontalDivider] at the bottom.
+ */
+@Composable
+fun Setting(
+    @StringRes title: Int,
+    content: @Composable () -> Unit
+) {
+    Column(verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.sColumnSpacedBy))) {
+        Text(
+            text = stringResource(title),
+            style = MaterialTheme.typography.headlineSmall.copy(
+                textDecoration = TextDecoration.Underline
+            )
+        )
+        content()
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             color = MaterialTheme.colorScheme.onSurface
