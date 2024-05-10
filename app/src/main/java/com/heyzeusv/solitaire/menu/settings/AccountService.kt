@@ -15,15 +15,16 @@ import javax.inject.Inject
  */
 class AccountService @Inject constructor(private val auth: FirebaseAuth) {
 
-    val currentUser: Flow<User>
-        get() = callbackFlow {
-            val listener =
-                FirebaseAuth.AuthStateListener { auth ->
-                    this.trySend(auth.currentUser?.let { User(it.uid, it.isAnonymous) } ?: User())
-                }
-            auth.addAuthStateListener(listener)
-            awaitClose { auth.removeAuthStateListener(listener) }
-        }
+    val hasUser: Boolean = auth.currentUser != null
+
+    val currentUser: Flow<User> = callbackFlow {
+        val listener =
+            FirebaseAuth.AuthStateListener { auth ->
+                this.trySend(auth.currentUser?.let { User(it.uid, it.isAnonymous) } ?: User())
+            }
+        auth.addAuthStateListener(listener)
+        awaitClose { auth.removeAuthStateListener(listener) }
+    }
 
     suspend fun authenticate(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).await()

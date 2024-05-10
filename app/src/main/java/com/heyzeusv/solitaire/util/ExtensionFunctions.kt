@@ -1,5 +1,7 @@
 package com.heyzeusv.solitaire.util
 
+import android.net.ConnectivityManager
+import android.net.NetworkCapabilities
 import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -157,3 +159,23 @@ fun List<Card>.notInOrderOrAltColor(): Boolean {
  *  Checks if list is in order and alternating color
  */
 fun List<Card>.inOrderAndAltColor(): Boolean = !this.notInOrderOrAltColor()
+
+/**
+ *  Checks if current network, if any, has a valid internet connect.
+ */
+fun ConnectivityManager.isConnected(): Boolean =
+    this.getNetworkCapabilities(this.activeNetwork).isNetworkCapabilitiesValid()
+
+/**
+ *  Checks if current network, if any, has a valid internet connect.
+ */
+fun NetworkCapabilities?.isNetworkCapabilitiesValid(): Boolean = when {
+    this == null -> false
+    hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+    hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) &&
+    (hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+    hasTransport(NetworkCapabilities.TRANSPORT_VPN) ||
+    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+    hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) -> true
+    else -> false
+}

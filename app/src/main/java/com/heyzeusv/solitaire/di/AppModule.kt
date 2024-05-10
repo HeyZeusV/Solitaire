@@ -1,7 +1,9 @@
 package com.heyzeusv.solitaire.di
 
 import android.content.Context
+import android.net.ConnectivityManager
 import android.util.DisplayMetrics
+import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
@@ -33,6 +35,13 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
+
+    /**
+     *  Provides [ConnectivityManager] to determine if device has access to internet.
+     */
+    @Provides
+    fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager =
+        context.getSystemService<ConnectivityManager>()!!
 
     /**
      *  Provides [DisplayMetrics] to determine screen size.

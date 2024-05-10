@@ -120,4 +120,6 @@
     <string name="rules_waste">Waste</string>
     <string name="rules_foundation">Foundation</string>
     <string name="rules_tableau">Tableau</string>
+    <string name="splash_error">Something went wrong, please try again.</string>
+    <string name="splash_error_button">Try again</string>
 </resources>

@@ -4,15 +4,12 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.Image
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,15 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.ImageShader
 import androidx.compose.ui.graphics.ShaderBrush
 import androidx.compose.ui.graphics.TileMode
-import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.imageResource
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
 import androidx.navigation.NavHostController
@@ -39,18 +32,18 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.heyzeusv.solitaire.board.Board
 import com.heyzeusv.solitaire.board.GameViewModel
+import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.games.Games
-import com.heyzeusv.solitaire.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.menu.MenuContainer
-import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.menu.MenuViewModel
+import com.heyzeusv.solitaire.scoreboard.SolitaireScoreboard
+import com.heyzeusv.solitaire.splash.SplashScreen
 import com.heyzeusv.solitaire.toolbar.Toolbar
+import com.heyzeusv.solitaire.util.NavScreens
 import com.heyzeusv.solitaire.util.composables.CloseGameAlertDialog
 import com.heyzeusv.solitaire.util.composables.GameWonAlertDialog
-import com.heyzeusv.solitaire.board.animation.AnimationDurations
-import com.heyzeusv.solitaire.util.NavScreens
+import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -100,8 +93,15 @@ fun SolitaireApp(
     NavHost(
         navController = navController,
         startDestination = NavScreens.Splash.route,
-        enterTransition = { fadeIn(animationSpec = tween(1500)) },
-        exitTransition = { fadeOut(animationSpec = tween(1500)) }
+        enterTransition = { slideInHorizontally(
+            animationSpec = tween(1500),
+            initialOffsetX = { -it }
+        ) },
+        exitTransition = {
+            slideOutHorizontally(
+                animationSpec = tween(1500),
+                targetOffsetX = { it }
+            ) }
     ) {
         composable(route = NavScreens.Splash.route) {
             SplashScreen(navController = navController)
@@ -162,37 +162,4 @@ fun GameScreen(
     }
     CloseGameAlertDialog(gameVM = gameVM, menuVM = menuVM, finishApp = finishApp)
     GameWonAlertDialog(gameVM = gameVM, menuVM = menuVM)
-}
-
-/**
- *  First screen that user sees in order to give Settings to load correct game. Uses
- *  [navController] to navigate to [GameScreen] after short delay.
- */
-@Composable
-fun SplashScreen(navController: NavHostController) {
-    LaunchedEffect(key1 = Unit) {
-        val delay = (1500L..2500L).random()
-        delay(delay)
-        navController.navigate(NavScreens.Game.route)
-    }
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.surface)
-    ) {
-        Box(modifier = Modifier.align(Alignment.Center)) {
-            Image(
-                painter = painterResource(R.mipmap.ic_launcher_background),
-                contentDescription = null,
-                modifier = Modifier.shadow(
-                    elevation = dimensionResource(R.dimen.aImageElevation),
-                    shape = RoundedCornerShape(dimensionResource(R.dimen.aImageRoundSize))
-                )
-            )
-            Image(
-                painter = painterResource(R.mipmap.ic_launcher_foreground),
-                contentDescription = stringResource(R.string.app_name)
-            )
-        }
-    }
 }
