@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.util
 
 import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
+import android.util.Patterns
 import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -14,6 +15,7 @@ import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.board.piles.Card
 import java.text.DecimalFormat
+import java.util.regex.Pattern
 
 fun Long.formatTimeDisplay(): String {
     val minutes = this / 60
@@ -178,4 +180,21 @@ fun NetworkCapabilities?.isNetworkCapabilitiesValid(): Boolean = when {
     hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
     hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) -> true
     else -> false
+}
+
+private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\\p{P}|.*\\p{S}).{6,}\$"
+
+/**
+ *  Uses pre-made [Patterns.EMAIL_ADDRESS] to check if email is valid
+ */
+fun String.isValidEmail(): Boolean {
+    return this.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+}
+
+/**
+ *  Uses custom regex [PASS_PATTERN] which requires at least 1 digit, upper, lower, and symbol and
+ *  must be a size of at least 6.
+ */
+fun String.isValidPassword(): Boolean {
+    return this.isNotBlank() && Pattern.compile(PASS_PATTERN).matcher(this).matches()
 }

@@ -69,10 +69,15 @@ import com.heyzeusv.solitaire.util.theme.Purple80
 @Composable
 fun SettingsMenu(menuVM: MenuViewModel) {
     val settings by menuVM.settings.collectAsState()
+    val uiState by menuVM.uiState.collectAsState()
     val selectedAnimationDurations = AnimationDurations from settings.animationDurations
 
     SettingsMenu(
         isConnected = menuVM::isConnected,
+        uiState = uiState,
+        updateUsername = menuVM::updateUsername,
+        updateEmail = menuVM::updateEmail,
+        updatePassword = menuVM::updatePassword,
         selectedAnimationDurations = selectedAnimationDurations,
         updateAnimationDurations = menuVM::updateAnimationDurations
     ) {
@@ -96,6 +101,10 @@ fun SettingsMenu(menuVM: MenuViewModel) {
 @Composable
 fun SettingsMenu(
     isConnected: () -> Boolean = { false },
+    uiState: AccountUiState,
+    updateUsername: (String) -> Unit = { },
+    updateEmail: (String) -> Unit = { },
+    updatePassword: (String) -> Unit = { },
     selectedAnimationDurations: AnimationDurations,
     updateAnimationDurations: (AnimationDurations) -> Unit = { },
     onBackPress: () -> Unit = { }
@@ -107,7 +116,11 @@ fun SettingsMenu(
     ) {
         Setting(title = R.string.settings_account) {
             AccountSetting(
-                isConnected = isConnected
+                isConnected = isConnected,
+                uiState = uiState,
+                updateUsername = updateUsername,
+                updateEmail = updateEmail,
+                updatePassword = updatePassword,
             )
         }
         Setting(title = R.string.settings_animation_duration) {
@@ -122,7 +135,11 @@ fun SettingsMenu(
  */
 @Composable
 fun AccountSetting(
-    isConnected: () -> Boolean = { false }
+    isConnected: () -> Boolean = { false },
+    uiState: AccountUiState,
+    updateUsername: (String) -> Unit = { },
+    updateEmail: (String) -> Unit = { },
+    updatePassword: (String) -> Unit = { }
 ) {
     var connected by remember { mutableStateOf(isConnected()) }
     var selectedTab by remember { mutableIntStateOf(0) }
@@ -154,8 +171,8 @@ fun AccountSetting(
                 ) {
                     if (selectedTab == AccountTabs.SignUp.ordinal) {
                         AccountTextField(
-                            value = "",
-                            onValueChange = { },
+                            value = uiState.username,
+                            onValueChange = { updateUsername(it) },
                             placeholder = R.string.account_username
                         ) {
                             Icon(
@@ -165,8 +182,8 @@ fun AccountSetting(
                         }
                     }
                     AccountTextField(
-                        value = "",
-                        onValueChange = { },
+                        value = uiState.email,
+                        onValueChange = { updateEmail(it) },
                         placeholder = R.string.account_email
                     ) {
                         Icon(
@@ -175,8 +192,8 @@ fun AccountSetting(
                         )
                     }
                     PasswordTextField(
-                        value = "",
-                        onValueChange = { },
+                        value = uiState.password,
+                        onValueChange = { updatePassword(it) },
                         placeholder = R.string.account_password
                     )
                     if (selectedTab == AccountTabs.SignUp.ordinal) {
@@ -381,6 +398,7 @@ fun SettingsMenuPreview() {
         Preview {
             SettingsMenu(
                 isConnected = { true },
+                uiState = AccountUiState(),
                 selectedAnimationDurations = AnimationDurations.None
             )
         }
@@ -392,7 +410,10 @@ fun SettingsMenuPreview() {
 fun AccountSettingPreview() {
     PreviewUtil().apply {
         Preview {
-            AccountSetting { true }
+            AccountSetting(
+                isConnected = { true },
+                uiState = AccountUiState()
+            )
         }
     }
 }
@@ -402,7 +423,10 @@ fun AccountSettingPreview() {
 fun AccountSettingErrorPreview() {
     PreviewUtil().apply {
         Preview {
-            AccountSetting()
+            AccountSetting(
+                isConnected = { false },
+                uiState = AccountUiState()
+            )
         }
     }
 }

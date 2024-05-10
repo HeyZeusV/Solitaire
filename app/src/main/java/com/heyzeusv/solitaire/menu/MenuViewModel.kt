@@ -10,11 +10,13 @@ import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.menu.settings.AccountUiState
 import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.util.isConnected
+import com.heyzeusv.solitaire.util.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -46,6 +48,12 @@ class MenuViewModel @Inject constructor(
         updateDisplayMenuButtons()
         updateMenuState(newMenuState)
     }
+
+    private val _uiState = MutableStateFlow(AccountUiState())
+    val uiState: StateFlow<AccountUiState> get() = _uiState
+    fun updateUsername(newValue: String) { _uiState.value = _uiState.value.copy(username = newValue) }
+    fun updateEmail(newValue: String) { _uiState.value = _uiState.value.copy(email = newValue) }
+    fun updatePassword(newValue: String) { _uiState.value = _uiState.value.copy(password = newValue) }
 
     val settings: StateFlow<Settings> = settingsManager.settingsData.stateIn(
         scope = viewModelScope,
@@ -147,4 +155,11 @@ class MenuViewModel @Inject constructor(
     }
 
     fun isConnected(): Boolean = connectManager.isConnected()
+
+    fun onLogInClick() {
+        if (!uiState.value.email.isValidEmail()) {
+            return
+        }
+
+    }
 }
