@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.scoreboard.LastGameStats
@@ -15,6 +16,7 @@ import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
+import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.isConnected
 import com.heyzeusv.solitaire.util.isValidEmail
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -158,6 +160,7 @@ class MenuViewModel @Inject constructor(
 
     fun onLogInClick() {
         if (!uiState.value.email.isValidEmail()) {
+            SnackbarManager.showMessage(R.string.email_error)
             return
         }
 

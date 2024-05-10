@@ -78,6 +78,7 @@ fun SettingsMenu(menuVM: MenuViewModel) {
         updateUsername = menuVM::updateUsername,
         updateEmail = menuVM::updateEmail,
         updatePassword = menuVM::updatePassword,
+        logInOnClick = menuVM::onLogInClick,
         selectedAnimationDurations = selectedAnimationDurations,
         updateAnimationDurations = menuVM::updateAnimationDurations
     ) {
@@ -105,6 +106,7 @@ fun SettingsMenu(
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
     updatePassword: (String) -> Unit = { },
+    logInOnClick: () -> Unit = { },
     selectedAnimationDurations: AnimationDurations,
     updateAnimationDurations: (AnimationDurations) -> Unit = { },
     onBackPress: () -> Unit = { }
@@ -121,6 +123,7 @@ fun SettingsMenu(
                 updateUsername = updateUsername,
                 updateEmail = updateEmail,
                 updatePassword = updatePassword,
+                logInOnClick = logInOnClick,
             )
         }
         Setting(title = R.string.settings_animation_duration) {
@@ -139,8 +142,9 @@ fun AccountSetting(
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
-    updatePassword: (String) -> Unit = { }
-) {
+    updatePassword: (String) -> Unit = { },
+    logInOnClick: () -> Unit = { },
+    ) {
     var connected by remember { mutableStateOf(isConnected()) }
     var selectedTab by remember { mutableIntStateOf(0) }
 
@@ -208,7 +212,7 @@ fun AccountSetting(
                         }
                     } else {
                         Button(
-                            onClick = { /*TODO*/ },
+                            onClick = { logInOnClick() },
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(top = 4.dp),
@@ -235,14 +239,14 @@ fun AccountSetting(
             ) {
                 Icon(
                     imageVector = Icons.Default.Warning,
-                    contentDescription = stringResource(R.string.account_error),
+                    contentDescription = stringResource(R.string.internet_error),
                     modifier = Modifier
                         .weight(.4f)
                         .fillMaxSize(),
                     tint = MaterialTheme.colorScheme.error
                 )
                 Text(
-                    text = stringResource(R.string.account_error),
+                    text = stringResource(R.string.internet_error),
                     modifier = Modifier.weight(.1f),
                     color = MaterialTheme.colorScheme.error
                 )
@@ -254,7 +258,7 @@ fun AccountSetting(
                         contentColor = MaterialTheme.colorScheme.onError
                     )
                 ) {
-                    Text(text = stringResource(R.string.account_error_button))
+                    Text(text = stringResource(R.string.internet_error_button))
                 }
             }
         }
