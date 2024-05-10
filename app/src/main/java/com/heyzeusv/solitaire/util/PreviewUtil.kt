@@ -3,8 +3,10 @@ package com.heyzeusv.solitaire.util
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Card
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
@@ -39,7 +41,10 @@ class PreviewUtil {
     @Composable
     fun Preview(content: @Composable () -> Unit) {
         SolitaireTheme {
-            Box(Modifier.fillMaxWidth().background(PreviewBG)) {
+            Card(
+                modifier = Modifier.fillMaxWidth().background(PreviewBG),
+                shape = RectangleShape
+            ) {
                 content()
             }
         }

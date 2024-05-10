@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.menu
 
+import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.Game
@@ -13,6 +14,7 @@ import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
+import com.heyzeusv.solitaire.util.isConnected
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -30,9 +32,9 @@ import javax.inject.Inject
 @HiltViewModel
 class MenuViewModel @Inject constructor(
     private val settingsManager: SettingsManager,
-    private val statManager: StatManager
+    private val statManager: StatManager,
+    private val connectManager: ConnectivityManager
 ) : ViewModel() {
-
     private val _displayMenuButtons = MutableStateFlow(false)
     val displayMenuButtons: StateFlow<Boolean> get() = _displayMenuButtons
     private fun updateDisplayMenuButtons() { _displayMenuButtons.value = !_displayMenuButtons.value }
@@ -143,4 +145,6 @@ class MenuViewModel @Inject constructor(
             }
         }
     }
+
+    fun isConnected(): Boolean = connectManager.isConnected()
 }
