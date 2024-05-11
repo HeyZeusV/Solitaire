@@ -14,23 +14,45 @@ import javax.inject.Inject
  */
 class AccountService @Inject constructor(private val auth: FirebaseAuth) {
 
-    val hasUser: Boolean = auth.currentUser != null
+    val currentUserId: String
+        get() = auth.currentUser?.uid.orEmpty()
 
-    val currentUser: Flow<User> = callbackFlow {
-        val listener =
-            FirebaseAuth.AuthStateListener { auth ->
-                this.trySend(auth.currentUser?.let { User(it.uid, it.displayName, it.isAnonymous) } ?: User())
-            }
-        auth.addAuthStateListener(listener)
-        awaitClose { auth.removeAuthStateListener(listener) }
-    }
+    val hasUser: Boolean
+        get() = auth.currentUser != null
+
+    val isAnonymous: Boolean
+        get() = auth.currentUser!!.isAnonymous
+
+    val currentUser: Flow<User>
+        get() = callbackFlow {
+            val listener =
+                FirebaseAuth.AuthStateListener { auth ->
+                    this.trySend(auth.currentUser?.let { User(it.uid, it.displayName, it.isAnonymous) } ?: User())
+                }
+            auth.addAuthStateListener(listener)
+            awaitClose { auth.removeAuthStateListener(listener) }
+        }
 
     suspend fun authenticate(email: String, password: String) {
+        auth.currentUser?.let {
+            if (it.isAnonymous) {
+                it.delete()
+                auth.signOut()
+            }
+        }
         auth.signInWithEmailAndPassword(email, password).await()
     }
 
     suspend fun createAnonymousAccount() {
         auth.signInAnonymously().await()
+    }
+
+    suspend fun recreateAnonymousAccount() {
+        auth.currentUser?.let {
+            it.delete()
+            auth.signOut()
+            auth.signInAnonymously().await()
+        }
     }
 
     suspend fun createAccount(email: String, password: String) {

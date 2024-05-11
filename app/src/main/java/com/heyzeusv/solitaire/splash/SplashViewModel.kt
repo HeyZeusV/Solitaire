@@ -35,7 +35,11 @@ class SplashViewModel @Inject constructor(
         _showError.value = false
         if (connectManager.isConnected()) {
             if (accountService.hasUser) {
-                navigate()
+                if (accountService.isAnonymous) {
+                    recreateAnonymousAccount(navigate)
+                } else {
+                    navigate()
+                }
             } else {
                 createAnonymousAccount(navigate)
             }
@@ -52,6 +56,17 @@ class SplashViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 accountService.createAnonymousAccount()
+                navigate()
+            } catch (ex: FirebaseAuthException) {
+                _showError.value = true
+            }
+        }
+    }
+
+    private fun recreateAnonymousAccount(navigate: () -> Unit) {
+        viewModelScope.launch {
+            try {
+                accountService.recreateAnonymousAccount()
                 navigate()
             } catch (ex: FirebaseAuthException) {
                 _showError.value = true

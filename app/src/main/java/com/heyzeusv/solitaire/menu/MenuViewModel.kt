@@ -17,6 +17,7 @@ import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
+import com.heyzeusv.solitaire.service.StorageService
 import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
 import com.heyzeusv.solitaire.util.isConnected
@@ -44,7 +45,8 @@ class MenuViewModel @Inject constructor(
     private val settingsManager: SettingsManager,
     private val statManager: StatManager,
     private val connectManager: ConnectivityManager,
-    private val accountService: AccountService
+    private val accountService: AccountService,
+    private val storageService: StorageService
 ) : ViewModel() {
     private val _displayMenuButtons = MutableStateFlow(false)
     val displayMenuButtons: StateFlow<Boolean> get() = _displayMenuButtons
@@ -183,6 +185,7 @@ class MenuViewModel @Inject constructor(
             }
 
             launchCatching {
+                storageService.addUsername(it.username.trim().lowercase(), it.email)
                 accountService.createAccount(it.email, it.password)
                 accountService.updateDisplayName(it.username.trim())
             }
