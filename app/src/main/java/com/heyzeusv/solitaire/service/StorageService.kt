@@ -9,6 +9,10 @@ class StorageService @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: AccountService
 ) {
+    suspend fun emailExists(email: String): Boolean {
+        val query = firestore.collection(USER_COLLECTION).whereEqualTo("email", email)
+        return !query.get().await().isEmpty
+    }
 
     suspend fun addUsername(usernameToAdd: String, email: String) {
         val user = hashMapOf("username" to usernameToAdd, "email" to email)

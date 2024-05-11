@@ -123,6 +123,7 @@
     <string name="internet_error_button">Check connection</string>
     <string name="username_error">Please enter a different username.</string>
     <string name="email_error">Please use a valid email.</string>
+    <string name="email_in_use_error">Email is already registered.</string>
     <string name="password_error">Password must be at least 6 characters long and contain at least 1 digit, 1 lowercase letter, 1 uppercase letter, and 1 symbol.</string>
     <string name="empty_password_error">Password cannot be empty.</string>
     <string name="generic_error">Something went wrong. Please try again.</string>

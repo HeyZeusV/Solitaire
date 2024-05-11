@@ -185,9 +185,13 @@ class MenuViewModel @Inject constructor(
             }
 
             launchCatching {
-                storageService.addUsername(it.username.trim().lowercase(), it.email)
-                accountService.createAccount(it.email, it.password)
-                accountService.updateDisplayName(it.username.trim())
+                if (storageService.emailExists(it.email)) {
+                    SnackbarManager.showMessage(R.string.email_in_use_error)
+                } else {
+                    storageService.addUsername(it.username.trim().lowercase(), it.email)
+                    accountService.createAccount(it.email, it.password)
+                    accountService.updateDisplayName(it.username.trim())
+                }
             }
         }
     }
