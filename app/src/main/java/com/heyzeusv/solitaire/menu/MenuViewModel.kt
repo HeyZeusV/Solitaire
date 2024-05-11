@@ -12,6 +12,8 @@ import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.menu.settings.AccountService
+import com.heyzeusv.solitaire.menu.settings.AccountStatus
+import com.heyzeusv.solitaire.menu.settings.AccountStatus.*
 import com.heyzeusv.solitaire.menu.settings.AccountUiState
 import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
@@ -61,6 +63,8 @@ class MenuViewModel @Inject constructor(
     }
 
     val currentUser = accountService.currentUser
+    private val _accountStatus = MutableStateFlow<AccountStatus>(Idle)
+    val accountStatus: StateFlow<AccountStatus> get() = _accountStatus
 
     private val _uiState = MutableStateFlow(AccountUiState())
     val uiState: StateFlow<AccountUiState> get() = _uiState
@@ -185,10 +189,13 @@ class MenuViewModel @Inject constructor(
             }
 
             launchCatching {
+                _accountStatus.value = EmailCheck()
                 if (storageService.emailExists(it.email)) {
                     SnackbarManager.showMessage(R.string.email_in_use_error)
                 } else {
+                    _accountStatus.value = UsernameCheck()
                     storageService.addUsername(it.username.trim().lowercase(), it.email)
+                    _accountStatus.value = CreateAccount()
                     accountService.createAccount(it.email, it.password)
                     accountService.updateDisplayName(it.username.trim())
                 }
@@ -239,7 +246,11 @@ class MenuViewModel @Inject constructor(
     private fun launchCatching(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(
             CoroutineExceptionHandler { _, throwable ->
+                _accountStatus.value = Idle
                 SnackbarManager.showMessage(throwable.toSnackbarMessage())
             }
-        ) { block() }
+        ) {
+            block()
+            _accountStatus.value = Idle
+        }
 }

@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.menu.settings
 
+import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -7,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
 import androidx.compose.material3.HorizontalDivider
@@ -54,6 +57,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.menu.MenuScreen
 import com.heyzeusv.solitaire.menu.MenuViewModel
@@ -63,20 +67,23 @@ import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.theme.Purple80
+import com.heyzeusv.solitaire.util.theme.TransparentDarkBG
 
 /**
  *  Composable that displays Menu which allows user to change various Settings.
  */
 @Composable
 fun SettingsMenu(menuVM: MenuViewModel) {
+    val accountStatus by menuVM.accountStatus.collectAsState()
     val settings by menuVM.settings.collectAsState()
     val currentUser by menuVM.currentUser.collectAsState(initial = User())
     val uiState by menuVM.uiState.collectAsState()
     val selectedAnimationDurations = AnimationDurations from settings.animationDurations
 
     SettingsMenu(
-        user = currentUser,
+        accountStatus = accountStatus,
         isConnected = menuVM::isConnected,
+        user = currentUser,
         uiState = uiState,
         updateUsername = menuVM::updateUsername,
         updateEmail = menuVM::updateEmail,
@@ -107,6 +114,7 @@ fun SettingsMenu(menuVM: MenuViewModel) {
  */
 @Composable
 fun SettingsMenu(
+    accountStatus: AccountStatus = AccountStatus.Idle,
     isConnected: () -> Boolean = { false },
     user: User,
     uiState: AccountUiState,
@@ -121,6 +129,31 @@ fun SettingsMenu(
     updateAnimationDurations: (AnimationDurations) -> Unit = { },
     onBackPress: () -> Unit = { }
 ) {
+    if (accountStatus != AccountStatus.Idle) {
+        BackHandler { }
+        Surface(
+            modifier = Modifier
+                .fillMaxSize()
+                .zIndex(10f),
+            color = TransparentDarkBG
+        ) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(200.dp),
+                    color = Purple80,
+                    strokeWidth = 10.dp
+                )
+                Text(
+                    text = stringResource(accountStatus.message),
+                    style = MaterialTheme.typography.headlineMedium
+                )
+            }
+        }
+    }
     MenuScreen(
         menu = MenuState.Settings,
         modifier = Modifier.testTag("Settings Menu"),
@@ -462,6 +495,7 @@ fun SettingsMenuPreview() {
     PreviewUtil().apply {
         Preview {
             SettingsMenu(
+                accountStatus =  AccountStatus.CreateAccount(),
                 isConnected = { true },
                 user = User(),
                 uiState = AccountUiState(),
