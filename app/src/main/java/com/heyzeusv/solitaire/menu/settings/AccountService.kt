@@ -74,6 +74,10 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
         // Sign the user back in anonymously.
         createAnonymousAccount()
     }
+
+    suspend fun sendRecoveryEmail(email: String) {
+        auth.sendPasswordResetEmail(email).await()
+    }
 }
 
 data class User(

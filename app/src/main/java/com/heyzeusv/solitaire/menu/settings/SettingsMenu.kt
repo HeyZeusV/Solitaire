@@ -84,6 +84,7 @@ fun SettingsMenu(menuVM: MenuViewModel) {
         signUpOnClick = menuVM::signUpOnClick,
         logInOnClick = menuVM::logInOnClick,
         signOutOnClick = menuVM::signOutOnClick,
+        forgotPasswordOnClick = menuVM::forgotPasswordOnClick,
         selectedAnimationDurations = selectedAnimationDurations,
         updateAnimationDurations = menuVM::updateAnimationDurations
     ) {
@@ -115,6 +116,7 @@ fun SettingsMenu(
     signUpOnClick: () -> Unit = { },
     logInOnClick: () -> Unit = { },
     signOutOnClick: () -> Unit = { },
+    forgotPasswordOnClick: () -> Unit = { },
     selectedAnimationDurations: AnimationDurations,
     updateAnimationDurations: (AnimationDurations) -> Unit = { },
     onBackPress: () -> Unit = { }
@@ -134,7 +136,8 @@ fun SettingsMenu(
                 updatePassword = updatePassword,
                 signUpOnClick = signUpOnClick,
                 logInOnClick = logInOnClick,
-                signOutOnClick = signOutOnClick
+                signOutOnClick = signOutOnClick,
+                forgotPasswordOnClick = forgotPasswordOnClick
             )
         }
         Setting(title = R.string.settings_animation_duration) {
@@ -157,7 +160,8 @@ fun AccountSetting(
     updatePassword: (String) -> Unit = { },
     signUpOnClick: () -> Unit = { },
     logInOnClick: () -> Unit = { },
-    signOutOnClick: () -> Unit = { }
+    signOutOnClick: () -> Unit = { },
+    forgotPasswordOnClick: () -> Unit = { }
     ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var connected by remember { mutableStateOf(isConnected()) }
@@ -273,7 +277,7 @@ fun AccountSetting(
                             Text(text = stringResource(R.string.account_log_in))
                         }
                         FilledTonalButton(
-                            onClick = { /*TODO*/ },
+                            onClick = { forgotPasswordOnClick() },
                             modifier = Modifier.fillMaxWidth(),
                             shape = RoundedCornerShape(4.dp)
                         ) {

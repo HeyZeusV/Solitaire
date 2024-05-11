@@ -219,6 +219,20 @@ class MenuViewModel @Inject constructor(
         }
     }
 
+    fun forgotPasswordOnClick() {
+        uiState.value.let {
+            if (!it.email.isValidEmail()) {
+                SnackbarManager.showMessage(R.string.email_error)
+                return
+            }
+
+            launchCatching {
+                accountService.sendRecoveryEmail(it.email)
+                SnackbarManager.showMessage(R.string.email_password_recovery)
+            }
+        }
+    }
+
     /**
      *  Attempts to run [block], if exception is caught, displays message as Snackbar.
      */
