@@ -114,7 +114,7 @@ fun SettingsMenu(menuVM: MenuViewModel) {
  */
 @Composable
 fun SettingsMenu(
-    accountStatus: AccountStatus = AccountStatus.Idle,
+    accountStatus: AccountStatus = AccountStatus.Idle(),
     isConnected: () -> Boolean = { false },
     user: User,
     uiState: AccountUiState,
@@ -129,7 +129,7 @@ fun SettingsMenu(
     updateAnimationDurations: (AnimationDurations) -> Unit = { },
     onBackPress: () -> Unit = { }
 ) {
-    if (accountStatus != AccountStatus.Idle) {
+    if (accountStatus !is AccountStatus.Idle) {
         BackHandler { }
         Surface(
             modifier = Modifier
@@ -275,7 +275,7 @@ fun AccountSetting(
                     ) {
                         Icon(
                             imageVector = Icons.Default.Email,
-                            contentDescription = stringResource(id = R.string.account_username)
+                            contentDescription = stringResource(id = R.string.account_email)
                         )
                     }
                     PasswordTextField(
@@ -376,7 +376,8 @@ fun AccountTextField(
         colors = TextFieldDefaults.colors(
             focusedContainerColor = Color.Transparent,
             unfocusedContainerColor = Color.Transparent
-        )
+        ),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email)
     )
 }
 

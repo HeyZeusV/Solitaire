@@ -63,7 +63,7 @@ class MenuViewModel @Inject constructor(
     }
 
     val currentUser = accountService.currentUser
-    private val _accountStatus = MutableStateFlow<AccountStatus>(Idle)
+    private val _accountStatus = MutableStateFlow<AccountStatus>(Idle())
     val accountStatus: StateFlow<AccountStatus> get() = _accountStatus
 
     private val _uiState = MutableStateFlow(AccountUiState())
@@ -175,11 +175,11 @@ class MenuViewModel @Inject constructor(
 
     fun signUpOnClick() {
         uiState.value.let {
-            if (!it.username.isValidUsername()) {
+            if (!it.username.trim().isValidUsername()) {
                 SnackbarManager.showMessage(R.string.username_error)
                 return
             }
-            if (!it.email.isValidEmail()) {
+            if (!it.email.trim().isValidEmail()) {
                 SnackbarManager.showMessage(R.string.email_error)
                 return
             }
@@ -189,14 +189,13 @@ class MenuViewModel @Inject constructor(
             }
 
             launchCatching {
-                _accountStatus.value = EmailCheck()
-                if (storageService.emailExists(it.email)) {
-                    SnackbarManager.showMessage(R.string.email_in_use_error)
+                _accountStatus.value = UsernameCheck()
+                if (storageService.usernameExists(it.username.trim().lowercase())) {
+                    SnackbarManager.showMessage(R.string.username_in_use_error)
                 } else {
-                    _accountStatus.value = UsernameCheck()
-                    storageService.addUsername(it.username.trim().lowercase(), it.email)
                     _accountStatus.value = CreateAccount()
-                    accountService.createAccount(it.email, it.password)
+                    accountService.createAccount(it.email.trim(), it.password)
+                    storageService.addUsername(it.username.trim().lowercase(), it.email.trim())
                     accountService.updateDisplayName(it.username.trim())
                 }
             }
@@ -246,11 +245,11 @@ class MenuViewModel @Inject constructor(
     private fun launchCatching(block: suspend CoroutineScope.() -> Unit) =
         viewModelScope.launch(
             CoroutineExceptionHandler { _, throwable ->
-                _accountStatus.value = Idle
+                _accountStatus.value = Idle()
                 SnackbarManager.showMessage(throwable.toSnackbarMessage())
             }
         ) {
             block()
-            _accountStatus.value = Idle
+            _accountStatus.value = Idle()
         }
 }

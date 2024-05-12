@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.service
 
+import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.heyzeusv.solitaire.menu.settings.AccountService
 import kotlinx.coroutines.tasks.await
@@ -9,8 +10,9 @@ class StorageService @Inject constructor(
     private val firestore: FirebaseFirestore,
     private val auth: AccountService
 ) {
-    suspend fun emailExists(email: String): Boolean {
-        val query = firestore.collection(USER_COLLECTION).whereEqualTo("email", email)
+    suspend fun usernameExists(username: String): Boolean {
+        val query =
+            firestore.collection(USERNAME_COLLECTION).whereEqualTo(FieldPath.documentId(), username)
         return !query.get().await().isEmpty
     }
 
