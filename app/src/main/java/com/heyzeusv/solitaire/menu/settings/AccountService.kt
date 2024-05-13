@@ -30,22 +30,10 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
         }
 
     suspend fun authenticate(email: String, password: String) {
-        auth.currentUser?.let {
-            if (it.isAnonymous) {
-                it.delete()
-                auth.signOut()
-            }
-        }
         auth.signInWithEmailAndPassword(email, password).await()
     }
 
     suspend fun createAccount(email: String, password: String) {
-        auth.currentUser?.let {
-            if (it.isAnonymous) {
-                it.delete()
-                auth.signOut()
-            }
-        }
         auth.createUserWithEmailAndPassword(email, password).await()
     }
 

@@ -7,6 +7,7 @@ import androidx.core.content.getSystemService
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.DataStoreFactory
 import androidx.datastore.dataStoreFile
+import androidx.lifecycle.LifecycleCoroutineScope
 import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.board.layouts.ScreenLayouts
@@ -19,6 +20,7 @@ import com.heyzeusv.solitaire.board.layouts.Width960
 import com.heyzeusv.solitaire.board.piles.ShuffleSeed
 import com.heyzeusv.solitaire.menu.settings.SettingsSerializer
 import com.heyzeusv.solitaire.menu.stats.StatPreferencesSerializer
+import com.heyzeusv.solitaire.util.MyConnectivityManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -42,6 +44,17 @@ class AppModule {
     @Provides
     fun provideConnectivityManager(@ApplicationContext context: Context): ConnectivityManager =
         context.getSystemService<ConnectivityManager>()!!
+
+    /**
+     *  Provides [MyConnectivityManager] which contains StateFlow that is used to determine if
+     *  device has access to internet.
+     */
+    @Provides
+    fun provideConnectivityManager(
+        @ApplicationContext context: Context,
+        scope: LifecycleCoroutineScope
+    ): MyConnectivityManager =
+        MyConnectivityManager(context, scope)
 
     /**
      *  Provides [DisplayMetrics] to determine screen size.
