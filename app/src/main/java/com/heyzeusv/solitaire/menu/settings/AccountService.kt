@@ -1,7 +1,6 @@
 package com.heyzeusv.solitaire.menu.settings
 
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.userProfileChangeRequest
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -48,12 +47,6 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
             }
         }
         auth.createUserWithEmailAndPassword(email, password).await()
-    }
-
-    suspend fun updateDisplayName(username: String) {
-        auth.currentUser!!.updateProfile(userProfileChangeRequest {
-            displayName = username
-        }).await()
     }
 
     fun signOut() {

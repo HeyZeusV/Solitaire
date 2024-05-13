@@ -17,12 +17,16 @@ class StorageService @Inject constructor(
     }
 
     suspend fun addUsername(usernameToAdd: String, email: String) {
-        val user = hashMapOf("username" to usernameToAdd, "email" to email)
+        val user = hashMapOf(
+            "username" to usernameToAdd,
+            "usernameLower" to usernameToAdd.lowercase(),
+            "email" to email
+        )
         val username = hashMapOf("userId" to auth.currentUserId)
         firestore.runBatch { batch ->
             batch.set(firestore.collection(USER_COLLECTION).document(auth.currentUserId), user)
             batch.set(
-                firestore.collection(USERNAME_COLLECTION).document(usernameToAdd),
+                firestore.collection(USERNAME_COLLECTION).document(usernameToAdd.lowercase()),
                 username
             )
         }.await()

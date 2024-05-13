@@ -195,8 +195,7 @@ class MenuViewModel @Inject constructor(
                 } else {
                     _accountStatus.value = CreateAccount()
                     accountService.createAccount(it.email.trim(), it.password)
-                    storageService.addUsername(it.username.trim().lowercase(), it.email.trim())
-                    accountService.updateDisplayName(it.username.trim())
+                    storageService.addUsername(it.username.trim(), it.email.trim())
                 }
             }
         }
