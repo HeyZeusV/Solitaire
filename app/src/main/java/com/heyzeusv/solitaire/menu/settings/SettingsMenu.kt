@@ -75,7 +75,7 @@ import com.heyzeusv.solitaire.util.theme.TransparentDarkBG
 fun SettingsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
     val accountStatus by menuVM.accountStatus.collectAsState()
     val settings by menuVM.settings.collectAsState()
-    val currentUser by menuVM.currentUser.collectAsState(initial = UserAccount())
+    val currentUser by menuVM.currentUser.collectAsState(initial = null)
     val uiState by menuVM.uiState.collectAsState()
     val selectedAnimationDurations = AnimationDurations from settings.animationDurations
 
@@ -115,7 +115,7 @@ fun SettingsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
 fun SettingsMenu(
     accountStatus: AccountStatus = AccountStatus.Idle(),
     isConnected: Boolean,
-    userAccount: UserAccount,
+    userAccount: UserData?,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
@@ -185,7 +185,7 @@ fun SettingsMenu(
 @Composable
 fun AccountSetting(
     isConnected: Boolean,
-    userAccount: UserAccount,
+    userAccount: UserData?,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
@@ -204,8 +204,7 @@ fun AccountSetting(
             .height(272.dp),
         shape = RoundedCornerShape(4.dp)
     ) {
-        if (isConnected && !userAccount.isAnonymous) {
-            val displayName = ""
+        if (isConnected && userAccount != null) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -220,7 +219,7 @@ fun AccountSetting(
                         .fillMaxSize()
                 )
                 Text(
-                    text = stringResource(R.string.hello_user, displayName),
+                    text = stringResource(R.string.hello_user, userAccount.username),
                     modifier = Modifier.weight(.1f)
                 )
                 Button(
@@ -485,7 +484,7 @@ fun SettingsMenuPreview() {
             SettingsMenu(
                 accountStatus =  AccountStatus.CreateAccount(),
                 isConnected = true,
-                userAccount = UserAccount(),
+                userAccount = UserData(),
                 uiState = AccountUiState(),
                 selectedAnimationDurations = AnimationDurations.None
             )
@@ -500,7 +499,7 @@ fun AccountSettingPreview() {
         Preview {
             AccountSetting(
                 isConnected = true,
-                userAccount = UserAccount(),
+                userAccount = UserData(),
                 uiState = AccountUiState()
             )
         }
@@ -514,7 +513,7 @@ fun AccountSettingErrorPreview() {
         Preview {
             AccountSetting(
                 isConnected = false,
-                userAccount = UserAccount(),
+                userAccount = UserData(),
                 uiState = AccountUiState()
             )
         }

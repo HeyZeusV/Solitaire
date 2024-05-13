@@ -59,7 +59,8 @@ class MenuViewModel @Inject constructor(
         updateMenuState(newMenuState)
     }
 
-    val currentUser = accountService.currentUser
+    val currentUser = storageService.currentUser
+
     private val _accountStatus = MutableStateFlow<AccountStatus>(Idle())
     val accountStatus: StateFlow<AccountStatus> get() = _accountStatus
 
@@ -218,6 +219,7 @@ class MenuViewModel @Inject constructor(
         launchCatching {
             _accountStatus.value = SignOut()
             accountService.signOut()
+            _uiState.value = AccountUiState()
         }
     }
 
