@@ -1,16 +1,13 @@
 package com.heyzeusv.solitaire.splash
 
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.auth.FirebaseAuthException
 import com.heyzeusv.solitaire.menu.settings.AccountService
-import com.heyzeusv.solitaire.util.isConnected
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 /**
@@ -28,49 +25,14 @@ class SplashViewModel @Inject constructor(
     val showError: StateFlow<Boolean> get() = _showError
 
     /**
-     *  Checks to see if a user is signed into [FirebaseAuth], else it calls
-     *  [createAnonymousAccount]. Afterwards, navigates to next screen using [navigate]
+     *  Checks to see if a user is signed into [FirebaseAuth]. Afterwards, navigates to next screen
+     *  using [navigate].
      */
     fun onAppStart(navigate: () -> Unit) {
         _showError.value = false
-        if (connectManager.isConnected()) {
-            if (accountService.hasUser) {
-                if (accountService.isAnonymous) {
-                    recreateAnonymousAccount(navigate)
-                } else {
-                    navigate()
-                }
-            } else {
-                createAnonymousAccount(navigate)
-            }
-        } else {
-            navigate()
+        if (accountService.hasUser) {
+            Log.d("tag", "has user")
         }
-    }
-
-    /**
-     *  Attempts to create an anonymous account in [FirebaseAuth] through [AccountService].
-     *  Navigates to next screen using [navigate].
-     */
-    private fun createAnonymousAccount(navigate: () -> Unit) {
-        viewModelScope.launch {
-            try {
-                accountService.createAnonymousAccount()
-                navigate()
-            } catch (ex: FirebaseAuthException) {
-                _showError.value = true
-            }
-        }
-    }
-
-    private fun recreateAnonymousAccount(navigate: () -> Unit) {
-        viewModelScope.launch {
-            try {
-                accountService.recreateAnonymousAccount()
-                navigate()
-            } catch (ex: FirebaseAuthException) {
-                _showError.value = true
-            }
-        }
+        navigate()
     }
 }

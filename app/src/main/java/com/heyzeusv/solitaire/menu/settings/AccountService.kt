@@ -2,8 +2,9 @@ package com.heyzeusv.solitaire.menu.settings
 
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.userProfileChangeRequest
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.channels.awaitClose
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -19,11 +20,15 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
     val hasUser: Boolean
         get() = auth.currentUser != null
 
-    val isAnonymous: Boolean
-        get() = auth.currentUser!!.isAnonymous
-
-    private val _currentUser = MutableStateFlow(User())
-    val currentUser: StateFlow<User> get() = _currentUser
+    val currentUser: Flow<UserAccount>
+        get() = callbackFlow {
+            val listener =
+                FirebaseAuth.AuthStateListener { auth ->
+                    this.trySend(auth.currentUser?.let { UserAccount(it.uid, it.isAnonymous) } ?: UserAccount())
+                }
+            auth.addAuthStateListener(listener)
+            awaitClose { auth.removeAuthStateListener(listener) }
+        }
 
     suspend fun authenticate(email: String, password: String) {
         auth.currentUser?.let {
@@ -33,20 +38,6 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
             }
         }
         auth.signInWithEmailAndPassword(email, password).await()
-        _currentUser.value =
-            auth.currentUser?.let { User(it.uid, it.displayName, it.isAnonymous) } ?: User()
-    }
-
-    suspend fun createAnonymousAccount() {
-        auth.signInAnonymously().await()
-    }
-
-    suspend fun recreateAnonymousAccount() {
-        auth.currentUser?.let {
-            it.delete()
-            auth.signOut()
-            auth.signInAnonymously().await()
-        }
     }
 
     suspend fun createAccount(email: String, password: String) {
@@ -63,18 +54,10 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
         auth.currentUser!!.updateProfile(userProfileChangeRequest {
             displayName = username
         }).await()
-        _currentUser.value =
-            auth.currentUser?.let { User(it.uid, it.displayName, it.isAnonymous) } ?: User()
     }
 
-    suspend fun signOut() {
-        if (auth.currentUser!!.isAnonymous) {
-            auth.currentUser!!.delete()
-        }
+    fun signOut() {
         auth.signOut()
-        _currentUser.value = User()
-        // Sign the user back in anonymously.
-        createAnonymousAccount()
     }
 
     suspend fun sendRecoveryEmail(email: String) {
@@ -82,8 +65,12 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
     }
 }
 
-data class User(
+data class UserAccount(
     val id: String = "",
-    val displayName: String? = "",
     val isAnonymous: Boolean = true
+)
+
+data class UserData(
+    val id: String = "",
+    val username: String = ""
 )

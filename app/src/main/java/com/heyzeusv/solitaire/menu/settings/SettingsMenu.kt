@@ -76,14 +76,14 @@ import com.heyzeusv.solitaire.util.theme.TransparentDarkBG
 fun SettingsMenu(menuVM: MenuViewModel) {
     val accountStatus by menuVM.accountStatus.collectAsState()
     val settings by menuVM.settings.collectAsState()
-    val currentUser by menuVM.currentUser.collectAsState(initial = User())
+    val currentUser by menuVM.currentUser.collectAsState(initial = UserAccount())
     val uiState by menuVM.uiState.collectAsState()
     val selectedAnimationDurations = AnimationDurations from settings.animationDurations
 
     SettingsMenu(
         accountStatus = accountStatus,
         isConnected = menuVM::isConnected,
-        user = currentUser,
+        userAccount = currentUser,
         uiState = uiState,
         updateUsername = menuVM::updateUsername,
         updateEmail = menuVM::updateEmail,
@@ -116,7 +116,7 @@ fun SettingsMenu(menuVM: MenuViewModel) {
 fun SettingsMenu(
     accountStatus: AccountStatus = AccountStatus.Idle(),
     isConnected: () -> Boolean = { false },
-    user: User,
+    userAccount: UserAccount,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
@@ -162,7 +162,7 @@ fun SettingsMenu(
         Setting(title = R.string.settings_account) {
             AccountSetting(
                 isConnected = isConnected,
-                user = user,
+                userAccount = userAccount,
                 uiState = uiState,
                 updateUsername = updateUsername,
                 updateEmail = updateEmail,
@@ -186,7 +186,7 @@ fun SettingsMenu(
 @Composable
 fun AccountSetting(
     isConnected: () -> Boolean = { false },
-    user: User,
+    userAccount: UserAccount,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
     updateEmail: (String) -> Unit = { },
@@ -206,8 +206,8 @@ fun AccountSetting(
             .height(272.dp),
         shape = RoundedCornerShape(4.dp)
     ) {
-        if (connected && !user.isAnonymous) {
-            val displayName = user.displayName ?: ""
+        if (connected && !userAccount.isAnonymous) {
+            val displayName = ""
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -498,7 +498,7 @@ fun SettingsMenuPreview() {
             SettingsMenu(
                 accountStatus =  AccountStatus.CreateAccount(),
                 isConnected = { true },
-                user = User(),
+                userAccount = UserAccount(),
                 uiState = AccountUiState(),
                 selectedAnimationDurations = AnimationDurations.None
             )
@@ -513,7 +513,7 @@ fun AccountSettingPreview() {
         Preview {
             AccountSetting(
                 isConnected = { true },
-                user = User(),
+                userAccount = UserAccount(),
                 uiState = AccountUiState()
             )
         }
@@ -527,7 +527,7 @@ fun AccountSettingErrorPreview() {
         Preview {
             AccountSetting(
                 isConnected = { false },
-                user = User(),
+                userAccount = UserAccount(),
                 uiState = AccountUiState()
             )
         }
