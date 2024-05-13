@@ -133,8 +133,8 @@
     <string name="rules_waste">Waste</string>
     <string name="rules_foundation">Foundation</string>
     <string name="rules_tableau">Tableau</string>
-    <string name="account_status_email_check">Checking email availability…</string>
     <string name="account_status_username_check">Checking username availability…</string>
     <string name="account_status_creating_account">Creating account…</string>
-    <string name="account_stats_sign_in">Signing In…</string>
+    <string name="account_status_sign_in">Signing In…</string>
+    <string name="account_status_sign_out">Signing In…</string>
 </resources>

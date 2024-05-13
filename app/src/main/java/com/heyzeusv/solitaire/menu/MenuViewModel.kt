@@ -208,6 +208,7 @@ class MenuViewModel @Inject constructor(
             }
 
             launchCatching {
+                _accountStatus.value = SignIn()
                 accountService.authenticate(it.email, it.password)
             }
         }
@@ -215,6 +216,7 @@ class MenuViewModel @Inject constructor(
 
     fun signOutOnClick() {
         launchCatching {
+            _accountStatus.value = SignOut()
             accountService.signOut()
         }
     }
