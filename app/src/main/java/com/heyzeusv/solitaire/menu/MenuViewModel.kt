@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.menu
 
-import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.Game
@@ -22,7 +21,6 @@ import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.service.StorageService
 import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
-import com.heyzeusv.solitaire.util.isConnected
 import com.heyzeusv.solitaire.util.isValidEmail
 import com.heyzeusv.solitaire.util.isValidPassword
 import com.heyzeusv.solitaire.util.isValidUsername
@@ -46,7 +44,6 @@ import javax.inject.Inject
 class MenuViewModel @Inject constructor(
     private val settingsManager: SettingsManager,
     private val statManager: StatManager,
-    private val connectManager: ConnectivityManager,
     private val accountService: AccountService,
     private val storageService: StorageService
 ) : ViewModel() {
@@ -170,8 +167,6 @@ class MenuViewModel @Inject constructor(
             }
         }
     }
-
-    fun isConnected(): Boolean = connectManager.isConnected()
 
     fun signUpOnClick() {
         uiState.value.let {

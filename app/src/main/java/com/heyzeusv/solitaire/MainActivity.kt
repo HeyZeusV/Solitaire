@@ -39,6 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.LifecycleResumeEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,6 +54,7 @@ import com.heyzeusv.solitaire.menu.MenuViewModel
 import com.heyzeusv.solitaire.scoreboard.SolitaireScoreboard
 import com.heyzeusv.solitaire.splash.SplashScreen
 import com.heyzeusv.solitaire.toolbar.Toolbar
+import com.heyzeusv.solitaire.util.MyConnectivityManager
 import com.heyzeusv.solitaire.util.NavScreens
 import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.composables.CloseGameAlertDialog
@@ -63,12 +66,15 @@ import kotlinx.coroutines.CoroutineScope
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
 
+    private val connectManager by lazy { MyConnectivityManager(this, lifecycleScope) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         WindowCompat.setDecorFitsSystemWindows(window, false)
         setContent {
+            val isConnected by connectManager.connectionAsStateFlow.collectAsStateWithLifecycle()
             SolitaireTheme(darkTheme = true) {
-                SolitaireApp(finishApp = { finishAndRemoveTask() })
+                SolitaireApp(isConnected) { finishAndRemoveTask() }
             }
         }
     }
@@ -76,6 +82,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun SolitaireApp(
+    isConnected: Boolean,
     finishApp: () -> Unit
 ) {
     /**
@@ -137,6 +144,7 @@ fun SolitaireApp(
             }
             composable(route = NavScreens.Game.route) {
                 GameScreen(
+                    isConnected = isConnected,
                     gameVM = gameVM,
                     menuVM = menuVM,
                     animationDurations = animationDurations
@@ -152,6 +160,7 @@ fun SolitaireApp(
  */
 @Composable
 fun GameScreen(
+    isConnected: Boolean,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
     animationDurations: AnimationDurations,
@@ -185,6 +194,7 @@ fun GameScreen(
             )
         }
         MenuContainer(
+            isConnected = isConnected,
             gameVM = gameVM,
             menuVM = menuVM,
             modifier = Modifier.align(Alignment.BottomStart)

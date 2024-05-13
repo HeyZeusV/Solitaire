@@ -17,7 +17,6 @@ import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalButton
@@ -73,7 +72,7 @@ import com.heyzeusv.solitaire.util.theme.TransparentDarkBG
  *  Composable that displays Menu which allows user to change various Settings.
  */
 @Composable
-fun SettingsMenu(menuVM: MenuViewModel) {
+fun SettingsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
     val accountStatus by menuVM.accountStatus.collectAsState()
     val settings by menuVM.settings.collectAsState()
     val currentUser by menuVM.currentUser.collectAsState(initial = UserAccount())
@@ -82,7 +81,7 @@ fun SettingsMenu(menuVM: MenuViewModel) {
 
     SettingsMenu(
         accountStatus = accountStatus,
-        isConnected = menuVM::isConnected,
+        isConnected = isConnected,
         userAccount = currentUser,
         uiState = uiState,
         updateUsername = menuVM::updateUsername,
@@ -115,7 +114,7 @@ fun SettingsMenu(menuVM: MenuViewModel) {
 @Composable
 fun SettingsMenu(
     accountStatus: AccountStatus = AccountStatus.Idle(),
-    isConnected: () -> Boolean = { false },
+    isConnected: Boolean,
     userAccount: UserAccount,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
@@ -185,7 +184,7 @@ fun SettingsMenu(
  */
 @Composable
 fun AccountSetting(
-    isConnected: () -> Boolean = { false },
+    isConnected: Boolean,
     userAccount: UserAccount,
     uiState: AccountUiState,
     updateUsername: (String) -> Unit = { },
@@ -197,7 +196,6 @@ fun AccountSetting(
     forgotPasswordOnClick: () -> Unit = { }
     ) {
     val keyboardController = LocalSoftwareKeyboardController.current
-    var connected by remember { mutableStateOf(isConnected()) }
     var selectedTab by remember { mutableIntStateOf(0) }
 
     Surface(
@@ -206,7 +204,7 @@ fun AccountSetting(
             .height(272.dp),
         shape = RoundedCornerShape(4.dp)
     ) {
-        if (connected && !userAccount.isAnonymous) {
+        if (isConnected && !userAccount.isAnonymous) {
             val displayName = ""
             Column(
                 modifier = Modifier
@@ -236,7 +234,7 @@ fun AccountSetting(
                     Text(text = stringResource(R.string.account_sign_out))
                 }
             }
-        } else if (connected) {
+        } else if (isConnected) {
             Column(modifier = Modifier.padding(bottom = 4.dp)) {
                 TabRow(selectedTabIndex = selectedTab) {
                     AccountTabs.entries.forEachIndexed { index, tab ->
@@ -321,38 +319,27 @@ fun AccountSetting(
             }
         } else {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 12.dp),
-                horizontalAlignment = Alignment.CenterHorizontally
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.SpaceEvenly
             ) {
                 Icon(
                     imageVector = Icons.Default.Warning,
                     contentDescription = stringResource(R.string.internet_error),
-                    modifier = Modifier
-                        .weight(.4f)
-                        .fillMaxSize(),
+                    modifier = Modifier.size(100.dp),
                     tint = MaterialTheme.colorScheme.error
                 )
                 Text(
                     text = stringResource(R.string.internet_error),
-                    modifier = Modifier.weight(.1f),
-                    color = MaterialTheme.colorScheme.error
+                    modifier = Modifier,
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.headlineMedium
                 )
-                Button(
-                    onClick = { connected = isConnected() },
-                    modifier = Modifier
-                        .weight(.12f)
-                        .padding(horizontal = 16.dp)
-                        .fillMaxWidth(),
-                    shape = RoundedCornerShape(4.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = MaterialTheme.colorScheme.error,
-                        contentColor = MaterialTheme.colorScheme.onError
-                    )
-                ) {
-                    Text(text = stringResource(R.string.internet_error_button))
-                }
+                CircularProgressIndicator(
+                    modifier = Modifier.size(80.dp),
+                    color = MaterialTheme.colorScheme.error,
+                    strokeWidth = 4.dp
+                )
             }
         }
     }
@@ -497,7 +484,7 @@ fun SettingsMenuPreview() {
         Preview {
             SettingsMenu(
                 accountStatus =  AccountStatus.CreateAccount(),
-                isConnected = { true },
+                isConnected = true,
                 userAccount = UserAccount(),
                 uiState = AccountUiState(),
                 selectedAnimationDurations = AnimationDurations.None
@@ -512,7 +499,7 @@ fun AccountSettingPreview() {
     PreviewUtil().apply {
         Preview {
             AccountSetting(
-                isConnected = { true },
+                isConnected = true,
                 userAccount = UserAccount(),
                 uiState = AccountUiState()
             )
@@ -526,7 +513,7 @@ fun AccountSettingErrorPreview() {
     PreviewUtil().apply {
         Preview {
             AccountSetting(
-                isConnected = { false },
+                isConnected = false,
                 userAccount = UserAccount(),
                 uiState = AccountUiState()
             )

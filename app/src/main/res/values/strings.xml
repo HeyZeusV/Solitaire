@@ -120,7 +120,6 @@
     <string name="account_sign_out">Sign Out</string>
     <string name="hello_user">Hello %1$s</string>
     <string name="internet_error">No internet connection</string>
-    <string name="internet_error_button">Check connection</string>
     <string name="username_error">Please enter a different username.</string>
     <string name="email_error">Please use a valid email.</string>
     <string name="username_in_use_error">Username is in use. Please select a different username.</string>
@@ -134,8 +133,6 @@
     <string name="rules_waste">Waste</string>
     <string name="rules_foundation">Foundation</string>
     <string name="rules_tableau">Tableau</string>
-    <string name="splash_error">Something went wrong, please try again.</string>
-    <string name="splash_error_button">Try again</string>
     <string name="account_status_email_check">Checking email availability…</string>
     <string name="account_status_username_check">Checking username availability…</string>
     <string name="account_status_creating_account">Creating account…</string>
