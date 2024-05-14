@@ -97,7 +97,6 @@ fun SolitaireApp(
     val gameVM = hiltViewModel<GameViewModel>()
 
     val settings by menuVM.settings.collectAsState()
-    val stats by menuVM.stats.collectAsState()
     var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
     LaunchedEffect(key1 = settings.animationDurations) {
         animationDurations = AnimationDurations from settings.animationDurations
@@ -105,9 +104,6 @@ fun SolitaireApp(
     }
     LaunchedEffect(key1 = settings.selectedGame) {
         gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
-    }
-    LaunchedEffect(key1 = stats) {
-        menuVM.updateClassicWestcliffScore()
     }
     LifecycleResumeEffect {
         if (gameVM.sbLogic.moves.value != 0) gameVM.sbLogic.startTimer()

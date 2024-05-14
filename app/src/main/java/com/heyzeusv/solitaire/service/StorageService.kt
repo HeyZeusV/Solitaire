@@ -22,16 +22,6 @@ class StorageService @Inject constructor(
                 .dataObjects()
         }
 
-//    @OptIn(ExperimentalCoroutinesApi::class)
-//    val currentUserGameStats: Flow<List<SingleGameStats>>
-//        get() = auth.currentUser.flatMapLatest { user ->
-//            firestore
-//                .collection(USER_COLLECTION)
-//                .document(user.id)
-//                .collection(GAMESTATS_COLLECTION)
-//                .dataObjects()
-//        }
-
     suspend fun usernameExists(username: String): Boolean {
         val query =
             firestore.collection(USERNAME_COLLECTION).whereEqualTo(FieldPath.documentId(), username)
