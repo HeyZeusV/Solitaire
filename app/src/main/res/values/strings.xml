@@ -16,6 +16,7 @@
     <string name="menu_cdesc_rules">Game rules.</string>
     <string name="menu_button_stats">Stats</string>
     <string name="menu_cdesc_stats">View stats.</string>
+    <string name="menu_cdesc_upload">Upload stats.</string>
     <string name="menu_button_settings">Settings</string>
     <string name="menu_cdesc_settings">Change settings.</string>
     <string name="menu_button_about">About</string>
@@ -138,4 +139,8 @@
     <string name="account_status_sign_in">Signing In…</string>
     <string name="account_status_sign_out">Signing In…</string>
     <string name="account_status_upload_data">Uploading local data…</string>
+    <string name="upload_ad_title">Upload all stats?</string>
+    <string name="upload_ad_message">You can only upload stats once a day.</string>
+    <string name="upload_ad_confirm">Yes</string>
+    <string name="upload_ad_dismiss">No</string>
 </resources>

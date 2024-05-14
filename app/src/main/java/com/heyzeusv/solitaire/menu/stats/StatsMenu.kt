@@ -2,12 +2,14 @@ package com.heyzeusv.solitaire.menu.stats
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.DisableSelection
@@ -37,6 +39,8 @@ import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,6 +54,7 @@ import com.heyzeusv.solitaire.menu.MenuScreen
 import com.heyzeusv.solitaire.menu.MenuViewModel
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.composables.SolitaireAlertDialog
 import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.getAverageMoves
 import com.heyzeusv.solitaire.util.getAverageScore
@@ -93,10 +98,21 @@ fun StatsMenu(
     selectedGameStats: GameStats,
     onBackPressed: () -> Unit
 ) {
+    var displayUploadStatsAD by remember { mutableStateOf(false) }
     MenuScreen(
         menu = MenuState.Stats,
         modifier = Modifier.testTag("Stats Menu"),
-        onBackPress = onBackPressed
+        onBackPress = onBackPressed,
+        extraAction = { modifier ->
+            Icon(
+                painter = painterResource(R.drawable.button_upload),
+                contentDescription = stringResource(R.string.menu_cdesc_upload),
+                modifier = modifier
+                    .padding(top = dimensionResource(R.dimen.mhbIconPaddingTop))
+                    .size(dimensionResource(R.dimen.mhbIconSize))
+                    .clickable { displayUploadStatsAD = true }
+            )
+        }
     ) {
         StatsDropDownMenu(
             selectedGame = selectedGame,
@@ -107,6 +123,17 @@ fun StatsMenu(
             game = selectedGame
         )
     }
+    SolitaireAlertDialog(
+        display = displayUploadStatsAD,
+        title = stringResource(R.string.upload_ad_title),
+        message = stringResource(R.string.upload_ad_message),
+        confirmText = stringResource(R.string.upload_ad_confirm),
+        confirmOnClick = {
+            displayUploadStatsAD = false
+        },
+        dismissText = stringResource(R.string.upload_ad_dismiss),
+        dismissOnClick = { displayUploadStatsAD = false }
+    )
 }
 
 /**
