@@ -42,13 +42,3 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
         auth.sendPasswordResetEmail(email).await()
     }
 }
-
-data class UserAccount(
-    val id: String = "0",
-    val isAnonymous: Boolean = true
-)
-
-data class UserData(
-    val id: String = "0",
-    val username: String = ""
-)

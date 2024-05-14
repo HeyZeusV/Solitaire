@@ -21,6 +21,17 @@ class StorageService @Inject constructor(
                 .document(user.id)
                 .dataObjects()
         }
+
+//    @OptIn(ExperimentalCoroutinesApi::class)
+//    val currentUserGameStats: Flow<List<SingleGameStats>>
+//        get() = auth.currentUser.flatMapLatest { user ->
+//            firestore
+//                .collection(USER_COLLECTION)
+//                .document(user.id)
+//                .collection(GAMESTATS_COLLECTION)
+//                .dataObjects()
+//        }
+
     suspend fun usernameExists(username: String): Boolean {
         val query =
             firestore.collection(USERNAME_COLLECTION).whereEqualTo(FieldPath.documentId(), username)
@@ -42,8 +53,21 @@ class StorageService @Inject constructor(
         }.await()
     }
 
+    suspend fun uploadLocalData(gameStats: List<SingleGameStats>) {
+        firestore.runBatch { batch ->
+            gameStats.forEach { stats ->
+                batch.set(
+                    firestore.collection(USER_COLLECTION).document(auth.currentUserId).collection(
+                        GAMESTATS_COLLECTION
+                    ).document(stats.game), stats
+                )
+            }
+        }.await()
+    }
+
     companion object {
         private const val USER_COLLECTION = "users"
         private const val USERNAME_COLLECTION = "usernames"
+        private const val GAMESTATS_COLLECTION = "gameStats"
     }
 }

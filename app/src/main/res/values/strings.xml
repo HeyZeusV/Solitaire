@@ -137,4 +137,5 @@
     <string name="account_status_creating_account">Creating account…</string>
     <string name="account_status_sign_in">Signing In…</string>
     <string name="account_status_sign_out">Signing In…</string>
+    <string name="account_status_upload_data">Uploading local data…</string>
 </resources>
