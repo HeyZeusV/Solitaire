@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.menu.settings
+package com.heyzeusv.solitaire.service
 
 import com.google.firebase.auth.FirebaseAuth
 import kotlinx.coroutines.channels.awaitClose

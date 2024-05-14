@@ -16,7 +16,7 @@ message GameStats {
   int64 fastest_win = 6;
   int64 total_time = 7;
   int32 total_score = 8;
-  int64 best_total_score = 9;
+  int64 best_combined_score = 9;
 }
 
 enum Game {

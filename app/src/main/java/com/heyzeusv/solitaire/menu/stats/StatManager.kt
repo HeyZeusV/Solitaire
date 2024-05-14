@@ -48,6 +48,6 @@ fun getStatsDefaultInstance(): GameStats {
     return GameStats.getDefaultInstance().toBuilder()
         .setLowestMoves(9999)
         .setFastestWin(359999L)
-        .setBestTotalScore(99999L)
+        .setBestCombinedScore(99999L)
         .build()
 }

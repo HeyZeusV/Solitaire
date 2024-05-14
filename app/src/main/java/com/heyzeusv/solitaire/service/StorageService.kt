@@ -3,8 +3,6 @@ package com.heyzeusv.solitaire.service
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.dataObjects
-import com.heyzeusv.solitaire.menu.settings.AccountService
-import com.heyzeusv.solitaire.menu.settings.UserData
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flatMapLatest

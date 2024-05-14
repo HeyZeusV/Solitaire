@@ -10,9 +10,9 @@ import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
-import com.heyzeusv.solitaire.menu.settings.AccountService
-import com.heyzeusv.solitaire.menu.settings.AccountStatus
-import com.heyzeusv.solitaire.menu.settings.AccountStatus.*
+import com.heyzeusv.solitaire.service.AccountService
+import com.heyzeusv.solitaire.service.AccountStatus
+import com.heyzeusv.solitaire.service.AccountStatus.*
 import com.heyzeusv.solitaire.menu.settings.AccountUiState
 import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
@@ -120,11 +120,11 @@ class MenuViewModel @Inject constructor(
                     if (lgs.gameWon) old.fastestWin.coerceAtMost(lgs.time) else old.fastestWin
                 new.totalTime = old.totalTime.plus(lgs.time)
                 new.totalScore = old.totalScore.plus(lgs.score)
-                new.bestTotalScore =
+                new.bestCombinedScore =
                     if (lgs.gameWon) {
-                        old.bestTotalScore.coerceAtMost(lgs.totalScore)
+                        old.bestCombinedScore.coerceAtMost(lgs.totalScore)
                     } else {
-                        old.bestTotalScore
+                        old.bestCombinedScore
                     }
             }.build()
         }

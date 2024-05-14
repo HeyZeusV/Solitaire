@@ -88,8 +88,8 @@
     <string name="stats_total_time">Total Time Played</string>
     <string name="stats_average_score">Average Score</string>
     <string name="stats_average_score_value">%1$s of %2$s (%3$s%%)</string>
-    <string name="stats_best_score">Best Total Score</string>
-    <string name="stats_best_score_tip">┗ Moves + Time + Score (Lower is better)</string>
+    <string name="stats_best_combined_score">Best Combined Score</string>
+    <string name="stats_best_combined_score_tip">┗ Moves + Time + Score (Lower is better)</string>
     <string name="about_by_name">By Jesus E. Valdes</string>
     <string name="about_changelog">Changelog</string>
     <string name="about_contact_me">Questions, comments, or concerns? \nFeel free to email me at</string>

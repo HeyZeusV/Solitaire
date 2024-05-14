@@ -1,4 +1,4 @@
-package com.heyzeusv.solitaire.menu.settings
+package com.heyzeusv.solitaire.service
 
 import androidx.annotation.StringRes
 import com.heyzeusv.solitaire.R

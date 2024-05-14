@@ -245,9 +245,9 @@ fun StatColumn(
             )
         )
         StatField(
-            statNameId = R.string.stats_best_score,
-            statValue = "${selectedGameStats.bestTotalScore}",
-            statTipId = R.string.stats_best_score_tip
+            statNameId = R.string.stats_best_combined_score,
+            statValue = "${selectedGameStats.bestCombinedScore}",
+            statTipId = R.string.stats_best_combined_score_tip
         )
     }
 }
@@ -329,9 +329,9 @@ fun StatFieldPreview() {
                         statValue = "$test1"
                     )
                     StatField(
-                        statNameId = R.string.stats_best_score,
+                        statNameId = R.string.stats_best_combined_score,
                         statValue = "$test2",
-                        statTipId = R.string.stats_best_score_tip
+                        statTipId = R.string.stats_best_combined_score_tip
                     )
                 }
             }
