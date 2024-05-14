@@ -100,33 +100,20 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
         )
 
         /**
-         *  Returns [Games] subclass associated with given [game] from Proto DataSture [Game].
+         *  Returns [Games] subclass associated with given [dataStoreGame] from Proto DataSture [Game].
          */
-        fun getGameClass(game: Game): Games {
-            return when (game) {
-                Game.GAME_KLONDIKETURNONE -> KlondikeTurnOne
-                Game.GAME_KLONDIKETURNTHREE -> KlondikeTurnThree
-                Game.GAME_AUSTRALIAN_PATIENCE -> AustralianPatience
-                Game.GAME_CANBERRA -> Canberra
-                Game.GAME_YUKON -> Yukon
-                Game.GAME_ALASKA -> Alaska
-                Game.GAME_RUSSIAN -> Russian
-                Game.GAME_CLASSIC_WESTCLIFF -> ClassicWestcliff
-                Game.GAME_EASTHAVEN -> Easthaven
-                Game.GAME_GOLF -> Golf
-                Game.GAME_PUTT_PUTT -> PuttPutt
-                Game.GAME_GOLF_RUSH -> GolfRush
-                Game.GAME_SPIDER -> Spider
-                Game.GAME_SPIDER_TWO_SUITS -> SpiderTwoSuits
-                Game.GAME_SPIDER_ONE_SUIT -> SpiderOneSuit
-                Game.GAME_ACES_UP -> AcesUp
-                Game.GAME_ACES_UP_RELAXED -> AcesUpRelaxed
-                Game.GAME_ACES_UP_HARD -> AcesUpHard
-                Game.GAME_BEETLE -> Beetle
-                Game.GAME_FORTY_THIEVES -> FortyThieves
-                Game.GAME_FORTY_AND_EIGHT -> FortyAndEight
-                else -> KlondikeTurnOne
+        fun getGameClass(dataStoreGame: Game): Games {
+            for (game in orderedSubclasses) {
+                if (game.dataStoreEnum == dataStoreGame) return game
             }
+            return KlondikeTurnOne
+        }
+
+        fun getDataStoreEnum(dbName: String): Game {
+            for (game in orderedSubclasses) {
+                if (game.dbName == dbName) return game.dataStoreEnum
+            }
+            return KlondikeTurnOne.dataStoreEnum
         }
     }
 }

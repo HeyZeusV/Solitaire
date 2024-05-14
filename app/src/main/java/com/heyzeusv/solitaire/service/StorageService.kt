@@ -53,7 +53,7 @@ class StorageService @Inject constructor(
         }.await()
     }
 
-    suspend fun uploadLocalData(gameStats: List<SingleGameStats>) {
+    suspend fun uploadLocalGameStats(gameStats: List<SingleGameStats>) {
         firestore.runBatch { batch ->
             gameStats.forEach { stats ->
                 batch.set(
@@ -63,6 +63,12 @@ class StorageService @Inject constructor(
                 )
             }
         }.await()
+    }
+
+    suspend fun retrieveGameStats(): List<SingleGameStats> {
+        val query = firestore.collection(USER_COLLECTION).document(auth.currentUserId)
+            .collection(GAMESTATS_COLLECTION)
+        return query.get().await().toObjects(SingleGameStats::class.java)
     }
 
     companion object {

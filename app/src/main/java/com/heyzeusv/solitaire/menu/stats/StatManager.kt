@@ -39,6 +39,22 @@ class StatManager @Inject constructor(
             }
         }
     }
+
+    /**
+     *  Adds all given [stats]. Called when user logs in.
+     */
+    suspend fun addAllStats(stats: List<GameStats>) {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().clear().addAllStats(stats).build()
+        }
+    }
+
+    /**
+     *  Delete all stored stats. Called when user logs out.
+     */
+    suspend fun deleteAllStats() {
+        statPreferences.updateData { it.toBuilder().clear().build() }
+    }
 }
 
 /**

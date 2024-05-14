@@ -28,3 +28,17 @@ fun GameStats.toSingleGameStats(): SingleGameStats = SingleGameStats(
 )
 
 fun List<GameStats>.toSingleGameStatsList(): List<SingleGameStats> = map { it.toSingleGameStats() }
+
+fun SingleGameStats.toGameStats(): GameStats = GameStats.newBuilder().also { gs ->
+    gs.game = Games.getDataStoreEnum(game)
+    gs.gamesPlayed = gamesPlayed
+    gs.gamesWon = gamesWon
+    gs.lowestMoves = lowestMoves
+    gs.totalMoves = totalMoves
+    gs.fastestWin = fastestWin
+    gs.totalTime = totalTime
+    gs.totalScore = totalScore
+    gs.bestCombinedScore = bestCombinedScore
+}.build()
+
+fun List<SingleGameStats>.toGameStatsList(): List<GameStats> = map { it.toGameStats() }

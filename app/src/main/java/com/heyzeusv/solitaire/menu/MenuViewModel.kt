@@ -19,6 +19,7 @@ import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.service.StorageService
+import com.heyzeusv.solitaire.service.toGameStatsList
 import com.heyzeusv.solitaire.service.toSingleGameStatsList
 import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
@@ -195,7 +196,7 @@ class MenuViewModel @Inject constructor(
                     accountService.createAccount(it.email.trim(), it.password)
                     storageService.addUsername(it.username.trim())
                     _accountStatus.value = UploadData()
-                    storageService.uploadLocalData(stats.value.statsList.toSingleGameStatsList())
+                    storageService.uploadLocalGameStats(stats.value.statsList.toSingleGameStatsList())
                 }
             }
         }
@@ -215,6 +216,8 @@ class MenuViewModel @Inject constructor(
             launchCatching {
                 _accountStatus.value = SignIn()
                 accountService.authenticate(it.email, it.password)
+                val onlineGameStats = storageService.retrieveGameStats()
+                statManager.addAllStats(onlineGameStats.toGameStatsList())
             }
         }
     }
@@ -223,6 +226,7 @@ class MenuViewModel @Inject constructor(
         launchCatching {
             _accountStatus.value = SignOut()
             accountService.signOut()
+            statManager.deleteAllStats()
             _uiState.value = AccountUiState()
         }
     }
