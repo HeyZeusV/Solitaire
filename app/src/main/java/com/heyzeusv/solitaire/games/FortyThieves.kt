@@ -43,6 +43,7 @@ data object FortyThieves : Games.FortyThievesFamily() {
         tableauRulesId = R.string.forty_thieves_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_FORTY_THIEVES
+    override val dbName: String = "fortyThieves"
 
     /**
      *  [GameRules]

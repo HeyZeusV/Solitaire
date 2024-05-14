@@ -43,6 +43,7 @@ data object AustralianPatience : Games.YukonFamily() {
         tableauRulesId = R.string.australian_patience_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_AUSTRALIAN_PATIENCE
+    override val dbName: String = "australianPatience"
 
     /**
      *  [GameRules]

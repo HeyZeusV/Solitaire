@@ -43,6 +43,7 @@ data object Russian : Games.YukonFamily() {
         tableauRulesId = R.string.russian_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_RUSSIAN
+    override val dbName: String = "russian"
 
     /**
      *  [GameRules]

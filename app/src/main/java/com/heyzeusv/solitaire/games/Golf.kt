@@ -49,6 +49,7 @@ data object Golf : Games.GolfFamily() {
         tableauRulesId = R.string.golf_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_GOLF
+    override val dbName: String = "golf"
 
     /**
      *  [GameRules]

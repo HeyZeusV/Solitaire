@@ -43,6 +43,7 @@ data object KlondikeTurnOne : Games.KlondikeFamily() {
         tableauRulesId = R.string.klondike_turn_one_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_KLONDIKETURNONE
+    override val dbName: String = "klondikeTurnOne"
 
     /**
      *  [GameRules]

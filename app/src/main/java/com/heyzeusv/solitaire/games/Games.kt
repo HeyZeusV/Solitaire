@@ -162,6 +162,7 @@ interface GameInfo {
     @get:DrawableRes val previewId: Int
     val gamePileRules: GamePileRules
     val dataStoreEnum: Game
+    val dbName: String
 }
 
 /**

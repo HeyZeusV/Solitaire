@@ -41,6 +41,7 @@ data object ClassicWestcliff : Games.KlondikeFamily() {
         tableauRulesId = R.string.classic_westcliff_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_CLASSIC_WESTCLIFF
+    override val dbName: String = "classicWestcliff"
 
     /**
      *  [GameRules]

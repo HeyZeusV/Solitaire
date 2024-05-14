@@ -49,6 +49,7 @@ data object Spider : Games.SpiderFamily() {
         tableauRulesId = R.string.spider_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_SPIDER
+    override val dbName: String = "spider"
 
     /**
      *  [GameRules]
