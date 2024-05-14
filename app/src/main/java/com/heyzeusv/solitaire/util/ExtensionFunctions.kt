@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.util
 
-import android.net.ConnectivityManager
 import android.net.NetworkCapabilities
 import android.util.Patterns
 import androidx.compose.material3.ButtonColors
@@ -12,7 +11,6 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
-import com.google.firebase.Timestamp
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.board.piles.Card
 import java.text.DecimalFormat
@@ -178,10 +176,11 @@ fun NetworkCapabilities?.isNetworkCapabilitiesValid(): Boolean = when {
 }
 
 private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\\p{P}|.*\\p{S}).{6,}\$"
-private val profanityList = listOf("anal", "anus", "ballsack", "blowjob", "blow job", "boner",
-    "clitoris", "cock", "cunt", "dick", "dildo", "dyke", "fag", "fuck", "jizz", "labia", "muff",
-    "nigger", "nigga", "penis", "piss", "pussy", "scrotum", "sex", "shit", "slut", "smegma",
-    "spunk", "twat", "vagina", "wank", "whore"
+private val profanityList = listOf(
+    "admin", "anal", "anus", "ballsack", "blowjob", "blow job", "boner", "clitoris", "cock", "cunt",
+    "dick", "dildo", "dyke", "fag", "fuck", "jizz", "labia", "muff", "nigger", "nigga", "penis",
+    "piss", "pussy", "scrotum", "sex", "shit", "slut", "smegma", "spunk", "twat", "vagina", "wank",
+    "whore"
 )
 
 /**
@@ -206,17 +205,4 @@ fun String.isValidEmail(): Boolean {
  */
 fun String.isValidPassword(): Boolean {
     return this.isNotBlank() && Pattern.compile(PASS_PATTERN).matcher(this).matches()
-}
-
-private const val UTC_MINUS7 = 25200
-private const val DAY_IN_SECONDS = 86400
-
-/**
- *  Returns [Timestamp] to end of day today using UTC-7 as timezone.
- */
-fun Timestamp.endOfDay(): Timestamp {
-    val timestampNow = Timestamp.now()
-    val timeIntoDay = (timestampNow.seconds - UTC_MINUS7) % DAY_IN_SECONDS
-    val secondsEOD = timestampNow.seconds - timeIntoDay + DAY_IN_SECONDS
-    return Timestamp(seconds = secondsEOD, nanoseconds = 0)
 }
