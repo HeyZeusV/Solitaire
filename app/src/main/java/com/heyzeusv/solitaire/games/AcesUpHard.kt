@@ -68,6 +68,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
         tableauRulesId = R.string.aces_up_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_ACES_UP_HARD
+    override val dbName: String = "acesUpHard"
 
     /**
      *  [GameRules]
