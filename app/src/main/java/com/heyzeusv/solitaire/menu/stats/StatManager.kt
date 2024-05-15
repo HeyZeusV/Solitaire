@@ -34,11 +34,16 @@ class StatManager @Inject constructor(
     suspend fun updateStats(stats: GameStats) {
         statPreferences.updateData { statPrefs ->
             val index = statPrefs.statsList.indexOfFirst { it.game == stats.game }
+            val builder = statPrefs.toBuilder()
             if (index == -1) {
-                statPrefs.toBuilder().addStats(stats).build()
+                builder.addStats(stats).build()
             } else {
-                statPrefs.toBuilder().setStats(index, stats).build()
+                builder.setStats(index, stats)
             }
+            if (!statPrefs.gameStatsToUploadList.contains(stats.game)) {
+                builder.addGameStatsToUpload(stats.game)
+            }
+            builder.build()
         }
     }
 
@@ -55,7 +60,7 @@ class StatManager @Inject constructor(
      *  Delete all stored stats. Called when user logs out.
      */
     suspend fun deleteAllStats() {
-        statPreferences.updateData { it.toBuilder().clearStats().build() }
+        statPreferences.updateData { it.toBuilder().clearGameStatsToUpload().clearStats().build() }
     }
 
     /**
@@ -68,6 +73,12 @@ class StatManager @Inject constructor(
                 .setLastGameStatsUpload(date.time)
                 .setNextGameStatsUpload(date.endOfDay())
                 .build()
+        }
+    }
+
+    suspend fun clearGameStatsToUpload() {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().clearGameStatsToUpload().build()
         }
     }
 }

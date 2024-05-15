@@ -17,6 +17,7 @@ import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
+import com.heyzeusv.solitaire.service.SingleGameStats
 import com.heyzeusv.solitaire.service.StorageService
 import com.heyzeusv.solitaire.service.toGameStatsList
 import com.heyzeusv.solitaire.service.toSingleGameStatsList
@@ -228,6 +229,9 @@ class MenuViewModel @Inject constructor(
             val formattedTimeLeft = timeLeft.formatTimeStats()
             SnackbarManager.showMessage(R.string.upload_error_time, arrayOf(formattedTimeLeft))
             false
+        } else if (stats.value.gameStatsToUploadList.isEmpty()) {
+            SnackbarManager.showMessage(R.string.upload_error_no_stats)
+            false
         } else {
             true
         }
@@ -237,7 +241,14 @@ class MenuViewModel @Inject constructor(
         launchCatching {
             _accountStatus.value = UploadData()
             statManager.updateGameStatsUploadTimes()
-            storageService.uploadGameStats(stats.value.statsList.toSingleGameStatsList())
+            val gsToUpload: List<SingleGameStats>
+            stats.value.let {
+                gsToUpload =
+                    it.statsList.filter { gs -> it.gameStatsToUploadList.contains(gs.game) }
+                        .toSingleGameStatsList()
+            }
+            storageService.uploadGameStats(gsToUpload)
+            statManager.clearGameStatsToUpload()
         }
     }
 
