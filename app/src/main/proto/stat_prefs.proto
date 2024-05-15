@@ -45,4 +45,6 @@ enum Game {
   GAME_BEETLE = 18;
   GAME_FORTY_THIEVES = 19;
   GAME_FORTY_AND_EIGHT = 20;
+
+  GAME_ALL = 1000;
 }

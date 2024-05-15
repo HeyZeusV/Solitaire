@@ -232,9 +232,12 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun uploadStatsOnClick(): Boolean {
+    fun uploadStatsOnClick(isConnected: Boolean): Boolean {
         val currentTime = Date()
-        return if (!accountService.hasUser) {
+        return if (!isConnected) {
+            SnackbarManager.showMessage(R.string.upload_error_no_internet)
+            false
+        } else if (!accountService.hasUser) {
             SnackbarManager.showMessage(R.string.upload_error_no_user)
             false
         } else if (currentTime.before(Date(stats.value.nextGameStatsUpload))) {

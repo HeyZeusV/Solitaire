@@ -77,13 +77,13 @@ fun MenuContainer(
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.Stats
-        ) { StatsMenu(menuVM = menuVM) }
+        ) { StatsMenu(isConnected, menuVM) }
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.Settings
-        ) { SettingsMenu(isConnected = isConnected, menuVM = menuVM) }
+        ) { SettingsMenu(isConnected, menuVM) }
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,

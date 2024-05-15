@@ -69,9 +69,7 @@ import com.heyzeusv.solitaire.util.theme.Purple80
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of selected game.
  */
 @Composable
-fun StatsMenu(
-    menuVM: MenuViewModel
-) {
+fun StatsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
     val settings by menuVM.settings.collectAsState()
     var selectedGame by remember { mutableStateOf(Games.getGameClass(settings.selectedGame)) }
     val stats by menuVM.stats.collectAsState()
@@ -86,7 +84,7 @@ fun StatsMenu(
         updateSelectedGameStats = { selectedGame = it },
         selectedGameStats = selectedGameStats,
         onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) },
-        uploadStatsOnClick = menuVM::uploadStatsOnClick
+        uploadStatsOnClick = { menuVM.uploadStatsOnClick(isConnected) }
     ) { menuVM.uploadStatsConfirmOnClick() }
 }
 
