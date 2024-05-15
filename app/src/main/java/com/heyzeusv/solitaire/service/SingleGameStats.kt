@@ -1,8 +1,10 @@
 package com.heyzeusv.solitaire.service
 
+import androidx.annotation.Keep
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.games.Games
 
+@Keep
 data class SingleGameStats(
     val game: String = "",
     val gamesPlayed: Int = 0,
