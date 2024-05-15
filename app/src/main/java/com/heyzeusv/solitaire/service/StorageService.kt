@@ -46,7 +46,7 @@ class StorageService @Inject constructor(
         }.await()
     }
 
-    suspend fun uploadLocalGameStats(gameStats: List<SingleGameStats>) {
+    suspend fun uploadGameStats(gameStats: List<SingleGameStats>) {
         firestore.runBatch { batch ->
             gameStats.forEach { stats ->
                 batch.set(

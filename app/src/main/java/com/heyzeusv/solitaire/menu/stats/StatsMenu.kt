@@ -82,21 +82,23 @@ fun StatsMenu(
         updateSelectedGameStats = { selectedGame = it },
         selectedGameStats = selectedGameStats,
         onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) }
-    )
+    ) { menuVM.uploadStatsOnClick() }
 }
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of [selectedGame]
  *  which is updated through [updateSelectedGameStats]. All the data has been hoisted into above
  *  [StatsMenu] thus allowing for easier testing. [onBackPressed] handles opening and closing
- *  [StatsMenu]. [selectedGameStats] are to be displayed.
+ *  [StatsMenu]. [selectedGameStats] are to be displayed. [confirmUploadStatsOnClick] runs when
+ *  confirming [SolitaireAlertDialog] that appears on upload button press.
  */
 @Composable
 fun StatsMenu(
     selectedGame: Games,
     updateSelectedGameStats: (Games) -> Unit,
     selectedGameStats: GameStats,
-    onBackPressed: () -> Unit
+    onBackPressed: () -> Unit = { },
+    confirmUploadStatsOnClick: () -> Unit = { }
 ) {
     var displayUploadStatsAD by remember { mutableStateOf(false) }
     MenuScreen(
@@ -129,6 +131,7 @@ fun StatsMenu(
         message = stringResource(R.string.upload_ad_message),
         confirmText = stringResource(R.string.upload_ad_confirm),
         confirmOnClick = {
+            confirmUploadStatsOnClick()
             displayUploadStatsAD = false
         },
         dismissText = stringResource(R.string.upload_ad_dismiss),
@@ -321,7 +324,7 @@ fun StatsMenuPreview() {
                 selectedGame = KlondikeTurnOne,
                 updateSelectedGameStats = { },
                 selectedGameStats = GameStats.getDefaultInstance()
-            ) { }
+            )
         }
     }
 }

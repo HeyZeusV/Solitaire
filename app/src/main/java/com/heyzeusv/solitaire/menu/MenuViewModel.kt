@@ -168,7 +168,7 @@ class MenuViewModel @Inject constructor(
                     accountService.createAccount(it.email.trim(), it.password)
                     storageService.addUsername(it.username.trim())
                     _accountStatus.value = UploadData()
-                    storageService.uploadLocalGameStats(stats.value.statsList.toSingleGameStatsList())
+                    storageService.uploadGameStats(stats.value.statsList.toSingleGameStatsList())
                 }
             }
         }
@@ -214,6 +214,13 @@ class MenuViewModel @Inject constructor(
                 accountService.sendRecoveryEmail(it.email)
                 SnackbarManager.showMessage(R.string.email_password_recovery)
             }
+        }
+    }
+
+    fun uploadStatsOnClick() {
+        launchCatching {
+            _accountStatus.value = UploadData()
+            storageService.uploadGameStats(stats.value.statsList.toSingleGameStatsList())
         }
     }
 
