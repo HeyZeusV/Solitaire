@@ -18,6 +18,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavHostController
 import com.heyzeusv.solitaire.GameScreen
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.menu.MenuViewModel
 import com.heyzeusv.solitaire.util.NavScreens
 import com.heyzeusv.solitaire.util.PreviewUtil
 import kotlinx.coroutines.delay
@@ -28,9 +29,10 @@ import kotlinx.coroutines.delay
  */
 @Composable
 fun SplashScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    menuVM: MenuViewModel
 ) {
-    SplashScreen {
+    SplashScreen(createAllStats = menuVM::createAllStats) {
         navController.navigate(NavScreens.Game.route)
     }
 }
@@ -41,10 +43,12 @@ fun SplashScreen(
  */
 @Composable
 fun SplashScreen(
+    createAllStats: () -> Unit = { },
     navigate: () -> Unit = { }
 ) {
     LaunchedEffect(key1 = Unit) {
-        delay((1500L..2500L).random())
+        delay((2500L..3500L).random())
+        createAllStats()
         navigate()
     }
     Box(

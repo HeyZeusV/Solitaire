@@ -36,6 +36,7 @@
     <string name="tools_button_reset">Reset</string>
     <string name="tools_cdesc_undo">Undo last move.</string>
     <string name="tools_button_undo">Undo</string>
+    <string name="games_all">All</string>
     <string name="games_klondike_turn_one">Klondike (Turn One)</string>
     <string name="games_klondike_turn_three">Klondike (Turn Three)</string>
     <string name="games_classic_westcliff">Classic Westcliff</string>

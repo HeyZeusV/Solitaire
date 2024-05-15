@@ -47,6 +47,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.games.All
 import com.heyzeusv.solitaire.games.AustralianPatience
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.games.KlondikeTurnOne
@@ -208,7 +209,7 @@ fun StatsDropDownMenu(
                 onDismissRequest = { expanded = false },
                 modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
             ) {
-                Games.orderedSubclasses.forEach { game ->
+                Games.statsOrderedSubclasses.forEach { game ->
                     DropdownMenuItem(
                         text = { Text(stringResource(game.nameId)) },
                         onClick = {
@@ -272,15 +273,17 @@ fun StatColumn(
             statNameId = R.string.stats_total_time,
             statValue = selectedGameStats.totalTime.formatTimeStats()
         )
-        StatField(
-            statNameId = R.string.stats_average_score,
-            statValue = stringResource(
-                R.string.stats_average_score_value,
-                selectedGameStats.getAverageScore(),
-                game.maxScore.amount,
-                selectedGameStats.getScorePercentage(game.maxScore)
+        if (game != All) {
+            StatField(
+                statNameId = R.string.stats_average_score,
+                statValue = stringResource(
+                    R.string.stats_average_score_value,
+                    selectedGameStats.getAverageScore(),
+                    game.maxScore.amount,
+                    selectedGameStats.getScorePercentage(game.maxScore)
+                )
             )
-        )
+        }
         StatField(
             statNameId = R.string.stats_best_combined_score,
             statValue = "${selectedGameStats.bestCombinedScore}",

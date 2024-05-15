@@ -11,8 +11,10 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import java.text.DecimalFormat
 import java.util.Date
 import java.util.regex.Pattern
@@ -54,6 +56,41 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
     val df = DecimalFormat("#.##")
     val scorePercent: Double = (getAverageScore().toDouble() / maxScore.amount) * 100
     return df.format(scorePercent)
+}
+
+fun GameStats.updateStats(lgs: LastGameStats): GameStats {
+    return GameStats.newBuilder().also { new ->
+        new.game = this.game
+        new.gamesPlayed = this.gamesPlayed.plus(1)
+        new.gamesWon = this.gamesWon.plus(if (lgs.gameWon) 1 else 0)
+        new.lowestMoves =
+            if (lgs.gameWon) this.lowestMoves.coerceAtMost(lgs.moves) else this.lowestMoves
+        new.totalMoves = this.totalMoves.plus(lgs.moves)
+        new.fastestWin =
+            if (lgs.gameWon) this.fastestWin.coerceAtMost(lgs.time) else this.fastestWin
+        new.totalTime = this.totalTime.plus(lgs.time)
+        new.totalScore = this.totalScore.plus(lgs.score)
+        new.bestCombinedScore =
+            if (lgs.gameWon) {
+                this.bestCombinedScore.coerceAtMost(lgs.totalScore)
+            } else {
+                this.bestCombinedScore
+            }
+    }.build()
+}
+
+fun GameStats.combineGameStats(gs: GameStats): GameStats {
+    return GameStats.newBuilder().also { new ->
+        new.game = Game.GAME_ALL
+        new.gamesPlayed = this.gamesPlayed.plus(gs.gamesPlayed)
+        new.gamesWon = this.gamesWon.plus(gs.gamesWon)
+        new.lowestMoves = this.lowestMoves.coerceAtMost(gs.lowestMoves)
+        new.totalMoves = this.totalMoves.plus(gs.totalMoves)
+        new.fastestWin = this.fastestWin.coerceAtMost(gs.fastestWin)
+        new.totalTime = this.totalTime.plus(gs.totalTime)
+        new.totalScore = this.totalScore.plus(gs.totalScore)
+        new.bestCombinedScore = this.bestCombinedScore.coerceAtMost(gs.bestCombinedScore)
+    }.build()
 }
 
 fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)

@@ -32,6 +32,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class AcesUpVariants: Games() {
         abstract fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: Card): Boolean
     }
+    sealed class Other: Games()
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
@@ -98,6 +99,8 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
             FortyThieves, FortyAndEight,
             AcesUp, AcesUpRelaxed, AcesUpHard
         )
+
+        val statsOrderedSubclasses: List<Games> = listOf(All) + orderedSubclasses
 
         /**
          *  Returns [Games] subclass associated with given [dataStoreGame] from Proto DataSture [Game].

@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.Settings
@@ -23,10 +24,12 @@ import com.heyzeusv.solitaire.service.toGameStatsList
 import com.heyzeusv.solitaire.service.toSingleGameStatsList
 import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
+import com.heyzeusv.solitaire.util.combineGameStats
 import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.isValidEmail
 import com.heyzeusv.solitaire.util.isValidPassword
 import com.heyzeusv.solitaire.util.isValidUsername
+import com.heyzeusv.solitaire.util.updateStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.CoroutineScope
@@ -110,30 +113,25 @@ class MenuViewModel @Inject constructor(
     fun updateStats(lgs: LastGameStats) {
         val prevGS = stats.value.statsList.find { it.game == settings.value.selectedGame }
             ?: getStatsDefaultInstance()
+        val allGS = stats.value.statsList.find { it.game == Game.GAME_ALL }
+            ?: getStatsDefaultInstance()
 
-        var newGS: GameStats
-        prevGS.let { old ->
-            newGS = GameStats.newBuilder().also { new ->
-                new.game = settings.value.selectedGame
-                new.gamesPlayed = old.gamesPlayed.plus(1)
-                new.gamesWon = old.gamesWon.plus(if (lgs.gameWon) 1 else 0)
-                new.lowestMoves =
-                    if (lgs.gameWon) old.lowestMoves.coerceAtMost(lgs.moves) else old.lowestMoves
-                new.totalMoves = old.totalMoves.plus(lgs.moves)
-                new.fastestWin =
-                    if (lgs.gameWon) old.fastestWin.coerceAtMost(lgs.time) else old.fastestWin
-                new.totalTime = old.totalTime.plus(lgs.time)
-                new.totalScore = old.totalScore.plus(lgs.score)
-                new.bestCombinedScore =
-                    if (lgs.gameWon) {
-                        old.bestCombinedScore.coerceAtMost(lgs.totalScore)
-                    } else {
-                        old.bestCombinedScore
-                    }
-            }.build()
-        }
         viewModelScope.launch {
-            statManager.updateStats(newGS)
+            statManager.updateStats(prevGS.updateStats(lgs))
+            statManager.updateStats(allGS.updateStats(lgs))
+        }
+    }
+
+    fun createAllStats() {
+        val exists = stats.value.statsList.any { it.game == Game.GAME_ALL }
+        if (exists) return
+        var allGS: GameStats = getStatsDefaultInstance()
+        stats.value.statsList.forEach { gs ->
+            allGS = allGS.combineGameStats(gs)
+        }
+
+        viewModelScope.launch {
+            statManager.updateStats(allGS)
         }
     }
 

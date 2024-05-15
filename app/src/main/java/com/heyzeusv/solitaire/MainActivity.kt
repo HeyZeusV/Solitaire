@@ -90,6 +90,7 @@ fun SolitaireApp(
      *  [Games.orderedSubclasses] being null. Calling it here fixes it.
      */
     Games.orderedSubclasses
+    Games.statsOrderedSubclasses
 
     val appState = rememberAppState()
 
@@ -136,7 +137,7 @@ fun SolitaireApp(
                 ) }
         ) {
             composable(route = NavScreens.Splash.route) {
-                SplashScreen(navController = appState.navController)
+                SplashScreen(navController = appState.navController, menuVM = menuVM)
             }
             composable(route = NavScreens.Game.route) {
                 GameScreen(
