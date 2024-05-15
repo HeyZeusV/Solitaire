@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.menu.settings
 
-import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -56,7 +55,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.TextUnitType
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.menu.MenuScreen
 import com.heyzeusv.solitaire.menu.MenuViewModel
@@ -66,9 +64,9 @@ import com.heyzeusv.solitaire.service.UserData
 import com.heyzeusv.solitaire.util.AccountTabs
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.composables.AccountStatusIndicator
 import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.theme.Purple80
-import com.heyzeusv.solitaire.util.theme.TransparentDarkBG
 
 /**
  *  Composable that displays Menu which allows user to change various Settings.
@@ -130,31 +128,7 @@ fun SettingsMenu(
     updateAnimationDurations: (AnimationDurations) -> Unit = { },
     onBackPress: () -> Unit = { }
 ) {
-    if (accountStatus !is AccountStatus.Idle) {
-        BackHandler { }
-        Surface(
-            modifier = Modifier
-                .fillMaxSize()
-                .zIndex(10f),
-            color = TransparentDarkBG
-        ) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(200.dp),
-                    color = Purple80,
-                    strokeWidth = 10.dp
-                )
-                Text(
-                    text = stringResource(accountStatus.message),
-                    style = MaterialTheme.typography.headlineMedium
-                )
-            }
-        }
-    }
+    AccountStatusIndicator(accountStatus)
     MenuScreen(
         menu = MenuState.Settings,
         modifier = Modifier.testTag("Settings Menu"),

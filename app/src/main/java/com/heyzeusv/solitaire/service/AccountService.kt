@@ -16,6 +16,9 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
     val currentUserId: String
         get() = auth.currentUser?.uid.orEmpty()
 
+    val hasUser: Boolean
+        get() = auth.currentUser != null
+
     val currentUser: Flow<UserAccount>
         get() = callbackFlow {
             val listener =

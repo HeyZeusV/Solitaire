@@ -52,8 +52,10 @@ import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.menu.MenuScreen
 import com.heyzeusv.solitaire.menu.MenuViewModel
+import com.heyzeusv.solitaire.service.AccountStatus
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.composables.AccountStatusIndicator
 import com.heyzeusv.solitaire.util.composables.SolitaireAlertDialog
 import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.getAverageMoves
@@ -76,8 +78,10 @@ fun StatsMenu(
     val selectedGameStats =
         stats.statsList.find { it.game == selectedGame.dataStoreEnum }
             ?: getStatsDefaultInstance()
+    val accountStatus by menuVM.accountStatus.collectAsState()
 
     StatsMenu(
+        accountStatus = accountStatus,
         selectedGame = selectedGame,
         updateSelectedGameStats = { selectedGame = it },
         selectedGameStats = selectedGameStats,
@@ -96,6 +100,7 @@ fun StatsMenu(
  */
 @Composable
 fun StatsMenu(
+    accountStatus: AccountStatus = AccountStatus.Idle(),
     selectedGame: Games,
     updateSelectedGameStats: (Games) -> Unit,
     selectedGameStats: GameStats,
@@ -104,6 +109,7 @@ fun StatsMenu(
     uploadStatsConfirmOnClick: () -> Unit = { }
 ) {
     var displayUploadStatsAD by remember { mutableStateOf(false) }
+    AccountStatusIndicator(accountStatus)
     MenuScreen(
         menu = MenuState.Stats,
         modifier = Modifier.testTag("Stats Menu"),

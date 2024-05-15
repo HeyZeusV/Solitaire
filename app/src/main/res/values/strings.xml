@@ -143,5 +143,6 @@
     <string name="upload_ad_message">You can only upload stats once a day.</string>
     <string name="upload_ad_confirm">Yes</string>
     <string name="upload_ad_dismiss">No</string>
-    <string name="upload_error">You can upload in %1$s</string>
+    <string name="upload_error_time">You can upload in %1$s.</string>
+    <string name="upload_error_no_user">Please sign in first.</string>
 </resources>

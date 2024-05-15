@@ -63,7 +63,6 @@ class MenuViewModel @Inject constructor(
     }
 
     val currentUser = storageService.currentUser
-//    val currentUserGameStats = storageService.currentUserGameStats
 
     private val _accountStatus = MutableStateFlow<AccountStatus>(Idle())
     val accountStatus: StateFlow<AccountStatus> get() = _accountStatus
@@ -221,10 +220,13 @@ class MenuViewModel @Inject constructor(
 
     fun uploadStatsOnClick(): Boolean {
         val currentTime = Date()
-        return if (currentTime.before(Date(stats.value.nextGameStatsUpload))) {
+        return if (!accountService.hasUser) {
+            SnackbarManager.showMessage(R.string.upload_error_no_user)
+            false
+        } else if (currentTime.before(Date(stats.value.nextGameStatsUpload))) {
             val timeLeft = (stats.value.nextGameStatsUpload - currentTime.time) / 1000
             val formattedTimeLeft = timeLeft.formatTimeStats()
-            SnackbarManager.showMessage(R.string.upload_error, arrayOf(formattedTimeLeft))
+            SnackbarManager.showMessage(R.string.upload_error_time, arrayOf(formattedTimeLeft))
             false
         } else {
             true
