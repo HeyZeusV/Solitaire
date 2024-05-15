@@ -170,7 +170,12 @@ class MenuViewModel @Inject constructor(
                     accountService.createAccount(it.email.trim(), it.password)
                     storageService.addUsername(it.username.trim())
                     _accountStatus.value = UploadData()
-                    storageService.uploadGameStats(stats.value.statsList.toSingleGameStatsList())
+                    if (stats.value.uid != "") {
+                        statManager.deleteAllStats()
+                    } else {
+                        storageService.uploadGameStats(stats.value.statsList.toSingleGameStatsList())
+                    }
+                    statManager.updateUID(accountService.currentUserId)
                 }
             }
         }
@@ -190,11 +195,18 @@ class MenuViewModel @Inject constructor(
             launchCatching {
                 _accountStatus.value = SignIn()
                 accountService.authenticate(it.email, it.password)
-                val onlineGameStats = storageService.retrieveGameStats()
-                statManager.addAllStats(onlineGameStats.toGameStatsList())
+                if (stats.value.uid != accountService.currentUserId) {
+                    _accountStatus.value = RetrieveData()
+                    val fsGameStats = storageService.retrieveGameStats()
+                    statManager.addAllStats(fsGameStats.toGameStatsList())
+                    statManager.updateUID(accountService.currentUserId)
+                }
             }
         }
     }
+
+    fun signOutCheck(): Boolean = stats.value.gameStatsToUploadList.isEmpty()
+
 
     fun signOutOnClick() {
         launchCatching {
@@ -202,6 +214,7 @@ class MenuViewModel @Inject constructor(
             accountService.signOut()
             statManager.deleteAllStats()
             _uiState.value = AccountUiState()
+            statManager.updateUID("")
         }
     }
 

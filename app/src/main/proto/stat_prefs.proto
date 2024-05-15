@@ -8,6 +8,7 @@ message StatPreferences {
   int64 last_game_stats_upload = 2;
   int64 next_game_stats_upload = 3;
   repeated Game game_stats_to_upload = 4;
+  string uid = 5;
 }
 
 message GameStats {

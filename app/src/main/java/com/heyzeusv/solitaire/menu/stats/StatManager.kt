@@ -81,6 +81,12 @@ class StatManager @Inject constructor(
             statPrefs.toBuilder().clearGameStatsToUpload().build()
         }
     }
+
+    suspend fun updateUID(uid: String) {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().setUid(uid).build()
+        }
+    }
 }
 
 /**

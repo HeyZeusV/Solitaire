@@ -65,6 +65,7 @@ import com.heyzeusv.solitaire.util.AccountTabs
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.composables.AccountStatusIndicator
+import com.heyzeusv.solitaire.util.composables.SolitaireAlertDialog
 import com.heyzeusv.solitaire.util.theme.Purple40
 import com.heyzeusv.solitaire.util.theme.Purple80
 
@@ -89,6 +90,7 @@ fun SettingsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
         updatePassword = menuVM::updatePassword,
         signUpOnClick = menuVM::signUpOnClick,
         logInOnClick = menuVM::logInOnClick,
+        signOutCheck = menuVM::signOutCheck,
         signOutOnClick = menuVM::signOutOnClick,
         forgotPasswordOnClick = menuVM::forgotPasswordOnClick,
         selectedAnimationDurations = selectedAnimationDurations,
@@ -122,6 +124,7 @@ fun SettingsMenu(
     updatePassword: (String) -> Unit = { },
     signUpOnClick: () -> Unit = { },
     logInOnClick: () -> Unit = { },
+    signOutCheck: () -> Boolean = { true },
     signOutOnClick: () -> Unit = { },
     forgotPasswordOnClick: () -> Unit = { },
     selectedAnimationDurations: AnimationDurations,
@@ -144,6 +147,7 @@ fun SettingsMenu(
                 updatePassword = updatePassword,
                 signUpOnClick = signUpOnClick,
                 logInOnClick = logInOnClick,
+                signOutCheck = signOutCheck,
                 signOutOnClick = signOutOnClick,
                 forgotPasswordOnClick = forgotPasswordOnClick
             )
@@ -168,11 +172,13 @@ fun AccountSetting(
     updatePassword: (String) -> Unit = { },
     signUpOnClick: () -> Unit = { },
     logInOnClick: () -> Unit = { },
+    signOutCheck: () -> Boolean = { true },
     signOutOnClick: () -> Unit = { },
     forgotPasswordOnClick: () -> Unit = { }
     ) {
     val keyboardController = LocalSoftwareKeyboardController.current
     var selectedTab by remember { mutableIntStateOf(0) }
+    var signOutDisplay by remember { mutableStateOf(false) }
 
     Surface(
         modifier = Modifier
@@ -181,6 +187,18 @@ fun AccountSetting(
         shape = RoundedCornerShape(4.dp)
     ) {
         if (isConnected && userAccount != null) {
+            SolitaireAlertDialog(
+                display = signOutDisplay,
+                title = stringResource(R.string.sign_out_ad_title),
+                message = stringResource(R.string.sign_out_ad_message),
+                confirmText = stringResource(R.string.sign_out_ad_confirm),
+                confirmOnClick = {
+                    signOutOnClick()
+                    signOutDisplay = false
+                },
+                dismissText = stringResource(R.string.sign_out_ad_dismiss),
+                dismissOnClick = { signOutDisplay = false }
+            )
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -199,7 +217,13 @@ fun AccountSetting(
                     modifier = Modifier.weight(.1f)
                 )
                 Button(
-                    onClick = { signOutOnClick() },
+                    onClick = {
+                        if (signOutCheck()) {
+                            signOutOnClick()
+                        } else {
+                            signOutDisplay = true
+                        }
+                    },
                     modifier = Modifier
                         .weight(.12f)
                         .padding(horizontal = 16.dp)

@@ -119,6 +119,10 @@
     <string name="account_password_visibility">Visibility</string>
     <string name="account_forgot_password">Forgot Password</string>
     <string name="account_sign_out">Sign Out</string>
+    <string name="sign_out_ad_title">Are you sure?</string>
+    <string name="sign_out_ad_message">You have stats that haven\'t been upload, which will be deleted on sign out!</string>
+    <string name="sign_out_ad_confirm">Yes</string>
+    <string name="sign_out_ad_dismiss">No</string>
     <string name="hello_user">Hello %1$s</string>
     <string name="internet_error">No internet connection</string>
     <string name="username_error">Please enter a different username.</string>
@@ -139,6 +143,7 @@
     <string name="account_status_sign_in">Signing In…</string>
     <string name="account_status_sign_out">Signing In…</string>
     <string name="account_status_upload_data">Uploading local data…</string>
+    <string name="account_status_retrieve_data">Retrieving online data…</string>
     <string name="upload_ad_title">Upload all stats?</string>
     <string name="upload_ad_message">You can only upload stats once a day.</string>
     <string name="upload_ad_confirm">Yes</string>
