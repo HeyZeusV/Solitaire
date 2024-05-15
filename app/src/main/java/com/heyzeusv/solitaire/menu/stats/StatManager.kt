@@ -4,9 +4,11 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.util.endOfDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.io.IOException
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -45,7 +47,7 @@ class StatManager @Inject constructor(
      */
     suspend fun addAllStats(stats: List<GameStats>) {
         statPreferences.updateData { statPrefs ->
-            statPrefs.toBuilder().clear().addAllStats(stats).build()
+            statPrefs.toBuilder().clearStats().addAllStats(stats).build()
         }
     }
 
@@ -53,7 +55,20 @@ class StatManager @Inject constructor(
      *  Delete all stored stats. Called when user logs out.
      */
     suspend fun deleteAllStats() {
-        statPreferences.updateData { it.toBuilder().clear().build() }
+        statPreferences.updateData { it.toBuilder().clearStats().build() }
+    }
+
+    /**
+     *  Updates last_game_stats_upload to current time and next_game_stats_upload to end of day.
+     */
+    suspend fun updateGameStatsUploadTimes() {
+        statPreferences.updateData { statPrefs ->
+            val date = Date()
+            statPrefs.toBuilder()
+                .setLastGameStatsUpload(date.time)
+                .setNextGameStatsUpload(date.endOfDay())
+                .build()
+        }
     }
 }
 

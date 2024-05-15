@@ -8,8 +8,8 @@ object SnackbarManager {
     private val _messages: MutableStateFlow<SnackbarMessage?> = MutableStateFlow(null)
     val messages: StateFlow<SnackbarMessage?> get() = _messages
 
-    fun showMessage(@StringRes message: Int) {
-        _messages.value = SnackbarMessage.ResourceSnackbar(message)
+    fun showMessage(@StringRes message: Int, formatArgs: Array<Any?> = emptyArray()) {
+        _messages.value = SnackbarMessage.ResourceSnackbar(message, formatArgs)
     }
 
     fun showMessage(message: SnackbarMessage) {

@@ -22,6 +22,7 @@ import com.heyzeusv.solitaire.service.toGameStatsList
 import com.heyzeusv.solitaire.service.toSingleGameStatsList
 import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
+import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.isValidEmail
 import com.heyzeusv.solitaire.util.isValidPassword
 import com.heyzeusv.solitaire.util.isValidUsername
@@ -33,6 +34,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
+import java.util.Date
 import javax.inject.Inject
 
 /**
@@ -217,9 +219,22 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun uploadStatsOnClick() {
+    fun uploadStatsOnClick(): Boolean {
+        val currentTime = Date()
+        return if (currentTime.before(Date(stats.value.nextGameStatsUpload))) {
+            val timeLeft = (stats.value.nextGameStatsUpload - currentTime.time) / 1000
+            val formattedTimeLeft = timeLeft.formatTimeStats()
+            SnackbarManager.showMessage(R.string.upload_error, arrayOf(formattedTimeLeft))
+            false
+        } else {
+            true
+        }
+    }
+
+    fun uploadStatsConfirmOnClick() {
         launchCatching {
             _accountStatus.value = UploadData()
+            statManager.updateGameStatsUploadTimes()
             storageService.uploadGameStats(stats.value.statsList.toSingleGameStatsList())
         }
     }

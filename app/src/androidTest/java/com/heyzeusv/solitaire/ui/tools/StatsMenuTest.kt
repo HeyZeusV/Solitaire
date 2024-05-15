@@ -37,7 +37,7 @@ class StatsMenuTest {
         .setFastestWin(700L)
         .setTotalTime(10000L)
         .setTotalScore(200)
-        .setBestTotalScore(329L)
+        .setBestCombinedScore(329L)
         .build()
 
     private var gameTwoStats = getStatsDefaultInstance()

@@ -21,12 +21,7 @@ class SettingsManager @Inject constructor(
             // DataStore.data throws an IOException when an error is encountered when reading data
             if (exception is IOException) {
                 Log.e("Solitaire", "Error reading settings.", exception)
-                emit(
-                    Settings.getDefaultInstance().toBuilder()
-                        .setAnimationDurations(AnimationDurationsSetting.FAST)
-                        .setSelectedGame(Game.GAME_KLONDIKETURNONE)
-                        .build()
-                )
+                emit(Settings.getDefaultInstance())
             } else {
                 throw exception
             }

@@ -143,4 +143,5 @@
     <string name="upload_ad_message">You can only upload stats once a day.</string>
     <string name="upload_ad_confirm">Yes</string>
     <string name="upload_ad_dismiss">No</string>
+    <string name="upload_error">You can upload in %1$s</string>
 </resources>

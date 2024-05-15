@@ -81,16 +81,18 @@ fun StatsMenu(
         selectedGame = selectedGame,
         updateSelectedGameStats = { selectedGame = it },
         selectedGameStats = selectedGameStats,
-        onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) }
-    ) { menuVM.uploadStatsOnClick() }
+        onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) },
+        uploadStatsOnClick = menuVM::uploadStatsOnClick
+    ) { menuVM.uploadStatsConfirmOnClick() }
 }
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of [selectedGame]
  *  which is updated through [updateSelectedGameStats]. All the data has been hoisted into above
  *  [StatsMenu] thus allowing for easier testing. [onBackPressed] handles opening and closing
- *  [StatsMenu]. [selectedGameStats] are to be displayed. [confirmUploadStatsOnClick] runs when
- *  confirming [SolitaireAlertDialog] that appears on upload button press.
+ *  [StatsMenu]. [selectedGameStats] are to be displayed. [uploadStatsOnClick] runs when clicking
+ *  on upload icon. [uploadStatsConfirmOnClick] runs when confirming [SolitaireAlertDialog] that
+ *  appears on upload button press.
  */
 @Composable
 fun StatsMenu(
@@ -98,7 +100,8 @@ fun StatsMenu(
     updateSelectedGameStats: (Games) -> Unit,
     selectedGameStats: GameStats,
     onBackPressed: () -> Unit = { },
-    confirmUploadStatsOnClick: () -> Unit = { }
+    uploadStatsOnClick: () -> Boolean = { true },
+    uploadStatsConfirmOnClick: () -> Unit = { }
 ) {
     var displayUploadStatsAD by remember { mutableStateOf(false) }
     MenuScreen(
@@ -112,7 +115,7 @@ fun StatsMenu(
                 modifier = modifier
                     .padding(top = dimensionResource(R.dimen.mhbIconPaddingTop))
                     .size(dimensionResource(R.dimen.mhbIconSize))
-                    .clickable { displayUploadStatsAD = true }
+                    .clickable { displayUploadStatsAD = uploadStatsOnClick() }
             )
         }
     ) {
@@ -131,7 +134,7 @@ fun StatsMenu(
         message = stringResource(R.string.upload_ad_message),
         confirmText = stringResource(R.string.upload_ad_confirm),
         confirmOnClick = {
-            confirmUploadStatsOnClick()
+            uploadStatsConfirmOnClick()
             displayUploadStatsAD = false
         },
         dismissText = stringResource(R.string.upload_ad_dismiss),

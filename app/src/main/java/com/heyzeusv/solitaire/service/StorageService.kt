@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.service
 
-import com.google.firebase.Timestamp
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.dataObjects
@@ -32,9 +31,7 @@ class StorageService @Inject constructor(
     suspend fun addUsername(usernameToAdd: String) {
         val user = hashMapOf(
             "username" to usernameToAdd,
-            "usernameLower" to usernameToAdd.lowercase(),
-            "lastGameStatsUpload" to Timestamp.now(),
-            "nextGameStatsUpload" to endOfDay()
+            "usernameLower" to usernameToAdd.lowercase()
         )
         val username = hashMapOf("userId" to auth.currentUserId)
         firestore.runBatch { batch ->
@@ -64,21 +61,9 @@ class StorageService @Inject constructor(
         return query.get().await().toObjects(SingleGameStats::class.java)
     }
 
-    /**
-     *  Returns [Timestamp] to end of day today using UTC-7 as timezone.
-     */
-    private fun endOfDay(): Timestamp {
-        val timestampNow = Timestamp.now()
-        val timeIntoDay = (timestampNow.seconds - UTC_MINUS7) % DAY_IN_SECONDS
-        val secondsEOD = timestampNow.seconds - timeIntoDay + DAY_IN_SECONDS
-        return Timestamp(seconds = secondsEOD, nanoseconds = 0)
-    }
-
     companion object {
         private const val USER_COLLECTION = "users"
         private const val USERNAME_COLLECTION = "usernames"
         private const val GAMESTATS_COLLECTION = "gameStats"
-        private const val UTC_MINUS7 = 25200
-        private const val DAY_IN_SECONDS = 86400
     }
 }

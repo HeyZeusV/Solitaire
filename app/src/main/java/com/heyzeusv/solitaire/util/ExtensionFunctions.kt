@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.board.piles.Card
 import java.text.DecimalFormat
+import java.util.Date
 import java.util.regex.Pattern
 
 fun Long.formatTimeDisplay(): String {
@@ -205,4 +206,16 @@ fun String.isValidEmail(): Boolean {
  */
 fun String.isValidPassword(): Boolean {
     return this.isNotBlank() && Pattern.compile(PASS_PATTERN).matcher(this).matches()
+}
+
+private const val UTC_MINUS7 = 25200
+private const val DAY_IN_SECONDS = 86400
+
+/**
+ *  Returns [Long] from this [Date] that represents the end of day today using UTC-7 as timezone.
+ */
+fun Date.endOfDay(): Long {
+    val dateNowSeconds = this.time / 1000
+    val timeIntoDay = (dateNowSeconds - UTC_MINUS7) % DAY_IN_SECONDS
+    return (dateNowSeconds - timeIntoDay + DAY_IN_SECONDS) * 1000
 }

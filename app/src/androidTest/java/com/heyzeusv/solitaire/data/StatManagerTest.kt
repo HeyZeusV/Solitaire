@@ -93,7 +93,7 @@ class StatManagerTest {
 
     @Test
     fun statManager_updateData_updateExisting() {
-        val updatedTurnOne = turnOne.toBuilder().setBestTotalScore(10L).build()
+        val updatedTurnOne = turnOne.toBuilder().setBestCombinedScore(10L).build()
         runTestAndCleanup {
             statManager.updateStats(turnOne)
             var data = statManager.statData.first()

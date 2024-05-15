@@ -3,6 +3,8 @@ package com.heyzeusv.solitaire.menu.settings
 import androidx.datastore.core.CorruptionException
 import androidx.datastore.core.Serializer
 import com.google.protobuf.InvalidProtocolBufferException
+import com.heyzeusv.solitaire.AnimationDurationsSetting
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.Settings
 import java.io.InputStream
 import java.io.OutputStream
@@ -12,7 +14,10 @@ import javax.inject.Inject
  *  Used to convert from Proto to Kotlin and vice versa when working with DataStore.
  */
 class SettingsSerializer @Inject constructor() : Serializer<Settings> {
-    override val defaultValue: Settings = Settings.getDefaultInstance()
+    override val defaultValue: Settings = Settings.getDefaultInstance().toBuilder()
+        .setAnimationDurations(AnimationDurationsSetting.FAST)
+        .setSelectedGame(Game.GAME_KLONDIKETURNONE)
+        .build()
 
     override suspend fun readFrom(input: InputStream): Settings {
         try {
