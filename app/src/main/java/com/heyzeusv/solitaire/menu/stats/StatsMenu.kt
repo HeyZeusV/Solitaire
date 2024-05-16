@@ -6,8 +6,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -37,6 +39,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
@@ -162,6 +165,7 @@ fun StatsDropDownMenu(
     val iconRotation = remember { Animatable(0f) }
     val interactionSource = remember { MutableInteractionSource() }
     if (interactionSource.collectIsPressedAsState().value) expanded = !expanded
+    val screenHeight = LocalConfiguration.current.screenHeightDp.dp
 
     LaunchedEffect(expanded) {
         if (expanded) {
@@ -173,7 +177,7 @@ fun StatsDropDownMenu(
         }
     }
     DisableSelection {
-        Column {
+        Box {
             OutlinedTextField(
                 value = stringResource(selectedGame.nameId),
                 onValueChange = { },
@@ -207,8 +211,11 @@ fun StatsDropDownMenu(
             DropdownMenu(
                 expanded = expanded,
                 onDismissRequest = { expanded = false },
-                modifier = Modifier.width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                modifier = Modifier
+                    .width(with(LocalDensity.current) { textFieldSize.width.toDp() })
+                    .height(screenHeight - 225.dp),
             ) {
+                HorizontalDivider()
                 Games.statsOrderedSubclasses.forEach { game ->
                     DropdownMenuItem(
                         text = { Text(stringResource(game.nameId)) },
@@ -216,8 +223,10 @@ fun StatsDropDownMenu(
                             updateSelectedGame(game)
                             expanded = false
                         },
-                        modifier = Modifier.testTag("DropDownMenu Item ${game::class.java.simpleName}")
+                        modifier = Modifier
+                            .testTag("DropDownMenu Item ${game::class.java.simpleName}")
                     )
+                    HorizontalDivider()
                 }
             }
         }
