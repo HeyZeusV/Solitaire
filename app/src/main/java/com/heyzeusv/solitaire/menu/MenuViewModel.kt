@@ -117,8 +117,8 @@ class MenuViewModel @Inject constructor(
             ?: getStatsDefaultInstance()
 
         viewModelScope.launch {
-            statManager.updateStats(prevGS.updateStats(lgs))
-            statManager.updateStats(allGS.updateStats(lgs))
+            statManager.updateStats(prevGS.updateStats(lgs), accountService.hasUser)
+            statManager.updateStats(allGS.updateStats(lgs), accountService.hasUser)
         }
     }
 
@@ -131,7 +131,7 @@ class MenuViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            statManager.updateStats(allGS)
+            statManager.updateStats(allGS, accountService.hasUser)
         }
     }
 
@@ -204,7 +204,6 @@ class MenuViewModel @Inject constructor(
     }
 
     fun signOutCheck(): Boolean = stats.value.gameStatsToUploadList.isEmpty()
-
 
     fun signOutOnClick() {
         launchCatching {

@@ -101,7 +101,6 @@ dependencies {
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:$firebase"))
-    implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
     implementation("com.google.firebase:firebase-appcheck-playintegrity")

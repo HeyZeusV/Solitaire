@@ -31,7 +31,7 @@ class StatManager @Inject constructor(
     /**
      *  Stats can all be updated together when a game is ended by any means.
      */
-    suspend fun updateStats(stats: GameStats) {
+    suspend fun updateStats(stats: GameStats, signedIn: Boolean) {
         statPreferences.updateData { statPrefs ->
             val index = statPrefs.statsList.indexOfFirst { it.game == stats.game }
             val builder = statPrefs.toBuilder()
@@ -40,7 +40,7 @@ class StatManager @Inject constructor(
             } else {
                 builder.setStats(index, stats)
             }
-            if (!statPrefs.gameStatsToUploadList.contains(stats.game)) {
+            if (signedIn && !statPrefs.gameStatsToUploadList.contains(stats.game)) {
                 builder.addGameStatsToUpload(stats.game)
             }
             builder.build()

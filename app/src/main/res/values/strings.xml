@@ -121,7 +121,7 @@
     <string name="account_forgot_password">Forgot Password</string>
     <string name="account_sign_out">Sign Out</string>
     <string name="sign_out_ad_title">Are you sure?</string>
-    <string name="sign_out_ad_message">You have stats that haven\'t been upload, which will be deleted on sign out!</string>
+    <string name="sign_out_ad_message">You have stats that haven\'t been uploaded, which will be deleted on sign out!</string>
     <string name="sign_out_ad_confirm">Yes</string>
     <string name="sign_out_ad_dismiss">No</string>
     <string name="hello_user">Hello %1$s</string>
