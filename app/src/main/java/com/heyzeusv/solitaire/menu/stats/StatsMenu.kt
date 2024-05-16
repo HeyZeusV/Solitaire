@@ -2,17 +2,22 @@ package com.heyzeusv.solitaire.menu.stats
 
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.selection.DisableSelection
 import androidx.compose.foundation.verticalScroll
@@ -34,6 +39,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.geometry.Size
@@ -45,6 +51,7 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
@@ -60,6 +67,7 @@ import com.heyzeusv.solitaire.service.AccountStatus
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.util.PreviewUtil
 import com.heyzeusv.solitaire.util.composables.AccountStatusIndicator
+import com.heyzeusv.solitaire.util.composables.HorizontalPagerIndicator
 import com.heyzeusv.solitaire.util.composables.SolitaireAlertDialog
 import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.getAverageMoves
@@ -131,10 +139,7 @@ fun StatsMenu(
             selectedGame = selectedGame,
             updateSelectedGame = { updateSelectedGameStats(it) }
         )
-        StatColumn(
-            selectedGameStats = selectedGameStats,
-            game = selectedGame
-        )
+        StatPager(selectedGameStats = selectedGameStats, game = selectedGame)
     }
     SolitaireAlertDialog(
         display = displayUploadStatsAD,
@@ -233,71 +238,127 @@ fun StatsDropDownMenu(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
+@Composable
+fun StatPager(
+    selectedGameStats: GameStats,
+    game: Games
+) {
+    val pagerState = rememberPagerState(pageCount = { 2 })
+    val scrollState = rememberScrollState()
+
+    Column(
+        modifier = Modifier.fillMaxSize(),
+        verticalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        HorizontalPager(
+            state = pagerState,
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(0.9f)
+        ) { page ->
+            when (page) {
+                0 -> StatColumn(
+                    title = stringResource(R.string.stats_personal),
+                    selectedGameStats = selectedGameStats,
+                    game = game,
+                    scrollState = scrollState
+                )
+                else -> StatColumn(
+                    title = stringResource(R.string.stats_global),
+                    selectedGameStats = selectedGameStats,
+                    game = game,
+                    scrollState = scrollState
+                )
+            }
+        }
+        HorizontalPagerIndicator(
+            pagerState = pagerState,
+            pageCount = 2,
+            modifier = Modifier
+                .padding(vertical = 4.dp)
+                .align(Alignment.CenterHorizontally),
+            activeColor = Purple80,
+            inactiveColor = Purple80.copy(alpha = 0.38f)
+        )
+    }
+}
+
 /**
  *  Composable which displays all stats stored in given [selectedGameStats] plus a few extras
  *  thanks to extension functions.
  */
 @Composable
 fun StatColumn(
+    title: String,
     selectedGameStats: GameStats,
-    game: Games
+    game: Games,
+    scrollState: ScrollState
 ) {
-    Column(
-        modifier = Modifier.verticalScroll(rememberScrollState()),
-        verticalArrangement = Arrangement.spacedBy(2.dp)
-    ) {
-        StatField(
-            statNameId = R.string.stats_games_played,
-            statValue = "${selectedGameStats.gamesPlayed}"
+    Column {
+        Text(
+            text = title,
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            textDecoration = TextDecoration.Underline,
+            style = MaterialTheme.typography.headlineLarge
         )
-        StatField(
-            statNameId = R.string.stats_games_won,
-            statValue = stringResource(
-                R.string.stats_games_won_value,
-                selectedGameStats.gamesWon,
-                selectedGameStats.getWinPercentage()
-            )
-        )
-        StatField(
-            statNameId = R.string.stats_lowest_moves,
-            statValue = "${selectedGameStats.lowestMoves}"
-        )
-        StatField(
-            statNameId = R.string.stats_average_moves,
-            statValue = "${selectedGameStats.getAverageMoves()}"
-        )
-        StatField(
-            statNameId = R.string.stats_total_moves,
-            statValue = "${selectedGameStats.totalMoves}"
-        )
-        StatField(
-            statNameId = R.string.stats_fastest_win,
-            statValue = selectedGameStats.fastestWin.formatTimeStats()
-        )
-        StatField(
-            statNameId = R.string.stats_average_time,
-            statValue = selectedGameStats.getAverageTime().formatTimeStats()
-        )
-        StatField(
-            statNameId = R.string.stats_total_time,
-            statValue = selectedGameStats.totalTime.formatTimeStats()
-        )
-        if (game != All) {
+        Column(
+            modifier = Modifier.verticalScroll(scrollState),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
             StatField(
-                statNameId = R.string.stats_average_score,
+                statNameId = R.string.stats_games_played,
+                statValue = "${selectedGameStats.gamesPlayed}"
+            )
+            StatField(
+                statNameId = R.string.stats_games_won,
                 statValue = stringResource(
-                    R.string.stats_average_score_value,
-                    selectedGameStats.getAverageScore(),
-                    game.maxScore.amount,
-                    selectedGameStats.getScorePercentage(game.maxScore)
+                    R.string.stats_games_won_value,
+                    selectedGameStats.gamesWon,
+                    selectedGameStats.getWinPercentage()
                 )
             )
+            StatField(
+                statNameId = R.string.stats_lowest_moves,
+                statValue = "${selectedGameStats.lowestMoves}"
+            )
+            StatField(
+                statNameId = R.string.stats_average_moves,
+                statValue = "${selectedGameStats.getAverageMoves()}"
+            )
+            StatField(
+                statNameId = R.string.stats_total_moves,
+                statValue = "${selectedGameStats.totalMoves}"
+            )
+            StatField(
+                statNameId = R.string.stats_fastest_win,
+                statValue = selectedGameStats.fastestWin.formatTimeStats()
+            )
+            StatField(
+                statNameId = R.string.stats_average_time,
+                statValue = selectedGameStats.getAverageTime().formatTimeStats()
+            )
+            StatField(
+                statNameId = R.string.stats_total_time,
+                statValue = selectedGameStats.totalTime.formatTimeStats()
+            )
+            if (game != All) {
+                StatField(
+                    statNameId = R.string.stats_average_score,
+                    statValue = stringResource(
+                        R.string.stats_average_score_value,
+                        selectedGameStats.getAverageScore(),
+                        game.maxScore.amount,
+                        selectedGameStats.getScorePercentage(game.maxScore)
+                    )
+                )
+            }
+            StatField(
+                statNameId = R.string.stats_best_combined_score,
+                statValue = "${selectedGameStats.bestCombinedScore}",
+                statTipId = R.string.stats_best_combined_score_tip
+            )
         }
-        StatField(
-            statNameId = R.string.stats_best_combined_score,
-            statValue = "${selectedGameStats.bestCombinedScore}",
-            statTipId = R.string.stats_best_combined_score_tip
-        )
     }
 }
 
