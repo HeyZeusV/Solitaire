@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.menu.stats
 
 import android.util.Log
 import androidx.datastore.core.DataStore
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.util.endOfDay
@@ -90,10 +91,11 @@ class StatManager @Inject constructor(
 }
 
 /**
- *  Returns [GameStats] with stats either at 0 or maxed out.
+ *  Returns [GameStats] tied to given [game] with stats either at 0 or maxed out.
  */
-fun getStatsDefaultInstance(): GameStats {
+fun getStatsDefaultInstance(game: Game): GameStats {
     return GameStats.getDefaultInstance().toBuilder()
+        .setGame(game)
         .setLowestMoves(9999)
         .setFastestWin(359999L)
         .setBestCombinedScore(99999L)

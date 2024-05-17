@@ -1,12 +1,13 @@
 package com.heyzeusv.solitaire.service
 
 import androidx.annotation.Keep
+import com.google.firebase.firestore.DocumentId
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.games.Games
 
 @Keep
 data class SingleGameStats(
-    val game: String = "",
+    @DocumentId val game: String = "",
     val gamesPlayed: Int = 0,
     val gamesWon: Int = 0,
     val lowestMoves: Int = 9999,

@@ -87,7 +87,7 @@ fun StatsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
     val stats by menuVM.stats.collectAsState()
     val selectedGameStats =
         stats.statsList.find { it.game == selectedGame.dataStoreEnum }
-            ?: getStatsDefaultInstance()
+            ?: getStatsDefaultInstance(selectedGame.dataStoreEnum)
     val accountStatus by menuVM.accountStatus.collectAsState()
 
     StatsMenu(

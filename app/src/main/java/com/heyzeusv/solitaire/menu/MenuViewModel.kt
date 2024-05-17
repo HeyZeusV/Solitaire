@@ -112,9 +112,9 @@ class MenuViewModel @Inject constructor(
      */
     fun updateStats(lgs: LastGameStats) {
         val prevGS = stats.value.statsList.find { it.game == settings.value.selectedGame }
-            ?: getStatsDefaultInstance()
+            ?: getStatsDefaultInstance(settings.value.selectedGame)
         val allGS = stats.value.statsList.find { it.game == Game.GAME_ALL }
-            ?: getStatsDefaultInstance()
+            ?: getStatsDefaultInstance(Game.GAME_ALL)
 
         viewModelScope.launch {
             statManager.updateStats(prevGS.updateStats(lgs), accountService.hasUser)
@@ -125,7 +125,7 @@ class MenuViewModel @Inject constructor(
     fun createAllStats() {
         val exists = stats.value.statsList.any { it.game == Game.GAME_ALL }
         if (exists) return
-        var allGS: GameStats = getStatsDefaultInstance()
+        var allGS: GameStats = getStatsDefaultInstance(Game.GAME_ALL)
         stats.value.statsList.forEach { gs ->
             allGS = allGS.combineGameStats(gs)
         }
