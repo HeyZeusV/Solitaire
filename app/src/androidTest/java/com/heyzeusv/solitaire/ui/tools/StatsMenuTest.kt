@@ -50,8 +50,9 @@ class StatsMenuTest {
                 SolitaireTheme {
                     StatsMenu(
                         selectedGame = KlondikeTurnOne,
-                        updateSelectedGameStats = { },
-                        selectedGameStats = gameOneStats
+                        updateSelectedGame = { },
+                        selectedGamePersonalStats = gameOneStats,
+                        selectedGameGlobalStats = gameTwoStats
                     ) { }
                 }
             }
@@ -68,14 +69,15 @@ class StatsMenuTest {
                 SolitaireTheme {
                     StatsMenu(
                         selectedGame = KlondikeTurnOne,
-                        updateSelectedGameStats = { },
-                        selectedGameStats = gameOneStats
+                        updateSelectedGame = { },
+                        selectedGamePersonalStats = gameOneStats,
+                        selectedGameGlobalStats = gameTwoStats
                     ) { }
                 }
             }
 
             onNode(hasTestTag("DropDownMenu")).performClick()
-            Games.orderedSubclasses.forEach {
+            Games.orderedSubclasses.forEach { _ ->
                 onNode(hasTestTag("DropDownMenu Item")).assertIsDisplayed()
             }
         }
@@ -90,7 +92,7 @@ class StatsMenuTest {
                     var stats by remember { mutableStateOf(gameOneStats) }
                     StatsMenu(
                         selectedGame = selectedGame,
-                        updateSelectedGameStats = {
+                        updateSelectedGame = {
                             selectedGame = it
                             stats = if (stats == gameOneStats) {
                                 gameTwoStats
@@ -98,7 +100,8 @@ class StatsMenuTest {
                                 gameOneStats
                             }
                         },
-                        selectedGameStats = stats
+                        selectedGamePersonalStats = stats,
+                        selectedGameGlobalStats = gameTwoStats
                     ) { }
                 }
             }
