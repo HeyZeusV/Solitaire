@@ -43,7 +43,7 @@ class StorageService @Inject constructor(
         }.await()
     }
 
-    suspend fun uploadGameStats(gameStats: List<SingleGameStats>) {
+    suspend fun uploadPersonalStats(gameStats: List<FsGameStats>) {
         firestore.runBatch { batch ->
             gameStats.forEach { stats ->
                 batch.set(
@@ -55,15 +55,30 @@ class StorageService @Inject constructor(
         }.await()
     }
 
-    suspend fun retrieveGameStats(): List<SingleGameStats> {
+    suspend fun uploadGlobalStats(gameStats: List<FsGameStats>) {
+        for (gs in gameStats) {
+            firestore.runTransaction { transaction ->
+                val basePath = firestore.collection(GLOBALSTATS_COLLECTION)
+                val docRef = basePath.document(gs.game)
+                val snapshot = transaction.get(docRef)
+                val globalGS =
+                    snapshot.toObject(FsGameStats::class.java) ?: FsGameStats(game = gs.game)
+                val updatedGlobalGS = globalGS.combineFsGameStats(gs)
+                transaction.set(docRef, updatedGlobalGS)
+            }.await()
+        }
+    }
+
+    suspend fun retrieveGameStats(): List<FsGameStats> {
         val query = firestore.collection(USER_COLLECTION).document(auth.currentUserId)
             .collection(GAMESTATS_COLLECTION)
-        return query.get().await().toObjects(SingleGameStats::class.java)
+        return query.get().await().toObjects(FsGameStats::class.java)
     }
 
     companion object {
         private const val USER_COLLECTION = "users"
         private const val USERNAME_COLLECTION = "usernames"
         private const val GAMESTATS_COLLECTION = "gameStats"
+        private const val GLOBALSTATS_COLLECTION = "globalStats"
     }
 }

@@ -97,7 +97,7 @@ fun SolitaireApp(
     val menuVM = hiltViewModel<MenuViewModel>()
     val gameVM = hiltViewModel<GameViewModel>()
 
-    val settings by menuVM.settings.collectAsState()
+    val settings by menuVM.settingsFlow.collectAsState()
     var animationDurations by remember { mutableStateOf(AnimationDurations.Fast) }
     LaunchedEffect(key1 = settings.animationDurations) {
         animationDurations = AnimationDurations from settings.animationDurations

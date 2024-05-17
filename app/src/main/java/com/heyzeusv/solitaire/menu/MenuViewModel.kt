@@ -18,10 +18,9 @@ import com.heyzeusv.solitaire.menu.stats.StatManager
 import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
-import com.heyzeusv.solitaire.service.SingleGameStats
 import com.heyzeusv.solitaire.service.StorageService
 import com.heyzeusv.solitaire.service.toGameStatsList
-import com.heyzeusv.solitaire.service.toSingleGameStatsList
+import com.heyzeusv.solitaire.service.toFsGameStatsList
 import com.heyzeusv.solitaire.util.SnackbarManager
 import com.heyzeusv.solitaire.util.SnackbarMessage.Companion.toSnackbarMessage
 import com.heyzeusv.solitaire.util.combineGameStats
@@ -29,6 +28,8 @@ import com.heyzeusv.solitaire.util.formatTimeStats
 import com.heyzeusv.solitaire.util.isValidEmail
 import com.heyzeusv.solitaire.util.isValidPassword
 import com.heyzeusv.solitaire.util.isValidUsername
+import com.heyzeusv.solitaire.util.retrieveLocalStatsFor
+import com.heyzeusv.solitaire.util.retrieveStatsToUploadFor
 import com.heyzeusv.solitaire.util.updateStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -77,17 +78,19 @@ class MenuViewModel @Inject constructor(
     fun updateEmail(newValue: String) { _uiState.value = _uiState.value.copy(email = newValue) }
     fun updatePassword(newValue: String) { _uiState.value = _uiState.value.copy(password = newValue) }
 
-    val settings: StateFlow<Settings> = settingsManager.settingsData.stateIn(
+    val settingsFlow: StateFlow<Settings> = settingsManager.settingsData.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = Settings.getDefaultInstance()
     )
+    private val settings: Settings get() = settingsFlow.value
 
-    val stats: StateFlow<StatPreferences> = statManager.statData.stateIn(
+    val statsFlow: StateFlow<StatPreferences> = statManager.statData.stateIn(
         scope = viewModelScope,
         started = SharingStarted.Eagerly,
         initialValue = StatPreferences.getDefaultInstance()
     )
+    private val stats: StatPreferences get() = statsFlow.value
 
     /**
      *  Updates [Settings].[AnimationDurations] using given [animationDurations].
@@ -111,27 +114,31 @@ class MenuViewModel @Inject constructor(
      *  Updates the [GameStats] of [Settings.selectedGame_] using given [lgs].
      */
     fun updateStats(lgs: LastGameStats) {
-        val prevGS = stats.value.statsList.find { it.game == settings.value.selectedGame }
-            ?: getStatsDefaultInstance(settings.value.selectedGame)
-        val allGS = stats.value.statsList.find { it.game == Game.GAME_ALL }
-            ?: getStatsDefaultInstance(Game.GAME_ALL)
-
+        val selectedGS = stats.retrieveLocalStatsFor(settings.selectedGame).updateStats(lgs)
+        val allGS = stats.retrieveLocalStatsFor(Game.GAME_ALL).updateStats(lgs)
+        var selectedUploadGS: GameStats? = null
+        var allUploadGS: GameStats? = null
+        if (accountService.hasUser) {
+            selectedUploadGS =
+                stats.retrieveStatsToUploadFor(settings.selectedGame).updateStats(lgs)
+            allUploadGS = stats.retrieveStatsToUploadFor(Game.GAME_ALL).updateStats(lgs)
+        }
         viewModelScope.launch {
-            statManager.updateStats(prevGS.updateStats(lgs), accountService.hasUser)
-            statManager.updateStats(allGS.updateStats(lgs), accountService.hasUser)
+            statManager.updateStats(selectedGS, selectedUploadGS)
+            statManager.updateStats(allGS, allUploadGS)
         }
     }
 
     fun createAllStats() {
-        val exists = stats.value.statsList.any { it.game == Game.GAME_ALL }
+        val exists = statsFlow.value.statsList.any { it.game == Game.GAME_ALL }
         if (exists) return
         var allGS: GameStats = getStatsDefaultInstance(Game.GAME_ALL)
-        stats.value.statsList.forEach { gs ->
+        statsFlow.value.statsList.forEach { gs ->
             allGS = allGS.combineGameStats(gs)
         }
 
         viewModelScope.launch {
-            statManager.updateStats(allGS, accountService.hasUser)
+            statManager.updateStats(allGS, null)
         }
     }
 
@@ -168,12 +175,14 @@ class MenuViewModel @Inject constructor(
                     accountService.createAccount(it.email.trim(), it.password)
                     storageService.addUsername(it.username.trim())
                     _accountStatus.value = UploadData()
-                    if (stats.value.uid != "") {
+                    if (statsFlow.value.uid != "") {
                         statManager.deleteAllStats()
                     } else {
-                        storageService.uploadGameStats(stats.value.statsList.toSingleGameStatsList())
+                        storageService.uploadPersonalStats(stats.statsList.toFsGameStatsList())
+                        storageService.uploadGlobalStats(stats.statsList.toFsGameStatsList())
                     }
                     statManager.updateUID(accountService.currentUserId)
+                    statManager.clearGameStatsToUpload()
                 }
             }
         }
@@ -193,7 +202,7 @@ class MenuViewModel @Inject constructor(
             launchCatching {
                 _accountStatus.value = SignIn()
                 accountService.authenticate(it.email, it.password)
-                if (stats.value.uid != accountService.currentUserId) {
+                if (statsFlow.value.uid != accountService.currentUserId) {
                     _accountStatus.value = RetrieveData()
                     val fsGameStats = storageService.retrieveGameStats()
                     statManager.addAllStats(fsGameStats.toGameStatsList())
@@ -203,13 +212,13 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun signOutCheck(): Boolean = stats.value.gameStatsToUploadList.isEmpty()
+    fun signOutCheck(): Boolean = statsFlow.value.gameStatsToUploadList.isEmpty()
 
     fun signOutOnClick() {
         launchCatching {
             _accountStatus.value = SignOut()
             accountService.signOut()
-            statManager.deleteAllStats()
+//            statManager.deleteAllStats()
             _uiState.value = AccountUiState()
             statManager.updateUID("")
         }
@@ -237,12 +246,12 @@ class MenuViewModel @Inject constructor(
         } else if (!accountService.hasUser) {
             SnackbarManager.showMessage(R.string.upload_error_no_user)
             false
-        } else if (currentTime.before(Date(stats.value.nextGameStatsUpload))) {
-            val timeLeft = (stats.value.nextGameStatsUpload - currentTime.time) / 1000
+        } else if (currentTime.before(Date(statsFlow.value.nextGameStatsUpload))) {
+            val timeLeft = (statsFlow.value.nextGameStatsUpload - currentTime.time) / 1000
             val formattedTimeLeft = timeLeft.formatTimeStats()
             SnackbarManager.showMessage(R.string.upload_error_time, arrayOf(formattedTimeLeft))
             false
-        } else if (stats.value.gameStatsToUploadList.isEmpty()) {
+        } else if (statsFlow.value.gameStatsToUploadList.isEmpty()) {
             SnackbarManager.showMessage(R.string.upload_error_no_stats)
             false
         } else {
@@ -254,13 +263,11 @@ class MenuViewModel @Inject constructor(
         launchCatching {
             _accountStatus.value = UploadData()
             statManager.updateGameStatsUploadTimes()
-            val gsToUpload: List<SingleGameStats>
-            stats.value.let {
-                gsToUpload =
-                    it.statsList.filter { gs -> it.gameStatsToUploadList.contains(gs.game) }
-                        .toSingleGameStatsList()
-            }
-            storageService.uploadGameStats(gsToUpload)
+            val gamesToUpload = stats.gameStatsToUploadList.map { it.game }
+            val gsToUpload = stats.statsList.filter { gs -> gamesToUpload.contains(gs.game) }
+                .toFsGameStatsList()
+            storageService.uploadPersonalStats(gsToUpload)
+            storageService.uploadGlobalStats(stats.gameStatsToUploadList.toFsGameStatsList())
             statManager.clearGameStatsToUpload()
         }
     }

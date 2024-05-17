@@ -56,7 +56,7 @@ fun GamesMenu(
     gameVM: GameViewModel,
     menuVM: MenuViewModel
 ) {
-    val settings by menuVM.settings.collectAsState()
+    val settings by menuVM.settingsFlow.collectAsState()
     val selectedGame = Games.getGameClass(settings.selectedGame)
     val scope = rememberCoroutineScope()
 

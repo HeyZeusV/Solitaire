@@ -75,7 +75,7 @@ import com.heyzeusv.solitaire.util.theme.Purple80
 @Composable
 fun SettingsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
     val accountStatus by menuVM.accountStatus.collectAsState()
-    val settings by menuVM.settings.collectAsState()
+    val settings by menuVM.settingsFlow.collectAsState()
     val currentUser by menuVM.currentUser.collectAsState(initial = null)
     val uiState by menuVM.uiState.collectAsState()
     val selectedAnimationDurations = AnimationDurations from settings.animationDurations

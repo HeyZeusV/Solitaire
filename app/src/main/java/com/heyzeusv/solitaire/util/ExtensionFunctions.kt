@@ -13,7 +13,9 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import java.text.DecimalFormat
 import java.util.Date
@@ -255,4 +257,12 @@ fun Date.endOfDay(): Long {
     val dateNowSeconds = this.time / 1000
     val timeIntoDay = (dateNowSeconds - UTC_MINUS7) % DAY_IN_SECONDS
     return (dateNowSeconds - timeIntoDay + DAY_IN_SECONDS) * 1000
+}
+
+fun StatPreferences.retrieveLocalStatsFor(game: Game): GameStats {
+    return statsList.find { it.game == game } ?: getStatsDefaultInstance(game)
+}
+
+fun StatPreferences.retrieveStatsToUploadFor(game: Game): GameStats {
+    return globalStatsList.find { it.game == game } ?: getStatsDefaultInstance(game)
 }
