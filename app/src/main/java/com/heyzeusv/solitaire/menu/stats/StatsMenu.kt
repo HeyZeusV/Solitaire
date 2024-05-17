@@ -85,16 +85,20 @@ fun StatsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
     val settings by menuVM.settingsFlow.collectAsState()
     var selectedGame by remember { mutableStateOf(Games.getGameClass(settings.selectedGame)) }
     val stats by menuVM.statsFlow.collectAsState()
-    val selectedGameStats =
+    val selectedGamePersonalStats =
         stats.statsList.find { it.game == selectedGame.dataStoreEnum }
+            ?: getStatsDefaultInstance(selectedGame.dataStoreEnum)
+    val selectedGameGlobalStats =
+        stats.globalStatsList.find { it.game == selectedGame.dataStoreEnum }
             ?: getStatsDefaultInstance(selectedGame.dataStoreEnum)
     val accountStatus by menuVM.accountStatus.collectAsState()
 
     StatsMenu(
         accountStatus = accountStatus,
         selectedGame = selectedGame,
-        updateSelectedGameStats = { selectedGame = it },
-        selectedGameStats = selectedGameStats,
+        updateSelectedGame = { selectedGame = it },
+        selectedGamePersonalStats = selectedGamePersonalStats,
+        selectedGameGlobalStats = selectedGameGlobalStats,
         onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) },
         syncStatsOnClick = { menuVM.syncStatsOnClick(isConnected) }
     ) { menuVM.syncStatsConfirmOnClick() }
@@ -102,9 +106,9 @@ fun StatsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of [selectedGame]
- *  which is updated through [updateSelectedGameStats]. All the data has been hoisted into above
+ *  which is updated through [updateSelectedGame]. All the data has been hoisted into above
  *  [StatsMenu] thus allowing for easier testing. [onBackPressed] handles opening and closing
- *  [StatsMenu]. [selectedGameStats] are to be displayed. [syncStatsOnClick] runs when clicking
+ *  [StatsMenu]. [selectedGamePersonalStats] are to be displayed. [syncStatsOnClick] runs when clicking
  *  on upload icon. [syncStatsConfirmOnClick] runs when confirming [SolitaireAlertDialog] that
  *  appears on upload button press.
  */
@@ -112,8 +116,9 @@ fun StatsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
 fun StatsMenu(
     accountStatus: AccountStatus = AccountStatus.Idle(),
     selectedGame: Games,
-    updateSelectedGameStats: (Games) -> Unit,
-    selectedGameStats: GameStats,
+    updateSelectedGame: (Games) -> Unit,
+    selectedGamePersonalStats: GameStats,
+    selectedGameGlobalStats: GameStats,
     onBackPressed: () -> Unit = { },
     syncStatsOnClick: () -> Boolean = { true },
     syncStatsConfirmOnClick: () -> Unit = { }
@@ -137,9 +142,13 @@ fun StatsMenu(
     ) {
         StatsDropDownMenu(
             selectedGame = selectedGame,
-            updateSelectedGame = { updateSelectedGameStats(it) }
+            updateSelectedGame = { updateSelectedGame(it) }
         )
-        StatPager(selectedGameStats = selectedGameStats, game = selectedGame)
+        StatPager(
+            selectedGamePersonalStats = selectedGamePersonalStats,
+            selectedGameGlobalStats = selectedGameGlobalStats,
+            game = selectedGame
+        )
     }
     SolitaireAlertDialog(
         display = displaySyncStatsAD,
@@ -241,7 +250,8 @@ fun StatsDropDownMenu(
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun StatPager(
-    selectedGameStats: GameStats,
+    selectedGamePersonalStats: GameStats,
+    selectedGameGlobalStats: GameStats,
     game: Games
 ) {
     val pagerState = rememberPagerState(pageCount = { 2 })
@@ -260,13 +270,13 @@ fun StatPager(
             when (page) {
                 0 -> StatColumn(
                     title = stringResource(R.string.stats_personal),
-                    selectedGameStats = selectedGameStats,
+                    selectedGameStats = selectedGamePersonalStats,
                     game = game,
                     scrollState = scrollState
                 )
                 else -> StatColumn(
                     title = stringResource(R.string.stats_global),
-                    selectedGameStats = selectedGameStats,
+                    selectedGameStats = selectedGameGlobalStats,
                     game = game,
                     scrollState = scrollState
                 )
@@ -402,8 +412,9 @@ fun StatsMenuPreview() {
         Preview {
             StatsMenu(
                 selectedGame = KlondikeTurnOne,
-                updateSelectedGameStats = { },
-                selectedGameStats = GameStats.getDefaultInstance()
+                updateSelectedGame = { },
+                selectedGamePersonalStats = GameStats.getDefaultInstance(),
+                selectedGameGlobalStats = GameStats.getDefaultInstance()
             )
         }
     }
