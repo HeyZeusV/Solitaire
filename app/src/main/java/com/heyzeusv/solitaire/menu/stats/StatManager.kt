@@ -32,7 +32,7 @@ class StatManager @Inject constructor(
     /**
      *  Stats can all be updated together when a game is ended by any means.
      */
-    suspend fun updateStats(localStats: GameStats, uploadStats: GameStats?) {
+    suspend fun updateStats(localStats: GameStats, uploadStats: GameStats? = null) {
         statPreferences.updateData { statPrefs ->
             val index = statPrefs.statsList.indexOfFirst { it.game == localStats.game }
             val builder = statPrefs.toBuilder()
@@ -57,16 +57,22 @@ class StatManager @Inject constructor(
     /**
      *  Adds all given [stats]. Called when user logs in.
      */
-    suspend fun addAllStats(stats: List<GameStats>) {
+    suspend fun addAllPersonalStats(stats: List<GameStats>) {
         statPreferences.updateData { statPrefs ->
             statPrefs.toBuilder().clearStats().addAllStats(stats).build()
+        }
+    }
+
+    suspend fun addAllGlobalStats(stats: List<GameStats>) {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().clearGlobalStats().addAllGlobalStats(stats).build()
         }
     }
 
     /**
      *  Delete all stored stats. Called when user logs out.
      */
-    suspend fun deleteAllStats() {
+    suspend fun deleteAllPersonalStats() {
         statPreferences.updateData { it.toBuilder().clearGameStatsToUpload().clearStats().build() }
     }
 
@@ -76,10 +82,7 @@ class StatManager @Inject constructor(
     suspend fun updateGameStatsUploadTimes() {
         statPreferences.updateData { statPrefs ->
             val date = Date()
-            statPrefs.toBuilder()
-                .setLastGameStatsUpload(date.time)
-                .setNextGameStatsUpload(date.endOfDay())
-                .build()
+            statPrefs.toBuilder().setNextGameStatsSync(date.endOfDay()).build()
         }
     }
 

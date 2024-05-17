@@ -9,6 +9,8 @@ sealed class AccountStatus(@StringRes val message: Int) {
     class CreateAccount : AccountStatus(R.string.account_status_creating_account)
     class SignIn : AccountStatus(R.string.account_status_sign_in)
     class SignOut : AccountStatus(R.string.account_status_sign_out)
-    class UploadData : AccountStatus(R.string.account_status_upload_data)
-    class RetrieveData : AccountStatus(R.string.account_status_retrieve_data)
+    class UploadPersonalStats : AccountStatus(R.string.account_status_upload_personal_stats)
+    class UploadGlobalStats: AccountStatus(R.string.account_status_upload_global_stats)
+    class DownloadPersonalStats : AccountStatus(R.string.account_status_download_personal_stats)
+    class DownloadGlobalStats : AccountStatus(R.string.account_status_download_global_stats)
 }

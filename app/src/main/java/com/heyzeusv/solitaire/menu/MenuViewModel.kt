@@ -138,7 +138,7 @@ class MenuViewModel @Inject constructor(
         }
 
         viewModelScope.launch {
-            statManager.updateStats(allGS, null)
+            statManager.updateStats(allGS)
         }
     }
 
@@ -174,9 +174,9 @@ class MenuViewModel @Inject constructor(
                     _accountStatus.value = CreateAccount()
                     accountService.createAccount(it.email.trim(), it.password)
                     storageService.addUsername(it.username.trim())
-                    _accountStatus.value = UploadData()
+                    _accountStatus.value = UploadPersonalStats()
                     if (statsFlow.value.uid != "") {
-                        statManager.deleteAllStats()
+                        statManager.deleteAllPersonalStats()
                     } else {
                         storageService.uploadPersonalStats(stats.statsList.toFsGameStatsList())
                         storageService.uploadGlobalStats(stats.statsList.toFsGameStatsList())
@@ -203,9 +203,9 @@ class MenuViewModel @Inject constructor(
                 _accountStatus.value = SignIn()
                 accountService.authenticate(it.email, it.password)
                 if (statsFlow.value.uid != accountService.currentUserId) {
-                    _accountStatus.value = RetrieveData()
-                    val fsGameStats = storageService.retrieveGameStats()
-                    statManager.addAllStats(fsGameStats.toGameStatsList())
+                    _accountStatus.value = DownloadPersonalStats()
+                    val fsGameStats = storageService.downloadPersonalStats()
+                    statManager.addAllPersonalStats(fsGameStats.toGameStatsList())
                     statManager.updateUID(accountService.currentUserId)
                 }
             }
@@ -218,7 +218,7 @@ class MenuViewModel @Inject constructor(
         launchCatching {
             _accountStatus.value = SignOut()
             accountService.signOut()
-//            statManager.deleteAllStats()
+            statManager.deleteAllPersonalStats()
             _uiState.value = AccountUiState()
             statManager.updateUID("")
         }
@@ -238,36 +238,40 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun uploadStatsOnClick(isConnected: Boolean): Boolean {
+    fun syncStatsOnClick(isConnected: Boolean): Boolean {
         val currentTime = Date()
         return if (!isConnected) {
-            SnackbarManager.showMessage(R.string.upload_error_no_internet)
+            SnackbarManager.showMessage(R.string.sync_error_no_internet)
             false
         } else if (!accountService.hasUser) {
-            SnackbarManager.showMessage(R.string.upload_error_no_user)
+            SnackbarManager.showMessage(R.string.sync_error_no_user)
             false
-        } else if (currentTime.before(Date(statsFlow.value.nextGameStatsUpload))) {
-            val timeLeft = (statsFlow.value.nextGameStatsUpload - currentTime.time) / 1000
+        } else if (currentTime.before(Date(stats.nextGameStatsSync))) {
+            val timeLeft = (stats.nextGameStatsSync - currentTime.time) / 1000
             val formattedTimeLeft = timeLeft.formatTimeStats()
-            SnackbarManager.showMessage(R.string.upload_error_time, arrayOf(formattedTimeLeft))
+            SnackbarManager.showMessage(R.string.sync_error_time, arrayOf(formattedTimeLeft))
             false
-        } else if (statsFlow.value.gameStatsToUploadList.isEmpty()) {
-            SnackbarManager.showMessage(R.string.upload_error_no_stats)
+        } else if (stats.gameStatsToUploadList.isEmpty()) {
+            SnackbarManager.showMessage(R.string.sync_error_no_stats)
             false
         } else {
             true
         }
     }
 
-    fun uploadStatsConfirmOnClick() {
+    fun syncStatsConfirmOnClick() {
         launchCatching {
-            _accountStatus.value = UploadData()
+            _accountStatus.value = UploadPersonalStats()
             statManager.updateGameStatsUploadTimes()
             val gamesToUpload = stats.gameStatsToUploadList.map { it.game }
             val gsToUpload = stats.statsList.filter { gs -> gamesToUpload.contains(gs.game) }
                 .toFsGameStatsList()
             storageService.uploadPersonalStats(gsToUpload)
+            _accountStatus.value = UploadGlobalStats()
             storageService.uploadGlobalStats(stats.gameStatsToUploadList.toFsGameStatsList())
+            _accountStatus.value = DownloadGlobalStats()
+            val globalStats = storageService.downloadGlobalStats()
+            statManager.addAllGlobalStats(globalStats.toGameStatsList())
             statManager.clearGameStatsToUpload()
         }
     }

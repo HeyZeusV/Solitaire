@@ -96,16 +96,16 @@ fun StatsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
         updateSelectedGameStats = { selectedGame = it },
         selectedGameStats = selectedGameStats,
         onBackPressed = { menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen) },
-        uploadStatsOnClick = { menuVM.uploadStatsOnClick(isConnected) }
-    ) { menuVM.uploadStatsConfirmOnClick() }
+        syncStatsOnClick = { menuVM.syncStatsOnClick(isConnected) }
+    ) { menuVM.syncStatsConfirmOnClick() }
 }
 
 /**
  *  Composable that displays Stats Menu Screen where users can see [GameStats] of [selectedGame]
  *  which is updated through [updateSelectedGameStats]. All the data has been hoisted into above
  *  [StatsMenu] thus allowing for easier testing. [onBackPressed] handles opening and closing
- *  [StatsMenu]. [selectedGameStats] are to be displayed. [uploadStatsOnClick] runs when clicking
- *  on upload icon. [uploadStatsConfirmOnClick] runs when confirming [SolitaireAlertDialog] that
+ *  [StatsMenu]. [selectedGameStats] are to be displayed. [syncStatsOnClick] runs when clicking
+ *  on upload icon. [syncStatsConfirmOnClick] runs when confirming [SolitaireAlertDialog] that
  *  appears on upload button press.
  */
 @Composable
@@ -115,10 +115,10 @@ fun StatsMenu(
     updateSelectedGameStats: (Games) -> Unit,
     selectedGameStats: GameStats,
     onBackPressed: () -> Unit = { },
-    uploadStatsOnClick: () -> Boolean = { true },
-    uploadStatsConfirmOnClick: () -> Unit = { }
+    syncStatsOnClick: () -> Boolean = { true },
+    syncStatsConfirmOnClick: () -> Unit = { }
 ) {
-    var displayUploadStatsAD by remember { mutableStateOf(false) }
+    var displaySyncStatsAD by remember { mutableStateOf(false) }
     AccountStatusIndicator(accountStatus)
     MenuScreen(
         menu = MenuState.Stats,
@@ -126,12 +126,12 @@ fun StatsMenu(
         onBackPress = onBackPressed,
         extraAction = { modifier ->
             Icon(
-                painter = painterResource(R.drawable.button_upload),
-                contentDescription = stringResource(R.string.menu_cdesc_upload),
+                painter = painterResource(R.drawable.button_sync),
+                contentDescription = stringResource(R.string.menu_cdesc_sync),
                 modifier = modifier
                     .padding(top = dimensionResource(R.dimen.mhbIconPaddingTop))
                     .size(dimensionResource(R.dimen.mhbIconSize))
-                    .clickable { displayUploadStatsAD = uploadStatsOnClick() }
+                    .clickable { displaySyncStatsAD = syncStatsOnClick() }
             )
         }
     ) {
@@ -142,16 +142,16 @@ fun StatsMenu(
         StatPager(selectedGameStats = selectedGameStats, game = selectedGame)
     }
     SolitaireAlertDialog(
-        display = displayUploadStatsAD,
-        title = stringResource(R.string.upload_ad_title),
-        message = stringResource(R.string.upload_ad_message),
-        confirmText = stringResource(R.string.upload_ad_confirm),
+        display = displaySyncStatsAD,
+        title = stringResource(R.string.sync_ad_title),
+        message = stringResource(R.string.sync_ad_message),
+        confirmText = stringResource(R.string.sync_ad_confirm),
         confirmOnClick = {
-            uploadStatsConfirmOnClick()
-            displayUploadStatsAD = false
+            syncStatsConfirmOnClick()
+            displaySyncStatsAD = false
         },
-        dismissText = stringResource(R.string.upload_ad_dismiss),
-        dismissOnClick = { displayUploadStatsAD = false }
+        dismissText = stringResource(R.string.sync_ad_dismiss),
+        dismissOnClick = { displaySyncStatsAD = false }
     )
 }
 

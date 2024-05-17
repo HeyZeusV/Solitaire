@@ -69,9 +69,14 @@ class StorageService @Inject constructor(
         }
     }
 
-    suspend fun retrieveGameStats(): List<FsGameStats> {
+    suspend fun downloadPersonalStats(): List<FsGameStats> {
         val query = firestore.collection(USER_COLLECTION).document(auth.currentUserId)
             .collection(GAMESTATS_COLLECTION)
+        return query.get().await().toObjects(FsGameStats::class.java)
+    }
+
+    suspend fun downloadGlobalStats(): List<FsGameStats> {
+        val query = firestore.collection(GLOBALSTATS_COLLECTION)
         return query.get().await().toObjects(FsGameStats::class.java)
     }
 

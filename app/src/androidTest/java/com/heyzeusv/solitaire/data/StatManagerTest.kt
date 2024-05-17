@@ -37,10 +37,8 @@ class StatManagerTest {
         hiltRule.inject()
     }
 
-    private val turnOne: GameStats = getStatsDefaultInstance()
-    private val turnThree: GameStats = getStatsDefaultInstance().toBuilder()
-        .setGame(Game.GAME_KLONDIKETURNTHREE)
-        .build()
+    private val turnOne: GameStats = getStatsDefaultInstance(Game.GAME_KLONDIKETURNONE)
+    private val turnThree: GameStats = getStatsDefaultInstance(Game.GAME_KLONDIKETURNTHREE)
 
     @Test
     fun statManager_initialData() {
