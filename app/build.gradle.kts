@@ -32,8 +32,8 @@ android {
         applicationId = "com.heyzeusv.solitaire"
         minSdk = 24
         targetSdk = 34
-        versionCode = 19
-        versionName = "4.2.0"
+        versionCode = 22
+        versionName = "5.0.0"
 
         testInstrumentationRunner = "com.heyzeusv.solitaire.util.CustomTestRunner"
         vectorDrawables {
@@ -108,7 +108,7 @@ dependencies {
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     // Proto Datastore
-    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("androidx.datastore:datastore:1.1.1")
     implementation("com.google.protobuf:protobuf-javalite:3.25.2")
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
