@@ -2,6 +2,7 @@ v5.0.0
 -New: Create an account in order to save your stats online. After creating an account, logging into any device will automatically download your last saved stats.
 -New: Stats menu now displays your personal stats and global stats, the stats of all registered users added together.
 -New: Stats menu now has a sync button that allows you to upload personal stats and download global stats. Note: This can only be done once a day.
+-New: You can now view your combined stats by selecting All in the game selection on the stats menu.
 
 v4.2.0
 -New: Forty Thieves and 1 of its variants, Forty and Eight, are now available to play!
