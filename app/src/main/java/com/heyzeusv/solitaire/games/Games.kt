@@ -32,6 +32,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class AcesUpVariants: Games() {
         abstract fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: Card): Boolean
     }
+    sealed class Other: Games()
 
     /**
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
@@ -99,34 +100,23 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
             AcesUp, AcesUpRelaxed, AcesUpHard
         )
 
+        val statsOrderedSubclasses: List<Games> = listOf(All) + orderedSubclasses
+
         /**
-         *  Returns [Games] subclass associated with given [game] from Proto DataSture [Game].
+         *  Returns [Games] subclass associated with given [dataStoreGame] from Proto DataSture [Game].
          */
-        fun getGameClass(game: Game): Games {
-            return when (game) {
-                Game.GAME_KLONDIKETURNONE -> KlondikeTurnOne
-                Game.GAME_KLONDIKETURNTHREE -> KlondikeTurnThree
-                Game.GAME_AUSTRALIAN_PATIENCE -> AustralianPatience
-                Game.GAME_CANBERRA -> Canberra
-                Game.GAME_YUKON -> Yukon
-                Game.GAME_ALASKA -> Alaska
-                Game.GAME_RUSSIAN -> Russian
-                Game.GAME_CLASSIC_WESTCLIFF -> ClassicWestcliff
-                Game.GAME_EASTHAVEN -> Easthaven
-                Game.GAME_GOLF -> Golf
-                Game.GAME_PUTT_PUTT -> PuttPutt
-                Game.GAME_GOLF_RUSH -> GolfRush
-                Game.GAME_SPIDER -> Spider
-                Game.GAME_SPIDER_TWO_SUITS -> SpiderTwoSuits
-                Game.GAME_SPIDER_ONE_SUIT -> SpiderOneSuit
-                Game.GAME_ACES_UP -> AcesUp
-                Game.GAME_ACES_UP_RELAXED -> AcesUpRelaxed
-                Game.GAME_ACES_UP_HARD -> AcesUpHard
-                Game.GAME_BEETLE -> Beetle
-                Game.GAME_FORTY_THIEVES -> FortyThieves
-                Game.GAME_FORTY_AND_EIGHT -> FortyAndEight
-                else -> KlondikeTurnOne
+        fun getGameClass(dataStoreGame: Game): Games {
+            for (game in statsOrderedSubclasses) {
+                if (game.dataStoreEnum == dataStoreGame) return game
             }
+            return KlondikeTurnOne
+        }
+
+        fun getDataStoreEnum(dbName: String): Game {
+            for (game in statsOrderedSubclasses) {
+                if (game.dbName == dbName) return game.dataStoreEnum
+            }
+            return KlondikeTurnOne.dataStoreEnum
         }
     }
 }
@@ -162,6 +152,7 @@ interface GameInfo {
     @get:DrawableRes val previewId: Int
     val gamePileRules: GamePileRules
     val dataStoreEnum: Game
+    val dbName: String
 }
 
 /**

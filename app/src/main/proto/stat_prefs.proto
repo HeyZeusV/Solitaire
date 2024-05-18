@@ -4,7 +4,12 @@ option java_package = "com.heyzeusv.solitaire";
 option java_multiple_files = true;
 
 message StatPreferences {
+  reserved 2;
   repeated GameStats stats = 1;
+  int64 next_game_stats_sync = 3;
+  repeated GameStats game_stats_to_upload = 4;
+  string uid = 5;
+  repeated GameStats global_stats = 6;
 }
 
 message GameStats {
@@ -16,7 +21,7 @@ message GameStats {
   int64 fastest_win = 6;
   int64 total_time = 7;
   int32 total_score = 8;
-  int64 best_total_score = 9;
+  int64 best_combined_score = 9;
 }
 
 enum Game {
@@ -41,4 +46,6 @@ enum Game {
   GAME_BEETLE = 18;
   GAME_FORTY_THIEVES = 19;
   GAME_FORTY_AND_EIGHT = 20;
+
+  GAME_ALL = 1000;
 }

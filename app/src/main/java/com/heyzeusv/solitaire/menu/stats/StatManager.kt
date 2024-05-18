@@ -2,11 +2,14 @@ package com.heyzeusv.solitaire.menu.stats
 
 import android.util.Log
 import androidx.datastore.core.DataStore
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
+import com.heyzeusv.solitaire.util.endOfDay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.io.IOException
+import java.util.Date
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -29,25 +32,81 @@ class StatManager @Inject constructor(
     /**
      *  Stats can all be updated together when a game is ended by any means.
      */
-    suspend fun updateStats(stats: GameStats) {
+    suspend fun updateStats(localStats: GameStats, uploadStats: GameStats? = null) {
         statPreferences.updateData { statPrefs ->
-            val index = statPrefs.statsList.indexOfFirst { it.game == stats.game }
+            val index = statPrefs.statsList.indexOfFirst { it.game == localStats.game }
+            val builder = statPrefs.toBuilder()
             if (index == -1) {
-                statPrefs.toBuilder().addStats(stats).build()
+                builder.addStats(localStats)
             } else {
-                statPrefs.toBuilder().setStats(index, stats).build()
+                builder.setStats(index, localStats)
             }
+            uploadStats?.let {
+                val uIndex =
+                    statPrefs.gameStatsToUploadList.indexOfFirst { it.game == uploadStats.game }
+                if (uIndex == -1) {
+                    builder.addGameStatsToUpload(uploadStats)
+                } else {
+                    builder.setGameStatsToUpload(uIndex, uploadStats)
+                }
+            }
+            builder.build()
+        }
+    }
+
+    /**
+     *  Adds all given [stats]. Called when user logs in.
+     */
+    suspend fun addAllPersonalStats(stats: List<GameStats>) {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().clearStats().addAllStats(stats).build()
+        }
+    }
+
+    suspend fun addAllGlobalStats(stats: List<GameStats>) {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().clearGlobalStats().addAllGlobalStats(stats).build()
+        }
+    }
+
+    /**
+     *  Delete all stored stats. Called when user logs out.
+     */
+    suspend fun deleteAllPersonalStats() {
+        statPreferences.updateData { it.toBuilder().clearGameStatsToUpload().clearStats().build() }
+    }
+
+    /**
+     *  Updates last_game_stats_upload to current time and next_game_stats_upload to end of day.
+     */
+    suspend fun updateGameStatsUploadTimes() {
+        statPreferences.updateData { statPrefs ->
+            val date = Date()
+            statPrefs.toBuilder().setNextGameStatsSync(date.endOfDay()).build()
+        }
+    }
+
+    suspend fun clearGameStatsToUpload() {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().clearGameStatsToUpload().build()
+        }
+    }
+
+    suspend fun updateUID(uid: String) {
+        statPreferences.updateData { statPrefs ->
+            statPrefs.toBuilder().setUid(uid).build()
         }
     }
 }
 
 /**
- *  Returns [GameStats] with stats either at 0 or maxed out.
+ *  Returns [GameStats] tied to given [game] with stats either at 0 or maxed out.
  */
-fun getStatsDefaultInstance(): GameStats {
+fun getStatsDefaultInstance(game: Game): GameStats {
     return GameStats.getDefaultInstance().toBuilder()
+        .setGame(game)
         .setLowestMoves(9999)
         .setFastestWin(359999L)
-        .setBestTotalScore(99999L)
+        .setBestCombinedScore(99999L)
         .build()
 }

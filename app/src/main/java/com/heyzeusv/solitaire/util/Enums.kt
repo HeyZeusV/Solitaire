@@ -17,6 +17,7 @@ import com.heyzeusv.solitaire.board.GameViewModel
 import com.heyzeusv.solitaire.games.Easthaven
 import com.heyzeusv.solitaire.menu.GamesMenu
 import com.heyzeusv.solitaire.menu.RulesMenu
+import com.heyzeusv.solitaire.menu.settings.AccountSetting
 import com.heyzeusv.solitaire.menu.stats.StatsMenu
 import com.heyzeusv.solitaire.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.util.icons.Games
@@ -217,4 +218,14 @@ enum class PileInfo(
     Waste(R.string.rules_waste, WasteRules),
     Foundation(R.string.rules_foundation, FoundationRules),
     Tableau(R.string.rules_tableau, TableauRules)
+}
+
+/**
+ *  Used by [AccountSetting] to determine which fields/buttons should be displayed to user.
+ */
+enum class AccountTabs(
+    @StringRes val nameId: Int
+) {
+    SignUp(R.string.account_sign_up),
+    LogIn(R.string.account_log_in)
 }

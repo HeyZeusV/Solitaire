@@ -37,10 +37,8 @@ class StatManagerTest {
         hiltRule.inject()
     }
 
-    private val turnOne: GameStats = getStatsDefaultInstance()
-    private val turnThree: GameStats = getStatsDefaultInstance().toBuilder()
-        .setGame(Game.GAME_KLONDIKETURNTHREE)
-        .build()
+    private val turnOne: GameStats = getStatsDefaultInstance(Game.GAME_KLONDIKETURNONE)
+    private val turnThree: GameStats = getStatsDefaultInstance(Game.GAME_KLONDIKETURNTHREE)
 
     @Test
     fun statManager_initialData() {
@@ -93,7 +91,7 @@ class StatManagerTest {
 
     @Test
     fun statManager_updateData_updateExisting() {
-        val updatedTurnOne = turnOne.toBuilder().setBestTotalScore(10L).build()
+        val updatedTurnOne = turnOne.toBuilder().setBestCombinedScore(10L).build()
         runTestAndCleanup {
             statManager.updateStats(turnOne)
             var data = statManager.statData.first()

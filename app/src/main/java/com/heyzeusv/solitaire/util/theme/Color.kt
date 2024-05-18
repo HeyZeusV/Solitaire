@@ -14,6 +14,8 @@ val PreviewBG = Color(0x77000000)
 
 val ARevealBG = Color(0x26000000)
 
+val TransparentDarkBG = Color(0xCC000000)
+
 val StockRules = Color.Red
 val WasteRules = Color(0xFFFFE500)
 val FoundationRules = Color(0xFF0075FF)

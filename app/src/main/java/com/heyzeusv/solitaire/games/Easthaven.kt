@@ -45,6 +45,7 @@ data object Easthaven : Games.KlondikeFamily() {
         tableauRulesId = R.string.easthaven_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_EASTHAVEN
+    override val dbName: String = "easthaven"
 
     /**
      *  [GameRules]

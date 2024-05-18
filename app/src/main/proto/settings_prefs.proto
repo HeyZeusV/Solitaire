@@ -6,9 +6,9 @@ option java_package = "com.heyzeusv.solitaire";
 option java_multiple_files = true;
 
 message Settings {
+    reserved 100;
     AnimationDurationsSetting animation_durations = 1;
     Game selected_game = 2;
-    bool updated_classic_westcliff_score = 100;
 }
 
 enum AnimationDurationsSetting {

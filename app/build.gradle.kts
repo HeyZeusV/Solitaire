@@ -8,6 +8,7 @@ plugins {
     id("com.google.protobuf") version "0.9.4"
     kotlin("kapt")
     id("com.google.dagger.hilt.android")
+    id("com.google.gms.google-services")
 }
 
 android {
@@ -31,8 +32,8 @@ android {
         applicationId = "com.heyzeusv.solitaire"
         minSdk = 24
         targetSdk = 34
-        versionCode = 19
-        versionName = "4.2.0"
+        versionCode = 23
+        versionName = "5.0.0"
 
         testInstrumentationRunner = "com.heyzeusv.solitaire.util.CustomTestRunner"
         vectorDrawables {
@@ -63,6 +64,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.5.1"
@@ -83,6 +85,7 @@ dependencies {
     val compose = "2024.02.02"
     val hiltVersion = "2.50"
     val lifecycleVersion = "2.7.0"
+    val firebase = "33.0.0"
 
     implementation("org.jetbrains.kotlin:kotlin-reflect:1.9.20")
 
@@ -91,14 +94,21 @@ dependencies {
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:$compose"))
     implementation("androidx.lifecycle:lifecycle-runtime-compose:$lifecycleVersion")
+    implementation("com.google.android.play:integrity:1.3.0")
     // Hilt
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
     implementation("androidx.hilt:hilt-navigation-compose:1.2.0")
+    // Firebase
+    implementation(platform("com.google.firebase:firebase-bom:$firebase"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
+    implementation("com.google.firebase:firebase-appcheck-playintegrity")
+    implementation("com.google.firebase:firebase-appcheck-debug")
     // Compose Navigation
     implementation("androidx.navigation:navigation-compose:2.7.7")
     // Proto Datastore
-    implementation("androidx.datastore:datastore:1.0.0")
+    implementation("androidx.datastore:datastore:1.1.1")
     implementation("com.google.protobuf:protobuf-javalite:3.25.2")
     // ViewModel
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")

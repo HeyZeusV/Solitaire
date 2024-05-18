@@ -33,7 +33,6 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 class AppModule {
-
     /**
      *  Provides [DisplayMetrics] to determine screen size.
      */

@@ -52,6 +52,7 @@ data object PuttPutt : Games.GolfFamily() {
         tableauRulesId = R.string.putt_putt_tableau_rules
     )
     override val dataStoreEnum: Game = Game.GAME_PUTT_PUTT
+    override val dbName: String = "puttPutt"
 
     /**
      *  [GameRules]

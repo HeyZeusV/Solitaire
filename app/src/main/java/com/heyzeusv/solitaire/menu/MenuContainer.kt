@@ -48,6 +48,7 @@ import com.heyzeusv.solitaire.util.PreviewUtil
  */
 @Composable
 fun MenuContainer(
+    isConnected: Boolean,
     gameVM: GameViewModel,
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
@@ -76,13 +77,13 @@ fun MenuContainer(
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.Stats
-        ) { StatsMenu(menuVM = menuVM) }
+        ) { StatsMenu(isConnected, menuVM) }
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.Settings
-        ) { SettingsMenu(menuVM = menuVM) }
+        ) { SettingsMenu(isConnected, menuVM) }
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
             menuState = menuState,

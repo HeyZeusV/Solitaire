@@ -10,6 +10,7 @@ import androidx.compose.ui.test.hasTestTag
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.performClick
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.games.Alaska
 import com.heyzeusv.solitaire.games.AustralianPatience
@@ -29,7 +30,7 @@ class StatsMenuTest {
     @get:Rule
     var composeRule = createAndroidComposeRule<ComponentActivity>()
 
-    private var gameOneStats = getStatsDefaultInstance().toBuilder()
+    private var gameOneStats = getStatsDefaultInstance(Game.GAME_KLONDIKETURNONE).toBuilder()
         .setGamesPlayed(10)
         .setGamesWon(5)
         .setLowestMoves(30)
@@ -37,10 +38,10 @@ class StatsMenuTest {
         .setFastestWin(700L)
         .setTotalTime(10000L)
         .setTotalScore(200)
-        .setBestTotalScore(329L)
+        .setBestCombinedScore(329L)
         .build()
 
-    private var gameTwoStats = getStatsDefaultInstance()
+    private var gameTwoStats = getStatsDefaultInstance(Game.GAME_KLONDIKETURNTHREE)
 
     @Test
     fun statsMenu_display() {
@@ -49,8 +50,9 @@ class StatsMenuTest {
                 SolitaireTheme {
                     StatsMenu(
                         selectedGame = KlondikeTurnOne,
-                        updateSelectedGameStats = { },
-                        selectedGameStats = gameOneStats
+                        updateSelectedGame = { },
+                        selectedGamePersonalStats = gameOneStats,
+                        selectedGameGlobalStats = gameTwoStats
                     ) { }
                 }
             }
@@ -67,14 +69,15 @@ class StatsMenuTest {
                 SolitaireTheme {
                     StatsMenu(
                         selectedGame = KlondikeTurnOne,
-                        updateSelectedGameStats = { },
-                        selectedGameStats = gameOneStats
+                        updateSelectedGame = { },
+                        selectedGamePersonalStats = gameOneStats,
+                        selectedGameGlobalStats = gameTwoStats
                     ) { }
                 }
             }
 
             onNode(hasTestTag("DropDownMenu")).performClick()
-            Games.orderedSubclasses.forEach {
+            Games.orderedSubclasses.forEach { _ ->
                 onNode(hasTestTag("DropDownMenu Item")).assertIsDisplayed()
             }
         }
@@ -89,7 +92,7 @@ class StatsMenuTest {
                     var stats by remember { mutableStateOf(gameOneStats) }
                     StatsMenu(
                         selectedGame = selectedGame,
-                        updateSelectedGameStats = {
+                        updateSelectedGame = {
                             selectedGame = it
                             stats = if (stats == gameOneStats) {
                                 gameTwoStats
@@ -97,7 +100,8 @@ class StatsMenuTest {
                                 gameOneStats
                             }
                         },
-                        selectedGameStats = stats
+                        selectedGamePersonalStats = stats,
+                        selectedGameGlobalStats = gameTwoStats
                     ) { }
                 }
             }

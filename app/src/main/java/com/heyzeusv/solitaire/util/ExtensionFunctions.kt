@@ -1,5 +1,7 @@
 package com.heyzeusv.solitaire.util
 
+import android.net.NetworkCapabilities
+import android.util.Patterns
 import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -9,9 +11,15 @@ import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
+import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
+import com.heyzeusv.solitaire.StatPreferences
 import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
+import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import java.text.DecimalFormat
+import java.util.Date
+import java.util.regex.Pattern
 
 fun Long.formatTimeDisplay(): String {
     val minutes = this / 60
@@ -50,6 +58,41 @@ fun GameStats.getScorePercentage(maxScore: MaxScore): String {
     val df = DecimalFormat("#.##")
     val scorePercent: Double = (getAverageScore().toDouble() / maxScore.amount) * 100
     return df.format(scorePercent)
+}
+
+fun GameStats.updateStats(lgs: LastGameStats): GameStats {
+    return GameStats.newBuilder().also { new ->
+        new.game = this.game
+        new.gamesPlayed = this.gamesPlayed.plus(1)
+        new.gamesWon = this.gamesWon.plus(if (lgs.gameWon) 1 else 0)
+        new.lowestMoves =
+            if (lgs.gameWon) this.lowestMoves.coerceAtMost(lgs.moves) else this.lowestMoves
+        new.totalMoves = this.totalMoves.plus(lgs.moves)
+        new.fastestWin =
+            if (lgs.gameWon) this.fastestWin.coerceAtMost(lgs.time) else this.fastestWin
+        new.totalTime = this.totalTime.plus(lgs.time)
+        new.totalScore = this.totalScore.plus(lgs.score)
+        new.bestCombinedScore =
+            if (lgs.gameWon) {
+                this.bestCombinedScore.coerceAtMost(lgs.totalScore)
+            } else {
+                this.bestCombinedScore
+            }
+    }.build()
+}
+
+fun GameStats.combineGameStats(gs: GameStats): GameStats {
+    return GameStats.newBuilder().also { new ->
+        new.game = Game.GAME_ALL
+        new.gamesPlayed = this.gamesPlayed.plus(gs.gamesPlayed)
+        new.gamesWon = this.gamesWon.plus(gs.gamesWon)
+        new.lowestMoves = this.lowestMoves.coerceAtMost(gs.lowestMoves)
+        new.totalMoves = this.totalMoves.plus(gs.totalMoves)
+        new.fastestWin = this.fastestWin.coerceAtMost(gs.fastestWin)
+        new.totalTime = this.totalTime.plus(gs.totalTime)
+        new.totalScore = this.totalScore.plus(gs.totalScore)
+        new.bestCombinedScore = this.bestCombinedScore.coerceAtMost(gs.bestCombinedScore)
+    }.build()
 }
 
 fun IntOffset.plusX(x: Int) = IntOffset(this.x + x, this.y)
@@ -157,3 +200,69 @@ fun List<Card>.notInOrderOrAltColor(): Boolean {
  *  Checks if list is in order and alternating color
  */
 fun List<Card>.inOrderAndAltColor(): Boolean = !this.notInOrderOrAltColor()
+
+/**
+ *  Checks if current network, if any, has a valid internet connect.
+ */
+fun NetworkCapabilities?.isNetworkCapabilitiesValid(): Boolean = when {
+    this == null -> false
+    hasCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET) &&
+    hasCapability(NetworkCapabilities.NET_CAPABILITY_VALIDATED) &&
+    (hasTransport(NetworkCapabilities.TRANSPORT_WIFI) ||
+    hasTransport(NetworkCapabilities.TRANSPORT_VPN) ||
+    hasTransport(NetworkCapabilities.TRANSPORT_CELLULAR) ||
+    hasTransport(NetworkCapabilities.TRANSPORT_ETHERNET)) -> true
+    else -> false
+}
+
+private const val PASS_PATTERN = "^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\\p{P}|.*\\p{S}).{6,}\$"
+private val profanityList = listOf(
+    "admin", "anal", "anus", "ballsack", "blowjob", "blow job", "boner", "clitoris", "cock", "cunt",
+    "dick", "dildo", "dyke", "fag", "fuck", "jizz", "labia", "muff", "nigger", "nigga", "penis",
+    "piss", "pussy", "scrotum", "sex", "shit", "slut", "smegma", "spunk", "twat", "vagina", "wank",
+    "whore"
+)
+
+/**
+ *  Checks if entered username contains any of the string from [profanityList].
+ */
+fun String.isValidUsername(): Boolean {
+    if (this.isBlank()) return false
+    profanityList.forEach { if (this.contains(it, ignoreCase = true)) return false }
+    return true
+}
+
+/**
+ *  Uses pre-made [Patterns.EMAIL_ADDRESS] to check if email is valid.
+ */
+fun String.isValidEmail(): Boolean {
+    return this.isNotBlank() && Patterns.EMAIL_ADDRESS.matcher(this).matches()
+}
+
+/**
+ *  Uses custom regex [PASS_PATTERN] which requires at least 1 digit, upper, lower, and symbol and
+ *  must be a size of at least 6.
+ */
+fun String.isValidPassword(): Boolean {
+    return this.isNotBlank() && Pattern.compile(PASS_PATTERN).matcher(this).matches()
+}
+
+private const val UTC_MINUS7 = 25200
+private const val DAY_IN_SECONDS = 86400
+
+/**
+ *  Returns [Long] from this [Date] that represents the end of day today using UTC-7 as timezone.
+ */
+fun Date.endOfDay(): Long {
+    val dateNowSeconds = this.time / 1000
+    val timeIntoDay = (dateNowSeconds - UTC_MINUS7) % DAY_IN_SECONDS
+    return (dateNowSeconds - timeIntoDay + DAY_IN_SECONDS) * 1000
+}
+
+fun StatPreferences.retrieveLocalStatsFor(game: Game): GameStats {
+    return statsList.find { it.game == game } ?: getStatsDefaultInstance(game)
+}
+
+fun StatPreferences.retrieveStatsToUploadFor(game: Game): GameStats {
+    return globalStatsList.find { it.game == game } ?: getStatsDefaultInstance(game)
+}

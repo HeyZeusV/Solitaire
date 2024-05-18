@@ -29,13 +29,15 @@ import com.heyzeusv.solitaire.util.PreviewUtil
 /**
  *  Composable that possible [MenuState] use as a base. Provided [menu] is used to fill top
  *  [MenuHeaderBar] title and [onBackPress] handles both ways to close [MenuScreen], arrow and phone
- *  back Button. [content] fills the rest of the screen.
+ *  back Button. [extraAction] is displayed opposite of [onBackPress] on [MenuHeaderBar]. [content]
+ *  fills the rest of the screen.
  */
 @Composable
 fun MenuScreen(
     menu: MenuState,
     modifier: Modifier,
     onBackPress: () -> Unit,
+    extraAction: @Composable (Modifier) -> Unit = { },
     content: @Composable () -> Unit
 ) {
     BackHandler { onBackPress() }
@@ -49,7 +51,7 @@ fun MenuScreen(
                 .padding(all = dimensionResource(R.dimen.msPaddingAll)),
             verticalArrangement = Arrangement.spacedBy(dimensionResource(R.dimen.msColumnSpacedBy))
         ) {
-            MenuHeaderBar(menu) { onBackPress() }
+            MenuHeaderBar(menu, onBackPress) { modifier -> extraAction(modifier) }
             content()
         }
     }
@@ -57,12 +59,14 @@ fun MenuScreen(
 
 /**
  *  Composable used by [MenuState] screens that display given [menu] name as a title and a back
- *  arrow button that runs [onBackPress] when clicked.
+ *  arrow button that runs [onBackPress] when clicked. [extraAction] is displayed opposite of
+ *  [onBackPress] on [MenuHeaderBar].
  */
 @Composable
 fun MenuHeaderBar(
     menu: MenuState,
-    onBackPress: () -> Unit
+    onBackPress: () -> Unit = { },
+    extraAction: @Composable (Modifier) -> Unit = { }
 ) {
     val menuName = stringResource(menu.nameId)
     Box(modifier = Modifier.fillMaxWidth()) {
@@ -81,6 +85,7 @@ fun MenuHeaderBar(
             textDecoration = TextDecoration.Underline,
             style = MaterialTheme.typography.displayMedium
         )
+        extraAction(Modifier.align(Alignment.CenterEnd))
     }
 }
 
@@ -105,9 +110,9 @@ fun MenuHeaderBarPreview() {
         Preview {
             Card {
                 Column {
-                    MenuHeaderBar(menu = MenuState.Games) { }
-                    MenuHeaderBar(menu = MenuState.Stats) { }
-                    MenuHeaderBar(menu = MenuState.About) { }
+                    MenuHeaderBar(menu = MenuState.Games)
+                    MenuHeaderBar(menu = MenuState.Stats)
+                    MenuHeaderBar(menu = MenuState.About)
                 }
             }
         }
