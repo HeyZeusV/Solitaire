@@ -1,9 +1,9 @@
 package com.heyzeusv.solitaire.service
 
 import com.google.firebase.auth.FirebaseAuth
-import kotlinx.coroutines.channels.awaitClose
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import com.google.firebase.auth.userProfileChangeRequest
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.tasks.await
 import javax.inject.Inject
 
@@ -19,29 +19,37 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
     val hasUser: Boolean
         get() = auth.currentUser != null
 
-    val currentUser: Flow<UserAccount>
-        get() = callbackFlow {
-            val listener =
-                FirebaseAuth.AuthStateListener { auth ->
-                    this.trySend(auth.currentUser?.let { UserAccount(it.uid, it.isAnonymous) } ?: UserAccount())
-                }
-            auth.addAuthStateListener(listener)
-            awaitClose { auth.removeAuthStateListener(listener) }
-        }
+    private val _userAccount = MutableStateFlow<UserAccount?>(null)
+    val userAccount: StateFlow<UserAccount?> get() = _userAccount
 
     suspend fun authenticate(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password).await()
+        auth.currentUser?.let {
+            _userAccount.value = UserAccount(it.uid, it.displayName!!, it.isAnonymous)
+        }
     }
 
-    suspend fun createAccount(email: String, password: String) {
+    suspend fun createAccount(email: String, password: String, name: String) {
         auth.createUserWithEmailAndPassword(email, password).await()
+        auth.currentUser?.let {
+            it.updateProfile(userProfileChangeRequest { displayName = name }).await()
+            _userAccount.value = UserAccount(it.uid, it.displayName!!, it.isAnonymous)
+        }
+
     }
 
     fun signOut() {
         auth.signOut()
+        _userAccount.value = null
     }
 
     suspend fun sendRecoveryEmail(email: String) {
         auth.sendPasswordResetEmail(email).await()
+    }
+
+    init {
+        auth.currentUser?.let {
+            _userAccount.value = UserAccount(it.uid, it.displayName!!, it.isAnonymous)
+        }
     }
 }

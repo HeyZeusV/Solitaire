@@ -67,7 +67,7 @@ class MenuViewModel @Inject constructor(
         updateMenuState(newMenuState)
     }
 
-    val currentUser = storageService.currentUser
+    val userAccount = accountService.userAccount
 
     private val _accountStatus = MutableStateFlow<AccountStatus>(Idle())
     val accountStatus: StateFlow<AccountStatus> get() = _accountStatus
@@ -172,7 +172,7 @@ class MenuViewModel @Inject constructor(
                     SnackbarManager.showMessage(R.string.username_in_use_error)
                 } else {
                     _accountStatus.value = CreateAccount()
-                    accountService.createAccount(it.email.trim(), it.password)
+                    accountService.createAccount(it.email.trim(), it.password, it.username.trim())
                     storageService.addUsername(it.username.trim())
                     _accountStatus.value = UploadPersonalStats()
                     if (statsFlow.value.uid != "") {
