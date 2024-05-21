@@ -38,6 +38,10 @@ class AccountService @Inject constructor(private val auth: FirebaseAuth) {
 
     }
 
+    suspend fun createAnonymousAccount() {
+        auth.signInAnonymously().await()
+    }
+
     fun signOut() {
         auth.signOut()
         _userAccount.value = null

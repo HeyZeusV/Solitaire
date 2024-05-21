@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.google.firebase.auth.FirebaseAuthException
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
@@ -184,6 +185,16 @@ class MenuViewModel @Inject constructor(
                     statManager.updateUID(accountService.currentUserId)
                     statManager.clearGameStatsToUpload()
                 }
+            }
+        }
+    }
+
+    fun createAnonymousAccount() {
+        launchCatching {
+            try {
+                accountService.createAnonymousAccount()
+            } catch (ex: FirebaseAuthException) {
+                SnackbarManager.showMessage(ex.toSnackbarMessage())
             }
         }
     }

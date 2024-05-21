@@ -137,7 +137,11 @@ fun SolitaireApp(
                 ) }
         ) {
             composable(route = NavScreens.Splash.route) {
-                SplashScreen(navController = appState.navController, menuVM = menuVM)
+                SplashScreen(
+                    isConnected = isConnected,
+                    navController = appState.navController,
+                    menuVM = menuVM
+                )
             }
             composable(route = NavScreens.Game.route) {
                 GameScreen(
