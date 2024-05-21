@@ -1,3 +1,6 @@
+v5.0.1
+-Fixed: Message for account status.
+
 v5.0.0
 -New: App name has been changed to "Hermes Solitaire."
 -New: Create an account in order to save your stats online. After creating an account, logging into any device will automatically download your last saved stats.
