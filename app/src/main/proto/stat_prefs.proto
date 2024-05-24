@@ -4,12 +4,12 @@ option java_package = "com.heyzeusv.solitaire";
 option java_multiple_files = true;
 
 message StatPreferences {
-  reserved 2;
+  reserved 2, 4;
   repeated GameStats stats = 1;
   int64 next_game_stats_sync = 3;
-  repeated GameStats game_stats_to_upload = 4;
   string uid = 5;
   repeated GameStats global_stats = 6;
+  bool stats_to_upload = 7;
 }
 
 message GameStats {

@@ -1,13 +1,12 @@
 package com.heyzeusv.solitaire.service
 
 import androidx.annotation.Keep
-import com.google.firebase.firestore.DocumentId
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.games.Games
 
 @Keep
 data class FsGameStats(
-    @DocumentId val game: String = "",
+    val game: String = "",
     val gamesPlayed: Int = 0,
     val gamesWon: Int = 0,
     val lowestMoves: Int = 9999,
@@ -17,7 +16,7 @@ data class FsGameStats(
     val totalScore: Int = 0,
     val bestCombinedScore: Long = 99999L
 ) {
-    fun combineFsGameStats(gs: FsGameStats): FsGameStats {
+    infix fun combineWith(gs: FsGameStats): FsGameStats {
         return FsGameStats(
             game = game,
             gamesPlayed = gamesPlayed.plus(gs.gamesPlayed),
@@ -30,6 +29,7 @@ data class FsGameStats(
             bestCombinedScore = bestCombinedScore.coerceAtMost(gs.bestCombinedScore)
         )
     }
+
     fun toGameStats(): GameStats = GameStats.newBuilder().also { gs ->
         gs.game = Games.getDataStoreEnum(game)
         gs.gamesPlayed = gamesPlayed

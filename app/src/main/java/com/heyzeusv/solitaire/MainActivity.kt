@@ -106,6 +106,9 @@ fun SolitaireApp(
     LaunchedEffect(key1 = settings.selectedGame) {
         gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
     }
+    LaunchedEffect(key1 = isConnected) {
+        menuVM.isConnected = isConnected
+    }
     LifecycleResumeEffect {
         if (gameVM.sbLogic.moves.value != 0) gameVM.sbLogic.startTimer()
         onPauseOrDispose { gameVM.sbLogic.pauseTimer() }

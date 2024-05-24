@@ -5,7 +5,7 @@ import androidx.datastore.core.DataStore
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
-import com.heyzeusv.solitaire.util.endOfDay
+import com.heyzeusv.solitaire.util.inFiveMinutes
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import java.io.IOException
@@ -32,7 +32,7 @@ class StatManager @Inject constructor(
     /**
      *  Stats can all be updated together when a game is ended by any means.
      */
-    suspend fun updateStats(localStats: GameStats, uploadStats: GameStats? = null) {
+    suspend fun updateStats(localStats: GameStats) {
         statPreferences.updateData { statPrefs ->
             val index = statPrefs.statsList.indexOfFirst { it.game == localStats.game }
             val builder = statPrefs.toBuilder()
@@ -41,15 +41,7 @@ class StatManager @Inject constructor(
             } else {
                 builder.setStats(index, localStats)
             }
-            uploadStats?.let {
-                val uIndex =
-                    statPrefs.gameStatsToUploadList.indexOfFirst { it.game == uploadStats.game }
-                if (uIndex == -1) {
-                    builder.addGameStatsToUpload(uploadStats)
-                } else {
-                    builder.setGameStatsToUpload(uIndex, uploadStats)
-                }
-            }
+
             builder.build()
         }
     }
@@ -73,23 +65,21 @@ class StatManager @Inject constructor(
      *  Delete all stored stats. Called when user logs out.
      */
     suspend fun deleteAllPersonalStats() {
-        statPreferences.updateData { it.toBuilder().clearGameStatsToUpload().clearStats().build() }
+        statPreferences.updateData { it.toBuilder().setStatsToUpload(false).clearStats().build() }
     }
 
     /**
-     *  Updates last_game_stats_upload to current time and next_game_stats_upload to end of day.
+     *  Updates next_game_stats_upload to 5 minutes past time this function is called.
      */
-    suspend fun updateGameStatsUploadTimes() {
+    suspend fun updateGameStatsSyncTime() {
         statPreferences.updateData { statPrefs ->
             val date = Date()
-            statPrefs.toBuilder().setNextGameStatsSync(date.endOfDay()).build()
+            statPrefs.toBuilder().setNextGameStatsSync(date.inFiveMinutes()).build()
         }
     }
 
-    suspend fun clearGameStatsToUpload() {
-        statPreferences.updateData { statPrefs ->
-            statPrefs.toBuilder().clearGameStatsToUpload().build()
-        }
+    suspend fun setStatsToUpload(newValue: Boolean) {
+        statPreferences.updateData { it.toBuilder().setStatsToUpload(newValue).build() }
     }
 
     suspend fun updateUID(uid: String) {

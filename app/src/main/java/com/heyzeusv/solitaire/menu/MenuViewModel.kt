@@ -30,7 +30,6 @@ import com.heyzeusv.solitaire.util.isValidEmail
 import com.heyzeusv.solitaire.util.isValidPassword
 import com.heyzeusv.solitaire.util.isValidUsername
 import com.heyzeusv.solitaire.util.retrieveLocalStatsFor
-import com.heyzeusv.solitaire.util.retrieveStatsToUploadFor
 import com.heyzeusv.solitaire.util.updateStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -67,6 +66,8 @@ class MenuViewModel @Inject constructor(
         updateDisplayMenuButtons()
         updateMenuState(newMenuState)
     }
+
+    var isConnected = true
 
     val userAccount = accountService.userAccount
 
@@ -117,17 +118,12 @@ class MenuViewModel @Inject constructor(
     fun updateStats(lgs: LastGameStats) {
         val selectedGS = stats.retrieveLocalStatsFor(settings.selectedGame).updateStats(lgs)
         val allGS = stats.retrieveLocalStatsFor(Game.GAME_ALL).updateStats(lgs)
-        var selectedUploadGS: GameStats? = null
-        var allUploadGS: GameStats? = null
-        if (accountService.hasUser) {
-            selectedUploadGS =
-                stats.retrieveStatsToUploadFor(settings.selectedGame).updateStats(lgs)
-            allUploadGS = stats.retrieveStatsToUploadFor(Game.GAME_ALL).updateStats(lgs)
-        }
+
         viewModelScope.launch {
-            statManager.updateStats(selectedGS, selectedUploadGS)
-            statManager.updateStats(allGS, allUploadGS)
-            if (accountService.hasUser) {
+            if (!isConnected) statManager.setStatsToUpload(true)
+            statManager.updateStats(selectedGS)
+            statManager.updateStats(allGS)
+            if (accountService.hasUser && isConnected) {
                 storageService.uploadStatsAfterGame(selectedGS.toFsGameStats(), allGS.toFsGameStats())
             }
         }
@@ -182,10 +178,10 @@ class MenuViewModel @Inject constructor(
                     if (statsFlow.value.uid != "") {
                         statManager.deleteAllPersonalStats()
                     } else {
-                        storageService.uploadStatsOnSignUp(stats.statsList.toFsGameStatsList())
+                        storageService.uploadStats(stats.statsList.toFsGameStatsList())
                     }
                     statManager.updateUID(accountService.currentUserId)
-                    statManager.clearGameStatsToUpload()
+                    statManager.setStatsToUpload(false)
                 }
             }
         }
@@ -215,7 +211,7 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun signOutCheck(): Boolean = statsFlow.value.gameStatsToUploadList.isEmpty()
+    fun signOutCheck(): Boolean = !statsFlow.value.statsToUpload
 
     fun signOutOnClick() {
         launchCatching {
@@ -254,9 +250,6 @@ class MenuViewModel @Inject constructor(
             val formattedTimeLeft = timeLeft.formatTimeStats()
             SnackbarManager.showMessage(R.string.sync_error_time, arrayOf(formattedTimeLeft))
             false
-        } else if (stats.gameStatsToUploadList.isEmpty()) {
-            SnackbarManager.showMessage(R.string.sync_error_no_stats)
-            false
         } else {
             true
         }
@@ -264,9 +257,15 @@ class MenuViewModel @Inject constructor(
 
     fun syncStatsConfirmOnClick() {
         launchCatching {
-            _accountStatus.value = UploadPersonalStats()
-            statManager.updateGameStatsUploadTimes()
-            statManager.clearGameStatsToUpload()
+            statManager.updateGameStatsSyncTime()
+            if (stats.statsToUpload) {
+                _accountStatus.value = UploadPersonalStats()
+                storageService.uploadStats(stats.statsList.toFsGameStatsList())
+                statManager.setStatsToUpload(false)
+            }
+            _accountStatus.value = DownloadGlobalStats()
+            val globalStats = storageService.downloadGlobalStats()
+            statManager.addAllGlobalStats(globalStats.toGameStatsList())
         }
     }
 
