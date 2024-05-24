@@ -182,8 +182,7 @@ class MenuViewModel @Inject constructor(
                     if (statsFlow.value.uid != "") {
                         statManager.deleteAllPersonalStats()
                     } else {
-                        storageService.uploadPersonalStats(stats.statsList.toFsGameStatsList())
-                        storageService.uploadGlobalStats(stats.statsList.toFsGameStatsList())
+                        storageService.uploadStatsOnSignUp(stats.statsList.toFsGameStatsList())
                     }
                     statManager.updateUID(accountService.currentUserId)
                     statManager.clearGameStatsToUpload()
@@ -267,15 +266,6 @@ class MenuViewModel @Inject constructor(
         launchCatching {
             _accountStatus.value = UploadPersonalStats()
             statManager.updateGameStatsUploadTimes()
-            val gamesToUpload = stats.gameStatsToUploadList.map { it.game }
-            val gsToUpload = stats.statsList.filter { gs -> gamesToUpload.contains(gs.game) }
-                .toFsGameStatsList()
-            storageService.uploadPersonalStats(gsToUpload)
-            _accountStatus.value = UploadGlobalStats()
-            storageService.uploadGlobalStats(stats.gameStatsToUploadList.toFsGameStatsList())
-            _accountStatus.value = DownloadGlobalStats()
-            val globalStats = storageService.downloadGlobalStats()
-            statManager.addAllGlobalStats(globalStats.toGameStatsList())
             statManager.clearGameStatsToUpload()
         }
     }

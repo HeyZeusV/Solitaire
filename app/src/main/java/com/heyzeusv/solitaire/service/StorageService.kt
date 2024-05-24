@@ -31,14 +31,10 @@ class StorageService @Inject constructor(
         }.await()
     }
 
-    suspend fun uploadPersonalStats(gameStats: List<FsGameStats>) {
+    suspend fun uploadStatsOnSignUp(gameStats: List<FsGameStats>) {
         firestore.runBatch { batch ->
             gameStats.forEach { stats ->
-                batch.set(
-                    firestore.collection(USERS_COLLECTION).document(auth.currentUserId).collection(
-                        GAMESTATS_COLLECTION
-                    ).document(stats.game), stats
-                )
+                batch.set(gameDocRef(auth.currentUserId, stats.game), stats)
             }
         }.await()
     }
@@ -50,28 +46,9 @@ class StorageService @Inject constructor(
         }.await()
     }
 
-    suspend fun uploadGlobalStats(gameStats: List<FsGameStats>) {
-        for (gs in gameStats) {
-            firestore.runTransaction { transaction ->
-                val basePath = firestore.collection(GLOBALSTATS_COLLECTION)
-                val docRef = basePath.document(gs.game)
-                val snapshot = transaction.get(docRef)
-                val globalGS =
-                    snapshot.toObject(FsGameStats::class.java) ?: FsGameStats(game = gs.game)
-                val updatedGlobalGS = globalGS.combineFsGameStats(gs)
-                transaction.set(docRef, updatedGlobalGS)
-            }.await()
-        }
-    }
-
     suspend fun downloadPersonalStats(): List<FsGameStats> {
         val query = firestore.collection(USERS_COLLECTION).document(auth.currentUserId)
             .collection(GAMESTATS_COLLECTION)
-        return query.get().await().toObjects(FsGameStats::class.java)
-    }
-
-    suspend fun downloadGlobalStats(): List<FsGameStats> {
-        val query = firestore.collection(GLOBALSTATS_COLLECTION)
         return query.get().await().toObjects(FsGameStats::class.java)
     }
 
@@ -84,6 +61,5 @@ class StorageService @Inject constructor(
         private const val USERS_COLLECTION = "users"
         private const val USERNAMES_COLLECTION = "usernames"
         private const val GAMESTATS_COLLECTION = "gameStats"
-        private const val GLOBALSTATS_COLLECTION = "globalStats"
     }
 }
