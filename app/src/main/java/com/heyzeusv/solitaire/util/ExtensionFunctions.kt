@@ -247,22 +247,15 @@ fun String.isValidPassword(): Boolean {
     return this.isNotBlank() && Pattern.compile(PASS_PATTERN).matcher(this).matches()
 }
 
-private const val UTC_MINUS7 = 25200
-private const val DAY_IN_SECONDS = 86400
-
 /**
- *  Returns [Long] from this [Date] that represents the end of day today using UTC-7 as timezone.
+ *  Returns [Long] from this [Date] that is 5 minutes ahead.
  */
-fun Date.endOfDay(): Long {
+fun Date.inFiveMinutes(): Long {
     val dateNowSeconds = this.time / 1000
-    val timeIntoDay = (dateNowSeconds - UTC_MINUS7) % DAY_IN_SECONDS
-    return (dateNowSeconds - timeIntoDay + DAY_IN_SECONDS) * 1000
+    val fiveMinutes = 5 * 60
+    return (dateNowSeconds + fiveMinutes) * 1000
 }
 
 fun StatPreferences.retrieveLocalStatsFor(game: Game): GameStats {
     return statsList.find { it.game == game } ?: getStatsDefaultInstance(game)
-}
-
-fun StatPreferences.retrieveStatsToUploadFor(game: Game): GameStats {
-    return globalStatsList.find { it.game == game } ?: getStatsDefaultInstance(game)
 }

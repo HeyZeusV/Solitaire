@@ -103,7 +103,7 @@
     <string name="about_license">License</string>
     <string name="about_special_thanks">Special thanks to family, friends, and pets for all their support!</string>
     <string name="about_translation_warning">Google Translate was used for localization. Please let me know of any mistakes, thank you!</string>
-    <string name="about_version">v5.0.1</string>
+    <string name="about_version">v5.0.2</string>
     <string name="about_privacy_policy">Privacy Policy</string>
     <string name="about_privacy_policy_link">https://doc-hosting.flycricket.io/klondike-solitaire/b4a088cc-badf-42f7-b9eb-e196ca220b1b/privacy</string>
     <string name="about_icon_credit">Card Suits by Amethyst Studio (CC BY 3.0)</string>
@@ -150,7 +150,7 @@
     <string name="account_status_download_personal_stats">Downloading personal stats…</string>
     <string name="account_status_download_global_stats">Downloading global stats…</string>
     <string name="sync_ad_title">Upload personal stats and download global stats?</string>
-    <string name="sync_ad_message">You can only sync stats once a day.</string>
+    <string name="sync_ad_message">You can only sync stats once every 5 minutes.</string>
     <string name="sync_ad_confirm">Yes</string>
     <string name="sync_ad_dismiss">No</string>
     <string name="sync_error_time">You can sync in %1$s.</string>

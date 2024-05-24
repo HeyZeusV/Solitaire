@@ -29,14 +29,10 @@ import kotlinx.coroutines.delay
  */
 @Composable
 fun SplashScreen(
-    isConnected: Boolean,
     navController: NavHostController,
     menuVM: MenuViewModel
 ) {
-    SplashScreen(
-        onStartUp = { if (isConnected) menuVM.createAnonymousAccount() },
-        createAllStats = menuVM::createAllStats
-    ) {
+    SplashScreen(createAllStats = menuVM::createAllStats) {
         navController.navigate(NavScreens.Game.route)
     }
 }
@@ -47,13 +43,11 @@ fun SplashScreen(
  */
 @Composable
 fun SplashScreen(
-    onStartUp: () -> Unit = { },
     createAllStats: () -> Unit = { },
     navigate: () -> Unit = { }
 ) {
     LaunchedEffect(key1 = Unit) {
         delay((2500L..3500L).random())
-        onStartUp()
         createAllStats()
         navigate()
     }

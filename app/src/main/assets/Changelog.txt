@@ -1,3 +1,6 @@
+v5.0.2
+-Fixed: Global stats are now correctly shown on sync.
+
 v5.0.1
 -Fixed: Message for account status.
 

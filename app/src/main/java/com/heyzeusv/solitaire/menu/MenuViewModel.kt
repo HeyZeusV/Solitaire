@@ -2,7 +2,6 @@ package com.heyzeusv.solitaire.menu
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.auth.FirebaseAuthException
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.R
@@ -20,6 +19,7 @@ import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.service.StorageService
+import com.heyzeusv.solitaire.service.toFsGameStats
 import com.heyzeusv.solitaire.service.toGameStatsList
 import com.heyzeusv.solitaire.service.toFsGameStatsList
 import com.heyzeusv.solitaire.util.SnackbarManager
@@ -30,7 +30,6 @@ import com.heyzeusv.solitaire.util.isValidEmail
 import com.heyzeusv.solitaire.util.isValidPassword
 import com.heyzeusv.solitaire.util.isValidUsername
 import com.heyzeusv.solitaire.util.retrieveLocalStatsFor
-import com.heyzeusv.solitaire.util.retrieveStatsToUploadFor
 import com.heyzeusv.solitaire.util.updateStats
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
@@ -67,6 +66,8 @@ class MenuViewModel @Inject constructor(
         updateDisplayMenuButtons()
         updateMenuState(newMenuState)
     }
+
+    var isConnected = true
 
     val userAccount = accountService.userAccount
 
@@ -117,16 +118,14 @@ class MenuViewModel @Inject constructor(
     fun updateStats(lgs: LastGameStats) {
         val selectedGS = stats.retrieveLocalStatsFor(settings.selectedGame).updateStats(lgs)
         val allGS = stats.retrieveLocalStatsFor(Game.GAME_ALL).updateStats(lgs)
-        var selectedUploadGS: GameStats? = null
-        var allUploadGS: GameStats? = null
-        if (accountService.hasUser) {
-            selectedUploadGS =
-                stats.retrieveStatsToUploadFor(settings.selectedGame).updateStats(lgs)
-            allUploadGS = stats.retrieveStatsToUploadFor(Game.GAME_ALL).updateStats(lgs)
-        }
+
         viewModelScope.launch {
-            statManager.updateStats(selectedGS, selectedUploadGS)
-            statManager.updateStats(allGS, allUploadGS)
+            if (!isConnected) statManager.setStatsToUpload(true)
+            statManager.updateStats(selectedGS)
+            statManager.updateStats(allGS)
+            if (accountService.hasUser && isConnected) {
+                storageService.uploadStatsAfterGame(selectedGS.toFsGameStats(), allGS.toFsGameStats())
+            }
         }
     }
 
@@ -179,22 +178,11 @@ class MenuViewModel @Inject constructor(
                     if (statsFlow.value.uid != "") {
                         statManager.deleteAllPersonalStats()
                     } else {
-                        storageService.uploadPersonalStats(stats.statsList.toFsGameStatsList())
-                        storageService.uploadGlobalStats(stats.statsList.toFsGameStatsList())
+                        storageService.uploadStats(stats.statsList.toFsGameStatsList())
                     }
                     statManager.updateUID(accountService.currentUserId)
-                    statManager.clearGameStatsToUpload()
+                    statManager.setStatsToUpload(false)
                 }
-            }
-        }
-    }
-
-    fun createAnonymousAccount() {
-        launchCatching {
-            try {
-                accountService.createAnonymousAccount()
-            } catch (ex: FirebaseAuthException) {
-                SnackbarManager.showMessage(ex.toSnackbarMessage())
             }
         }
     }
@@ -223,7 +211,7 @@ class MenuViewModel @Inject constructor(
         }
     }
 
-    fun signOutCheck(): Boolean = statsFlow.value.gameStatsToUploadList.isEmpty()
+    fun signOutCheck(): Boolean = !statsFlow.value.statsToUpload
 
     fun signOutOnClick() {
         launchCatching {
@@ -262,9 +250,6 @@ class MenuViewModel @Inject constructor(
             val formattedTimeLeft = timeLeft.formatTimeStats()
             SnackbarManager.showMessage(R.string.sync_error_time, arrayOf(formattedTimeLeft))
             false
-        } else if (stats.gameStatsToUploadList.isEmpty()) {
-            SnackbarManager.showMessage(R.string.sync_error_no_stats)
-            false
         } else {
             true
         }
@@ -272,18 +257,15 @@ class MenuViewModel @Inject constructor(
 
     fun syncStatsConfirmOnClick() {
         launchCatching {
-            _accountStatus.value = UploadPersonalStats()
-            statManager.updateGameStatsUploadTimes()
-            val gamesToUpload = stats.gameStatsToUploadList.map { it.game }
-            val gsToUpload = stats.statsList.filter { gs -> gamesToUpload.contains(gs.game) }
-                .toFsGameStatsList()
-            storageService.uploadPersonalStats(gsToUpload)
-            _accountStatus.value = UploadGlobalStats()
-            storageService.uploadGlobalStats(stats.gameStatsToUploadList.toFsGameStatsList())
+            statManager.updateGameStatsSyncTime()
+            if (stats.statsToUpload) {
+                _accountStatus.value = UploadPersonalStats()
+                storageService.uploadStats(stats.statsList.toFsGameStatsList())
+                statManager.setStatsToUpload(false)
+            }
             _accountStatus.value = DownloadGlobalStats()
             val globalStats = storageService.downloadGlobalStats()
             statManager.addAllGlobalStats(globalStats.toGameStatsList())
-            statManager.clearGameStatsToUpload()
         }
     }
 
