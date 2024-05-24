@@ -1,5 +1,6 @@
 package com.heyzeusv.solitaire.service
 
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FieldPath
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.tasks.await
@@ -11,7 +12,7 @@ class StorageService @Inject constructor(
 ) {
     suspend fun usernameExists(username: String): Boolean {
         val query =
-            firestore.collection(USERNAME_COLLECTION).whereEqualTo(FieldPath.documentId(), username)
+            firestore.collection(USERNAMES_COLLECTION).whereEqualTo(FieldPath.documentId(), username)
         return !query.get().await().isEmpty
     }
 
@@ -22,9 +23,9 @@ class StorageService @Inject constructor(
         )
         val username = hashMapOf("userId" to auth.currentUserId)
         firestore.runBatch { batch ->
-            batch.set(firestore.collection(USER_COLLECTION).document(auth.currentUserId), user)
+            batch.set(firestore.collection(USERS_COLLECTION).document(auth.currentUserId), user)
             batch.set(
-                firestore.collection(USERNAME_COLLECTION).document(usernameToAdd.lowercase()),
+                firestore.collection(USERNAMES_COLLECTION).document(usernameToAdd.lowercase()),
                 username
             )
         }.await()
@@ -34,11 +35,18 @@ class StorageService @Inject constructor(
         firestore.runBatch { batch ->
             gameStats.forEach { stats ->
                 batch.set(
-                    firestore.collection(USER_COLLECTION).document(auth.currentUserId).collection(
+                    firestore.collection(USERS_COLLECTION).document(auth.currentUserId).collection(
                         GAMESTATS_COLLECTION
                     ).document(stats.game), stats
                 )
             }
+        }.await()
+    }
+
+    suspend fun uploadStatsAfterGame(gameStats: FsGameStats, allGameStats: FsGameStats) {
+        firestore.runBatch { batch ->
+            batch.set(gameDocRef(auth.currentUserId, gameStats.game), gameStats)
+            batch.set(gameDocRef(auth.currentUserId, allGameStats.game), allGameStats)
         }.await()
     }
 
@@ -57,7 +65,7 @@ class StorageService @Inject constructor(
     }
 
     suspend fun downloadPersonalStats(): List<FsGameStats> {
-        val query = firestore.collection(USER_COLLECTION).document(auth.currentUserId)
+        val query = firestore.collection(USERS_COLLECTION).document(auth.currentUserId)
             .collection(GAMESTATS_COLLECTION)
         return query.get().await().toObjects(FsGameStats::class.java)
     }
@@ -67,9 +75,14 @@ class StorageService @Inject constructor(
         return query.get().await().toObjects(FsGameStats::class.java)
     }
 
+    private fun gameDocRef(userId: String, game: String): DocumentReference {
+        return firestore.collection(USERS_COLLECTION).document(userId)
+            .collection(GAMESTATS_COLLECTION).document(game)
+    }
+
     companion object {
-        private const val USER_COLLECTION = "users"
-        private const val USERNAME_COLLECTION = "usernames"
+        private const val USERS_COLLECTION = "users"
+        private const val USERNAMES_COLLECTION = "usernames"
         private const val GAMESTATS_COLLECTION = "gameStats"
         private const val GLOBALSTATS_COLLECTION = "globalStats"
     }

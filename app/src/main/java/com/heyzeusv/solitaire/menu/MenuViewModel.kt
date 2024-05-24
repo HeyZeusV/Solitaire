@@ -19,6 +19,7 @@ import com.heyzeusv.solitaire.util.MenuState
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.service.StorageService
+import com.heyzeusv.solitaire.service.toFsGameStats
 import com.heyzeusv.solitaire.service.toGameStatsList
 import com.heyzeusv.solitaire.service.toFsGameStatsList
 import com.heyzeusv.solitaire.util.SnackbarManager
@@ -126,6 +127,9 @@ class MenuViewModel @Inject constructor(
         viewModelScope.launch {
             statManager.updateStats(selectedGS, selectedUploadGS)
             statManager.updateStats(allGS, allUploadGS)
+            if (accountService.hasUser) {
+                storageService.uploadStatsAfterGame(selectedGS.toFsGameStats(), allGS.toFsGameStats())
+            }
         }
     }
 
