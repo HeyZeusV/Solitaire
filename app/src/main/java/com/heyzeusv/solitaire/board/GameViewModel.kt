@@ -404,7 +404,7 @@ class GameViewModel @Inject constructor(
                                         }
                                     }
                                     _animateInfo.value = aniInfo
-                                    delay(animationDurations.autoCompleteDelay)
+                                    delay(animationDurations.autocompleteDelay)
                                 }
                             }
                         }
@@ -730,7 +730,7 @@ class GameViewModel @Inject constructor(
                             animatedCards = last13Cards,
                             startTableauIndices = List(13) { it + tCardIndex },
                             tableauCardFlipInfo = tPile.getTableauCardFlipInfo(tCardIndex),
-                            spiderPile = true
+                            isSpiderPile = true
                         )
                         spiderAniInfo.actionBeforeAnimation = {
                             spiderMutex.withLock {
@@ -785,7 +785,7 @@ class GameViewModel @Inject constructor(
             step.actionAfterAnimation = {
                 mutex.withLock { endPiles.forEach { it.updateDisplayPile() } }
             }
-            if (step.spiderPile) {
+            if (step.isSpiderPile) {
                 viewModelScope.launch {
                     _undoEnabled.value = false
                     _spiderAnimateInfo.value = step

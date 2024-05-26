@@ -62,11 +62,11 @@ fun AcesUpBoard(
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
-                if (it.undoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                if (it.isUndoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
                 delay(animationDurations.fullDelay)
                 updateAnimateInfo(null)
             } finally {
-                if (it.undoAnimation) updateUndoAnimation(false)
+                if (it.isUndoAnimation) updateUndoAnimation(false)
             }
         }
         // Action Before Animation
@@ -98,7 +98,7 @@ fun AcesUpBoard(
         )
         AnimateFlip(
             animateInfo = it,
-            flipDuration = animationDurations.fullAniSpec,
+            flipDuration = animationDurations.duration,
             flipDelay = animationDurations.noAnimation,
             flipCardInfo = it.flipCardInfo,
             updateRotation = { value -> flipRotation = value}

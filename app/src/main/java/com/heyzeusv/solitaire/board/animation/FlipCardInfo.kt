@@ -3,19 +3,19 @@ package com.heyzeusv.solitaire.board.animation
 import com.heyzeusv.solitaire.board.piles.Card
 
 /**
- *  Sealed class containing animation values for Card flips.
+ *  Sealed classes containing animation values for Card flips.
  */
 sealed class FlipCardInfo {
     sealed class FaceDown : FlipCardInfo() {
         override val endRotationY = 180f
-        override fun flipCondition(flipRotation: Float): Boolean = flipRotation < 90f
+        override fun flipCondition(rotationY: Float): Boolean = rotationY < 90f
 
         data object SinglePile : FaceDown()
         data object MultiPile : FaceDown()
     }
     sealed class FaceUp : FlipCardInfo() {
         override val endRotationY = -180f
-        override fun flipCondition(flipRotation: Float): Boolean = flipRotation > -90f
+        override fun flipCondition(rotationY: Float): Boolean = rotationY > -90f
 
         data object SinglePile : FaceUp()
         data object MultiPile : FaceUp()
@@ -28,10 +28,11 @@ sealed class FlipCardInfo {
     open val endRotationY: Float = 0f
 
     /**
-     *  Replaced in inner sealed classes. Determines when [Card] has flipped enough to show other
-     *  side of [Card] depending on [flipRotation] value.
+     *  Determines when [Card] has flipped enough to show other side of [Card].
+     *
+     *  @param rotationY Determines [Card's][Card] current Y rotation value.
      */
-    open fun flipCondition(flipRotation: Float): Boolean = false
+    open fun flipCondition(rotationY: Float): Boolean = false
 
     /**
      *  Returns the opposite value of this, which is used by Undo.

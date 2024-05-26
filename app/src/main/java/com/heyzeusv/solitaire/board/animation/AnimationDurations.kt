@@ -2,85 +2,90 @@ package com.heyzeusv.solitaire.board.animation
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.animation.core.AnimationSpec
 import com.heyzeusv.solitaire.AnimationDurationsSetting
 import com.heyzeusv.solitaire.R
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.menu.settings.SettingsMenu
-import kotlinx.coroutines.delay
 
 /**
- *   Enum class containing durations of Card animations. [fullAniSpec] is the full duration of most
- *   animations available and is used by [AnimationSpec]. [fullDelay] is [fullAniSpec] converted to
- *   [Long] in order to be used by [delay]. [beforeActionDelay] and [afterActionDelay] are used by
- *   [delay] in order to prevent Cards from flashing in and out before and after animations.
- *   [tableauCardFlipAniSpec] is the duration of the animation that occurs when a [Tableau] Card is
- *   flipped with [tableauCardFlipDelayAniSpec] being the delay before it occurs. Both are used by
- *   [AnimationSpec]. [autoCompleteDelay] is delay used during autocomplete between each valid move.
- *   [iconId] and [settingDisplayId] is used in [SettingsMenu] to represent entries.
+ *  Users have 5 options to select from that determine how long an animation lasts on a valid move.
+ *  None(0ms), Fastest(100ms), Fast(250ms), Slow(500ms), Slowest(1000ms)
+ *
+ *  @property duration How long the animation lasts from start to finish.
+ *  @property beforeActionDelay Delay length before running [AnimateInfo.actionBeforeAnimation].
+ *  @property afterActionDelay Delay length before running [AnimateInfo.actionAfterAnimation].
+ *  @property tableauCardFlipDuration How long the animation lasts for [TableauCardFlipInfo].
+ *  @property tableauCardFlipDelay Delay length before flipping [Tableau] [Card].
+ *  @property autocompleteDelay Delay length before attempting to run the next autocomplete step.
+ *  @property iconId Icon resource id that is display on [SettingsMenu] to represent entry.
+ *  @property displayId String resource id that is displayed on [SettingsMenu] to represent
+ *  selected entry.
+ *  @property setting Is the enum value that entry is represented by in Proto DataStore.
  */
 enum class AnimationDurations(
-    val fullAniSpec: Int,
+    val duration: Int,
     val beforeActionDelay: Long = 15,
     val afterActionDelay: Long,
-    val tableauCardFlipAniSpec: Int,
-    val tableauCardFlipDelayAniSpec: Int = 50,
+    val tableauCardFlipDuration: Int,
+    val tableauCardFlipDelay: Int = 50,
+    val autocompleteDelay: Long = (duration + 50).toLong(),
     @DrawableRes val iconId: Int,
-    @StringRes val settingDisplayId: Int,
-    val ads: AnimationDurationsSetting
+    @StringRes val displayId: Int,
+    val setting: AnimationDurationsSetting
 ) {
     None(
-        fullAniSpec = 0,
+        duration = 0,
         beforeActionDelay = 0,
         afterActionDelay = 0,
-        tableauCardFlipAniSpec = 0,
-        tableauCardFlipDelayAniSpec = 0,
+        tableauCardFlipDuration = 0,
+        tableauCardFlipDelay = 0,
         iconId = R.drawable.button_animation_none,
-        settingDisplayId = R.string.animation_duration_none,
-        ads = AnimationDurationsSetting.NONE
+        displayId = R.string.animation_duration_none,
+        setting = AnimationDurationsSetting.NONE
     ),
-    Slowest(
-        fullAniSpec = 1000,
+    Slowest(duration = 1000,
         afterActionDelay = 990,
-        tableauCardFlipAniSpec = 950,
+        tableauCardFlipDuration = 950,
         iconId = R.drawable.button_animation_slowest,
-        settingDisplayId = R.string.animation_duration_slowest,
-        ads = AnimationDurationsSetting.SLOWEST
+        displayId = R.string.animation_duration_slowest,
+        setting = AnimationDurationsSetting.SLOWEST
     ),
     Slow(
-        fullAniSpec = 500,
+        duration = 500,
         afterActionDelay = 490,
-        tableauCardFlipAniSpec = 450,
+        tableauCardFlipDuration = 450,
         iconId = R.drawable.button_animation_slow,
-        settingDisplayId = R.string.animation_duration_slow,
-        ads = AnimationDurationsSetting.SLOW
+        displayId = R.string.animation_duration_slow,
+        setting = AnimationDurationsSetting.SLOW
     ),
     Fast(
-        fullAniSpec = 250,
+        duration = 250,
         afterActionDelay = 240,
-        tableauCardFlipAniSpec = 200,
+        tableauCardFlipDuration = 200,
         iconId = R.drawable.button_animation_fast,
-        settingDisplayId = R.string.animation_duration_fast,
-        ads = AnimationDurationsSetting.FAST
+        displayId = R.string.animation_duration_fast,
+        setting = AnimationDurationsSetting.FAST
     ),
     Fastest(
-        fullAniSpec = 100,
+        duration = 100,
         afterActionDelay = 90,
-        tableauCardFlipAniSpec = 50,
+        tableauCardFlipDuration = 50,
         iconId = R.drawable.button_animation_fastest,
-        settingDisplayId = R.string.animation_duration_fastest,
-        ads = AnimationDurationsSetting.FASTEST
+        displayId = R.string.animation_duration_fastest,
+        setting = AnimationDurationsSetting.FASTEST
     );
 
-    val fullDelay: Long = fullAniSpec.toLong()
+    val fullDelay: Long = duration.toLong()
     val noAnimation: Int = 0
-    val autoCompleteDelay: Long = (fullAniSpec + 50).toLong()
 
     companion object {
         /**
-         *  Returns [AnimationDurations] that corresponds to given [ads].
+         *  Returns [AnimationDurations] that corresponds to [AnimationDurationsSetting].
+         *
+         *  @param setting Value from Proto DataStore [AnimationDurationsSetting] enum class.
          */
-        infix fun from(ads: AnimationDurationsSetting): AnimationDurations =
-            entries.firstOrNull { it.ads == ads } ?: None
+        infix fun from(setting: AnimationDurationsSetting): AnimationDurations =
+            entries.firstOrNull { it.setting == setting } ?: None
     }
 }

@@ -200,8 +200,8 @@ fun TableauPileWithFlip(
 
         AnimateFlip(
             animateInfo = animateInfo,
-            flipDuration = animationDurations.tableauCardFlipAniSpec,
-            flipDelay = animationDurations.tableauCardFlipDelayAniSpec,
+            flipDuration = animationDurations.tableauCardFlipDuration,
+            flipDelay = animationDurations.tableauCardFlipDelay,
             flipCardInfo = it.flipCardInfo,
             updateRotation = { value -> tableauCardFlipRotation = value }
         )
@@ -264,7 +264,7 @@ fun HorizontalCardPileWithFlip(
         }
         AnimateFlip(
             animateInfo = it,
-            flipDuration = animationDurations.fullAniSpec,
+            flipDuration = animationDurations.duration,
             flipDelay = animationDurations.noAnimation,
             flipCardInfo = it.flipCardInfo,
             updateRotation = { value -> flipRotation = value }
@@ -365,7 +365,7 @@ fun MultiPileCardWithFlip(
         }
         AnimateFlip(
             animateInfo = it,
-            flipDuration = animationDurations.fullAniSpec,
+            flipDuration = animationDurations.duration,
             flipDelay = animationDurations.noAnimation,
             flipCardInfo = it.flipCardInfo,
             updateRotation = { value -> flipRotation = value}
@@ -495,7 +495,7 @@ fun AnimateOffset(
     updateXOffset: (Int) -> Unit,
     updateYOffset: (Int) -> Unit
 ) {
-    val animationSpec = tween<Float>(animationDurations.fullAniSpec)
+    val animationSpec = tween<Float>(animationDurations.duration)
 
     LaunchedEffect(key1 = animateInfo) {
         animate(

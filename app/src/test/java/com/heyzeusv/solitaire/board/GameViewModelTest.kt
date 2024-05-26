@@ -488,7 +488,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                         flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
                         remainingPile = listOf(tc.card12S, tc.card12S)
                     ),
-                    spiderPile = true
+                    isSpiderPile = true
                 )
                 Then("State should be") {
                     vm.spiderAnimateInfo valueShouldBe expectedSpiderAnimateInfo

@@ -99,7 +99,7 @@ class MenuViewModel @Inject constructor(
      */
     fun updateAnimationDurations(animationDurations: AnimationDurations) {
         viewModelScope.launch {
-            settingsManager.updateAnimationDurations(animationDurations.ads)
+            settingsManager.updateAnimationDurations(animationDurations.setting)
         }
     }
 

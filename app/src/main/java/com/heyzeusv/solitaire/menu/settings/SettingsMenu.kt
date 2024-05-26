@@ -441,7 +441,7 @@ fun AnimationDurationSetting(
             }
         }
         Text(
-            text = stringResource(selectedAnimationDurations.settingDisplayId),
+            text = stringResource(selectedAnimationDurations.displayId),
             style = MaterialTheme.typography.bodyLarge.copy(
                 fontSize = TextUnit(
                     20f,
