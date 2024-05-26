@@ -3,18 +3,10 @@ package com.heyzeusv.solitaire.board.layouts
 import androidx.compose.ui.unit.IntOffset
 
 /**
- *  Interface to ensure each layout type is implemented per screen width.
- */
-interface LayoutPositions {
-    val sevenWideLayout: SevenWideLayout
-    val sevenWideFourTableauLayout: SevenWideLayout
-    val tenWideLayout: TenWideLayout
-    val tenWideEightTableauLayout: TenWideLayout
-}
-
-/**
- *  Used to ensure all Width* classes have [extraWidth], which is the width beyond the class size
- *  divided by 2.
+ *  Ensures all Width* classes contain [extraWidth].
+ *
+ *  @property extraWidth The width beyond class size divided by 2, used to determine X offset
+ *  needed to center piles.
  */
 abstract class ScreenLayouts(private val extraWidth: Int) : LayoutPositions
 
