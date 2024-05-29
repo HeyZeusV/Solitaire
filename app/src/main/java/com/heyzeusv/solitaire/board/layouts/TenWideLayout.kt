@@ -13,10 +13,11 @@ import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.toDp
 
 /**
- *  Data class referring to layouts 10 piles wide. Contains [Card] size in pixels and pile
- *  offsets. Using predetermined positions due to [Layout] using [Int]/[IntOffset] to determine
- *  content positions on screen. This would cause issues when trying to apply padding, which would
- *  be in [Dp], as it would cause items to appear lopsided due to padding being correct on one side
+ *  Used by games that are 10 piles wide. Contains card dimensions and piles positions in pixels.
+ *
+ *  Using predetermined positions due to [Layout] using [Int]/[IntOffset] to determine content
+ *  positions on screen. This would cause issues when trying to apply padding, which would be in
+ *  [Dp], as it would cause items to appear lopsided due to padding being correct on one side
  *  but not the other.
  */
 data class TenWideLayout(
@@ -77,10 +78,13 @@ data class TenWideLayout(
     )
 
     /**
-     *  Used by movement animations to determine given [gamePile] offset. Animations between
-     *  Stock and Waste requires a different offset, [stockWasteMove] determines which to use.
-     *  [tAllPile] is used to recursively call this function in order to get the correct offset,
+     *  Used by card animations to determine pile offset.
+     *
+     *  @param gamePile The pile offset to retrieve.
+     *  @param stockWasteMove Animations between Stock and Waste requires a different offset.
+     *  @param tAllPile Used to call this function recursively in order to get correct offset,
      *  when [gamePile] is [GamePiles.TableauAll].
+     *  @return [IntOffset] corresponding to given [gamePile].
      */
     override fun getPilePosition(
         gamePile: GamePiles,
@@ -113,16 +117,21 @@ data class TenWideLayout(
     }
 
     /**
-     *  Used by animations involving Tableau piles in order to determine additional Y offset needed
-     *  since animation could only involve a sublist of Tableau, rather than entire pile.
+     *  Card animations involving Tableau piles require Y offset to determine where card moving
+     *  beings/ends.
+     *
+     *  @param index The index of [Card] in Tableau pile.
+     *  @return The y offset of Tableau [Card], but in [IntOffset] form.
      */
     override fun getCardsYOffset(index: Int): IntOffset {
         return IntOffset(x = 0, y = (index * (cardHeight * (1 - vPileSpacedByPercent))).toInt())
     }
 
     /**
-     *  Used by [HorizontalCardPileWithFlip] in order to retrieve [HorizontalCardOffsets] which
-     *  contains necessary offsets for animations. [flipCardInfo] determines start/end positions.
+     *  Used by [HorizontalCardPileWithFlip] in order to retrieve necessary offsets for animations.
+     *
+     *  @param flipCardInfo Determines start/end positions.
+     *  @return [HorizontalCardOffsets] data class containing [IntOffsets][IntOffset]
      */
     override fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets {
         return if (flipCardInfo is FlipCardInfo.FaceDown) {
@@ -147,7 +156,7 @@ data class TenWideLayout(
     }
 
     /**
-     *  Returns size of [Card] in dp in the form of [DpSize].
+     *  @return The size of [Card] in the form of [DpSize].
      */
     @Composable
     override fun getCardDpSize(): DpSize = DpSize(cardWidth.toDp(), cardHeight.toDp())

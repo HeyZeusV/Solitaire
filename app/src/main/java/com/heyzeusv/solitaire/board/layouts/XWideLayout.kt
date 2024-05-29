@@ -32,9 +32,11 @@ interface XWideLayout {
     val multiPileLayoutIds: List<String>
 
     /**
-     *  Used by movement animations to determine given [gamePile] offset. Animations between
-     *  Stock and Waste requires a different offset, [stockWasteMove] determines which to use.
-     *  [tAllPile] is used to recursively call this function in order to get the correct offset,
+     *  Used by card animations to determine pile offset.
+     *
+     *  @param gamePile The pile offset to retrieve.
+     *  @param stockWasteMove Animations between Stock and Waste requires a different offset.
+     *  @param tAllPile Used to call this function recursively in order to get correct offset,
      *  when [gamePile] is [GamePiles.TableauAll].
      */
     fun getPilePosition(
@@ -44,19 +46,24 @@ interface XWideLayout {
     ): IntOffset
 
     /**
-     *  Used by animations involving Tableau piles in order to determine additional Y offset needed
-     *  since animation could only involve a sublist of Tableau, rather than entire pile.
+     *  Card animations involving Tableau piles require Y offset to determine where card moving
+     *  beings/ends.
+     *
+     *  @param index The index of [Card] in Tableau pile.
+     *  @return The y offset of Tableau [Card], but in [IntOffset] form.
      */
     fun getCardsYOffset(index: Int): IntOffset
 
     /**
-     *  Used by [HorizontalCardPileWithFlip] in order to retrieve [HorizontalCardOffsets] which
-     *  contains necessary offsets for animations. [flipCardInfo] determines start/end positions.
+     *  Used by [HorizontalCardPileWithFlip] in order to retrieve necessary offsets for animations.
+     *
+     *  @param flipCardInfo Determines start/end positions.
+     *  @return [HorizontalCardOffsets] data class containing [IntOffsets][IntOffset]
      */
     fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets
 
     /**
-     *  Returns size of [Card] in dp in the form of [DpSize].
+     *  @return The size of [Card] in the form of [DpSize].
      */
     @Composable
     fun getCardDpSize(): DpSize
