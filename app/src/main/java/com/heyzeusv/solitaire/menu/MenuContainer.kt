@@ -55,6 +55,7 @@ fun MenuContainer(
 ) {
     val displayMenuButtons by menuVM.displayMenuButtons.collectAsState()
     val menuState by menuVM.menuState.collectAsState()
+    val selectedGame by gameVM.selectedGame.collectAsState()
     Column(modifier = modifier) {
         MenuOptionTransition(
             displayMenuButtons = displayMenuButtons,
@@ -68,7 +69,7 @@ fun MenuContainer(
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.Rules
         ) {
-            RulesMenu(gameVM = gameVM) {
+            RulesMenu(selectedGame = selectedGame) {
                 menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
             }
         }

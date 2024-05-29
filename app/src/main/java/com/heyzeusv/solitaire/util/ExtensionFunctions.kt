@@ -2,6 +2,8 @@ package com.heyzeusv.solitaire.util
 
 import android.net.NetworkCapabilities
 import android.util.Patterns
+import androidx.annotation.DimenRes
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -10,6 +12,7 @@ import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
@@ -259,3 +262,7 @@ fun Date.inFiveMinutes(): Long {
 fun StatPreferences.retrieveLocalStatsFor(game: Game): GameStats {
     return statsList.find { it.game == game } ?: getStatsDefaultInstance(game)
 }
+
+@Composable
+infix fun Arrangement.spacedBy(@DimenRes dimenId: Int): Arrangement.HorizontalOrVertical =
+    spacedBy(dimensionResource(dimenId))
