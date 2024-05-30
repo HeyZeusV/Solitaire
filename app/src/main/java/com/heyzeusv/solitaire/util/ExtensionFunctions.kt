@@ -3,21 +3,28 @@ package com.heyzeusv.solitaire.util
 import android.net.NetworkCapabilities
 import android.util.Patterns
 import androidx.annotation.DimenRes
+import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.material3.ButtonColors
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.PointerInputChange
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import java.text.DecimalFormat
@@ -132,7 +139,7 @@ fun ButtonColors.getContentColor(enabled: Boolean): Color =
 /**
  *  Checks if pile is not in descending order.
  */
-fun List<Card>.notInOrder(): Boolean {
+fun List<CardLogic>.notInOrder(): Boolean {
     val it = this.iterator()
     if (!it.hasNext()) return false
     var current = it.next()
@@ -147,22 +154,22 @@ fun List<Card>.notInOrder(): Boolean {
 /**
  *  Checks if pile is in descending order.
  */
-fun List<Card>.inOrder(): Boolean = !this.notInOrder()
+fun List<CardLogic>.inOrder(): Boolean = !this.notInOrder()
 
 /**
  *  Checks if pile contains more than 1 [Suits] type.
  */
-fun List<Card>.isMultiSuit(): Boolean = this.map { it.suit }.distinct().size > 1
+fun List<CardLogic>.isMultiSuit(): Boolean = this.map { it.suit }.distinct().size > 1
 
 /**
  *  Checks if piles contains only 1 [Suits] type
  */
-fun List<Card>.isNotMultiSuit(): Boolean = !this.isMultiSuit()
+fun List<CardLogic>.isNotMultiSuit(): Boolean = !this.isMultiSuit()
 
 /**
  *  Returns the number of cards in order ascending and face up starting from the end of [List].
  */
-fun List<Card>.numInOrder(): Int {
+fun List<CardLogic>.numInOrder(): Int {
     if (this.isEmpty()) return 0
     var num = 1
     val it = this.reversed().iterator()
@@ -179,7 +186,7 @@ fun List<Card>.numInOrder(): Int {
 /**
  *  Checks if entire pile is face up.
  */
-fun List<Card>.allFaceUp(): Boolean {
+fun List<CardLogic>.allFaceUp(): Boolean {
     this.forEach { if (!it.faceUp) return false }
     return true
 }
@@ -187,7 +194,7 @@ fun List<Card>.allFaceUp(): Boolean {
 /**
  *  Checks if list is not in order or not alternating color
  */
-fun List<Card>.notInOrderOrAltColor(): Boolean {
+fun List<CardLogic>.notInOrderOrAltColor(): Boolean {
     val it = this.iterator()
     if (!it.hasNext()) return false
     var current = it.next()
@@ -202,7 +209,7 @@ fun List<Card>.notInOrderOrAltColor(): Boolean {
 /**
  *  Checks if list is in order and alternating color
  */
-fun List<Card>.inOrderAndAltColor(): Boolean = !this.notInOrderOrAltColor()
+fun List<CardLogic>.inOrderAndAltColor(): Boolean = !this.notInOrderOrAltColor()
 
 /**
  *  Checks if current network, if any, has a valid internet connect.
@@ -266,3 +273,33 @@ fun StatPreferences.retrieveLocalStatsFor(game: Game): GameStats {
 @Composable
 infix fun Arrangement.spacedBy(@DimenRes dimenId: Int): Arrangement.HorizontalOrVertical =
     spacedBy(dimensionResource(dimenId))
+
+/**
+ *  Load a dimension resource.
+ *
+ *  @param id The resource identifier.
+ *  @return The dimension value associated with the resource.
+ */
+@Composable
+@ReadOnlyComposable
+fun dRes(@DimenRes id: Int): Dp = dimensionResource(id)
+
+/**
+ *  Load a string resource with formatting.
+ *
+ *  @param id The resource identifier.
+ *  @param args The format arguments.
+ *  @return The string data associated with the resource.
+ */
+@Composable
+@ReadOnlyComposable
+fun sRes(@StringRes id: Int, vararg args: Any): String = stringResource(id, *args)
+
+/**
+ *  Create a [Painter] from an Android resource id.
+ *
+ *  @param id Resources object to query the image file from.
+ *  @return [Painter] used for drawing the loaded resource.
+ */
+@Composable
+fun pRes(@DrawableRes id: Int): Painter = painterResource(id)

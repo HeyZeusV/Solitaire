@@ -2,7 +2,7 @@ package com.heyzeusv.solitaire.games
 
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -17,9 +17,9 @@ data object All : Games.Other() {
     /**
      *  [BaseGame]
      */
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean = false
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean = false
 
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean = false
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean = false
 
     /**
      *  [GameInfo]
@@ -40,7 +40,7 @@ data object All : Games.Other() {
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<Card> = List(52) { Card(it % 13, getSuit(it)) }
+    override val baseDeck: List<CardLogic> = List(52) { CardLogic(it % 13, getSuit(it)) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
     override val drawAmount: DrawAmount = DrawAmount.One
     override val redeals: Redeals = Redeals.Unlimited

@@ -18,7 +18,7 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollToNode
 import androidx.compose.ui.test.performTouchInput
 import androidx.test.ext.junit.rules.ActivityScenarioRule
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 
 /**
  *  Looks for node with text that matches given String resource [id] with [args] (if any).
@@ -41,7 +41,7 @@ fun <A : ComponentActivity> AndroidTestRule<A>.onNodeWithConDescId(
  *  Looks for node with test tag that matches given [card] toString().
  */
 fun <A : ComponentActivity> AndroidTestRule<A>.onCard(
-    card: Card
+    card: CardLogic
 ): SemanticsNodeInteraction = onNode(hasTestTag(card.toString()))
 
 /**
@@ -60,7 +60,7 @@ fun <A : ComponentActivity> AndroidTestRule<A>.clickOnPileTT(
  */
 fun <A : ComponentActivity> AndroidTestRule<A>.clickOnTableauCard(
     tableau: String,
-    card: Card
+    card: CardLogic
 ): SemanticsNodeInteraction {
     Thread.sleep(1000)
     return onNode(hasTestTag(card.toString()) and hasParent(hasTestTag(tableau)))
@@ -74,7 +74,7 @@ fun <A : ComponentActivity> AndroidTestRule<A>.clickOnTableauCard(
 @OptIn(ExperimentalTestApi::class)
 fun <A : ComponentActivity> AndroidTestRule<A>.waitUntilPileCardExists(
     parentTT: String,
-    card: Card
+    card: CardLogic
 ) = waitUntilExactlyOneExists(hasTestTag(parentTT) and hasAnyChild(hasTestTag(card.toString())))
 
 /**
@@ -84,20 +84,20 @@ fun <A : ComponentActivity> AndroidTestRule<A>.waitUntilPileCardExists(
 @OptIn(ExperimentalTestApi::class)
 fun <A : ComponentActivity> AndroidTestRule<A>.waitUntilPileCardDoesNotExists(
     parentTT: String,
-    card: Card
+    card: CardLogic
 ) = waitUntilDoesNotExist(hasTestTag(parentTT) and hasAnyChild(hasTestTag(card.toString())))
 
 /**
- *  Waits until given [Card]s appear under pile with given [parentTT] test tag. Uses default
+ *  Waits until given [CardLogic]s appear under pile with given [parentTT] test tag. Uses default
  *  timeout of 1 second before failing.
  */
 @OptIn(ExperimentalTestApi::class)
 fun <A : ComponentActivity> AndroidTestRule<A>.waitUntilTableauExists(
     parentTT: String,
-    card1: Card,
-    card2: Card,
-    card3: Card,
-    card4: Card
+    card1: CardLogic,
+    card2: CardLogic,
+    card3: CardLogic,
+    card4: CardLogic
 ) = waitUntilExactlyOneExists(
     hasTestTag(parentTT) and
             hasAnyChild(hasTestTag(card1.toString())) and
@@ -107,16 +107,16 @@ fun <A : ComponentActivity> AndroidTestRule<A>.waitUntilTableauExists(
 )
 
 /**
- *  Waits until given [Card]s disappear under pile with given [parentTT] test tag. Uses default
+ *  Waits until given [CardLogic]s disappear under pile with given [parentTT] test tag. Uses default
  *  timeout of 1 second before failing.
  */
 @OptIn(ExperimentalTestApi::class)
 fun <A : ComponentActivity> AndroidTestRule<A>.waitUntilTableauDoesNotExist(
     parentTT: String,
-    card1: Card,
-    card2: Card,
-    card3: Card,
-    card4: Card
+    card1: CardLogic,
+    card2: CardLogic,
+    card3: CardLogic,
+    card4: CardLogic
 ) = waitUntilDoesNotExist(
     hasTestTag(parentTT) and
             hasAnyChild(hasTestTag(card1.toString())) and

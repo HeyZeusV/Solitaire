@@ -2,7 +2,7 @@ package com.heyzeusv.solitaire.games
 
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -17,7 +17,7 @@ data object FortyAndEight : Games.FortyThievesFamily() {
     /**
      *  [BaseGame]
      */
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
         if (cardsToAdd.size > 1) return false
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
@@ -25,7 +25,7 @@ data object FortyAndEight : Games.FortyThievesFamily() {
         return cFirst.suit == tLast.suit && cFirst.value == tLast.value - 1
     }
 
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
         return cardsToAdd.size == 1
     }
 
@@ -48,7 +48,7 @@ data object FortyAndEight : Games.FortyThievesFamily() {
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<Card> = List(104) { Card(it % 13, getSuit(it)) }
+    override val baseDeck: List<CardLogic> = List(104) { CardLogic(it % 13, getSuit(it)) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.Five
     override val drawAmount: DrawAmount = DrawAmount.One
     override val redeals: Redeals = Redeals.Once

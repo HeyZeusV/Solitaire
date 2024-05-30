@@ -9,7 +9,7 @@ import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.board.HorizontalCardPileWithFlip
 import com.heyzeusv.solitaire.board.MultiPileCardWithFlip
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.util.GamePiles
 
 interface XWideLayout {
@@ -17,7 +17,7 @@ interface XWideLayout {
     val wasteConstraints: Constraints
 
     /**
-     *  This is used in any [Column] [Arrangement.spacedBy] involving [Card]s.
+     *  This is used in any [Column] [Arrangement.spacedBy] involving [CardLogic]s.
      */
     val vPileSpacedByPercent: Float
 
@@ -49,8 +49,8 @@ interface XWideLayout {
      *  Card animations involving Tableau piles require Y offset to determine where card moving
      *  beings/ends.
      *
-     *  @param index The index of [Card] in Tableau pile.
-     *  @return The y offset of Tableau [Card], but in [IntOffset] form.
+     *  @param index The index of [CardLogic] in Tableau pile.
+     *  @return The y offset of Tableau [CardLogic], but in [IntOffset] form.
      */
     fun getCardsYOffset(index: Int): IntOffset
 
@@ -63,7 +63,7 @@ interface XWideLayout {
     fun getHorizontalCardOffsets(flipCardInfo: FlipCardInfo): HorizontalCardOffsets
 
     /**
-     *  @return The size of [Card] in the form of [DpSize].
+     *  @return The size of [CardLogic] in the form of [DpSize].
      */
     @Composable
     fun getCardDpSize(): DpSize

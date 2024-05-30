@@ -1,6 +1,6 @@
 package com.heyzeusv.solitaire.games
 
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -142,7 +142,7 @@ class ClassicWestcliffTest : BehaviorSpec({
             Then("Piles should be") {
                 for (i in 0 until 4) {
                     foundationList[i] pilesShouldBe
-                            listOf(Card(0, foundationList[i].suit, true))
+                            listOf(CardLogic(0, foundationList[i].suit, true))
                 }
                 for (i in 4 until 8) foundationList[i] pilesShouldBe tc.clubs
             }

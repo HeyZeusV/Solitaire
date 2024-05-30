@@ -1,6 +1,6 @@
 package com.heyzeusv.solitaire.board.animation
 
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 
 /**
  *  Sealed classes containing animation values for Card flips.
@@ -28,9 +28,9 @@ sealed class FlipCardInfo {
     open val endRotationY: Float = 0f
 
     /**
-     *  Determines when [Card] has flipped enough to show other side of [Card].
+     *  Determines when [CardLogic] has flipped enough to show other side of [CardLogic].
      *
-     *  @param rotationY Determines [Card's][Card] current Y rotation value.
+     *  @param rotationY Determines [Card's][CardLogic] current Y rotation value.
      */
     open fun flipCondition(rotationY: Float): Boolean = false
 

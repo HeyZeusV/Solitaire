@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.heyzeusv.solitaire.AnimationDurationsSetting
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.menu.settings.SettingsMenu
 
@@ -16,7 +16,7 @@ import com.heyzeusv.solitaire.menu.settings.SettingsMenu
  *  @property beforeActionDelay Delay length before running [AnimateInfo.actionBeforeAnimation].
  *  @property afterActionDelay Delay length before running [AnimateInfo.actionAfterAnimation].
  *  @property tableauCardFlipDuration How long the animation lasts for [TableauCardFlipInfo].
- *  @property tableauCardFlipDelay Delay length before flipping [Tableau] [Card].
+ *  @property tableauCardFlipDelay Delay length before flipping [Tableau] [CardLogic].
  *  @property autocompleteDelay Delay length before attempting to run the next autocomplete step.
  *  @property iconId Icon resource id that is display on [SettingsMenu] to represent entry.
  *  @property displayId String resource id that is displayed on [SettingsMenu] to represent

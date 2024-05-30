@@ -2,7 +2,7 @@ package com.heyzeusv.solitaire.games
 
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -17,7 +17,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
     /**
      *  Checks if given [cardToAdd] is one more or less than last card of [foundation] truePile.
      */
-    override fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
+    override fun canAddToFoundation(foundation: Foundation, cardToAdd: CardLogic): Boolean {
         return true
     }
 
@@ -25,7 +25,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
      *  Checks if [cardToAdd] can be added to Foundation by checking the remaining top cards in
      *  [tableauList].
      */
-    override fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: Card): Boolean {
+    override fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: CardLogic): Boolean {
         for (i in 0 until numOfTableauPiles.amount) {
             if (tableauList[i].truePile.isNotEmpty()) {
                 if (!tableauList[i].truePile.contains(cardToAdd)) {
@@ -45,11 +45,11 @@ data object AcesUpHard : Games.AcesUpVariants() {
     /**
      *  [BaseGame]
      */
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
         return false
     }
 
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
         val cFirst = cardsToAdd.first()
         return cFirst.value == 0 && cardsToAdd.size == 1
     }
@@ -73,7 +73,7 @@ data object AcesUpHard : Games.AcesUpVariants() {
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<Card> = List(52) { Card(it % 13, getSuit(it)) }
+    override val baseDeck: List<CardLogic> = List(52) { CardLogic(it % 13, getSuit(it)) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
     override val drawAmount: DrawAmount = DrawAmount.Four
     override val redeals: Redeals = Redeals.None

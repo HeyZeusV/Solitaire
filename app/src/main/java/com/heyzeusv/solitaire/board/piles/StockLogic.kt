@@ -4,14 +4,14 @@ package com.heyzeusv.solitaire.board.piles
  *  In Solitaire, Stock refers to the face down pile where players draw from and place the drawn
  *  card on the [Waste] pile.
  */
-class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
+class Stock(initialPile: List<CardLogic> = emptyList()) : Pile(initialPile) {
 
     /**
      *  Returns a list of first [amount] of cards in [truePile]. Returns smaller list if [amount]
      *  is greater than [truePile] size.
      */
-    fun getCards(amount: Int): List<Card> {
-        val list = mutableListOf<Card>()
+    fun getCards(amount: Int): List<CardLogic> {
+        val list = mutableListOf<CardLogic>()
         for (i in 0 until amount) {
             try {
                 list.add(_truePile[i])
@@ -26,8 +26,8 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
      *  Removes and returns a list of first [amount] of cards in [truePile]. Returns smaller list
      *  if [amount] is greater than [truePile] size.
      */
-    fun removeMany(amount: Int): List<Card> {
-        val list = mutableListOf<Card>()
+    fun removeMany(amount: Int): List<CardLogic> {
+        val list = mutableListOf<CardLogic>()
         for (i in 1..amount) {
             try {
                 list.add(remove())
@@ -43,16 +43,16 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     /**
      *  Add given [cards] to [truePile].
      */
-    override fun add(cards: List<Card>) {
+    override fun add(cards: List<CardLogic>) {
         _truePile.addAll(cards.map { it.copy(faceUp = false) })
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
     /**
-     *  Remove the first [Card] in [truePile] and return it.
+     *  Remove the first [CardLogic] in [truePile] and return it.
      */
-    override fun remove(tappedIndex: Int): Card {
+    override fun remove(tappedIndex: Int): CardLogic {
         val removedCard = _truePile.removeFirst()
         _displayPile.clear()
         _displayPile.addAll(_truePile.toList())
@@ -62,7 +62,7 @@ class Stock(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     /**
      *  Reset [truePile] using given [cards].
      */
-    override fun reset(cards: List<Card>) {
+    override fun reset(cards: List<CardLogic>) {
         animatedPiles.clear()
         resetHistory()
         _truePile.clear()

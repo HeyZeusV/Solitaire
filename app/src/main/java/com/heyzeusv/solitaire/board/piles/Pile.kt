@@ -23,14 +23,14 @@ import com.heyzeusv.solitaire.util.Suits
 
 /**
  *  Composable that displays [pile]. If given [pile] is empty, [emptyIconId] is displayed. Clicking
- *  launches [onClick]. [drawAmount] determines the max number of [Card]s that will be displayed at
- *  once. [cardDpSize] determines the size to make [SolitaireCard] Composables.
+ *  launches [onClick]. [drawAmount] determines the max number of [CardLogic]s that will be displayed at
+ *  once. [cardDpSize] determines the size to make [Card] Composables.
  */
 @Composable
 fun SolitairePile(
     modifier: Modifier = Modifier,
     cardDpSize: DpSize,
-    pile: List<Card>,
+    pile: List<CardLogic>,
     @DrawableRes emptyIconId: Int,
     onClick: () -> Unit = { },
     drawAmount: DrawAmount = DrawAmount.One
@@ -53,7 +53,7 @@ fun SolitairePile(
             )
         ) {
             if (pile.size >= 3 && drawAmount.amount >= 3) {
-                SolitaireCard(
+                Card(
                     modifier = Modifier
                         .size(cardDpSize)
                         .fillMaxHeight(),
@@ -61,14 +61,14 @@ fun SolitairePile(
                 )
             }
             if (pile.size >= 2 && drawAmount.amount >= 2) {
-                SolitaireCard(
+                Card(
                     modifier = Modifier
                         .size(cardDpSize)
                         .fillMaxHeight(),
                     card = pile[pile.size - 2]
                 )
             }
-            SolitaireCard(
+            Card(
                 modifier = Modifier
                     .size(cardDpSize)
                     .fillMaxHeight()
@@ -82,13 +82,13 @@ fun SolitairePile(
 /**
  *  Composable that displays Stock [pile]. [stockWasteEmpty] determines which emptyIconId drawable
  *  should be passed to [SolitairePile]. Clicking launches [onClick]. [cardDpSize] determines the
- *  size to make [SolitaireCard] Composables.
+ *  size to make [Card] Composables.
  */
 @Composable
 fun SolitaireStock(
     modifier: Modifier = Modifier,
     cardDpSize: DpSize,
-    pile: List<Card>,
+    pile: List<CardLogic>,
     stockWasteEmpty: () -> Boolean,
     onClick: () -> Unit = { }
 ) {
@@ -119,7 +119,7 @@ fun SolitairePilePreview() {
     SolitairePreview {
         SolitairePile(
             cardDpSize = DpSize(56.dp, 79.dp),
-            pile = listOf(Card(100, Suits.CLUBS, faceUp = true)),
+            pile = listOf(CardLogic(100, Suits.CLUBS, faceUp = true)),
             emptyIconId = R.drawable.stock_reset
         )
     }
@@ -128,7 +128,7 @@ fun SolitairePilePreview() {
 @Preview
 @Composable
 fun SolitairePile3DrawPreview() {
-    val card = Card(2, Suits.CLUBS, faceUp = true)
+    val card = CardLogic(2, Suits.CLUBS, faceUp = true)
     SolitairePile(
         cardDpSize = DpSize(56.dp, 79.dp),
         pile = listOf(card, card, card),

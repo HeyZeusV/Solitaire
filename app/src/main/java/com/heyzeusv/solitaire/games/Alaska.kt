@@ -2,7 +2,7 @@ package com.heyzeusv.solitaire.games
 
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -17,7 +17,7 @@ data object Alaska : Games.YukonFamily() {
     /**
      *  [BaseGame]
      */
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
@@ -25,7 +25,7 @@ data object Alaska : Games.YukonFamily() {
                 (cFirst.value == tLast.value - 1 || cFirst.value == tLast.value + 1)
     }
 
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
         val cFirst = cardsToAdd.first()
         return cFirst.value == 12
     }
@@ -49,7 +49,7 @@ data object Alaska : Games.YukonFamily() {
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<Card> = List(52) { Card(it % 13, getSuit(it)) }
+    override val baseDeck: List<CardLogic> = List(52) { CardLogic(it % 13, getSuit(it)) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.Five
     override val drawAmount: DrawAmount = DrawAmount.Zero
     override val redeals: Redeals = Redeals.None

@@ -10,13 +10,13 @@ import com.heyzeusv.solitaire.util.Suits
 class Foundation(
     val suit: Suits,
     val gamePile: GamePiles,
-    initialPile: List<Card> = emptyList()
+    initialPile: List<CardLogic> = emptyList()
 ) : Pile(initialPile) {
 
     /**
      *  Adds first card of given [cards] to [truePile].
      */
-    override fun add(cards: List<Card>) {
+    override fun add(cards: List<CardLogic>) {
         _truePile.add(cards.first().copy(faceUp = true))
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
@@ -25,17 +25,17 @@ class Foundation(
     /**
      *  Adds all given [cards] to [truePile]
      */
-    fun addAll(cards: List<Card>) {
+    fun addAll(cards: List<CardLogic>) {
         _truePile.addAll(cards)
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
     /**
-     *  Removes the last [Card] in [truePile] which would refer to the top showing card and
+     *  Removes the last [CardLogic] in [truePile] which would refer to the top showing card and
      *  returns it.
      */
-    override fun remove(tappedIndex: Int): Card {
+    override fun remove(tappedIndex: Int): CardLogic {
         val removedCard = _truePile.removeLast()
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
@@ -45,7 +45,7 @@ class Foundation(
     /**
      *  Reset [truePile] using given [cards].
      */
-    override fun reset(cards: List<Card>) {
+    override fun reset(cards: List<CardLogic>) {
         animatedPiles.clear()
         resetHistory()
         _truePile.clear()

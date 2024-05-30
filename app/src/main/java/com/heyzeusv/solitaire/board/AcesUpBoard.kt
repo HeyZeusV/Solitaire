@@ -19,7 +19,7 @@ import com.heyzeusv.solitaire.board.piles.SolitairePile
 import com.heyzeusv.solitaire.board.piles.SolitaireStock
 import com.heyzeusv.solitaire.board.piles.SolitaireTableau
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Stock
@@ -29,7 +29,7 @@ import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
 /**
- *  Composable that displays all [Card] piles, Stock, Foundation, and Tableau. [layout] is
+ *  Composable that displays all [CardLogic] piles, Stock, Foundation, and Tableau. [layout] is
  *  used to determine offsets of every pile. [animationDurations] determines how long each animation
  *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
  *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during

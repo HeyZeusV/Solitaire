@@ -9,6 +9,12 @@
     <dimen name="aRevealHeight">200.dp</dimen>
     <dimen name="aRevealPaddingAll">8.dp</dimen>
 
+    <!-- Card (c) -->
+    <dimen name="c_bStroke">1.dp</dimen>
+    <dimen name="c_radius">4.dp</dimen>
+    <dimen name="c_padding_all">4.dp</dimen>
+    <dimen name="c_padding_horizontal">6.dp</dimen>
+
     <!-- Games (g) -->
     <dimen name="gColumnSpacedBy">2.dp</dimen>
     <dimen name="gInfoHeight">150.dp</dimen>

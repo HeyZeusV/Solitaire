@@ -9,7 +9,7 @@ import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.SolitaireCard
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.util.SolitairePreview
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onCard
@@ -32,7 +32,7 @@ class CardTest {
         composeRule.apply {
             setContent {
                 SolitairePreview {
-                    SolitaireCard(
+                    Card(
                         card = tc.card1C,
                         modifier = modifier
                     )
@@ -50,19 +50,19 @@ class CardTest {
             setContent {
                 SolitairePreview {
                     Row {
-                        SolitaireCard(
+                        Card(
                             card = tc.card1DFU,
                             modifier = modifier.weight(1f)
                         )
-                        SolitaireCard(
+                        Card(
                             card = tc.card7HFU,
                             modifier = modifier.weight(1f)
                         )
-                        SolitaireCard(
+                        Card(
                             card = tc.card12CFU,
                             modifier = modifier.weight(1f)
                         )
-                        SolitaireCard(
+                        Card(
                             card = tc.card5SFU,
                             modifier = modifier.weight(1f)
                         )

@@ -14,7 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.heyzeusv.solitaire.board.layouts.Width1080
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.CardLogic
 import com.heyzeusv.solitaire.util.theme.PreviewBG
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 
@@ -22,9 +22,11 @@ import com.heyzeusv.solitaire.util.theme.SolitaireTheme
  *  Used to create Compose Previews.
  */
 class PreviewUtil {
-    val pile = List(3) { Card(10, Suits.CLUBS, true) }
+    val pile = List(3) { CardLogic(10, Suits.CLUBS, true) }
 
     val cardDpSize = DpSize(148.dp, 208.dp)
+    val card7WideSize = DpSize(55.dp, 77.dp)
+    val card10WideSize = DpSize(39.dp, 55.dp)
     val spacedByPercent = 0.75f
     val screenWidth = Width1080(0)
     val animateInfo = AnimateInfo(
