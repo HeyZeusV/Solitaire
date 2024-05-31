@@ -17,13 +17,12 @@ import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.board.piles.PlayingCard
 import com.heyzeusv.solitaire.board.piles.Pile
 import com.heyzeusv.solitaire.board.piles.Stock
-import com.heyzeusv.solitaire.board.piles.SolitaireTableau
+import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.board.layouts.TenWideLayout
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
-import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.board.piles.Waste
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.util.DrawAmount
@@ -229,7 +228,7 @@ fun TenWideBoard(
                 onClick = { onStockClick() }
             )
             tableauList.forEachIndexed { index, tableau ->
-                SolitaireTableau(
+                Tableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
                     cardDpSize = layout.getCardDpSize(),
                     spacedByPercent = layout.vPileSpacedByPercent,

@@ -5,9 +5,11 @@ import androidx.compose.ui.test.assertHasClickAction
 import androidx.compose.ui.test.assertHasNoClickAction
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.SolitaireTableau
+import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.TestCards
 import com.heyzeusv.solitaire.util.onCard
@@ -28,7 +30,10 @@ class TableauTest {
     fun tableau_empty() {
         composeRule.setContent {
             SolitaireTheme {
-                SolitaireTableau(spacedByPercent = 0.75f)
+                Tableau(
+                    cardDpSize = DpSize(75.dp, 100.dp),
+                    spacedByPercent = 0.75f
+                )
             }
         }
 
@@ -42,7 +47,8 @@ class TableauTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    SolitaireTableau(
+                    Tableau(
+                        cardDpSize = DpSize(75.dp, 100.dp),
                         spacedByPercent = 0.75f,
                         pile = listOf(
                             tc.card5SFU, tc.card4DFU, tc.card3DFU, tc.card13DFU,

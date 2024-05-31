@@ -84,7 +84,7 @@ private fun PilePreview() {
             Pile(
                 cardDpSize = cardDpSize,
                 pile = pile,
-                emptyIconId = R.drawable.stock_reset
+                emptyIconId = R.drawable.stock_reset,
             )
         }
     }
@@ -99,7 +99,7 @@ private fun Pile3DrawPreview() {
                 cardDpSize = cardDpSize,
                 pile = pile,
                 emptyIconId = R.drawable.waste_empty,
-                drawAmount = DrawAmount.Three
+                drawAmount = DrawAmount.Three,
             )
         }
     }
@@ -113,7 +113,7 @@ private fun PileEmptyPreview() {
             Pile(
                 cardDpSize = cardDpSize,
                 pile = emptyList(),
-                emptyIconId = R.drawable.stock_reset
+                emptyIconId = R.drawable.stock_reset,
             )
         }
     }

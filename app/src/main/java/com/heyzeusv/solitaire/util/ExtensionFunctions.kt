@@ -274,7 +274,9 @@ fun StatPreferences.retrieveLocalStatsFor(game: Game): GameStats {
 
 @Composable
 infix fun Arrangement.spacedBy(@DimenRes dimenId: Int): Arrangement.HorizontalOrVertical =
-    spacedBy(dimensionResource(dimenId))
+    spacedBy(dRes(dimenId))
+
+infix fun Arrangement.spacedBy(space: Dp): Arrangement.HorizontalOrVertical = spacedBy(space)
 
 /**
  *  Load a dimension resource.

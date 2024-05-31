@@ -16,12 +16,11 @@ import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.board.layouts.SevenWideLayout
 import com.heyzeusv.solitaire.board.piles.Pile
 import com.heyzeusv.solitaire.board.piles.Stock
-import com.heyzeusv.solitaire.board.piles.SolitaireTableau
+import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
-import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
@@ -148,7 +147,7 @@ fun GolfBoard(
                 onClick = { onStockClick() }
             )
             tableauList.forEachIndexed { index, tableau ->
-                SolitaireTableau(
+                Tableau(
                     modifier = Modifier.layoutId("Tableau #$index"),
                     cardDpSize = layout.getCardDpSize(),
                     spacedByPercent = layout.vPileSpacedByPercent,

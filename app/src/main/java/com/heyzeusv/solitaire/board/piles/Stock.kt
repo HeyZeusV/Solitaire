@@ -23,14 +23,14 @@ fun Stock(
     cardDpSize: DpSize,
     pile: List<Card>,
     stockWasteEmpty: () -> Boolean,
-    onClick: () -> Unit = { }
+    onClick: () -> Unit = { },
 ) {
     Pile(
         modifier = modifier,
         cardDpSize = cardDpSize,
         pile = pile,
         emptyIconId = if (stockWasteEmpty()) R.drawable.stock_empty else R.drawable.stock_reset,
-        onClick = onClick
+        onClick = onClick,
     )
 }
 
@@ -42,7 +42,7 @@ private fun StockPreview() {
             Stock(
                 cardDpSize = cardDpSize,
                 pile = pile,
-                stockWasteEmpty = { true }
+                stockWasteEmpty = { true },
             )
         }
     }
@@ -56,7 +56,7 @@ private fun StockEmptyTrue() {
             Stock(
                 cardDpSize = cardDpSize,
                 pile = emptyList(),
-                stockWasteEmpty = { true }
+                stockWasteEmpty = { true },
             )
         }
     }
@@ -70,7 +70,7 @@ private fun StockEmptyFalse() {
             Stock(
                 cardDpSize = cardDpSize,
                 pile = emptyList(),
-                stockWasteEmpty = { false }
+                stockWasteEmpty = { false },
             )
         }
     }

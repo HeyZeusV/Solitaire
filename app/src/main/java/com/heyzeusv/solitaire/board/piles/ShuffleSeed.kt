@@ -1,10 +1,10 @@
 package com.heyzeusv.solitaire.board.piles
 
 import java.util.Random
-import com.heyzeusv.solitaire.board.GameViewModel
 
 /**
- *  Provided by Hilt to [GameViewModel] which holds the [Random] obj that determines the deck
- *  shuffle.
+ *  Used to determine deck shuffle.
+ *
+ *  @property shuffleSeed The [Random] obj which is used with [List.shuffled] to shuffle deck.
  */
 data class ShuffleSeed(val shuffleSeed: Random)
