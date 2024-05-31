@@ -4,23 +4,38 @@ import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.animation.TableauCardFlipInfo
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.Suits
+import com.heyzeusv.solitaire.util.faceDownExists
 import com.heyzeusv.solitaire.util.isMultiSuit
 import com.heyzeusv.solitaire.util.notInOrder
 import com.heyzeusv.solitaire.util.notInOrderOrAltColor
 
 /**
- *  Sealed class containing all possible options of [Tableau] piles. Each game has its own set of
- *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
- *  condition to add a new pile to the end of [truePile].
+ *  In Solitaire, the Tableau refers to the piles where users can move [Cards][Card] between in
+ *  order to sort before moving to a [Foundation] pile.
+ *
+ *  @property gamePile Which pile this instantiation represents.
+ *  @param initialPile Cards that [Pile] is initialized with.
  */
-class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : Pile(initialPile) {
+class Tableau(
+    val gamePile: GamePiles,
+    initialPile: List<Card> = emptyList(),
+) : Pile(initialPile) {
 
+    /**
+     *  Adds a [Card], face up, to the end [truePile].
+     *
+     *  @param card The [Card] to be added.
+     */
     override fun add(card: Card) {
-        TODO("Not yet implemented")
+        _truePile.add(card.copy(faceUp = true))
+        animatedPiles.add(_truePile.toList())
+        appendHistory()
     }
 
     /**
-     *  Adds given [cards] to [truePile].
+     *  Adds multiple [Cards][Card], to the end [truePile].
+     *
+     *  @param cards The [Cards][Card] to be added.
      */
     override fun addAll(cards: List<Card>) {
         _truePile.addAll(cards)
@@ -29,8 +44,11 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : 
     }
 
     /**
-     *  Removes all cards from [truePile] starting from [tappedIndex] to the end of [truePile] and
-     *  flips the last card if any.
+     *  Removes [Cards][Card] from [truePile], starting from [Card] that was pressed to the end of
+     *  [truePile]. Lastly, flips the last [Card] of [truePile] if any.
+     *
+     *  @param tappedIndex The [Card] to start removal process from.
+     *  @return Not used in this version.
      */
     override fun remove(tappedIndex: Int): Card {
         _truePile.run {
@@ -40,27 +58,24 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : 
         }
         animatedPiles.add(_truePile.toList())
         appendHistory()
-        // return value isn't used
         return Card(0, Suits.SPADES, false)
     }
 
     /**
-     *  Reset [truePile] to initial game state using given [cards].
+     *  Resets [animatedPiles] and [historyList]. Replaces [truePile] and [displayPile] with a new
+     *  list of face up [Cards][Card].
+     *
+     *  @param cards The new list of [Cards][Card].
      */
     override fun reset(cards: List<Card>) {
-        animatedPiles.clear()
-        resetHistory()
-        _truePile.run {
-            clear()
-            addAll(cards)
-            _displayPile.clear()
-            _displayPile.addAll(_truePile.toList())
-            currentStep = this.toList()
-        }
+        resetLists()
+        _truePile.addAll(cards)
+        _displayPile.addAll(cards)
+        currentStep = _truePile.toList()
     }
 
     /**
-     *  Used to return [truePile] to a previous state.
+     *  Returns [truePile] to its previous state by accessing [historyList].
      */
     override fun undo() {
         _truePile.clear()
@@ -71,8 +86,10 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : 
     }
 
     /**
-     *  Checks if last card of [Tableau] will need a flip animation. If so, returns
-     *  [TableauCardFlipInfo] using given [cardIndex].
+     *  Checks if last [Card] of [truePile] will need a flip animation.
+     *
+     *  @param cardIndex The [Card] to flip, if needed, will be one less than this value.
+     *  @return [TableauCardFlipInfo] which contains information needed to animated [Card] flip.
      */
     fun getTableauCardFlipInfo(cardIndex: Int): TableauCardFlipInfo? {
         val lastTableauCard: Card
@@ -93,7 +110,7 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : 
     /**
      *  Used to determine if game could be auto completed by having all face up cards
      */
-    fun faceDownExists(): Boolean = _truePile.any { !it.faceUp }
+    fun faceDownExists(): Boolean = _truePile.faceDownExists()
 
     /**
      *  Used to determine if pile contains more than 1 [Suits] type.

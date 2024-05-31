@@ -184,12 +184,14 @@ fun List<Card>.numInOrder(): Int {
 }
 
 /**
+ *  Checks if any face down [Card] exists.
+ */
+fun List<Card>.faceDownExists(): Boolean = any { !it.faceUp }
+
+/**
  *  Checks if entire pile is face up.
  */
-fun List<Card>.allFaceUp(): Boolean {
-    this.forEach { if (!it.faceUp) return false }
-    return true
-}
+fun List<Card>.allFaceUp(): Boolean = !faceDownExists()
 
 /**
  *  Checks if list is not in order or not alternating color
