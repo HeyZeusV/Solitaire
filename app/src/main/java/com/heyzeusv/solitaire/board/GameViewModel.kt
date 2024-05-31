@@ -3,7 +3,7 @@ package com.heyzeusv.solitaire.board
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
-import com.heyzeusv.solitaire.board.piles.CardLogic
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.animation.TableauCardFlipInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
@@ -62,7 +62,7 @@ class GameViewModel @Inject constructor(
         resetAll(ResetOptions.NEW)
     }
 
-    private var shuffledDeck = emptyList<CardLogic>()
+    private var shuffledDeck = emptyList<Card>()
 
     private var redealLeft: Int = 1000
 
@@ -175,7 +175,7 @@ class GameViewModel @Inject constructor(
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
                     _stock.removeMany(_selectedGame.value.drawAmount.amount)
-                    _waste.add(cards)
+                    _waste.addAll(cards)
                     _stock.updateDisplayPile()
                 }
             }
@@ -199,7 +199,7 @@ class GameViewModel @Inject constructor(
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
                     _waste.removeAll()
-                    _stock.add(cards)
+                    _stock.addAll(cards)
                     _waste.updateDisplayPile()
                 }
             }
@@ -227,8 +227,8 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  Custom onStockClick for [Games] that require [CardLogic]s to be move directly from [Stock] to
-     *  [Tableau]. Each click on [Stock] attempts to move 1 [CardLogic] to each [Tableau] pile. If there
+     *  Custom onStockClick for [Games] that require [Card]s to be move directly from [Stock] to
+     *  [Tableau]. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile. If there
      *  isn't enough for all [Tableau] piles, it adds from left to right until it runs out.
      */
     private fun onStockClickMultiPile() {
@@ -250,12 +250,12 @@ class GameViewModel @Inject constructor(
                     _stock.removeMany(stockCards.size)
                     _tableau.forEachIndexed { index, tableau ->
                         if (index < _selectedGame.value.numOfTableauPiles.amount) {
-                            val stockCard: List<CardLogic> = try {
+                            val stockCard: List<Card> = try {
                                 listOf(stockCards[index].copy(faceUp = true))
                             } catch (e: IndexOutOfBoundsException) {
                                 emptyList()
                             }
-                            tableau.add(stockCard)
+                            tableau.addAll(stockCard)
                         }
                     }
                     _stock.updateDisplayPile()
@@ -273,8 +273,8 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  Custom onStockClick for [Golf] due to [CardLogic]s being move directly from [Stock] to specific
-     *  [Foundation] pile. Each click on [Stock] attempts to move 1 [CardLogic] to each [Tableau] pile.
+     *  Custom onStockClick for [Golf] due to [Card]s being move directly from [Stock] to specific
+     *  [Foundation] pile. Each click on [Stock] attempts to move 1 [Card] to each [Tableau] pile.
      */
     private fun onStockClickGolf() {
         if (_stock.truePile.isNotEmpty()) {
@@ -287,8 +287,8 @@ class GameViewModel @Inject constructor(
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
-                    _stock.removeMany(cards.size)
-                    _foundation[3].add(cards)
+                    _stock.removeMany(_selectedGame.value.drawAmount.amount)
+                    _foundation[3].add(cards.first())
                     _stock.updateDisplayPile()
                 }
             }
@@ -305,7 +305,7 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  Runs when user taps on Waste pile. Checks to see if top [CardLogic] can be moved to any other
+     *  Runs when user taps on Waste pile. Checks to see if top [Card] can be moved to any other
      *  pile except [Stock]. If so, it is removed from [Waste].
      */
     fun onWasteClick() {
@@ -326,7 +326,7 @@ class GameViewModel @Inject constructor(
     }
 
     /**
-     *  Runs when user taps on Foundation with given [fIndex]. Checks to see if top [CardLogic] can be
+     *  Runs when user taps on Foundation with given [fIndex]. Checks to see if top [Card] can be
      *  moved to any [Tableau] pile. If so, it is removed from [foundation] with given [fIndex].
      */
     fun onFoundationClick(fIndex: Int) {
@@ -345,7 +345,7 @@ class GameViewModel @Inject constructor(
 
     /**
      *  Runs when user taps on Tableau pile with given [tableauIndex] and given [cardIndex]. Checks
-     *  to see if tapped sublist of [CardLogic]s can be moved to another [Tableau] pile or a [Foundation].
+     *  to see if tapped sublist of [Card]s can be moved to another [Tableau] pile or a [Foundation].
      */
     fun onTableauClick(tableauIndex: Int, cardIndex: Int) {
         val tableauPile = _tableau[tableauIndex]
@@ -393,7 +393,7 @@ class GameViewModel @Inject constructor(
                                     aniInfo.actionBeforeAnimation = {
                                         mutex.withLock {
                                             tableau.remove(tableau.truePile.size - 1)
-                                            foundation.add(listOf(lastTCard))
+                                            foundation.add(lastTCard)
                                             tableau.updateDisplayPile()
                                         }
                                     }
@@ -432,7 +432,7 @@ class GameViewModel @Inject constructor(
      *  uses rest of parameters to create [AnimateInfo].
      */
     private fun checkLegalMove(
-        cards: List<CardLogic>,
+        cards: List<Card>,
         start: GamePiles,
         startIndex: Int = 0,
         tableauCardFlipInfo: TableauCardFlipInfo? = null,
@@ -472,7 +472,7 @@ class GameViewModel @Inject constructor(
      *  uses rest of parameters to create [AnimateInfo].
      */
     private fun checkLegalMoveStandard(
-        cards: List<CardLogic>,
+        cards: List<Card>,
         start: GamePiles,
         startIndex: Int = 0,
         tableauCardFlipInfo: TableauCardFlipInfo?,
@@ -481,9 +481,10 @@ class GameViewModel @Inject constructor(
     ): MoveResult {
         // only one card can be added to Foundation at a time.
         if (cards.size == 1) {
+            val card = cards.first()
             _foundation.forEachIndexed { index, it ->
                 if (index < _selectedGame.value.numOfFoundationPiles.amount) {
-                    if (selectedGame.value.canAddToFoundation(it, cards.first())) {
+                    if (selectedGame.value.canAddToFoundation(it, card)) {
                         val aniInfo = AnimateInfo(
                             start = start,
                             end = it.gamePile,
@@ -494,7 +495,7 @@ class GameViewModel @Inject constructor(
                         aniInfo.actionBeforeAnimation = {
                             mutex.withLock {
                                 ifLegal()
-                                it.add(cards)
+                                it.add(card)
                                 actionBeforeAnimation()
                             }
                         }
@@ -527,7 +528,7 @@ class GameViewModel @Inject constructor(
                     aniInfo.actionBeforeAnimation = {
                         mutex.withLock {
                             ifLegal()
-                            it.add(cards)
+                            it.addAll(cards)
                             actionBeforeAnimation()
                         }
                     }
@@ -556,7 +557,7 @@ class GameViewModel @Inject constructor(
                     aniInfo.actionBeforeAnimation = {
                         mutex.withLock {
                             ifLegal()
-                            it.add(cards)
+                            it.addAll(cards)
                             actionBeforeAnimation()
                         }
                     }
@@ -580,7 +581,7 @@ class GameViewModel @Inject constructor(
      *  uses rest of parameters to create [AnimateInfo].
      */
     private fun checkLegalMoveAcesUp(
-        cards: List<CardLogic>,
+        cards: List<Card>,
         start: GamePiles,
         startIndex: Int = 0,
         tableauCardFlipInfo: TableauCardFlipInfo?,
@@ -601,7 +602,7 @@ class GameViewModel @Inject constructor(
                 aniInfo.actionBeforeAnimation = {
                     mutex.withLock {
                         ifLegal()
-                        _foundation[0].add(cards)
+                        _foundation[0].add(card)
                         actionBeforeAnimation()
                     }
                 }
@@ -629,7 +630,7 @@ class GameViewModel @Inject constructor(
                 aniInfo.actionBeforeAnimation = {
                     mutex.withLock {
                         ifLegal()
-                        tmpTab.add(cards)
+                        tmpTab.addAll(cards)
                         actionBeforeAnimation()
                     }
                 }
@@ -653,7 +654,7 @@ class GameViewModel @Inject constructor(
      *  face up) will receive [cards]. If possible, uses rest of parameters to create [AnimateInfo].
      */
     private fun checkLegalMoveSpider(
-        cards: List<CardLogic>,
+        cards: List<Card>,
         start: GamePiles,
         startIndex: Int = 0,
         tableauCardFlipInfo: TableauCardFlipInfo?,
@@ -686,7 +687,7 @@ class GameViewModel @Inject constructor(
                 tableauCardFlipInfo = tableauCardFlipInfo
             )
             ifLegal()
-            it.add(cards)
+            it.addAll(cards)
             val spiderAniInfo = fullPileToFoundation(it)
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {

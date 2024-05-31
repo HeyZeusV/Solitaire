@@ -24,10 +24,10 @@ class TableauLogicTest : BehaviorSpec({
     }
     Given("Tableau with cards") {
         beforeContainer {
-            tableau.add(cards)
+            tableau.addAll(cards)
         }
         When("Calling add") {
-            tableau.add(cards)
+            tableau.addAll(cards)
             Then("All cards should be added to truePile as is") {
                 tableau.truePile shouldBe (cards + cards)
                 tableau.displayPile shouldBe emptyList()
@@ -62,7 +62,7 @@ class TableauLogicTest : BehaviorSpec({
             }
         }
         When("Adding cards and calling undo") {
-            tableau.add(cards)
+            tableau.addAll(cards)
             tableau.undo()
             Then("truePile should contain cards as is") {
                 tableau.truePile shouldBe cards
@@ -99,7 +99,7 @@ class TableauLogicTest : BehaviorSpec({
     }
     Given("Tableau with no cards") {
         When("Calling add") {
-            tableau.add(cards)
+            tableau.addAll(cards)
             Then("All cards should be added to truePile as is") {
                 tableau.truePile shouldBe cards
                 tableau.displayPile shouldBe emptyList()

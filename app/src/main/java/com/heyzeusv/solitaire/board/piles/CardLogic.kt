@@ -20,13 +20,13 @@ val cardsMap = mapOf(
 )
 
 /**
- *  Contains information for an individual [Card].
+ *  Contains information for an individual [PlayingCard].
  *  
  *  @property value The value of the card in the form of an [Int].
  *  @property suit One of the 4 possible values from [Suits].
  *  @property faceUp Determines which side is displayed to user.
  */
-data class CardLogic(val value: Int, val suit: Suits, val faceUp: Boolean = false) {
+data class Card(val value: Int, val suit: Suits, val faceUp: Boolean = false) {
 
     /**
      *  @return The value of the card in the form of a [String] using [cardsMap].

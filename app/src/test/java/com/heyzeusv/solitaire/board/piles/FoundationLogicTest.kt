@@ -24,7 +24,7 @@ class FoundationLogicTest : BehaviorSpec({
     Given("List of cards") {
         val cards = listOf(tc.card1C, tc.card2D, tc.card3H, tc.card4S)
         When("Calling add") {
-            foundation.add(cards)
+            foundation.addAll(cards)
             Then("Only first card should be added to truePile face up") {
                 foundation.truePile shouldBe listOf(tc.card1CFU)
                 foundation.displayPile shouldBe emptyList()

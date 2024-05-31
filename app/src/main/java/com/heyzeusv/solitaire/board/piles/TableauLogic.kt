@@ -10,14 +10,14 @@ import com.heyzeusv.solitaire.util.notInOrderOrAltColor
 
 /**
  *  Sealed class containing all possible options of [Tableau] piles. Each game has its own set of
- *  rules, primarily referring to the amount of [CardLogic]s that start face up on reset and the
+ *  rules, primarily referring to the amount of [Card]s that start face up on reset and the
  *  condition to add a new pile to the end of [truePile].
  */
-class Tableau(val gamePile: GamePiles, initialPile: List<CardLogic> = emptyList()) : Pile(initialPile) {
+class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     /**
      *  Adds given [cards] to [truePile].
      */
-    override fun add(cards: List<CardLogic>) {
+    override fun addAll(cards: List<Card>) {
         _truePile.addAll(cards)
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
@@ -27,7 +27,7 @@ class Tableau(val gamePile: GamePiles, initialPile: List<CardLogic> = emptyList(
      *  Removes all cards from [truePile] starting from [tappedIndex] to the end of [truePile] and
      *  flips the last card if any.
      */
-    override fun remove(tappedIndex: Int): CardLogic {
+    override fun remove(tappedIndex: Int): Card {
         _truePile.run {
             subList(tappedIndex, size).clear()
             // flip last card up
@@ -36,13 +36,13 @@ class Tableau(val gamePile: GamePiles, initialPile: List<CardLogic> = emptyList(
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
         // return value isn't used
-        return CardLogic(0, Suits.SPADES, false)
+        return Card(0, Suits.SPADES, false)
     }
 
     /**
      *  Reset [truePile] to initial game state using given [cards].
      */
-    override fun reset(cards: List<CardLogic>) {
+    override fun reset(cards: List<Card>) {
         animatedPiles.clear()
         resetHistory()
         _truePile.run {
@@ -70,7 +70,7 @@ class Tableau(val gamePile: GamePiles, initialPile: List<CardLogic> = emptyList(
      *  [TableauCardFlipInfo] using given [cardIndex].
      */
     fun getTableauCardFlipInfo(cardIndex: Int): TableauCardFlipInfo? {
-        val lastTableauCard: CardLogic
+        val lastTableauCard: Card
         try {
             lastTableauCard = _truePile[cardIndex - 1]
         } catch (e: IndexOutOfBoundsException) {

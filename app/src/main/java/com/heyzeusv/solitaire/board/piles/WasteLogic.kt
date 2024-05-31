@@ -2,23 +2,23 @@ package com.heyzeusv.solitaire.board.piles
 
 /**
  *  In Solitaire, Waste refers to the face up pile where cards drawn from [Stock] are placed. Only
- *  the top [CardLogic] is playable.
+ *  the top [Card] is playable.
  */
-class Waste(initialPile: List<CardLogic> = emptyList()) : Pile(initialPile) {
+class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
     /**
      *  Adds given [cards] to [truePile].
      */
-    override fun add(cards: List<CardLogic>) {
+    override fun addAll(cards: List<Card>) {
         _truePile.addAll(cards.map { it.copy(faceUp = true) })
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
     }
 
     /**
-     *  Removes the last [CardLogic] in [truePile] which would refer to the top showing card and return it.
+     *  Removes the last [Card] in [truePile] which would refer to the top showing card and return it.
      */
-    override fun remove(tappedIndex: Int): CardLogic {
+    override fun remove(tappedIndex: Int): Card {
         val removedCard = _truePile.removeLast()
         animatedPiles.add(_truePile.toList())
         appendHistory(_truePile.toList())
@@ -26,7 +26,7 @@ class Waste(initialPile: List<CardLogic> = emptyList()) : Pile(initialPile) {
     }
 
     /**
-     *  Used when [Stock] is pressed when it is empty, which causes all [Waste] [CardLogic]s to be
+     *  Used when [Stock] is pressed when it is empty, which causes all [Waste] [Card]s to be
      *  removed.
      */
     fun removeAll() {
@@ -38,7 +38,7 @@ class Waste(initialPile: List<CardLogic> = emptyList()) : Pile(initialPile) {
     /**
      *  Reset [truePile] using given [cards].
      */
-    override fun reset(cards: List<CardLogic>) {
+    override fun reset(cards: List<Card>) {
         animatedPiles.clear()
         resetHistory()
         _truePile.clear()

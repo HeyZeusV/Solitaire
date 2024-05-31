@@ -8,7 +8,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.board.HorizontalCardPileWithFlip
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
-import com.heyzeusv.solitaire.board.piles.CardLogic
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.toDp
 
@@ -120,8 +120,8 @@ data class TenWideLayout(
      *  Card animations involving Tableau piles require Y offset to determine where card moving
      *  beings/ends.
      *
-     *  @param index The index of [CardLogic] in Tableau pile.
-     *  @return The y offset of Tableau [CardLogic], but in [IntOffset] form.
+     *  @param index The index of [Card] in Tableau pile.
+     *  @return The y offset of Tableau [Card], but in [IntOffset] form.
      */
     override fun getCardsYOffset(index: Int): IntOffset {
         return IntOffset(x = 0, y = (index * (cardHeight * (1 - vPileSpacedByPercent))).toInt())
@@ -156,7 +156,7 @@ data class TenWideLayout(
     }
 
     /**
-     *  @return The size of [CardLogic] in the form of [DpSize].
+     *  @return The size of [Card] in the form of [DpSize].
      */
     @Composable
     override fun getCardDpSize(): DpSize = DpSize(cardWidth.toDp(), cardHeight.toDp())

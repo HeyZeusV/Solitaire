@@ -2,7 +2,7 @@ package com.heyzeusv.solitaire.games
 
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.CardLogic
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -18,7 +18,7 @@ data object Easthaven : Games.KlondikeFamily() {
     /**
      *  [BaseGame]
      */
-    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
+    override fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         val tLast = tableau.truePile.last()
         val cFirst = cardsToAdd.first()
 
@@ -27,7 +27,7 @@ data object Easthaven : Games.KlondikeFamily() {
                 cardsToAdd.inOrderAndAltColor()
     }
 
-    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
+    override fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         return cardsToAdd.inOrderAndAltColor()
     }
 
@@ -50,7 +50,7 @@ data object Easthaven : Games.KlondikeFamily() {
     /**
      *  [GameRules]
      */
-    override val baseDeck: List<CardLogic> = List(52) { CardLogic(it % 13, getSuit(it)) }
+    override val baseDeck: List<Card> = List(52) { Card(it % 13, getSuit(it)) }
     override val resetFaceUpAmount: ResetFaceUpAmount = ResetFaceUpAmount.One
     override val drawAmount: DrawAmount = DrawAmount.Seven
     override val redeals: Redeals = Redeals.None

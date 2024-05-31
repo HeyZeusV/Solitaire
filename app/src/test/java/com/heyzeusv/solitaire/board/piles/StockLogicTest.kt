@@ -22,14 +22,14 @@ class StockLogicTest : BehaviorSpec({
     Given("List of cards") {
         val cards = listOf(tc.card1CFU, tc.card2DFU, tc.card3HFU, tc.card4SFU)
         When("Calling add") {
-            stock.add(cards)
+            stock.addAll(cards)
             Then("All cards should be added to truePile face down") {
                 stock.truePile shouldBe cards.map { it.copy(faceUp = false) }
                 stock.displayPile shouldBe emptyList()
             }
         }
         When("Adding all cards and calling remove") {
-            stock.add(cards)
+            stock.addAll(cards)
             val removedCard = stock.remove()
             Then("First card should be removed and returned") {
                 stock.truePile shouldBe listOf(tc.card2D, tc.card3H, tc.card4S)
@@ -45,7 +45,7 @@ class StockLogicTest : BehaviorSpec({
             }
         }
         When("Adding all cards and calling undo") {
-            stock.add(cards)
+            stock.addAll(cards)
             stock.undo()
             Then("Piles should be empty") {
                 stock.truePile shouldBe emptyList()
@@ -53,8 +53,8 @@ class StockLogicTest : BehaviorSpec({
             }
         }
         When("Adding all cards twice and calling undo once") {
-            stock.add(cards)
-            stock.add(cards)
+            stock.addAll(cards)
+            stock.addAll(cards)
             stock.undo()
             Then("truePile should contain 4 face down cards") {
                 stock.truePile shouldBe listOf(tc.card1C, tc.card2D, tc.card3H, tc.card4S)

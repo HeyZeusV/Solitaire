@@ -22,9 +22,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.board.layouts.XWideLayout
-import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.PlayingCard
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
-import com.heyzeusv.solitaire.board.piles.CardLogic
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.games.FortyAndEight
@@ -34,7 +34,7 @@ import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
 
 /**
- *  Composable that displays all [CardLogic] piles, Stock, Waste, Foundation, and Tableau.
+ *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau.
  */
 @Composable
 fun Board(
@@ -156,14 +156,14 @@ fun Board(
 
 /**
  *  Composable that displays given [pile] in vertical orientation. [cardDpSize] is used to size each
- *  [Card] and determine their vertical spacing. [spacedByPercent] is used to determine
+ *  [PlayingCard] and determine their vertical spacing. [spacedByPercent] is used to determine
  *  distance between cards vertically.
  */
 @Composable
 fun StaticVerticalCardPile(
     cardDpSize: DpSize,
     spacedByPercent: Float,
-    pile: List<CardLogic>,
+    pile: List<Card>,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -172,7 +172,7 @@ fun StaticVerticalCardPile(
             Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
     ) {
         pile.forEach { card ->
-            Card(
+            PlayingCard(
                 card = card,
                 modifier = Modifier.size(cardDpSize)
             )
@@ -182,7 +182,7 @@ fun StaticVerticalCardPile(
 
 /**
  *  Composable that displays a Tableau pile with the bottom most card having a flip animation.
- *  [cardDpSize] is used to size each [Card] and determine their vertical spacing.
+ *  [cardDpSize] is used to size each [PlayingCard] and determine their vertical spacing.
  *  [spacedByPercent] is used to determine distance between cards vertically. [animateInfo]
  *  contains the cards to be displayed and rotation details. [animationDurations] is used to
  *  determine length of animation.
@@ -212,7 +212,7 @@ fun TableauPileWithFlip(
                 Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
         ) {
             it.remainingPile.forEach { card ->
-                Card(
+                PlayingCard(
                     card = card,
                     modifier = Modifier.size(cardDpSize)
                 )
@@ -448,13 +448,13 @@ fun MultiPileCardWithFlip(
 }
 
 /**
- *  Composable that displays [flipCard] flipping. [cardDpSize] is used to size [Card].
+ *  Composable that displays [flipCard] flipping. [cardDpSize] is used to size [PlayingCard].
  *  [flipRotation] determines [flipCard]'s current rotation value. [flipCardInfo] is used to
  *  determine if [flipCard] should be displayed as face up or down depending on [flipRotation].
  */
 @Composable
 fun FlipCard(
-    flipCard: CardLogic,
+    flipCard: Card,
     cardDpSize: DpSize,
     flipRotation: Float,
     flipCardInfo: FlipCardInfo,
@@ -467,12 +467,12 @@ fun FlipCard(
             cameraDistance = 8 * density
         }
     if (flipCardInfo.flipCondition(flipRotation)) {
-        Card(
+        PlayingCard(
             card = flipCard.copy(faceUp = flipCardInfo !is FlipCardInfo.FaceUp),
             modifier = animateModifier
         )
     } else {
-        Card(
+        PlayingCard(
             card = flipCard.copy(faceUp = flipCardInfo is FlipCardInfo.FaceUp),
             modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY }
         )

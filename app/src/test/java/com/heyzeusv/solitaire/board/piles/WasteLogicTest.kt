@@ -22,7 +22,7 @@ class WasteLogicTest : BehaviorSpec({
     }
     Given("Waste with cards") {
         beforeContainer {
-            waste.add(cards)
+            waste.addAll(cards)
         }
         When("Calling remove") {
             val returnedCard = waste.remove()
@@ -47,7 +47,7 @@ class WasteLogicTest : BehaviorSpec({
             }
         }
         When("Adding cards and calling undo") {
-            waste.add(cards)
+            waste.addAll(cards)
             waste.undo()
             Then("truePile should contain cards face up") {
                 waste.truePile shouldBe cards.map { it.copy(faceUp = true) }
@@ -63,7 +63,7 @@ class WasteLogicTest : BehaviorSpec({
     }
     Given("Waste with no cards") {
         When("Calling add") {
-            waste.add(cards)
+            waste.addAll(cards)
             Then("All cards should be added to truePile face up") {
                 waste.truePile shouldBe cards.map { it.copy(faceUp = true) }
                 waste.displayPile shouldBe emptyList()

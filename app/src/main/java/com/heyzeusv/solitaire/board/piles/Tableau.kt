@@ -32,7 +32,7 @@ fun SolitaireTableau(
     cardDpSize: DpSize = DpSize(56.dp, 79.dp),
     spacedByPercent: Float,
     tableauIndex: Int = 0,
-    pile: List<CardLogic> = emptyList(),
+    pile: List<Card> = emptyList(),
     onClick: (Int, Int) -> Unit = { _, _ -> }
 ) {
     Column(
@@ -49,7 +49,7 @@ fun SolitaireTableau(
             )
         } else {
             pile.forEachIndexed { cardIndex, card ->
-                Card(
+                PlayingCard(
                     modifier = Modifier
                         .size(cardDpSize)
                         .clip(RoundedCornerShape(4.dp)) // makes click surface have round edges
@@ -76,8 +76,8 @@ fun SolitaireTableauPreview() {
         SolitaireTableau(
             spacedByPercent = 0.75f,
             pile = listOf(
-                CardLogic(0, Suits.DIAMONDS), CardLogic(1, Suits.SPADES),
-                CardLogic(0, Suits.DIAMONDS), CardLogic(1, Suits.SPADES)
+                Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES),
+                Card(0, Suits.DIAMONDS), Card(1, Suits.SPADES)
             )
         )
     }

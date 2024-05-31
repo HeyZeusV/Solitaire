@@ -24,7 +24,7 @@ import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
 import com.heyzeusv.solitaire.StatPreferences
-import com.heyzeusv.solitaire.board.piles.CardLogic
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.menu.stats.getStatsDefaultInstance
 import com.heyzeusv.solitaire.scoreboard.LastGameStats
 import java.text.DecimalFormat
@@ -139,7 +139,7 @@ fun ButtonColors.getContentColor(enabled: Boolean): Color =
 /**
  *  Checks if pile is not in descending order.
  */
-fun List<CardLogic>.notInOrder(): Boolean {
+fun List<Card>.notInOrder(): Boolean {
     val it = this.iterator()
     if (!it.hasNext()) return false
     var current = it.next()
@@ -154,22 +154,22 @@ fun List<CardLogic>.notInOrder(): Boolean {
 /**
  *  Checks if pile is in descending order.
  */
-fun List<CardLogic>.inOrder(): Boolean = !this.notInOrder()
+fun List<Card>.inOrder(): Boolean = !this.notInOrder()
 
 /**
  *  Checks if pile contains more than 1 [Suits] type.
  */
-fun List<CardLogic>.isMultiSuit(): Boolean = this.map { it.suit }.distinct().size > 1
+fun List<Card>.isMultiSuit(): Boolean = this.map { it.suit }.distinct().size > 1
 
 /**
  *  Checks if piles contains only 1 [Suits] type
  */
-fun List<CardLogic>.isNotMultiSuit(): Boolean = !this.isMultiSuit()
+fun List<Card>.isNotMultiSuit(): Boolean = !this.isMultiSuit()
 
 /**
  *  Returns the number of cards in order ascending and face up starting from the end of [List].
  */
-fun List<CardLogic>.numInOrder(): Int {
+fun List<Card>.numInOrder(): Int {
     if (this.isEmpty()) return 0
     var num = 1
     val it = this.reversed().iterator()
@@ -186,7 +186,7 @@ fun List<CardLogic>.numInOrder(): Int {
 /**
  *  Checks if entire pile is face up.
  */
-fun List<CardLogic>.allFaceUp(): Boolean {
+fun List<Card>.allFaceUp(): Boolean {
     this.forEach { if (!it.faceUp) return false }
     return true
 }
@@ -194,7 +194,7 @@ fun List<CardLogic>.allFaceUp(): Boolean {
 /**
  *  Checks if list is not in order or not alternating color
  */
-fun List<CardLogic>.notInOrderOrAltColor(): Boolean {
+fun List<Card>.notInOrderOrAltColor(): Boolean {
     val it = this.iterator()
     if (!it.hasNext()) return false
     var current = it.next()
@@ -209,7 +209,7 @@ fun List<CardLogic>.notInOrderOrAltColor(): Boolean {
 /**
  *  Checks if list is in order and alternating color
  */
-fun List<CardLogic>.inOrderAndAltColor(): Boolean = !this.notInOrderOrAltColor()
+fun List<Card>.inOrderAndAltColor(): Boolean = !this.notInOrderOrAltColor()
 
 /**
  *  Checks if current network, if any, has a valid internet connect.

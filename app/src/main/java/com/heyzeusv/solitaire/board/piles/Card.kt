@@ -34,8 +34,8 @@ import com.heyzeusv.solitaire.util.sRes
  *  @param card Contains the info to be displayed.
  */
 @Composable
-fun Card(
-    card: CardLogic,
+fun PlayingCard(
+    card: Card,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -104,8 +104,8 @@ fun Card(
 fun SingleCardPreview() {
     PreviewUtil().apply {
         Preview {
-            Card(
-                CardLogic(0, Suits.CLUBS, faceUp = true),
+            PlayingCard(
+                Card(0, Suits.CLUBS, faceUp = true),
                 modifier = Modifier.size(card7WideSize)
             )
         }
@@ -119,13 +119,13 @@ fun SevenWideCardFaceUpPreview() {
         val mod = Modifier.size(card7WideSize)
         Preview {
             Row {
-                Card(CardLogic(0, Suits.CLUBS, faceUp = true), modifier = mod)
-                Card(CardLogic(12, Suits.DIAMONDS, faceUp = true), modifier = mod)
-                Card(CardLogic(11, Suits.HEARTS, faceUp = true), modifier = mod)
-                Card(CardLogic(10, Suits.SPADES, faceUp = true), modifier = mod)
-                Card(CardLogic(9, Suits.CLUBS, faceUp = true), modifier = mod)
-                Card(CardLogic(8, Suits.DIAMONDS, faceUp = true), modifier = mod)
-                Card(CardLogic(7, Suits.HEARTS, faceUp = true), modifier = mod)
+                PlayingCard(Card(0, Suits.CLUBS, faceUp = true), modifier = mod)
+                PlayingCard(Card(12, Suits.DIAMONDS, faceUp = true), modifier = mod)
+                PlayingCard(Card(11, Suits.HEARTS, faceUp = true), modifier = mod)
+                PlayingCard(Card(10, Suits.SPADES, faceUp = true), modifier = mod)
+                PlayingCard(Card(9, Suits.CLUBS, faceUp = true), modifier = mod)
+                PlayingCard(Card(8, Suits.DIAMONDS, faceUp = true), modifier = mod)
+                PlayingCard(Card(7, Suits.HEARTS, faceUp = true), modifier = mod)
             }
         }
     }
@@ -138,13 +138,13 @@ fun SevenWideCardFaceDownPreview() {
         val mod = Modifier.size(card7WideSize)
         Preview {
             Row {
-                Card(CardLogic(0, Suits.CLUBS), modifier = mod)
-                Card(CardLogic(12, Suits.DIAMONDS), modifier = mod)
-                Card(CardLogic(11, Suits.HEARTS), modifier = mod)
-                Card(CardLogic(10, Suits.SPADES), modifier = mod)
-                Card(CardLogic(9, Suits.CLUBS), modifier = mod)
-                Card(CardLogic(8, Suits.DIAMONDS), modifier = mod)
-                Card(CardLogic(7, Suits.HEARTS), modifier = mod)
+                PlayingCard(Card(0, Suits.CLUBS), modifier = mod)
+                PlayingCard(Card(12, Suits.DIAMONDS), modifier = mod)
+                PlayingCard(Card(11, Suits.HEARTS), modifier = mod)
+                PlayingCard(Card(10, Suits.SPADES), modifier = mod)
+                PlayingCard(Card(9, Suits.CLUBS), modifier = mod)
+                PlayingCard(Card(8, Suits.DIAMONDS), modifier = mod)
+                PlayingCard(Card(7, Suits.HEARTS), modifier = mod)
             }
         }
     }
@@ -157,16 +157,16 @@ fun TenWideCardFaceUpPreview() {
         val mod = Modifier.size(card10WideSize)
         Preview {
             Row {
-                Card(CardLogic(0, Suits.CLUBS, faceUp = true), modifier = mod)
-                Card(CardLogic(12, Suits.DIAMONDS, faceUp = true), modifier = mod)
-                Card(CardLogic(11, Suits.HEARTS, faceUp = true), modifier = mod)
-                Card(CardLogic(10, Suits.SPADES, faceUp = true), modifier = mod)
-                Card(CardLogic(9, Suits.CLUBS, faceUp = true), modifier = mod)
-                Card(CardLogic(8, Suits.DIAMONDS, faceUp = true), modifier = mod)
-                Card(CardLogic(7, Suits.HEARTS, faceUp = true), modifier = mod)
-                Card(CardLogic(6, Suits.SPADES, faceUp = true), modifier = mod)
-                Card(CardLogic(5, Suits.CLUBS, faceUp = true), modifier = mod)
-                Card(CardLogic(4, Suits.DIAMONDS, faceUp = true), modifier = mod)
+                PlayingCard(Card(0, Suits.CLUBS, faceUp = true), modifier = mod)
+                PlayingCard(Card(12, Suits.DIAMONDS, faceUp = true), modifier = mod)
+                PlayingCard(Card(11, Suits.HEARTS, faceUp = true), modifier = mod)
+                PlayingCard(Card(10, Suits.SPADES, faceUp = true), modifier = mod)
+                PlayingCard(Card(9, Suits.CLUBS, faceUp = true), modifier = mod)
+                PlayingCard(Card(8, Suits.DIAMONDS, faceUp = true), modifier = mod)
+                PlayingCard(Card(7, Suits.HEARTS, faceUp = true), modifier = mod)
+                PlayingCard(Card(6, Suits.SPADES, faceUp = true), modifier = mod)
+                PlayingCard(Card(5, Suits.CLUBS, faceUp = true), modifier = mod)
+                PlayingCard(Card(4, Suits.DIAMONDS, faceUp = true), modifier = mod)
 
             }
         }
@@ -180,16 +180,16 @@ fun TenWideCardFaceDownPreview() {
         val mod = Modifier.size(card10WideSize)
         Preview {
             Row {
-                Card(CardLogic(0, Suits.CLUBS), modifier = mod)
-                Card(CardLogic(12, Suits.DIAMONDS), modifier = mod)
-                Card(CardLogic(11, Suits.HEARTS), modifier = mod)
-                Card(CardLogic(10, Suits.SPADES), modifier = mod)
-                Card(CardLogic(9, Suits.CLUBS), modifier = mod)
-                Card(CardLogic(8, Suits.DIAMONDS), modifier = mod)
-                Card(CardLogic(7, Suits.HEARTS), modifier = mod)
-                Card(CardLogic(6, Suits.SPADES), modifier = mod)
-                Card(CardLogic(5, Suits.CLUBS), modifier = mod)
-                Card(CardLogic(4, Suits.DIAMONDS), modifier = mod)
+                PlayingCard(Card(0, Suits.CLUBS), modifier = mod)
+                PlayingCard(Card(12, Suits.DIAMONDS), modifier = mod)
+                PlayingCard(Card(11, Suits.HEARTS), modifier = mod)
+                PlayingCard(Card(10, Suits.SPADES), modifier = mod)
+                PlayingCard(Card(9, Suits.CLUBS), modifier = mod)
+                PlayingCard(Card(8, Suits.DIAMONDS), modifier = mod)
+                PlayingCard(Card(7, Suits.HEARTS), modifier = mod)
+                PlayingCard(Card(6, Suits.SPADES), modifier = mod)
+                PlayingCard(Card(5, Suits.CLUBS), modifier = mod)
+                PlayingCard(Card(4, Suits.DIAMONDS), modifier = mod)
             }
         }
     }

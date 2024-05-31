@@ -4,7 +4,7 @@ import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import com.heyzeusv.solitaire.Game
 import com.heyzeusv.solitaire.GameStats
-import com.heyzeusv.solitaire.board.piles.CardLogic
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -30,7 +30,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
     sealed class SpiderFamily: Games()
     sealed class FortyThievesFamily: Games()
     sealed class AcesUpVariants: Games() {
-        abstract fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: CardLogic): Boolean
+        abstract fun canAddToFoundation(tableauList: List<Tableau>, cardToAdd: Card): Boolean
     }
     sealed class Other: Games()
 
@@ -38,7 +38,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
      *  Checks if it is possible for [cardsToAdd] to be added to given [tableau] using
      *  [canAddToNonEmptyTableau] and [canAddToEmptyTableau].
      */
-    fun canAddToTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean {
+    fun canAddToTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean {
         if (cardsToAdd.isEmpty()) return false
 
         val cFirst = cardsToAdd.first()
@@ -58,7 +58,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
      *  Checks if given [cardToAdd] matches this [Foundation.suit] and its is one more than last
      *  value of [foundation] truePile.
      */
-    open fun canAddToFoundation(foundation: Foundation, cardToAdd: CardLogic): Boolean {
+    open fun canAddToFoundation(foundation: Foundation, cardToAdd: Card): Boolean {
         val canAddValue = if (foundation.truePile.isEmpty()) {
             cardToAdd.value == 0
         } else {
@@ -72,9 +72,9 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
      *  [cards] and returns it as a new list.
      */
     protected fun resetFlipCard(
-        cards: List<CardLogic>,
+        cards: List<Card>,
         resetFaceUpAmount: ResetFaceUpAmount
-    ): List<CardLogic> {
+    ): List<Card> {
         val mCards = cards.toMutableList()
         for (i in mCards.size.downTo(mCards.size - resetFaceUpAmount.amount + 1)) {
             try {
@@ -129,13 +129,13 @@ abstract class BaseGame {
      *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile
      *  when truePile is not empty.
      */
-    protected abstract fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean
+    protected abstract fun canAddToNonEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean
 
     /**
      *  Each game has its own rules when it comes to adding [cardsToAdd] to given [tableau] pile
      *  when truePile is empty.
      */
-    protected abstract fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<CardLogic>): Boolean
+    protected abstract fun canAddToEmptyTableau(tableau: Tableau, cardsToAdd: List<Card>): Boolean
 }
 
 /**
@@ -167,7 +167,7 @@ interface GameInfo {
  *  [numOfTableauPiles] refers to the number of Tableau piles the game uses.
  */
 interface GameRules {
-    val baseDeck: List<CardLogic>
+    val baseDeck: List<Card>
     val resetFaceUpAmount: ResetFaceUpAmount
     val drawAmount: DrawAmount
     val redeals: Redeals

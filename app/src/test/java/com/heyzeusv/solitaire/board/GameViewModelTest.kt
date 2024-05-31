@@ -4,7 +4,7 @@ import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.animation.TableauCardFlipInfo
 import com.heyzeusv.solitaire.board.layouts.Width1080
-import com.heyzeusv.solitaire.board.piles.CardLogic
+import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.piles.ShuffleSeed
 import com.heyzeusv.solitaire.games.AcesUp
 import com.heyzeusv.solitaire.games.Alaska
@@ -61,7 +61,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
         When("Calling resetAll using RESTART after calling resetAll using NEW") {
             vm.resetAll(ResetOptions.NEW)
             val newStock = vm.stock.truePile.toList()
-            val newTableau = mutableListOf<List<CardLogic>>()
+            val newTableau = mutableListOf<List<Card>>()
             for (i in 0..6) newTableau.add(vm.tableau[i].truePile.toList())
             vm.resetAll(ResetOptions.RESTART)
             Then("The state should be") {
@@ -74,7 +74,7 @@ class GameViewModelTest : ViewModelBehaviorSpec({
         When("Calling resetAll using NEW after calling resetAll using NEW") {
             vm.resetAll(ResetOptions.NEW)
             val newStock = vm.stock.truePile.toList()
-            val newTableau = mutableListOf<List<CardLogic>>()
+            val newTableau = mutableListOf<List<Card>>()
             for (i in 0..6) newTableau.add(vm.tableau[i].truePile.toList())
             vm.resetAll(ResetOptions.NEW)
             Then("The state should be") {
