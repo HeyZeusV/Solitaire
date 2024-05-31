@@ -15,14 +15,13 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.board.layouts.SevenWideLayout
-import com.heyzeusv.solitaire.board.piles.SolitairePile
-import com.heyzeusv.solitaire.board.piles.SolitaireStock
+import com.heyzeusv.solitaire.board.piles.Pile
+import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.SolitaireTableau
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
-import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.util.gesturesDisabled
@@ -129,7 +128,7 @@ fun AcesUpBoard(
                     }
                 }
             }
-            SolitairePile(
+            Pile(
                 modifier = Modifier
                     .layoutId("Foundation")
                     .testTag("Foundation #$0"),
@@ -138,7 +137,7 @@ fun AcesUpBoard(
                 emptyIconId = R.drawable.foundation_empty,
                 onClick = { onFoundationClick(3) }
             )
-            SolitaireStock(
+            Stock(
                 modifier = Modifier
                     .layoutId("Stock")
                     .testTag("Stock"),

@@ -15,15 +15,14 @@ import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.board.piles.PlayingCard
-import com.heyzeusv.solitaire.board.piles.SolitairePile
-import com.heyzeusv.solitaire.board.piles.SolitaireStock
+import com.heyzeusv.solitaire.board.piles.Pile
+import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.SolitaireTableau
 import com.heyzeusv.solitaire.board.layouts.TenWideLayout
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
-import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.board.piles.Waste
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
@@ -200,7 +199,7 @@ fun TenWideBoard(
                 }
             }
             foundationList.forEachIndexed { index, foundation ->
-                SolitairePile(
+                Pile(
                     modifier = Modifier
                         .layoutId("Foundation #$index")
                         .testTag("Foundation #$index"),
@@ -210,7 +209,7 @@ fun TenWideBoard(
                     onClick = { onFoundationClick(index) }
                 )
             }
-            SolitairePile(
+            Pile(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
@@ -220,7 +219,7 @@ fun TenWideBoard(
                 onClick = { onWasteClick() },
                 drawAmount = drawAmount
             )
-            SolitaireStock(
+            Stock(
                 modifier = Modifier
                     .layoutId("Stock")
                     .testTag("Stock"),

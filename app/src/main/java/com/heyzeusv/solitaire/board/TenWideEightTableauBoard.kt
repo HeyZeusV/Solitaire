@@ -13,14 +13,13 @@ import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.SolitairePile
-import com.heyzeusv.solitaire.board.piles.SolitaireStock
+import com.heyzeusv.solitaire.board.piles.Pile
+import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.SolitaireTableau
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
-import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.board.piles.Waste
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
@@ -144,7 +143,7 @@ fun TenWideEightTableauBoard(
 //                }
             }
             foundationList.forEachIndexed { index, foundation ->
-                SolitairePile(
+                Pile(
                     modifier = Modifier
                         .layoutId("Foundation #$index")
                         .testTag("Foundation #$index"),
@@ -154,7 +153,7 @@ fun TenWideEightTableauBoard(
                     onClick = { onFoundationClick(index) }
                 )
             }
-            SolitairePile(
+            Pile(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
@@ -164,7 +163,7 @@ fun TenWideEightTableauBoard(
                 onClick = { onWasteClick() },
                 drawAmount = drawAmount
             )
-            SolitaireStock(
+            Stock(
                 modifier = Modifier
                     .layoutId("Stock")
                     .testTag("Stock"),

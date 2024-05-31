@@ -10,7 +10,7 @@ import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.SolitairePile
+import com.heyzeusv.solitaire.board.piles.Pile
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
 import com.heyzeusv.solitaire.util.TestCards
@@ -33,7 +33,7 @@ class PileTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    SolitairePile(
+                    Pile(
                         pile = emptyList(),
                         emptyIconId = R.drawable.tableau_empty,
                         cardDpSize = DpSize(100.dp, 140.dp)
@@ -52,7 +52,7 @@ class PileTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    SolitairePile(
+                    Pile(
                         pile = listOf(tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
                         cardDpSize = DpSize(100.dp, 140.dp)
@@ -73,7 +73,7 @@ class PileTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    SolitairePile(
+                    Pile(
                         pile = listOf(tc.card1CFU, tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
                         drawAmount = DrawAmount.Three,
@@ -103,7 +103,7 @@ class PileTest {
         composeRule.apply {
             setContent {
                 SolitaireTheme {
-                    SolitairePile(
+                    Pile(
                         pile = listOf(tc.card4DFU, tc.card7SFU),
                         emptyIconId = R.drawable.tableau_empty,
                         drawAmount = DrawAmount.Three,
