@@ -67,20 +67,6 @@ class StockLogicTest : BehaviorSpec({
         beforeContainer {
             stock.reset(cards)
         }
-        When("Calling getCards with amount of 3 (less than cards amount") {
-            val cardsReturned = stock.getCards(3)
-            Then("Card list of size 3 should be returned and truePile unchanged") {
-                stock.truePile shouldBe cards
-                cardsReturned shouldBe listOf(tc.card1CFU, tc.card2DFU, tc.card3HFU)
-            }
-        }
-        When("Calling getCards with amount of 10 (more than cards amount") {
-            val cardsReturned = stock.getCards(10)
-            Then("Cards list of size 4 should be returned and truePile unchanged") {
-                stock.truePile shouldBe cards
-                cardsReturned shouldBe cards
-            }
-        }
         When("Calling removeMany with amount of 3 (less than cards amount") {
             val cardsReturned = stock.removeMany(3)
             Then("Card list of size 3 should be returned and truePile changed") {

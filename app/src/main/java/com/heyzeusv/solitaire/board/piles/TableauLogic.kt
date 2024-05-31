@@ -14,13 +14,18 @@ import com.heyzeusv.solitaire.util.notInOrderOrAltColor
  *  condition to add a new pile to the end of [truePile].
  */
 class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : Pile(initialPile) {
+
+    override fun add(card: Card) {
+        TODO("Not yet implemented")
+    }
+
     /**
      *  Adds given [cards] to [truePile].
      */
     override fun addAll(cards: List<Card>) {
         _truePile.addAll(cards)
         animatedPiles.add(_truePile.toList())
-        appendHistory(_truePile.toList())
+        appendHistory()
     }
 
     /**
@@ -34,7 +39,7 @@ class Tableau(val gamePile: GamePiles, initialPile: List<Card> = emptyList()) : 
             if (isNotEmpty() && !last().faceUp) this[size - 1] = last().copy(faceUp = true)
         }
         animatedPiles.add(_truePile.toList())
-        appendHistory(_truePile.toList())
+        appendHistory()
         // return value isn't used
         return Card(0, Suits.SPADES, false)
     }

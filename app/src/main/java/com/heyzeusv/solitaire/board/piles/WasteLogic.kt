@@ -6,13 +6,17 @@ package com.heyzeusv.solitaire.board.piles
  */
 class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
 
+    override fun add(card: Card) {
+        TODO("Not yet implemented")
+    }
+
     /**
      *  Adds given [cards] to [truePile].
      */
     override fun addAll(cards: List<Card>) {
         _truePile.addAll(cards.map { it.copy(faceUp = true) })
         animatedPiles.add(_truePile.toList())
-        appendHistory(_truePile.toList())
+        appendHistory()
     }
 
     /**
@@ -21,7 +25,7 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     override fun remove(tappedIndex: Int): Card {
         val removedCard = _truePile.removeLast()
         animatedPiles.add(_truePile.toList())
-        appendHistory(_truePile.toList())
+        appendHistory()
         return removedCard
     }
 
@@ -32,7 +36,7 @@ class Waste(initialPile: List<Card> = emptyList()) : Pile(initialPile) {
     fun removeAll() {
         _truePile.clear()
         animatedPiles.add(_truePile.toList())
-        appendHistory(_truePile.toList())
+        appendHistory()
     }
 
     /**

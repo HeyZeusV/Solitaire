@@ -165,7 +165,7 @@ class GameViewModel @Inject constructor(
     private fun onStockClickStandard() {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.truePile.isNotEmpty()) {
-            val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
+            val cards = _stock.truePile.take(_selectedGame.value.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
                 end = GamePiles.Waste,
@@ -233,7 +233,7 @@ class GameViewModel @Inject constructor(
      */
     private fun onStockClickMultiPile() {
         if (_stock.truePile.isNotEmpty()) {
-            val stockCards = _stock.getCards(_selectedGame.value.drawAmount.amount)
+            val stockCards = _stock.truePile.take(_selectedGame.value.drawAmount.amount)
             val tableauIndices = mutableListOf<Int>()
             for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
                 tableauIndices.add(_tableau[i].truePile.size)
@@ -278,7 +278,7 @@ class GameViewModel @Inject constructor(
      */
     private fun onStockClickGolf() {
         if (_stock.truePile.isNotEmpty()) {
-            val cards = _stock.getCards(_selectedGame.value.drawAmount.amount)
+            val cards = _stock.truePile.take(_selectedGame.value.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
                 end = GamePiles.FoundationSpadesOne,
