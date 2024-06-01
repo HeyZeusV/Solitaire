@@ -45,7 +45,7 @@ fun Board(
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
     val animateInfo by gameVM.animateInfo.collectAsState()
     val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsState()
-    val undoAnimation by gameVM.undoAnimation.collectAsState()
+    val undoAnimation by gameVM.isUndoAnimation.collectAsState()
     val selectedGame by gameVM.selectedGame.collectAsState()
 
     when (selectedGame) {
@@ -56,13 +56,12 @@ fun Board(
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
-                updateUndoEnabled = gameVM::updateUndoEnabled,
-                undoAnimation = undoAnimation,
-                updateUndoAnimation = gameVM::updateUndoAnimation,
+                updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
+                isUndoAnimation = undoAnimation,
+                updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
-                stockWasteEmpty = { stockWasteEmpty },
-                foundationList = gameVM.foundation,
+                foundation = gameVM.foundation[3],
                 tableauList = gameVM.tableau,
                 onTableauClick = gameVM::onTableauClick
             )
@@ -74,9 +73,9 @@ fun Board(
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
-                updateUndoEnabled = gameVM::updateUndoEnabled,
+                updateUndoEnabled = gameVM::updateIsUndoEnabled,
                 undoAnimation = undoAnimation,
-                updateUndoAnimation = gameVM::updateUndoAnimation,
+                updateUndoAnimation = gameVM::updateIsUndoAnimation,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 stockWasteEmpty = { stockWasteEmpty },
@@ -94,9 +93,9 @@ fun Board(
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 spiderAnimateInfo = spiderAnimateInfo,
                 updateSpiderAnimateInfo = gameVM::updateSpiderAnimateInfo,
-                updateUndoEnabled = gameVM::updateUndoEnabled,
+                updateUndoEnabled = gameVM::updateIsUndoEnabled,
                 undoAnimation = undoAnimation,
-                updateUndoAnimation = gameVM::updateUndoAnimation,
+                updateUndoAnimation = gameVM::updateIsUndoAnimation,
                 drawAmount = selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
@@ -115,9 +114,9 @@ fun Board(
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
-                updateUndoEnabled = gameVM::updateUndoEnabled,
+                updateUndoEnabled = gameVM::updateIsUndoEnabled,
                 undoAnimation = undoAnimation,
-                updateUndoAnimation = gameVM::updateUndoAnimation,
+                updateUndoAnimation = gameVM::updateIsUndoAnimation,
                 drawAmount = selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
@@ -136,9 +135,9 @@ fun Board(
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
-                updateUndoEnabled = gameVM::updateUndoEnabled,
+                updateUndoEnabled = gameVM::updateIsUndoEnabled,
                 undoAnimation = undoAnimation,
-                updateUndoAnimation = gameVM::updateUndoAnimation,
+                updateUndoAnimation = gameVM::updateIsUndoAnimation,
                 drawAmount = selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,

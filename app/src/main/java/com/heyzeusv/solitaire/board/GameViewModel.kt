@@ -85,14 +85,14 @@ class GameViewModel @Inject constructor(
     val historyList: List<AnimateInfo> get() = _historyList
 
     // determines if Undo Button is available
-    private val _undoEnabled = MutableStateFlow(false)
-    val undoEnabled: StateFlow<Boolean> get() = _undoEnabled
-    fun updateUndoEnabled(newValue: Boolean) { _undoEnabled.value = newValue }
+    private val _isUndoEnabled = MutableStateFlow(false)
+    val isUndoEnabled: StateFlow<Boolean> get() = _isUndoEnabled
+    fun updateIsUndoEnabled(newValue: Boolean) { _isUndoEnabled.value = newValue }
 
     // disables any Board clicks during undo animations
-    private val _undoAnimation = MutableStateFlow(false)
-    val undoAnimation: StateFlow<Boolean> get() = _undoAnimation
-    fun updateUndoAnimation(newValue: Boolean) { _undoAnimation.value = newValue }
+    private val _isUndoAnimation = MutableStateFlow(false)
+    val isUndoAnimation: StateFlow<Boolean> get() = _isUndoAnimation
+    fun updateIsUndoAnimation(newValue: Boolean) { _isUndoAnimation.value = newValue }
 
     private val _autoCompleteActive = MutableStateFlow(false)
     val autoCompleteActive: StateFlow<Boolean> get() = _autoCompleteActive
@@ -128,8 +128,8 @@ class GameViewModel @Inject constructor(
         // clear the waste pile
         _waste.reset()
         _historyList.clear()
-        _undoEnabled.value = false
-        _undoAnimation.value = false
+        _isUndoEnabled.value = false
+        _isUndoAnimation.value = false
         _gameWon.value = false
         _autoCompleteActive.value = false
         _animateInfo.value = null
@@ -375,7 +375,7 @@ class GameViewModel @Inject constructor(
         if (_stock.truePile.isEmpty() && _waste.truePile.isEmpty()) {
             if (!_selectedGame.value.autocompleteTableauCheck(tableau)) return
             viewModelScope.launch {
-                _undoAnimation.value = true
+                _isUndoAnimation.value = true
                 _autoCompleteActive.value = true
                 while (!gameWon()) {
                     _tableau.forEach { tableau ->
@@ -594,7 +594,7 @@ class GameViewModel @Inject constructor(
             if ((_selectedGame.value as Games.AcesUpVariants).canAddToFoundation(_tableau, card)) {
                 val aniInfo = AnimateInfo(
                     start = start,
-                    end = _foundation[0].gamePile,
+                    end = _foundation[3].gamePile,
                     animatedCards = cards,
                     startTableauIndices = listOf(startIndex),
                     tableauCardFlipInfo = tableauCardFlipInfo
@@ -602,13 +602,13 @@ class GameViewModel @Inject constructor(
                 aniInfo.actionBeforeAnimation = {
                     mutex.withLock {
                         ifLegal()
-                        _foundation[0].add(card)
+                        _foundation[3].add(card)
                         actionBeforeAnimation()
                     }
                 }
                 aniInfo.actionAfterAnimation = {
                     mutex.withLock {
-                        _foundation[0].updateDisplayPile()
+                        _foundation[3].updateDisplayPile()
                         appendHistory(aniInfo.getUndoAnimateInfo())
                         autoComplete()
                     }
@@ -764,7 +764,7 @@ class GameViewModel @Inject constructor(
         // limit number of undo steps to 15
         if (_historyList.size == 15) _historyList.removeFirst()
         _historyList.add(undoAnimateInfo)
-        _undoEnabled.value = true
+        _isUndoEnabled.value = true
     }
 
     /**
@@ -788,11 +788,11 @@ class GameViewModel @Inject constructor(
             }
             if (step.isSpiderPile) {
                 viewModelScope.launch {
-                    _undoEnabled.value = false
+                    _isUndoEnabled.value = false
                     _spiderAnimateInfo.value = step
                     delay(animationDurations.fullDelay)
                     undo()
-                    _undoEnabled.value = true
+                    _isUndoEnabled.value = true
                 }
             } else {
                 sbLogic.undo()

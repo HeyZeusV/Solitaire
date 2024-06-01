@@ -11,6 +11,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.R
@@ -23,16 +24,32 @@ import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.board.layouts.Width1080
+import com.heyzeusv.solitaire.games.AcesUp
+import com.heyzeusv.solitaire.util.GamePiles
+import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
 /**
- *  Composable that displays all [Card] piles, Stock, Foundation, and Tableau. [layout] is
- *  used to determine offsets of every pile. [animationDurations] determines how long each animation
- *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
- *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
- *  animations. [undoAnimation] is used to enable/disable all clicks during an undo animation and
- *  is updated using [updateUndoAnimation].
+ *  Displays [Stock], [Foundation], and [Tableau] [Piles][Pile] needed in order to play [AcesUp]
+ *  and its variants.
+ *
+ *  @param layout Contains the positions for all [Piles][Pile].
+ *  @param animationDurations The durations for each available animation.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ *  @param updateAnimateInfo Updates [AnimateInfo] once an animation fully completes.
+ *  @param updateIsUndoEnabled Disables undo button during certain animations.
+ *  @param isUndoAnimation Used to determine if currently running animation is representing an
+ *  undo move.
+ *  @param updateIsUndoAnimation Updates the value of [isUndoAnimation].
+ *  @param stock [Pile] where user draws more [Cards][Card] from.
+ *  @param onStockClick Runs when [stock] is pressed.
+ *  @param foundation [Pile] where user has to move [Cards][Card] to in order to win.
+ *  @param tableauList List of [Tableau] piles where user can move [Cards][Card] between or to
+ *  [foundation].
+ *  @param onTableauClick Runs when any of [tableauList] is pressed.
  */
 @Composable
 fun AcesUpBoard(
@@ -41,17 +58,15 @@ fun AcesUpBoard(
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
-    updateUndoEnabled: (Boolean) -> Unit = { },
-    undoAnimation: Boolean,
-    updateUndoAnimation: (Boolean) -> Unit = { },
+    updateIsUndoEnabled: (Boolean) -> Unit = { },
+    isUndoAnimation: Boolean,
+    updateIsUndoAnimation: (Boolean) -> Unit = { },
     /** Piles and their onClicks */
     stock: Stock,
     onStockClick: () -> Unit = { },
-    stockWasteEmpty: () -> Boolean = { true },
-    foundationList: List<Foundation>,
-    onFoundationClick: (Int) -> Unit = { },
+    foundation: Foundation,
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> Unit = { _, _ ->  }
+    onTableauClick: (Int, Int) -> Unit = { _, _ ->  },
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
     var flipRotation by remember { mutableFloatStateOf(0f) }
@@ -60,11 +75,11 @@ fun AcesUpBoard(
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
-                if (it.isUndoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(true) else updateIsUndoEnabled(false)
                 delay(animationDurations.fullDelay)
                 updateAnimateInfo(null)
             } finally {
-                if (it.isUndoAnimation) updateUndoAnimation(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(false)
             }
         }
         // Action Before Animation
@@ -83,7 +98,6 @@ fun AcesUpBoard(
                 it.actionAfterAnimation()
             }
         }
-        // end pile correction
         AnimateOffset(
             animateInfo = it,
             animationDurations = animationDurations,
@@ -92,19 +106,19 @@ fun AcesUpBoard(
             endOffset = layout.getPilePosition(it.end)
                 .plus(layout.getCardsYOffset(it.endTableauIndices.first())),
             updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
-            updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
+            updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) },
         )
         AnimateFlip(
             animateInfo = it,
             flipDuration = animationDurations.duration,
             flipDelay = animationDurations.noAnimation,
             flipCardInfo = it.flipCardInfo,
-            updateRotation = { value -> flipRotation = value}
+            updateRotation = { value -> flipRotation = value},
         )
     }
 
     Layout(
-        modifier = modifier.gesturesDisabled(undoAnimation),
+        modifier = modifier.gesturesDisabled(isUndoAnimation),
         content = {
             animateInfo?.let {
                 when (it.flipCardInfo) {
@@ -114,7 +128,7 @@ fun AcesUpBoard(
                             layout = layout,
                             animateInfo = it,
                             animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Multi Pile")
+                            modifier = Modifier.layoutId("Animated Multi Pile"),
                         )
                     }
                     FlipCardInfo.NoFlip -> {
@@ -122,19 +136,18 @@ fun AcesUpBoard(
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
                             pile = it.animatedCards,
-                            modifier = Modifier.layoutId("Animated Vertical Pile")
+                            modifier = Modifier.layoutId("Animated Vertical Pile"),
                         )
                     }
                 }
             }
-            Pile(
+            Foundation(
                 modifier = Modifier
                     .layoutId("Foundation")
                     .testTag("Foundation #$0"),
                 cardDpSize = layout.getCardDpSize(),
-                pile = foundationList[0].displayPile,
+                pile = foundation.displayPile,
                 emptyIconId = R.drawable.foundation_empty,
-                onClick = { onFoundationClick(3) }
             )
             Stock(
                 modifier = Modifier
@@ -142,8 +155,8 @@ fun AcesUpBoard(
                     .testTag("Stock"),
                 cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
-                stockWasteEmpty = stockWasteEmpty,
-                onClick = { onStockClick() }
+                stockWasteEmpty = { true },
+                onClick = { onStockClick() },
             )
             tableauList.forEachIndexed { index, tableau ->
                 Tableau(
@@ -152,14 +165,13 @@ fun AcesUpBoard(
                     spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick
+                    onClick = onTableauClick,
                 )
             }
         }
     ) { measurables, constraints ->
-        val foundation = measurables.firstOrNull { it.layoutId == "Foundation" }
+        val foundationPile = measurables.firstOrNull { it.layoutId == "Foundation" }
         val stockPile = measurables.firstOrNull { it.layoutId == "Stock" }
-
         val tableauPile0 = measurables.firstOrNull { it.layoutId == "Tableau #0" }
         val tableauPile1 = measurables.firstOrNull { it.layoutId == "Tableau #1" }
         val tableauPile2 = measurables.firstOrNull { it.layoutId == "Tableau #2" }
@@ -177,18 +189,36 @@ fun AcesUpBoard(
             val tableauHeight = constraints.maxHeight - layout.tableauZero.y
             val tableauConstraints = Constraints(cardWidth, cardWidth, cardHeight, tableauHeight)
 
+            // prevents quick flash of animated Card at (0, 0)
             if (animatedOffset != IntOffset.Zero) {
                 animatedVerticalPile?.measure(tableauConstraints)?.place(animatedOffset, 2f)
             }
             animatedMultiPile?.measure(constraints)?.place(IntOffset.Zero, 2f)
 
-            foundation?.measure(cardConstraints)?.place(layout.foundationClubs)
+            foundationPile?.measure(cardConstraints)?.place(layout.foundationSpades)
             stockPile?.measure(cardConstraints)?.place(layout.stockPile)
-
             tableauPile0?.measure(tableauConstraints)?.place(layout.tableauZero)
             tableauPile1?.measure(tableauConstraints)?.place(layout.tableauOne)
             tableauPile2?.measure(tableauConstraints)?.place(layout.tableauTwo)
             tableauPile3?.measure(tableauConstraints)?.place(layout.tableauThree)
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun AcesUpBoardPreview() {
+    PreviewUtil().apply {
+        Preview {
+            AcesUpBoard(
+                layout = Width1080(0).sevenWideFourTableauLayout,
+                animationDurations = AnimationDurations.None,
+                animateInfo = null,
+                isUndoAnimation = true,
+                stock = Stock(pile),
+                foundation = Foundation(Suits.SPADES, GamePiles.FoundationSpadesOne, pile),
+                tableauList = List(4) { Tableau(GamePiles.TableauZero, pile) },
+            )
         }
     }
 }

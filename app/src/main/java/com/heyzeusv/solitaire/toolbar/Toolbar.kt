@@ -48,7 +48,7 @@ fun Toolbar(
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
 ) {
-    val undoEnabled by gameVM.undoEnabled.collectAsState()
+    val undoEnabled by gameVM.isUndoEnabled.collectAsState()
     val autoCompleteActive by gameVM.autoCompleteActive.collectAsState()
 
     Toolbar(

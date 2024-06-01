@@ -48,8 +48,8 @@ class GameViewModelTest : ViewModelBehaviorSpec({
                 vm.stock pilesShouldNotBe emptyList()
                 vm.waste pilesShouldBe emptyList()
                 vm.historyList shouldBe emptyList()
-                vm.undoEnabled valueShouldBe  false
-                vm.undoAnimation valueShouldBe false
+                vm.isUndoEnabled valueShouldBe  false
+                vm.isUndoAnimation valueShouldBe false
                 vm.gameWon valueShouldBe false
                 vm.autoCompleteActive valueShouldBe false
                 vm.animateInfo valueShouldBe null
