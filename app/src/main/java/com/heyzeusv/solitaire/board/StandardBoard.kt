@@ -117,36 +117,36 @@ fun StandardBoard(
                 when (it.flipCardInfo) {
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
                         HorizontalCardPileWithFlip(
+                            modifier = Modifier.layoutId("Animated Horizontal Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Horizontal Pile")
+                            animationDurations = animationDurations
                         )
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
                         MultiPileCardWithFlip(
+                            modifier = Modifier.layoutId("Animated Multi Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Multi Pile")
+                            animationDurations = animationDurations
                         )
                     }
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
+                            modifier = Modifier.layoutId("Animated Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
-                            pile = it.animatedCards,
-                            modifier = Modifier.layoutId("Animated Vertical Pile")
+                            pile = it.animatedCards
                         )
                     }
                 }
                 it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
+                        modifier = Modifier.layoutId("Animated Tableau Card"),
                         cardDpSize = layout.getCardDpSize(),
                         spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
-                        animationDurations = animationDurations,
-                        modifier = Modifier.layoutId("Animated Tableau Card")
+                        animationDurations = animationDurations
                     )
                 }
             }

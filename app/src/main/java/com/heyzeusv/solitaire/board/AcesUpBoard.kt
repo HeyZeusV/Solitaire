@@ -36,6 +36,7 @@ import kotlinx.coroutines.delay
  *  Displays [Stock], [Foundation], and [Tableau] [Piles][Pile] needed in order to play [AcesUp]
  *  and its variants.
  *
+ *  @param modifier Modifiers to be applied to the layout.
  *  @param layout Contains the positions for all [Piles][Pile].
  *  @param animationDurations The durations for each available animation.
  *  @param animateInfo Contains the information needed to animate a legal move.
@@ -125,18 +126,18 @@ fun AcesUpBoard(
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> { }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
                         MultiPileCardWithFlip(
+                            modifier = Modifier.layoutId("Animated Multi Pile"),
                             layout = layout,
                             animateInfo = it,
                             animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Multi Pile"),
                         )
                     }
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
+                            modifier = Modifier.layoutId("Animated Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
                             pile = it.animatedCards,
-                            modifier = Modifier.layoutId("Animated Vertical Pile"),
                         )
                     }
                 }

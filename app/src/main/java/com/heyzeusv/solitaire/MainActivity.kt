@@ -186,9 +186,9 @@ fun GameScreen(
                 modifier = Modifier
             )
             Board(
-                gameVM = gameVM,
+                modifier = Modifier.weight(1f),
                 animationDurations = animationDurations,
-                modifier = Modifier.weight(1f)
+                gameVM = gameVM
             )
             Toolbar(
                 gameVM = gameVM,

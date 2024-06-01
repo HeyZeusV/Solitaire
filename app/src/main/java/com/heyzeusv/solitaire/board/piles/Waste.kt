@@ -14,6 +14,7 @@ import com.heyzeusv.solitaire.util.PreviewUtil
  *  [Waste] works exactly like [Pile], this is essentially just a wrapper in order to be more
  *  clear as to what the Composable is, rather than having multiple [Piles][Pile] on same screen.
  *
+ *  @param modifier Modifiers to be applied to the layout.
  *  @param cardDpSize The size to make [PlayingCard] and empty pile [Image] Composables.
  *  @param pile The [Cards][Card] to display.
  *  @param emptyIconId The image to display when [pile] is empty.

@@ -108,10 +108,10 @@ fun TenWideEightTableauBoard(
                 when (it.flipCardInfo) {
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
                         HorizontalCardPileWithFlip(
+                            modifier = Modifier.layoutId("Animated Horizontal Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Horizontal Pile")
+                            animationDurations = animationDurations
                         )
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
@@ -124,10 +124,10 @@ fun TenWideEightTableauBoard(
                     }
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
+                            modifier = Modifier.layoutId("Animated Static Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
-                            pile = it.animatedCards,
-                            modifier = Modifier.layoutId("Animated Static Vertical Pile")
+                            pile = it.animatedCards
                         )
                     }
                 }

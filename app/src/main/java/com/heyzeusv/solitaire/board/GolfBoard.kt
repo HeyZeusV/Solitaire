@@ -110,20 +110,20 @@ fun GolfBoard(
                 when (it.flipCardInfo) {
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
                         FlipCard(
+                            modifier = Modifier.layoutId("Animated Horizontal Pile"),
                             flipCard = it.animatedCards.first(),
                             cardDpSize = layout.getCardDpSize(),
                             flipRotation = flipRotation,
-                            flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId("Animated Horizontal Pile")
+                            flipCardInfo = it.flipCardInfo
                         )
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> { }
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
+                            modifier = Modifier.layoutId("Animated Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
-                            pile = it.animatedCards,
-                            modifier = Modifier.layoutId("Animated Vertical Pile")
+                            pile = it.animatedCards
                         )
                     }
                 }

@@ -1,17 +1,19 @@
 package com.heyzeusv.solitaire.board
 
+import androidx.compose.animation.core.TweenSpec
 import androidx.compose.animation.core.animate
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -21,6 +23,8 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.IntOffset
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.heyzeusv.solitaire.board.layouts.XWideLayout
 import com.heyzeusv.solitaire.board.piles.PlayingCard
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
@@ -32,21 +36,28 @@ import com.heyzeusv.solitaire.games.FortyThieves
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.spacedBy
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 /**
- *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau.
+ *  Displays the correct [Games] [Board] that depends on currently selected game.
+ *
+ *  @param animationDurations The durations for each available animation.
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param gameVM Contains and handles game data.
  */
 @Composable
 fun Board(
-    gameVM: GameViewModel,
+    modifier: Modifier = Modifier,
     animationDurations: AnimationDurations,
-    modifier: Modifier = Modifier
+    gameVM: GameViewModel = hiltViewModel(),
 ) {
-    val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsState()
-    val animateInfo by gameVM.animateInfo.collectAsState()
-    val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsState()
-    val undoAnimation by gameVM.isUndoAnimation.collectAsState()
-    val selectedGame by gameVM.selectedGame.collectAsState()
+    val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsStateWithLifecycle()
+    val animateInfo by gameVM.animateInfo.collectAsStateWithLifecycle()
+    val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsStateWithLifecycle()
+    val undoAnimation by gameVM.isUndoAnimation.collectAsStateWithLifecycle()
+    val selectedGame by gameVM.selectedGame.collectAsStateWithLifecycle()
 
     when (selectedGame) {
         is Games.AcesUpVariants -> {
@@ -63,7 +74,7 @@ fun Board(
                 onStockClick = gameVM::onStockClick,
                 foundation = gameVM.foundation[3],
                 tableauList = gameVM.tableau,
-                onTableauClick = gameVM::onTableauClick
+                onTableauClick = gameVM::onTableauClick,
             )
         }
         is Games.GolfFamily -> {
@@ -81,7 +92,7 @@ fun Board(
                 stockWasteEmpty = { stockWasteEmpty },
                 foundationList = gameVM.foundation,
                 tableauList = gameVM.tableau,
-                onTableauClick = gameVM::onTableauClick
+                onTableauClick = gameVM::onTableauClick,
             )
         }
         is Games.SpiderFamily, is FortyThieves -> {
@@ -104,7 +115,7 @@ fun Board(
                 onWasteClick = gameVM::onWasteClick,
                 foundationList = gameVM.foundation,
                 tableauList = gameVM.tableau,
-                onTableauClick = gameVM::onTableauClick
+                onTableauClick = gameVM::onTableauClick,
             )
         }
         is FortyAndEight -> {
@@ -125,7 +136,7 @@ fun Board(
                 onWasteClick = gameVM::onWasteClick,
                 foundationList = gameVM.foundation,
                 tableauList = gameVM.tableau,
-                onTableauClick = gameVM::onTableauClick
+                onTableauClick = gameVM::onTableauClick,
             )
         }
         else -> {
@@ -147,53 +158,61 @@ fun Board(
                 foundationList = gameVM.foundation,
                 onFoundationClick = gameVM::onFoundationClick,
                 tableauList = gameVM.tableau,
-                onTableauClick = gameVM::onTableauClick
+                onTableauClick = gameVM::onTableauClick,
             )
         }
     }
 }
 
 /**
- *  Composable that displays given [pile] in vertical orientation. [cardDpSize] is used to size each
- *  [PlayingCard] and determine their vertical spacing. [spacedByPercent] is used to determine
- *  distance between cards vertically.
+ *  Displays given [Cards][Card] in vertical orientation.
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param cardDpSize The size to make [PlayingCard] and empty pile [Image] Composables.
+ *  @param spacedByPercent The percentage that will be taken from [Card] height which will be used.
+ *  to determine distance between each [Card] vertically.
+ *  @param pile The [Cards][Card] to display.
  */
 @Composable
 fun StaticVerticalCardPile(
+    modifier: Modifier = Modifier,
     cardDpSize: DpSize,
     spacedByPercent: Float,
     pile: List<Card>,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
-        verticalArrangement =
-            Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
+        verticalArrangement = Arrangement spacedBy -(cardDpSize.height.times(spacedByPercent)),
     ) {
         pile.forEach { card ->
             PlayingCard(
+                modifier = Modifier.size(cardDpSize),
                 card = card,
-                modifier = Modifier.size(cardDpSize)
             )
         }
     }
 }
 
 /**
- *  Composable that displays a Tableau pile with the bottom most card having a flip animation.
- *  [cardDpSize] is used to size each [PlayingCard] and determine their vertical spacing.
- *  [spacedByPercent] is used to determine distance between cards vertically. [animateInfo]
- *  contains the cards to be displayed and rotation details. [animationDurations] is used to
- *  determine length of animation.
+ *  Displays a copy of a Tableau pile with the bottom most [PlayingCard] going through a flip
+ *  animation.
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param cardDpSize The size to make [PlayingCard] and empty pile [Image] Composables.
+ *  @param spacedByPercent The percentage that will be taken from [Card] height which will be used.
+ *  to determine distance between each [Card] vertically.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ *  @param animationDurations The durations for each available animation.
  */
 @Composable
 fun TableauPileWithFlip(
+    modifier: Modifier = Modifier,
     cardDpSize: DpSize,
     spacedByPercent: Float,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
-    modifier: Modifier = Modifier
 ) {
+    // don't show anything if TableauCardFlipInfo in passed animateInfo is null
     animateInfo.tableauCardFlipInfo?.let {
         var tableauCardFlipRotation by remember { mutableFloatStateOf(0f) }
 
@@ -202,41 +221,43 @@ fun TableauPileWithFlip(
             flipDuration = animationDurations.tableauCardFlipDuration,
             flipDelay = animationDurations.tableauCardFlipDelay,
             flipCardInfo = it.flipCardInfo,
-            updateRotation = { value -> tableauCardFlipRotation = value }
+            updateRotation = { value -> tableauCardFlipRotation = value },
         )
 
         Column(
             modifier = modifier,
-            verticalArrangement =
-                Arrangement.spacedBy(space = -(cardDpSize.height.times(spacedByPercent)))
+            verticalArrangement = Arrangement spacedBy -(cardDpSize.height.times(spacedByPercent)),
         ) {
             it.remainingPile.forEach { card ->
                 PlayingCard(
+                    modifier = Modifier.size(cardDpSize),
                     card = card,
-                    modifier = Modifier.size(cardDpSize)
                 )
             }
             FlipCard(
                 flipCard = it.flipCard,
                 cardDpSize = cardDpSize,
                 flipRotation = tableauCardFlipRotation,
-                flipCardInfo = it.flipCardInfo
+                flipCardInfo = it.flipCardInfo,
             )
         }
     }
 }
 
 /**
- *  Composable that displays up to 3 [FlipCard] overlapping horizontally. [layout] provides
- *  animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be displayed
- *  and their flip animation info. [animationDurations] is used to determine length of animations.
+ *  Displays up to 3 [FlipCard] overlapping horizontally.
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param layout Provides pile offsets and [PlayingCard] sizes/constraints.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ *  @param animationDurations The durations for each available animation.
  */
 @Composable
 fun HorizontalCardPileWithFlip(
+    modifier: Modifier = Modifier,
     layout: XWideLayout,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
-    modifier: Modifier = Modifier
 ) {
     animateInfo.let {
         var rightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -258,7 +279,7 @@ fun HorizontalCardPileWithFlip(
                         2 -> leftCardOffset = leftCardOffset.copy(x = value)
                     }
                 },
-                updateYOffset = { }
+                updateYOffset = { },
             )
         }
         AnimateFlip(
@@ -266,7 +287,7 @@ fun HorizontalCardPileWithFlip(
             flipDuration = animationDurations.duration,
             flipDelay = animationDurations.noAnimation,
             flipCardInfo = it.flipCardInfo,
-            updateRotation = { value -> flipRotation = value }
+            updateRotation = { value -> flipRotation = value },
         )
 
         Layout(
@@ -275,11 +296,11 @@ fun HorizontalCardPileWithFlip(
                 it.animatedCards.let { cards ->
                     cards.reversed().forEachIndexed { i, card ->
                         FlipCard(
+                            modifier = Modifier.layoutId(layout.horizontalPileLayoutIds[i]),
                             flipCard = card,
                             cardDpSize = layout.getCardDpSize(),
                             flipRotation = flipRotation,
                             flipCardInfo = it.flipCardInfo,
-                            modifier = Modifier.layoutId(layout.horizontalPileLayoutIds[i])
                         )
                     }
                 }
@@ -299,17 +320,20 @@ fun HorizontalCardPileWithFlip(
 }
 
 /**
- *  Composable that displays up to 7 [FlipCard], each animated to/from different piles. [layout]
- *  provides animation offsets and Card sizes/constraints. [animateInfo] provides the Cards to be
- *  displayed and their flip animation info. [animationDurations] is used to determine length of
- *  animations.
+ *  Displays up to 7 [FlipCard], which each start/end from the same [GamePiles], but end/start
+ *  from different [GamePiles].
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param layout Provides pile offsets and [PlayingCard] sizes/constraints.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ *  @param animationDurations The durations for each available animation.
  */
 @Composable
 fun MultiPileCardWithFlip(
+    modifier: Modifier = Modifier,
     layout: XWideLayout,
     animateInfo: AnimateInfo,
     animationDurations: AnimationDurations,
-    modifier: Modifier = Modifier
 ) {
     animateInfo.let {
         var tZeroCardOffset by remember { mutableStateOf(IntOffset.Zero) }
@@ -323,51 +347,57 @@ fun MultiPileCardWithFlip(
         var tEightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var tNineCardOffset by remember { mutableStateOf(IntOffset.Zero) }
         var flipRotation by remember { mutableFloatStateOf(0f) }
+        val scope = rememberCoroutineScope()
 
-        for (i in 0 until it.animatedCards.size) {
-            AnimateOffset(
-                animateInfo = it,
-                animationDurations = animationDurations,
-                startOffset = layout.getPilePosition(it.start, tAllPile = GamePiles.entries[i + 10])
-                    .plus(layout.getCardsYOffset(it.startTableauIndices[i])),
-                endOffset = layout.getPilePosition(it.end, tAllPile = GamePiles.entries[i + 10])
-                    .plus(layout.getCardsYOffset(it.endTableauIndices[i])),
-                updateXOffset = { value ->
-                    when (i) {
-                        0 -> tZeroCardOffset = tZeroCardOffset.copy(x = value)
-                        1 -> tOneCardOffset = tOneCardOffset.copy(x = value)
-                        2 -> tTwoCardOffset = tTwoCardOffset.copy(x = value)
-                        3 -> tThreeCardOffset = tThreeCardOffset.copy(x = value)
-                        4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
-                        5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
-                        6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
-                        7 -> tSevenCardOffset = tSevenCardOffset.copy(x = value)
-                        8 -> tEightCardOffset = tEightCardOffset.copy(x = value)
-                        9 -> tNineCardOffset = tNineCardOffset.copy(x = value)
-                    }
-                },
-                updateYOffset = { value ->
-                    when (i) {
-                        0 -> tZeroCardOffset = tZeroCardOffset.copy(y = value)
-                        1 -> tOneCardOffset = tOneCardOffset.copy(y = value)
-                        2 -> tTwoCardOffset = tTwoCardOffset.copy(y = value)
-                        3 -> tThreeCardOffset = tThreeCardOffset.copy(y = value)
-                        4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
-                        5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
-                        6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
-                        7 -> tSevenCardOffset = tSevenCardOffset.copy(y = value)
-                        8 -> tEightCardOffset = tEightCardOffset.copy(y = value)
-                        9 -> tNineCardOffset = tNineCardOffset.copy(y = value)
-                    }
-                }
-            )
+        LaunchedEffect(key1 = it) {
+            val animationSpec = tween<Float>(animationDurations.duration)
+            for (i in 0 until it.animatedCards.size) {
+                animateOffset(
+                    scope = scope,
+                    animationSpec = animationSpec,
+                    startOffset = layout
+                        .getPilePosition(it.start, tAllPile = GamePiles.entries[i + 10])
+                        .plus(layout.getCardsYOffset(it.startTableauIndices[i])),
+                    endOffset = layout
+                        .getPilePosition(it.end, tAllPile = GamePiles.entries[i + 10])
+                        .plus(layout.getCardsYOffset(it.endTableauIndices[i])),
+                    updateXOffset = { value ->
+                        when (i) {
+                            0 -> tZeroCardOffset = tZeroCardOffset.copy(x = value)
+                            1 -> tOneCardOffset = tOneCardOffset.copy(x = value)
+                            2 -> tTwoCardOffset = tTwoCardOffset.copy(x = value)
+                            3 -> tThreeCardOffset = tThreeCardOffset.copy(x = value)
+                            4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
+                            5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
+                            6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
+                            7 -> tSevenCardOffset = tSevenCardOffset.copy(x = value)
+                            8 -> tEightCardOffset = tEightCardOffset.copy(x = value)
+                            9 -> tNineCardOffset = tNineCardOffset.copy(x = value)
+                        }
+                    },
+                    updateYOffset = { value ->
+                        when (i) {
+                            0 -> tZeroCardOffset = tZeroCardOffset.copy(y = value)
+                            1 -> tOneCardOffset = tOneCardOffset.copy(y = value)
+                            2 -> tTwoCardOffset = tTwoCardOffset.copy(y = value)
+                            3 -> tThreeCardOffset = tThreeCardOffset.copy(y = value)
+                            4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
+                            5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
+                            6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
+                            7 -> tSevenCardOffset = tSevenCardOffset.copy(y = value)
+                            8 -> tEightCardOffset = tEightCardOffset.copy(y = value)
+                            9 -> tNineCardOffset = tNineCardOffset.copy(y = value)
+                        }
+                    },
+                )
+            }
         }
         AnimateFlip(
             animateInfo = it,
             flipDuration = animationDurations.duration,
             flipDelay = animationDurations.noAnimation,
             flipCardInfo = it.flipCardInfo,
-            updateRotation = { value -> flipRotation = value}
+            updateRotation = { value -> flipRotation = value},
         )
 
         Layout(
@@ -375,11 +405,11 @@ fun MultiPileCardWithFlip(
             content = {
                 for (i in 0 until it.animatedCards.size) {
                     FlipCard(
+                        modifier = Modifier.layoutId(layout.multiPileLayoutIds[i]),
                         flipCard = it.animatedCards[i],
                         cardDpSize = layout.getCardDpSize(),
                         flipRotation = flipRotation,
                         flipCardInfo = it.flipCardInfo,
-                        modifier = Modifier.layoutId(layout.multiPileLayoutIds[i])
                     )
                 }
             }
@@ -447,17 +477,21 @@ fun MultiPileCardWithFlip(
 }
 
 /**
- *  Composable that displays [flipCard] flipping. [cardDpSize] is used to size [PlayingCard].
- *  [flipRotation] determines [flipCard]'s current rotation value. [flipCardInfo] is used to
- *  determine if [flipCard] should be displayed as face up or down depending on [flipRotation].
+ *  Displays [PlayingCard] flipping from face up/down to face down/up.
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param flipCard The [Card] to be flipped.
+ *  @param cardDpSize The size to make [PlayingCard].
+ *  @param flipRotation Current Y rotation value.
+ *  @param flipCardInfo Contains start/end Y rotation values and when flip shows other side.
  */
 @Composable
 fun FlipCard(
+    modifier: Modifier = Modifier,
     flipCard: Card,
     cardDpSize: DpSize,
     flipRotation: Float,
     flipCardInfo: FlipCardInfo,
-    modifier: Modifier = Modifier
 ) {
     val animateModifier = modifier
         .size(cardDpSize)
@@ -467,23 +501,26 @@ fun FlipCard(
         }
     if (flipCardInfo.flipCondition(flipRotation)) {
         PlayingCard(
-            card = flipCard.copy(faceUp = flipCardInfo !is FlipCardInfo.FaceUp),
-            modifier = animateModifier
+            modifier = animateModifier,
+            card = flipCard.copy(faceUp = flipCardInfo !is FlipCardInfo.FaceUp)
         )
     } else {
         PlayingCard(
-            card = flipCard.copy(faceUp = flipCardInfo is FlipCardInfo.FaceUp),
-            modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY }
+            modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY },
+            card = flipCard.copy(faceUp = flipCardInfo is FlipCardInfo.FaceUp)
         )
     }
 }
 
 /**
- *  Uses two [LaunchedEffect] in order to animate XY movement. [animateInfo] is used as
- *  LaunchedEffect key to determine when to start/restart animation. [animationDurations] is used to
- *  determine length of animation. [startOffset] is start position. [endOffset] is end position.
- *  [updateXOffset] and [updateYOffset] are used to update [IntOffset] from where this function is
- *  called.
+ *  Animates XY movement of a [PlayingCard] with the use of two [LaunchedEffect] blocks.
+ *
+ *  @param animateInfo Used as key to determine when to start/restart animation.
+ *  @param animationDurations The durations for each available animation.
+ *  @param startOffset The start position.
+ *  @param endOffset The end position.
+ *  @param updateXOffset Updates X position.
+ *  @param updateYOffset Updates Y position.
  */
 @Composable
 fun AnimateOffset(
@@ -494,9 +531,9 @@ fun AnimateOffset(
     updateXOffset: (Int) -> Unit,
     updateYOffset: (Int) -> Unit
 ) {
-    val animationSpec = tween<Float>(animationDurations.duration)
-
     LaunchedEffect(key1 = animateInfo) {
+        val animationSpec = tween<Float>(animationDurations.duration)
+
         animate(
             initialValue = startOffset.x.toFloat(),
             targetValue = endOffset.x.toFloat(),
@@ -504,8 +541,11 @@ fun AnimateOffset(
         ) { value, _ ->
             updateXOffset(value.toInt())
         }
+
     }
     LaunchedEffect(key1 = animateInfo) {
+        val animationSpec = tween<Float>(animationDurations.duration)
+
         animate(
             initialValue = startOffset.y.toFloat(),
             targetValue = endOffset.y.toFloat(),
@@ -517,10 +557,54 @@ fun AnimateOffset(
 }
 
 /**
- *  Uses two [LaunchedEffect] in order to animate XY movement. [animateInfo] is used as
- *  LaunchedEffect key to determine when to start/restart animation. [flipDuration] is the duration
- *  of flip animation, while [flipDelay] is the time before animation begins. [flipCardInfo] is used
- *  to determine start/end rotation values.
+ *  Animates XY movement of a [PlayingCard] with the use of two [LaunchedEffect] blocks. Almost
+ *  copy of [AnimateOffset], but uses [CoroutineScope] rather than [LaunchedEffect]. This allows
+ *  multiple animations to be controlled by a single [LaunchedEffect], rather than one per
+ *  [PlayingCard], so small efficiency improvement.
+ *
+ *  @param scope Handles coroutines.
+ *  @param animationSpec The animation configuration to be used.
+ *  @param startOffset The start position.
+ *  @param endOffset The end position.
+ *  @param updateXOffset Updates X position.
+ *  @param updateYOffset Updates Y position.
+ */
+suspend fun animateOffset(
+    scope: CoroutineScope,
+    animationSpec: TweenSpec<Float>,
+    startOffset: IntOffset,
+    endOffset: IntOffset,
+    updateXOffset: (Int) -> Unit,
+    updateYOffset: (Int) -> Unit,
+) {
+    scope.launch {
+        animate(
+            initialValue = startOffset.x.toFloat(),
+            targetValue = endOffset.x.toFloat(),
+            animationSpec = animationSpec
+        ) { value, _ ->
+            updateXOffset(value.toInt())
+        }
+    }
+    scope.launch {
+        animate(
+            initialValue = startOffset.y.toFloat(),
+            targetValue = endOffset.y.toFloat(),
+            animationSpec = animationSpec
+        ) { value, _ ->
+            updateYOffset(value.toInt())
+        }
+    }
+}
+
+/**
+ *  Used [LaunchedEffect] to animate Y rotation, aka flipping a [PlayingCard] over.
+ *
+ *  @param animateInfo Used as key to determine when to start/restart animation.
+ *  @param flipDuration The duration of animation lasts after [flipDelay] is over.
+ *  @param flipDelay The duration before the animation starts.
+ *  @param flipCardInfo Contains Y rotation start/end information.
+ *  @param updateRotation Updates Y rotation value.
  */
 @Composable
 fun AnimateFlip(
@@ -546,7 +630,11 @@ fun AnimateFlip(
 fun VerticalCardPilePreview() {
     PreviewUtil().apply {
         Preview {
-            StaticVerticalCardPile(cardDpSize, spacedByPercent,  pile)
+            StaticVerticalCardPile(
+                cardDpSize = cardDpSize,
+                spacedByPercent = spacedByPercent,
+                pile = pile
+            )
         }
     }
 }
@@ -556,7 +644,12 @@ fun VerticalCardPilePreview() {
 fun TableauPileWithFlipPreview() {
     PreviewUtil().apply {
         Preview {
-            TableauPileWithFlip(cardDpSize, spacedByPercent, animateInfo, animationDurations)
+            TableauPileWithFlip(
+                cardDpSize = cardDpSize,
+                spacedByPercent = spacedByPercent,
+                animateInfo = animateInfo,
+                animationDurations = animationDurations
+            )
         }
     }
 }
@@ -566,7 +659,11 @@ fun TableauPileWithFlipPreview() {
 fun HorizontalCardPileWithFlipPreview() {
     PreviewUtil().apply {
         Preview {
-            HorizontalCardPileWithFlip(screenWidth.sevenWideLayout, animateInfo, animationDurations)
+            HorizontalCardPileWithFlip(
+                layout = screenWidth.sevenWideLayout,
+                animateInfo = animateInfo,
+                animationDurations = animationDurations
+            )
         }
     }
 }

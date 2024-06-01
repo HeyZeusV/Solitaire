@@ -33,8 +33,8 @@ class CardTest {
             setContent {
                 SolitairePreview {
                     PlayingCard(
-                        card = tc.card1C,
-                        modifier = modifier
+                        modifier = modifier,
+                        card = tc.card1C
                     )
                 }
             }
@@ -51,20 +51,20 @@ class CardTest {
                 SolitairePreview {
                     Row {
                         PlayingCard(
-                            card = tc.card1DFU,
-                            modifier = modifier.weight(1f)
+                            modifier = modifier.weight(1f),
+                            card = tc.card1DFU
                         )
                         PlayingCard(
-                            card = tc.card7HFU,
-                            modifier = modifier.weight(1f)
+                            modifier = modifier.weight(1f),
+                            card = tc.card7HFU
                         )
                         PlayingCard(
-                            card = tc.card12CFU,
-                            modifier = modifier.weight(1f)
+                            modifier = modifier.weight(1f),
+                            card = tc.card12CFU
                         )
                         PlayingCard(
-                            card = tc.card5SFU,
-                            modifier = modifier.weight(1f)
+                            modifier = modifier.weight(1f),
+                            card = tc.card5SFU
                         )
                     }
                 }

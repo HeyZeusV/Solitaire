@@ -21,8 +21,9 @@ import com.heyzeusv.solitaire.util.spacedBy
 /**
  *  Displays [Tableau] [Pile] which displays [PlayingCards][PlayingCard] in vertical orientation.
  *
+ *  @param modifier Modifiers to be applied to the layout.
  *  @param cardDpSize The size to make [PlayingCard] and empty pile [Image] Composables.
- *  @param spacedByPercent The percentage that will be taken from [Card] height which will be used
+ *  @param spacedByPercent The percentage that will be taken from [Card] height which will be used.
  *  to determine distance between each [Card] vertically.
  *  @param tableauIndex The index for which Tableau this Composable represents in [GameViewModel].
  *  @param pile The [Cards][Card] to display.

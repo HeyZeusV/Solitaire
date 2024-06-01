@@ -22,6 +22,7 @@ import com.heyzeusv.solitaire.util.sRes
  *  Displays up to 3 [PlayingCard] next to each other horizontally. Displays an image if no
  *  [Cards][Card] are passed.
  *
+ *  @param modifier Modifiers to be applied to the layout.
  *  @param cardDpSize The size to make [PlayingCard] and empty pile [Image] Composables.
  *  @param pile The [Cards][Card] to display.
  *  @param emptyIconId The image to display when [pile] is empty.

@@ -12,6 +12,7 @@ import com.heyzeusv.solitaire.util.PreviewUtil
  *  Displays [Stock] [Pile]. Acts the same as [Pile], but additional [Boolean] that is used to
  *  determine which empty image is used.
  *
+ *  @param modifier Modifiers to be applied to the layout.
  *  @param cardDpSize The size to make [PlayingCard] and empty pile [Image] Composables.
  *  @param pile The [Cards][Card] to display.
  *  @param stockWasteEmpty Determines which empty image to use.

@@ -147,36 +147,36 @@ fun TenWideBoard(
                 when (it.flipCardInfo) {
                     FlipCardInfo.FaceDown.SinglePile, FlipCardInfo.FaceUp.SinglePile -> {
                         HorizontalCardPileWithFlip(
+                            modifier = Modifier.layoutId("Animated Horizontal Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Horizontal Pile")
+                            animationDurations = animationDurations
                         )
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
                         MultiPileCardWithFlip(
+                            modifier = Modifier.layoutId("Animated Multi Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations,
-                            modifier = Modifier.layoutId("Animated Multi Pile")
+                            animationDurations = animationDurations
                         )
                     }
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
+                            modifier = Modifier.layoutId("Animated Static Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
-                            pile = it.animatedCards,
-                            modifier = Modifier.layoutId("Animated Static Vertical Pile")
+                            pile = it.animatedCards
                         )
                     }
                 }
                 it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
+                        modifier = Modifier.layoutId("Animated Tableau Card"),
                         cardDpSize = layout.getCardDpSize(),
                         spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
-                        animationDurations = animationDurations,
-                        modifier = Modifier.layoutId("Animated Tableau Card")
+                        animationDurations = animationDurations
                     )
                 }
             }
@@ -189,11 +189,11 @@ fun TenWideBoard(
                 )
                 it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
+                        modifier = Modifier.layoutId("Animated Spider Tableau Card"),
                         cardDpSize = layout.getCardDpSize(),
                         spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
-                        animationDurations = animationDurations,
-                        modifier = Modifier.layoutId("Animated Spider Tableau Card")
+                        animationDurations = animationDurations
                     )
                 }
             }
@@ -438,10 +438,10 @@ fun DynamicVerticalCardPile(
             content = {
                 for (i in 0 until it.animatedCards.size) {
                     PlayingCard(
-                        card = it.animatedCards[i],
                         modifier = Modifier
                             .size(layout.getCardDpSize())
-                            .layoutId(layout.multiPileLayoutIds[i])
+                            .layoutId(layout.multiPileLayoutIds[i]),
+                        card = it.animatedCards[i]
                     )
                 }
             }
