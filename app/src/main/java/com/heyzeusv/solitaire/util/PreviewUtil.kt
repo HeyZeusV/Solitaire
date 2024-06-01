@@ -11,9 +11,10 @@ import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.DpSize
 import androidx.compose.ui.unit.dp
-import com.heyzeusv.solitaire.board.layouts.Width1080
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.board.animation.FlipCardInfo
+import com.heyzeusv.solitaire.board.animation.TableauCardFlipInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.util.theme.PreviewBG
 import com.heyzeusv.solitaire.util.theme.SolitaireTheme
@@ -28,11 +29,23 @@ class PreviewUtil {
     val card7WideSize = DpSize(55.dp, 77.dp)
     val card10WideSize = DpSize(39.dp, 55.dp)
     val spacedByPercent = 0.75f
-    val screenWidth = Width1080(0)
     val animateInfo = AnimateInfo(
         start = GamePiles.Stock,
         end = GamePiles.Waste,
         animatedCards = pile
+    )
+    val animateInfoWithFaceDownFlip = animateInfo.copy(
+        flipCardInfo = FlipCardInfo.FaceDown.SinglePile
+    )
+    val animateInfoWithFaceUpFlip = animateInfo.copy(
+        flipCardInfo = FlipCardInfo.FaceUp.SinglePile
+    )
+    val animateInfoWithTableauFlip = animateInfo.copy(
+        tableauCardFlipInfo = TableauCardFlipInfo(
+            flipCard = Card(0, Suits.DIAMONDS, faceUp = false),
+            flipCardInfo = FlipCardInfo.FaceUp.SinglePile,
+            remainingPile = pile
+        )
     )
     val animationDurations = AnimationDurations.Fast
 
