@@ -50,6 +50,7 @@ import kotlinx.coroutines.delay
  *  @param isUndoAnimation Used to determine if currently running animation is representing an
  *  undo move.
  *  @param updateIsUndoAnimation Updates the value of [isUndoAnimation].
+ *  @param drawAmount The number of [Cards][Card] that are moved to [Waste] on each [onStockClick].
  *  @param stock [Pile] where user draws more [Cards][Card] from.
  *  @param onStockClick Runs when [stock] is pressed.
  *  @param waste [Pile] where [Cards][Card] from [Stock] can be moved to.

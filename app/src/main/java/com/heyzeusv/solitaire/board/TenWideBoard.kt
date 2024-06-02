@@ -1,6 +1,5 @@
 package com.heyzeusv.solitaire.board
 
-import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -11,10 +10,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.R
-import com.heyzeusv.solitaire.board.piles.PlayingCard
 import com.heyzeusv.solitaire.board.piles.Pile
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Tableau
@@ -25,21 +24,46 @@ import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Waste
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.board.layouts.Width1080
+import com.heyzeusv.solitaire.board.layouts.Width1440
+import com.heyzeusv.solitaire.board.layouts.Width2160
+import com.heyzeusv.solitaire.board.layouts.Width480
+import com.heyzeusv.solitaire.board.layouts.Width720
+import com.heyzeusv.solitaire.games.Games
+import com.heyzeusv.solitaire.games.Spider
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
+import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
 /**
- *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [layout] is
- *  used to determine offsets of every pile. [animationDurations] determines how long each animation
- *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
- *  [updateAnimateInfo]. [spiderAnimateInfo] is used specifically for the full Ace to King
- *  [Tableau] pile to [Foundation] pile or vice versa and can be updated with
- *  [updateSpiderAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
- *  animations. [undoAnimation] is used to enable/disable all clicks during an undo animation and
- *  is updated using [updateUndoAnimation]. [drawAmount] determines how many cards are drawn from
- *  [Stock] and shown by [Waste].
+ *  Displays [Stock], [Foundation], [Waste], and [Tableau] [Piles][Pile] needed in order to play
+ *  [Games] that require 10 [Piles][Pile] side-by-side, such as [Spider] and its variants.
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param layout Contains the positions for all [Piles][Pile].
+ *  @param animationDurations The durations for each available animation.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ *  @param updateAnimateInfo Updates [animateInfo] once an animation fully completes.
+ *  @param spiderAnimateInfo Contains the information needed to animate a full (A to King) pile.
+ *  @param updateSpiderAnimateInfo Updates [spiderAnimateInfo] once an animation fully completes.
+ *  @param updateIsUndoEnabled Disables undo button during certain animations.
+ *  @param isUndoAnimation Used to determine if currently running animation is representing an
+ *  undo move.
+ *  @param updateIsUndoAnimation Updates the value of [isUndoAnimation].
+ *  @param drawAmount The number of [Cards][Card] that are moved to [Waste] on each [onStockClick].
+ *  @param stock [Pile] where user draws more [Cards][Card] from.
+ *  @param onStockClick Runs when [stock] is pressed.
+ *  @param waste [Pile] where [Cards][Card] from [Stock] can be moved to.
+ *  @param stockWasteEmpty Determines which empty icon should be displayed on [Stock].
+ *  @param onWasteClick Runs when [waste] is pressed.
+ *  @param foundationList The [Piles][Pile] where user has to move [Cards][Card] to in order to win.
+ *  @param onFoundationClick Runs when any of [foundationList] is pressed.
+ *  @param tableauList List of [Tableau] piles where user can move [Cards][Card] between or to
+ *  [foundationList] piles.
+ *  @param onTableauClick Runs when any of [tableauList] is pressed.
  */
 @Composable
 fun TenWideBoard(
@@ -50,9 +74,9 @@ fun TenWideBoard(
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
     spiderAnimateInfo: AnimateInfo?,
     updateSpiderAnimateInfo: (AnimateInfo?) -> Unit = { },
-    updateUndoEnabled: (Boolean) -> Unit = { },
-    undoAnimation: Boolean,
-    updateUndoAnimation: (Boolean) -> Unit = { },
+    updateIsUndoEnabled: (Boolean) -> Unit = { },
+    isUndoAnimation: Boolean,
+    updateIsUndoAnimation: (Boolean) -> Unit = { },
     drawAmount: DrawAmount,
     /** Piles and their onClicks */
     stock: Stock,
@@ -63,7 +87,7 @@ fun TenWideBoard(
     foundationList: List<Foundation>,
     onFoundationClick: (Int) -> Unit = { },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> Unit = { _, _ -> }
+    onTableauClick: (Int, Int) -> Unit = { _, _ -> },
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
     // not used to animate per se, but instead to ensure Composable does not blink in and out
@@ -73,11 +97,11 @@ fun TenWideBoard(
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
-                if (it.isUndoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(true) else updateIsUndoEnabled(false)
                 delay(animationDurations.fullDelay)
                 updateAnimateInfo(null)
             } finally {
-                if (it.isUndoAnimation) updateUndoAnimation(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(false)
             }
         }
         // Action Before Animation
@@ -105,7 +129,7 @@ fun TenWideBoard(
                 endOffset = layout.getPilePosition(it.end, it.stockWasteMove)
                     .plus(layout.getCardsYOffset(it.endTableauIndices.first())),
                 updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
-                updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
+                updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) },
             )
         }
     }
@@ -113,11 +137,11 @@ fun TenWideBoard(
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
-                if (it.isUndoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(true) else updateIsUndoEnabled(false)
                 delay(animationDurations.fullDelay)
                 updateSpiderAnimateInfo(null)
             } finally {
-                if (it.isUndoAnimation) updateUndoAnimation(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(false)
             }
         }
         // Action Before Animation
@@ -141,7 +165,7 @@ fun TenWideBoard(
     }
 
     Layout(
-        modifier = modifier.gesturesDisabled(undoAnimation),
+        modifier = modifier.gesturesDisabled(isUndoAnimation),
         content = {
             animateInfo?.let {
                 when (it.flipCardInfo) {
@@ -150,7 +174,7 @@ fun TenWideBoard(
                             modifier = Modifier.layoutId("Animated Horizontal Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations
+                            animationDurations = animationDurations,
                         )
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
@@ -158,7 +182,7 @@ fun TenWideBoard(
                             modifier = Modifier.layoutId("Animated Multi Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations
+                            animationDurations = animationDurations,
                         )
                     }
                     FlipCardInfo.NoFlip -> {
@@ -166,7 +190,7 @@ fun TenWideBoard(
                             modifier = Modifier.layoutId("Animated Static Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
-                            pile = it.animatedCards
+                            pile = it.animatedCards,
                         )
                     }
                 }
@@ -176,16 +200,16 @@ fun TenWideBoard(
                         cardDpSize = layout.getCardDpSize(),
                         spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
-                        animationDurations = animationDurations
+                        animationDurations = animationDurations,
                     )
                 }
             }
             spiderAnimateInfo?.let {
                 DynamicVerticalCardPile(
+                    modifier = Modifier.layoutId("Animated Dynamic Vertical Pile"),
                     layout = layout,
-                    animateInfo = it,
                     animationDurations = animationDurations,
-                    modifier = Modifier.layoutId("Animated Dynamic Vertical Pile")
+                    animateInfo = it,
                 )
                 it.tableauCardFlipInfo?.let { _ ->
                     TableauPileWithFlip(
@@ -193,22 +217,22 @@ fun TenWideBoard(
                         cardDpSize = layout.getCardDpSize(),
                         spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
-                        animationDurations = animationDurations
+                        animationDurations = animationDurations,
                     )
                 }
             }
             foundationList.forEachIndexed { index, foundation ->
-                Pile(
+                Foundation(
                     modifier = Modifier
                         .layoutId("Foundation #$index")
                         .testTag("Foundation #$index"),
                     cardDpSize = layout.getCardDpSize(),
                     pile = foundation.displayPile,
                     emptyIconId = foundation.suit.emptyIcon,
-                    onClick = { onFoundationClick(index) }
+                    onClick = { onFoundationClick(index) },
                 )
             }
-            Pile(
+            Waste(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
@@ -216,7 +240,7 @@ fun TenWideBoard(
                 pile = waste.displayPile,
                 emptyIconId = R.drawable.waste_empty,
                 onClick = { onWasteClick() },
-                drawAmount = drawAmount
+                drawAmount = drawAmount,
             )
             Stock(
                 modifier = Modifier
@@ -225,7 +249,7 @@ fun TenWideBoard(
                 cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { onStockClick() }
+                onClick = { onStockClick() },
             )
             tableauList.forEachIndexed { index, tableau ->
                 Tableau(
@@ -234,7 +258,7 @@ fun TenWideBoard(
                     spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick
+                    onClick = onTableauClick,
                 )
             }
         }
@@ -360,160 +384,107 @@ fun TenWideBoard(
     }
 }
 
-/**
- *  Composable that displays up to 13 [PlayingCard], each animated to/from a [Tableau] pile
- *  to/from a [Foundation] pile. [layout] provides animation offsets and Card sizes/constraints.
- *  [animateInfo] provides the Cards to be  displayed and their flip animation info.
- *  [animationDurations] is used to determine length of animations.
- */
+@Preview(device = "id:Nexus One")
 @Composable
-fun DynamicVerticalCardPile(
-    layout: TenWideLayout,
-    animateInfo: AnimateInfo,
-    animationDurations: AnimationDurations,
-    modifier: Modifier = Modifier
-) {
-    animateInfo.let {
-        var tZeroCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tOneCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tTwoCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tThreeCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tFourCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tFiveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tSixCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tSevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tEightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tNineCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tTenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tElevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-        var tTwelveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
-
-        for (i in 0 until it.animatedCards.size) {
-            AnimateOffset(
-                animateInfo = it,
+private fun TenWideBoard480Preview() {
+    PreviewUtil().apply {
+        Preview {
+            TenWideBoard(
+                layout = Width480(0).tenWideLayout,
                 animationDurations = animationDurations,
-                startOffset = layout.getPilePosition(it.start)
-                    .plus(layout.getCardsYOffset(it.startTableauIndices[i])),
-                endOffset = layout.getPilePosition(it.end)
-                    .plus(layout.getCardsYOffset(it.endTableauIndices[i])),
-                updateXOffset = { value ->
-                    when (i) {
-                        0 -> tZeroCardOffset = tZeroCardOffset.copy(x = value)
-                        1 -> tOneCardOffset = tOneCardOffset.copy(x = value)
-                        2 -> tTwoCardOffset = tTwoCardOffset.copy(x = value)
-                        3 -> tThreeCardOffset = tThreeCardOffset.copy(x = value)
-                        4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
-                        5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
-                        6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
-                        7 -> tSevenCardOffset = tSevenCardOffset.copy(x = value)
-                        8 -> tEightCardOffset = tEightCardOffset.copy(x = value)
-                        9 -> tNineCardOffset = tNineCardOffset.copy(x = value)
-                        10 -> tTenCardOffset = tTenCardOffset.copy(x = value)
-                        11 -> tElevenCardOffset = tElevenCardOffset.copy(x = value)
-                        12 -> tTwelveCardOffset = tTwelveCardOffset.copy(x = value)
-                    }
-                },
-                updateYOffset = { value ->
-                    when (i) {
-                        0 -> tZeroCardOffset = tZeroCardOffset.copy(y = value)
-                        1 -> tOneCardOffset = tOneCardOffset.copy(y = value)
-                        2 -> tTwoCardOffset = tTwoCardOffset.copy(y = value)
-                        3 -> tThreeCardOffset = tThreeCardOffset.copy(y = value)
-                        4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
-                        5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
-                        6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
-                        7 -> tSevenCardOffset = tSevenCardOffset.copy(y = value)
-                        8 -> tEightCardOffset = tEightCardOffset.copy(y = value)
-                        9 -> tNineCardOffset = tNineCardOffset.copy(y = value)
-                        10 -> tTenCardOffset = tTenCardOffset.copy(y = value)
-                        11 -> tElevenCardOffset = tElevenCardOffset.copy(y = value)
-                        12 -> tTwelveCardOffset = tTwelveCardOffset.copy(y = value)
-                    }
-                }
+                animateInfo = animateInfo,
+                spiderAnimateInfo = null,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(10) { Tableau(GamePiles.Stock, pile) },
             )
         }
+    }
+}
 
-        Layout(
-            modifier = modifier,
-            content = {
-                for (i in 0 until it.animatedCards.size) {
-                    PlayingCard(
-                        modifier = Modifier
-                            .size(layout.getCardDpSize())
-                            .layoutId(layout.multiPileLayoutIds[i]),
-                        card = it.animatedCards[i]
-                    )
-                }
-            }
-        ) { measurables, constraints ->
-            val tZeroCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[0] }
-            val tOneCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[1] }
-            val tTwoCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[2] }
-            val tThreeCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[3] }
-            val tFourCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[4] }
-            val tFiveCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[5] }
-            val tSixCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[6] }
-            val tSevenCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[7] }
-            val tEightCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[8] }
-            val tNineCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[9] }
-            val tTenCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[10] }
-            val tElevenCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[11] }
-            val tTwelveCard =
-                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[12] }
+@Preview(device = "id:Nexus 4")
+@Composable
+private fun TenWideBoard720Preview() {
+    PreviewUtil().apply {
+        Preview {
+            TenWideBoard(
+                layout = Width720(24).tenWideLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                spiderAnimateInfo = null,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(10) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
 
-            layout(constraints.maxWidth, constraints.maxHeight) {
-                if (tZeroCardOffset != IntOffset.Zero) {
-                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset, 10f)
-                }
-                if (tOneCardOffset != IntOffset.Zero) {
-                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 11f)
-                }
-                if (tTwoCardOffset != IntOffset.Zero) {
-                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 12f)
-                }
-                if (tThreeCardOffset != IntOffset.Zero) {
-                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 13f)
-                }
-                if (tFourCardOffset != IntOffset.Zero) {
-                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 14f)
-                }
-                if (tFiveCardOffset != IntOffset.Zero) {
-                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 15f)
-                }
-                if (tSixCardOffset != IntOffset.Zero) {
-                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset, 16f)
-                }
-                if (tSevenCardOffset != IntOffset.Zero) {
-                    tSevenCard?.measure(layout.cardConstraints)?.place(tSevenCardOffset, 17f)
-                }
-                if (tEightCardOffset != IntOffset.Zero) {
-                    tEightCard?.measure(layout.cardConstraints)?.place(tEightCardOffset, 18f)
-                }
-                if (tNineCardOffset != IntOffset.Zero) {
-                    tNineCard?.measure(layout.cardConstraints)?.place(tNineCardOffset, 19f)
-                }
-                if (tTenCardOffset != IntOffset.Zero) {
-                    tTenCard?.measure(layout.cardConstraints)?.place(tTenCardOffset, 20f)
-                }
-                if (tElevenCardOffset != IntOffset.Zero) {
-                    tElevenCard?.measure(layout.cardConstraints)?.place(tElevenCardOffset, 21f)
-                }
-                if (tTwelveCardOffset != IntOffset.Zero) {
-                    tTwelveCard?.measure(layout.cardConstraints)?.place(tTwelveCardOffset, 22f)
-                }
-            }
+@Preview
+@Composable
+private fun TenWideBoard1080Preview() {
+    PreviewUtil().apply {
+        Preview {
+            TenWideBoard(
+                layout = Width1080(0).tenWideLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                spiderAnimateInfo = null,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(10) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "id:pixel_xl")
+@Composable
+private fun TenWideBoard1440Preview() {
+    PreviewUtil().apply {
+        Preview {
+            TenWideBoard(
+                layout = Width1440(0).tenWideLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                spiderAnimateInfo = null,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(10) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "spec:width=2160px,height=3840px,dpi=640")
+@Composable
+private fun TenWideBoard2160Preview() {
+    PreviewUtil().apply {
+        Preview {
+            TenWideBoard(
+                layout = Width2160(0).tenWideLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                spiderAnimateInfo = null,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(10) { Tableau(GamePiles.Stock, pile) },
+            )
         }
     }
 }

@@ -27,8 +27,10 @@ import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
+import com.heyzeusv.solitaire.board.layouts.TenWideLayout
 import com.heyzeusv.solitaire.board.layouts.XWideLayout
 import com.heyzeusv.solitaire.board.piles.Card
+import com.heyzeusv.solitaire.board.piles.Pile
 import com.heyzeusv.solitaire.board.piles.PlayingCard
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -389,6 +391,168 @@ fun FlipCard(
             modifier = animateModifier.graphicsLayer { rotationY = flipCardInfo.endRotationY },
             card = flipCard.copy(faceUp = flipCardInfo is FlipCardInfo.FaceUp)
         )
+    }
+}
+
+/**
+ *  Displays up to 13 [PlayingCard], each animated from one [Pile] to another [Pile].
+ *  @param layout Contains the positions for all [Piles][Pile] and [Card] sizes/constraints.
+ *  @param animationDurations The durations for each available animation.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ */
+@Composable
+fun DynamicVerticalCardPile(
+    modifier: Modifier = Modifier,
+    layout: TenWideLayout,
+    animationDurations: AnimationDurations,
+    animateInfo: AnimateInfo
+) {
+    animateInfo.let {
+        var tZeroCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tOneCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tTwoCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tThreeCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tFourCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tFiveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tSixCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tSevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tEightCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tNineCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tTenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tElevenCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        var tTwelveCardOffset by remember { mutableStateOf(IntOffset.Zero) }
+        val scope = rememberCoroutineScope()
+
+        LaunchedEffect(key1 = it) {
+            val animationSpec = tween<Float>(animationDurations.duration)
+            for (i in 0 until it.animatedCards.size) {
+                animateOffset(
+                    scope = scope,
+                    animationSpec = animationSpec,
+                    startOffset = layout.getPilePosition(it.start)
+                        .plus(layout.getCardsYOffset(it.startTableauIndices[i])),
+                    endOffset = layout.getPilePosition(it.end)
+                        .plus(layout.getCardsYOffset(it.endTableauIndices[i])),
+                    updateXOffset = { value ->
+                        when (i) {
+                            0 -> tZeroCardOffset = tZeroCardOffset.copy(x = value)
+                            1 -> tOneCardOffset = tOneCardOffset.copy(x = value)
+                            2 -> tTwoCardOffset = tTwoCardOffset.copy(x = value)
+                            3 -> tThreeCardOffset = tThreeCardOffset.copy(x = value)
+                            4 -> tFourCardOffset = tFourCardOffset.copy(x = value)
+                            5 -> tFiveCardOffset = tFiveCardOffset.copy(x = value)
+                            6 -> tSixCardOffset = tSixCardOffset.copy(x = value)
+                            7 -> tSevenCardOffset = tSevenCardOffset.copy(x = value)
+                            8 -> tEightCardOffset = tEightCardOffset.copy(x = value)
+                            9 -> tNineCardOffset = tNineCardOffset.copy(x = value)
+                            10 -> tTenCardOffset = tTenCardOffset.copy(x = value)
+                            11 -> tElevenCardOffset = tElevenCardOffset.copy(x = value)
+                            12 -> tTwelveCardOffset = tTwelveCardOffset.copy(x = value)
+                        }
+                    },
+                    updateYOffset = { value ->
+                        when (i) {
+                            0 -> tZeroCardOffset = tZeroCardOffset.copy(y = value)
+                            1 -> tOneCardOffset = tOneCardOffset.copy(y = value)
+                            2 -> tTwoCardOffset = tTwoCardOffset.copy(y = value)
+                            3 -> tThreeCardOffset = tThreeCardOffset.copy(y = value)
+                            4 -> tFourCardOffset = tFourCardOffset.copy(y = value)
+                            5 -> tFiveCardOffset = tFiveCardOffset.copy(y = value)
+                            6 -> tSixCardOffset = tSixCardOffset.copy(y = value)
+                            7 -> tSevenCardOffset = tSevenCardOffset.copy(y = value)
+                            8 -> tEightCardOffset = tEightCardOffset.copy(y = value)
+                            9 -> tNineCardOffset = tNineCardOffset.copy(y = value)
+                            10 -> tTenCardOffset = tTenCardOffset.copy(y = value)
+                            11 -> tElevenCardOffset = tElevenCardOffset.copy(y = value)
+                            12 -> tTwelveCardOffset = tTwelveCardOffset.copy(y = value)
+                        }
+                    }
+                )
+            }
+        }
+
+        Layout(
+            modifier = modifier,
+            content = {
+                for (i in 0 until it.animatedCards.size) {
+                    PlayingCard(
+                        modifier = Modifier
+                            .size(layout.getCardDpSize())
+                            .layoutId(layout.multiPileLayoutIds[i]),
+                        card = it.animatedCards[i]
+                    )
+                }
+            }
+        ) { measurables, constraints ->
+            val tZeroCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[0] }
+            val tOneCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[1] }
+            val tTwoCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[2] }
+            val tThreeCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[3] }
+            val tFourCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[4] }
+            val tFiveCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[5] }
+            val tSixCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[6] }
+            val tSevenCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[7] }
+            val tEightCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[8] }
+            val tNineCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[9] }
+            val tTenCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[10] }
+            val tElevenCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[11] }
+            val tTwelveCard =
+                measurables.firstOrNull { m -> m.layoutId == layout.multiPileLayoutIds[12] }
+
+            layout(constraints.maxWidth, constraints.maxHeight) {
+                if (tZeroCardOffset != IntOffset.Zero) {
+                    tZeroCard?.measure(layout.cardConstraints)?.place(tZeroCardOffset, 10f)
+                }
+                if (tOneCardOffset != IntOffset.Zero) {
+                    tOneCard?.measure(layout.cardConstraints)?.place(tOneCardOffset, 11f)
+                }
+                if (tTwoCardOffset != IntOffset.Zero) {
+                    tTwoCard?.measure(layout.cardConstraints)?.place(tTwoCardOffset, 12f)
+                }
+                if (tThreeCardOffset != IntOffset.Zero) {
+                    tThreeCard?.measure(layout.cardConstraints)?.place(tThreeCardOffset, 13f)
+                }
+                if (tFourCardOffset != IntOffset.Zero) {
+                    tFourCard?.measure(layout.cardConstraints)?.place(tFourCardOffset, 14f)
+                }
+                if (tFiveCardOffset != IntOffset.Zero) {
+                    tFiveCard?.measure(layout.cardConstraints)?.place(tFiveCardOffset, 15f)
+                }
+                if (tSixCardOffset != IntOffset.Zero) {
+                    tSixCard?.measure(layout.cardConstraints)?.place(tSixCardOffset, 16f)
+                }
+                if (tSevenCardOffset != IntOffset.Zero) {
+                    tSevenCard?.measure(layout.cardConstraints)?.place(tSevenCardOffset, 17f)
+                }
+                if (tEightCardOffset != IntOffset.Zero) {
+                    tEightCard?.measure(layout.cardConstraints)?.place(tEightCardOffset, 18f)
+                }
+                if (tNineCardOffset != IntOffset.Zero) {
+                    tNineCard?.measure(layout.cardConstraints)?.place(tNineCardOffset, 19f)
+                }
+                if (tTenCardOffset != IntOffset.Zero) {
+                    tTenCard?.measure(layout.cardConstraints)?.place(tTenCardOffset, 20f)
+                }
+                if (tElevenCardOffset != IntOffset.Zero) {
+                    tElevenCard?.measure(layout.cardConstraints)?.place(tElevenCardOffset, 21f)
+                }
+                if (tTwelveCardOffset != IntOffset.Zero) {
+                    tTwelveCard?.measure(layout.cardConstraints)?.place(tTwelveCardOffset, 22f)
+                }
+            }
+        }
     }
 }
 
