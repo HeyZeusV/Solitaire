@@ -25,6 +25,10 @@ import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.board.layouts.Width1080
+import com.heyzeusv.solitaire.board.layouts.Width1440
+import com.heyzeusv.solitaire.board.layouts.Width2160
+import com.heyzeusv.solitaire.board.layouts.Width480
+import com.heyzeusv.solitaire.board.layouts.Width720
 import com.heyzeusv.solitaire.games.AcesUp
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -219,6 +223,96 @@ private fun AcesUpBoardPreview() {
                 stock = Stock(pile),
                 foundation = Foundation(Suits.SPADES, GamePiles.FoundationSpadesOne, pile),
                 tableauList = List(4) { Tableau(GamePiles.TableauZero, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "id:Nexus One")
+@Composable
+private fun AcesUpBoard480Preview() {
+    PreviewUtil().apply {
+        Preview {
+            AcesUpBoard(
+                layout = Width480(0).sevenWideFourTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                stock = Stock(pile),
+                foundation = Foundation(Suits.SPADES, GamePiles.FoundationSpadesOne, pile),
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "id:Nexus 4")
+@Composable
+private fun AcesUpBoard720Preview() {
+    PreviewUtil().apply {
+        Preview {
+            AcesUpBoard(
+                layout = Width720(24).sevenWideFourTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                stock = Stock(pile),
+                foundation = Foundation(Suits.SPADES, GamePiles.FoundationSpadesOne, pile),
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun AcesUpBoard1080Preview() {
+    PreviewUtil().apply {
+        Preview {
+            AcesUpBoard(
+                layout = Width1080(0).sevenWideFourTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                stock = Stock(pile),
+                foundation = Foundation(Suits.SPADES, GamePiles.FoundationSpadesOne, pile),
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "id:pixel_xl")
+@Composable
+private fun AcesUpBoard1440Preview() {
+    PreviewUtil().apply {
+        Preview {
+            AcesUpBoard(
+                layout = Width1440(0).sevenWideFourTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                stock = Stock(pile),
+                foundation = Foundation(Suits.SPADES, GamePiles.FoundationSpadesOne, pile),
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "spec:width=2160px,height=3840px,dpi=640")
+@Composable
+private fun AcesUpBoard2160Preview() {
+    PreviewUtil().apply {
+        Preview {
+            AcesUpBoard(
+                layout = Width2160(0).sevenWideFourTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                stock = Stock(pile),
+                foundation = Foundation(Suits.SPADES, GamePiles.FoundationSpadesOne, pile),
+                tableauList = List(7) { Tableau(GamePiles.Stock, pile) },
             )
         }
     }
