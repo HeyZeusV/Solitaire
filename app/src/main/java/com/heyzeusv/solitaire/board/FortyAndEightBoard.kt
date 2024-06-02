@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.testTag
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import com.heyzeusv.solitaire.R
@@ -23,29 +24,54 @@ import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Waste
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.board.layouts.TenWideLayout
+import com.heyzeusv.solitaire.board.layouts.Width1080
+import com.heyzeusv.solitaire.board.layouts.Width1440
+import com.heyzeusv.solitaire.board.layouts.Width2160
+import com.heyzeusv.solitaire.board.layouts.Width480
+import com.heyzeusv.solitaire.board.layouts.Width720
+import com.heyzeusv.solitaire.games.FortyAndEight
 import com.heyzeusv.solitaire.util.DrawAmount
+import com.heyzeusv.solitaire.util.GamePiles
+import com.heyzeusv.solitaire.util.PreviewUtil
+import com.heyzeusv.solitaire.util.Suits
 import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
 /**
- *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [layout] is
- *  used to determine offsets of every pile. [animationDurations] determines how long each animation
- *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
- *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
- *  animations. [undoAnimation] is used to enable/disable all clicks during an undo animation and
- *  is updated using [updateUndoAnimation]. [drawAmount] determines how many cards are drawn from
- *  [Stock] and shown by [Waste].
+ *  Displays [Stock], [Foundation], [Waste], and [Tableau] [Piles][Pile] needed in order to play
+ *  [FortyAndEight],
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param layout Contains the positions for all [Piles][Pile].
+ *  @param animationDurations The durations for each available animation.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ *  @param updateAnimateInfo Updates [animateInfo] once an animation fully completes.
+ *  @param updateIsUndoEnabled Disables undo button during certain animations.
+ *  @param isUndoAnimation Used to determine if currently running animation is representing an
+ *  undo move.
+ *  @param updateIsUndoAnimation Updates the value of [isUndoAnimation].
+ *  @param drawAmount The number of [Cards][Card] that are moved to [Waste] on each [onStockClick].
+ *  @param stock [Pile] where user draws more [Cards][Card] from.
+ *  @param onStockClick Runs when [stock] is pressed.
+ *  @param waste [Pile] where [Cards][Card] from [Stock] can be moved to.
+ *  @param stockWasteEmpty Determines which empty icon should be displayed on [Stock].
+ *  @param onWasteClick Runs when [waste] is pressed.
+ *  @param foundationList The [Piles][Pile] where user has to move [Cards][Card] to in order to win.
+ *  @param onFoundationClick Runs when any of [foundationList] is pressed.
+ *  @param tableauList List of [Tableau] piles where user can move [Cards][Card] between or to
+ *  [foundationList] piles.
+ *  @param onTableauClick Runs when any of [tableauList] is pressed.
  */
 @Composable
-fun TenWideEightTableauBoard(
+fun FortyAndEightBoard(
     modifier: Modifier = Modifier,
     layout: TenWideLayout,
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
-    updateUndoEnabled: (Boolean) -> Unit = { },
-    undoAnimation: Boolean,
-    updateUndoAnimation: (Boolean) -> Unit = { },
+    updateIsUndoEnabled: (Boolean) -> Unit = { },
+    isUndoAnimation: Boolean,
+    updateIsUndoAnimation: (Boolean) -> Unit = { },
     drawAmount: DrawAmount,
     /** Piles and their onClicks */
     stock: Stock,
@@ -56,7 +82,7 @@ fun TenWideEightTableauBoard(
     foundationList: List<Foundation>,
     onFoundationClick: (Int) -> Unit = { },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> Unit = { _, _ -> }
+    onTableauClick: (Int, Int) -> Unit = { _, _ -> },
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
 
@@ -64,11 +90,11 @@ fun TenWideEightTableauBoard(
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
-                if (it.isUndoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(true) else updateIsUndoEnabled(false)
                 delay(animationDurations.fullDelay)
                 updateAnimateInfo(null)
             } finally {
-                if (it.isUndoAnimation) updateUndoAnimation(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(false)
             }
         }
         // Action Before Animation
@@ -96,13 +122,13 @@ fun TenWideEightTableauBoard(
                 endOffset = layout.getPilePosition(it.end, it.stockWasteMove)
                     .plus(layout.getCardsYOffset(it.endTableauIndices.first())),
                 updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
-                updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
+                updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) },
             )
         }
     }
 
     Layout(
-        modifier = modifier.gesturesDisabled(undoAnimation),
+        modifier = modifier.gesturesDisabled(isUndoAnimation),
         content = {
             animateInfo?.let {
                 when (it.flipCardInfo) {
@@ -111,48 +137,32 @@ fun TenWideEightTableauBoard(
                             modifier = Modifier.layoutId("Animated Horizontal Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations
+                            animationDurations = animationDurations,
                         )
                     }
-                    FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
-//                        MultiPileCardWithFlip(
-//                            layout = layout,
-//                            animateInfo = it,
-//                            animationDurations = animationDurations,
-//                            modifier = Modifier.layoutId("Animated Multi Pile")
-//                        )
-                    }
+                    FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> { }
                     FlipCardInfo.NoFlip -> {
                         StaticVerticalCardPile(
                             modifier = Modifier.layoutId("Animated Static Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
-                            pile = it.animatedCards
+                            pile = it.animatedCards,
                         )
                     }
                 }
-//                it.tableauCardFlipInfo?.let { _ ->
-//                    TableauPileWithFlip(
-//                        cardDpSize = layout.getCardDpSize(),
-//                        spacedByPercent = layout.vPileSpacedByPercent,
-//                        animateInfo = it,
-//                        animationDurations = animationDurations,
-//                        modifier = Modifier.layoutId("Animated Tableau Card")
-//                    )
-//                }
             }
             foundationList.forEachIndexed { index, foundation ->
-                Pile(
+                Foundation(
                     modifier = Modifier
                         .layoutId("Foundation #$index")
                         .testTag("Foundation #$index"),
                     cardDpSize = layout.getCardDpSize(),
                     pile = foundation.displayPile,
                     emptyIconId = foundation.suit.emptyIcon,
-                    onClick = { onFoundationClick(index) }
+                    onClick = { onFoundationClick(index) },
                 )
             }
-            Pile(
+            Waste(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
@@ -160,7 +170,7 @@ fun TenWideEightTableauBoard(
                 pile = waste.displayPile,
                 emptyIconId = R.drawable.waste_empty,
                 onClick = { onWasteClick() },
-                drawAmount = drawAmount
+                drawAmount = drawAmount,
             )
             Stock(
                 modifier = Modifier
@@ -169,7 +179,7 @@ fun TenWideEightTableauBoard(
                 cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { onStockClick() }
+                onClick = { onStockClick() },
             )
             tableauList.forEachIndexed { index, tableau ->
                 Tableau(
@@ -178,7 +188,7 @@ fun TenWideEightTableauBoard(
                     spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick
+                    onClick = onTableauClick,
                 )
             }
         }
@@ -242,6 +252,106 @@ fun TenWideEightTableauBoard(
             tableauFive?.measure(tableauConstraints)?.place(layout.tableauFive)
             tableauSix?.measure(tableauConstraints)?.place(layout.tableauSix)
             tableauSeven?.measure(tableauConstraints)?.place(layout.tableauSeven)
+        }
+    }
+}
+
+@Preview(device = "id:Nexus One")
+@Composable
+private fun FortyAndEightBoard480Preview() {
+    PreviewUtil().apply {
+        Preview {
+            FortyAndEightBoard(
+                layout = Width480(0).tenWideEightTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(pile),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(8) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "id:Nexus 4")
+@Composable
+private fun FortyAndEightBoard720Preview() {
+    PreviewUtil().apply {
+        Preview {
+            FortyAndEightBoard(
+                layout = Width720(24).tenWideEightTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(pile),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(8) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun FortyAndEightBoard1080Preview() {
+    PreviewUtil().apply {
+        Preview {
+            FortyAndEightBoard(
+                layout = Width1080(0).tenWideEightTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(pile),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(8) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "id:pixel_xl")
+@Composable
+private fun FortyAndEightBoard1440Preview() {
+    PreviewUtil().apply {
+        Preview {
+            FortyAndEightBoard(
+                layout = Width1440(0).tenWideEightTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(pile),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(8) { Tableau(GamePiles.Stock, pile) },
+            )
+        }
+    }
+}
+
+@Preview(device = "spec:width=2160px,height=3840px,dpi=640")
+@Composable
+private fun FortyAndEightBoard2160Preview() {
+    PreviewUtil().apply {
+        Preview {
+            FortyAndEightBoard(
+                layout = Width2160(0).tenWideEightTableauLayout,
+                animationDurations = animationDurations,
+                animateInfo = animateInfo,
+                isUndoAnimation = false,
+                drawAmount = DrawAmount.One,
+                stock = Stock(pile),
+                waste = Waste(pile),
+                foundationList = List(8) { Foundation(Suits.CLUBS, GamePiles.Stock, pile) },
+                tableauList = List(8) { Tableau(GamePiles.Stock, pile) },
+            )
         }
     }
 }

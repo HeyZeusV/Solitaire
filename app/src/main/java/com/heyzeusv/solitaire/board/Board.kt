@@ -88,15 +88,15 @@ fun Board(
             )
         }
         is FortyAndEight -> {
-            TenWideEightTableauBoard(
+            FortyAndEightBoard(
                 modifier = modifier,
                 layout = gameVM.screenLayouts.tenWideEightTableauLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
-                updateUndoEnabled = gameVM::updateIsUndoEnabled,
-                undoAnimation = undoAnimation,
-                updateUndoAnimation = gameVM::updateIsUndoAnimation,
+                updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
+                isUndoAnimation = undoAnimation,
+                updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
                 drawAmount = selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
