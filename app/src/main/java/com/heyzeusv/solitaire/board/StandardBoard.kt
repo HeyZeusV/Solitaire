@@ -29,6 +29,7 @@ import com.heyzeusv.solitaire.board.animation.FlipCardInfo
 import com.heyzeusv.solitaire.board.piles.Foundation
 import com.heyzeusv.solitaire.board.piles.Waste
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.util.DrawAmount
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.PreviewUtil
@@ -37,13 +38,28 @@ import com.heyzeusv.solitaire.util.gesturesDisabled
 import kotlinx.coroutines.delay
 
 /**
- *  Composable that displays all [Card] piles, Stock, Waste, Foundation, and Tableau. [layout] is
- *  used to determine offsets of every pile. [animationDurations] determines how long each animation
- *  lasts. [animateInfo] is used to determine what needs to be animated and can be updated with
- *  [updateAnimateInfo]. [updateUndoEnabled] is used to enable/disable undo button during
- *  animations. [undoAnimation] is used to enable/disable all clicks during an undo animation and
- *  is updated using [updateUndoAnimation]. [drawAmount] determines how many cards are drawn from
- *  [Stock] and shown by [Waste].
+ *  Displays [Stock], [Foundation], [Waste], and [Tableau] [Piles][Pile] needed in order to play 
+ *  most Solitaire [Games].
+ *
+ *  @param modifier Modifiers to be applied to the layout.
+ *  @param layout Contains the positions for all [Piles][Pile].
+ *  @param animationDurations The durations for each available animation.
+ *  @param animateInfo Contains the information needed to animate a legal move.
+ *  @param updateAnimateInfo Updates [AnimateInfo] once an animation fully completes.
+ *  @param updateIsUndoEnabled Disables undo button during certain animations.
+ *  @param isUndoAnimation Used to determine if currently running animation is representing an
+ *  undo move.
+ *  @param updateIsUndoAnimation Updates the value of [isUndoAnimation].
+ *  @param stock [Pile] where user draws more [Cards][Card] from.
+ *  @param onStockClick Runs when [stock] is pressed.
+ *  @param waste [Pile] where [Cards][Card] from [Stock] can be moved to.
+ *  @param stockWasteEmpty Determines which empty icon should be displayed on [Stock].
+ *  @param onWasteClick Runs when [waste] is pressed.
+ *  @param foundationList The [Piles][Pile] where user has to move [Cards][Card] to in order to win.
+ *  @param onFoundationClick Runs when any of [foundationList] is pressed.
+ *  @param tableauList List of [Tableau] piles where user can move [Cards][Card] between or to
+ *  [foundationList] piles.
+ *  @param onTableauClick Runs when any of [tableauList] is pressed.
  */
 @Composable
 fun StandardBoard(
@@ -52,9 +68,9 @@ fun StandardBoard(
     animationDurations: AnimationDurations,
     animateInfo: AnimateInfo?,
     updateAnimateInfo: (AnimateInfo?) -> Unit = { },
-    updateUndoEnabled: (Boolean) -> Unit = { },
-    undoAnimation: Boolean,
-    updateUndoAnimation: (Boolean) -> Unit = { },
+    updateIsUndoEnabled: (Boolean) -> Unit = { },
+    isUndoAnimation: Boolean,
+    updateIsUndoAnimation: (Boolean) -> Unit = { },
     drawAmount: DrawAmount,
     /** Piles and their onClicks */
     stock: Stock,
@@ -65,7 +81,7 @@ fun StandardBoard(
     foundationList: List<Foundation>,
     onFoundationClick: (Int) -> Unit = { },
     tableauList: List<Tableau>,
-    onTableauClick: (Int, Int) -> Unit = { _, _ -> }
+    onTableauClick: (Int, Int) -> Unit = { _, _ -> },
 ) {
     var animatedOffset by remember(animateInfo) { mutableStateOf(IntOffset.Zero) }
 
@@ -73,11 +89,11 @@ fun StandardBoard(
         // Updating AnimateInfo to null if animation is fully completed
         LaunchedEffect(key1 = it) {
             try {
-                if (it.isUndoAnimation) updateUndoAnimation(true) else updateUndoEnabled(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(true) else updateIsUndoEnabled(false)
                 delay(animationDurations.fullDelay)
                 updateAnimateInfo(null)
             } finally {
-                if (it.isUndoAnimation) updateUndoAnimation(false)
+                if (it.isUndoAnimation) updateIsUndoAnimation(false)
             }
         }
         // Action Before Animation
@@ -105,13 +121,13 @@ fun StandardBoard(
                 endOffset = layout.getPilePosition(it.end, it.stockWasteMove)
                     .plus(layout.getCardsYOffset(it.endTableauIndices.first())),
                 updateXOffset = { value -> animatedOffset = animatedOffset.copy(x = value) },
-                updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) }
+                updateYOffset = { value -> animatedOffset = animatedOffset.copy(y = value) },
             )
         }
     }
 
     Layout(
-        modifier = modifier.gesturesDisabled(undoAnimation),
+        modifier = modifier.gesturesDisabled(isUndoAnimation),
         content = {
             animateInfo?.let {
                 when (it.flipCardInfo) {
@@ -120,7 +136,7 @@ fun StandardBoard(
                             modifier = Modifier.layoutId("Animated Horizontal Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations
+                            animationDurations = animationDurations,
                         )
                     }
                     FlipCardInfo.FaceDown.MultiPile, FlipCardInfo.FaceUp.MultiPile -> {
@@ -128,7 +144,7 @@ fun StandardBoard(
                             modifier = Modifier.layoutId("Animated Multi Pile"),
                             layout = layout,
                             animateInfo = it,
-                            animationDurations = animationDurations
+                            animationDurations = animationDurations,
                         )
                     }
                     FlipCardInfo.NoFlip -> {
@@ -136,7 +152,7 @@ fun StandardBoard(
                             modifier = Modifier.layoutId("Animated Vertical Pile"),
                             cardDpSize = layout.getCardDpSize(),
                             spacedByPercent = layout.vPileSpacedByPercent,
-                            pile = it.animatedCards
+                            pile = it.animatedCards,
                         )
                     }
                 }
@@ -146,22 +162,22 @@ fun StandardBoard(
                         cardDpSize = layout.getCardDpSize(),
                         spacedByPercent = layout.vPileSpacedByPercent,
                         animateInfo = it,
-                        animationDurations = animationDurations
+                        animationDurations = animationDurations,
                     )
                 }
             }
             Suits.entries.forEachIndexed { index, suit ->
-                Pile(
+                Foundation(
                     modifier = Modifier
                         .layoutId("${suit.name} Foundation")
                         .testTag("Foundation #$index"),
                     cardDpSize = layout.getCardDpSize(),
                     pile = foundationList[index].displayPile,
                     emptyIconId = suit.emptyIcon,
-                    onClick = { onFoundationClick(index) }
+                    onClick = { onFoundationClick(index) },
                 )
             }
-            Pile(
+            Waste(
                 modifier = Modifier
                     .layoutId("Waste")
                     .testTag("Waste"),
@@ -169,7 +185,7 @@ fun StandardBoard(
                 pile = waste.displayPile,
                 emptyIconId = R.drawable.waste_empty,
                 onClick = { onWasteClick() },
-                drawAmount = drawAmount
+                drawAmount = drawAmount,
             )
             Stock(
                 modifier = Modifier
@@ -178,7 +194,7 @@ fun StandardBoard(
                 cardDpSize = layout.getCardDpSize(),
                 pile = stock.displayPile,
                 stockWasteEmpty = stockWasteEmpty,
-                onClick = { onStockClick() }
+                onClick = { onStockClick() },
             )
             tableauList.forEachIndexed { index, tableau ->
                 Tableau(
@@ -187,7 +203,7 @@ fun StandardBoard(
                     spacedByPercent = layout.vPileSpacedByPercent,
                     pile = tableau.displayPile,
                     tableauIndex = index,
-                    onClick = onTableauClick
+                    onClick = onTableauClick,
                 )
             }
         }
@@ -268,14 +284,14 @@ fun StandardBoard(
 
 @Preview(device = "id:Nexus One")
 @Composable
-fun StandardBoard480Preview() {
+private fun StandardBoard480Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
                 layout = Width480(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
-                undoAnimation = false,
+                isUndoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
@@ -288,14 +304,14 @@ fun StandardBoard480Preview() {
 
 @Preview(device = "id:Nexus 4")
 @Composable
-fun StandardBoard720Preview() {
+private fun StandardBoard720Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
                 layout = Width720(24).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
-                undoAnimation = false,
+                isUndoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
@@ -308,14 +324,14 @@ fun StandardBoard720Preview() {
 
 @Preview
 @Composable
-fun StandardBoard1080Preview() {
+private fun StandardBoard1080Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
                 layout = Width1080(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
-                undoAnimation = false,
+                isUndoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
@@ -328,14 +344,14 @@ fun StandardBoard1080Preview() {
 
 @Preview(device = "id:pixel_xl")
 @Composable
-fun StandardBoard1440Preview() {
+private fun StandardBoard1440Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
                 layout = Width1440(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
-                undoAnimation = false,
+                isUndoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
@@ -348,14 +364,14 @@ fun StandardBoard1440Preview() {
 
 @Preview(device = "spec:width=2160px,height=3840px,dpi=640")
 @Composable
-fun StandardBoard2160Preview() {
+private fun StandardBoard2160Preview() {
     PreviewUtil().apply {
         Preview {
             StandardBoard(
                 layout = Width2160(0).sevenWideLayout,
                 animationDurations = animationDurations,
                 animateInfo = animateInfo,
-                undoAnimation = false,
+                isUndoAnimation = false,
                 drawAmount = DrawAmount.One,
                 stock = Stock(pile),
                 waste = Waste(),
