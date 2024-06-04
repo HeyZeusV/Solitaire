@@ -44,8 +44,9 @@ enum class AnimationDurations(
         displayId = R.string.animation_duration_none,
         setting = AnimationDurationsSetting.NONE
     ),
-    Slowest(duration = 1000,
-        afterActionDelay = 990,
+    Slowest(
+        duration = 1000,
+        afterActionDelay = 950,
         tableauCardFlipDuration = 950,
         iconId = R.drawable.button_animation_slowest,
         displayId = R.string.animation_duration_slowest,
@@ -53,7 +54,7 @@ enum class AnimationDurations(
     ),
     Slow(
         duration = 500,
-        afterActionDelay = 490,
+        afterActionDelay = 450,
         tableauCardFlipDuration = 450,
         iconId = R.drawable.button_animation_slow,
         displayId = R.string.animation_duration_slow,
@@ -61,7 +62,7 @@ enum class AnimationDurations(
     ),
     Fast(
         duration = 250,
-        afterActionDelay = 240,
+        afterActionDelay = 200,
         tableauCardFlipDuration = 200,
         iconId = R.drawable.button_animation_fast,
         displayId = R.string.animation_duration_fast,
@@ -69,7 +70,7 @@ enum class AnimationDurations(
     ),
     Fastest(
         duration = 100,
-        afterActionDelay = 90,
+        afterActionDelay = 50,
         tableauCardFlipDuration = 50,
         iconId = R.drawable.button_animation_fastest,
         displayId = R.string.animation_duration_fastest,

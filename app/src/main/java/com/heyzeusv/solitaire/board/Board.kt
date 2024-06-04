@@ -1,11 +1,12 @@
 package com.heyzeusv.solitaire.board
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.board.layouts.ScreenLayouts
 import com.heyzeusv.solitaire.games.FortyAndEight
 import com.heyzeusv.solitaire.games.FortyThieves
 import com.heyzeusv.solitaire.games.Games
@@ -13,28 +14,33 @@ import com.heyzeusv.solitaire.games.Games
 /**
  *  Displays the correct [Games] [Board] that depends on currently selected game.
  *
- *  @param animationDurations The durations for each available animation.
  *  @param modifier Modifiers to be applied to the layout.
+ *  @param screenLayouts Provides pile positions and Card sizes.
  *  @param gameVM Contains and handles game data.
  */
 @Composable
 fun Board(
     modifier: Modifier = Modifier,
-    animationDurations: AnimationDurations,
+    screenLayouts: ScreenLayouts,
     gameVM: GameViewModel = hiltViewModel(),
 ) {
+    val settings by gameVM.settingsFlow.collectAsStateWithLifecycle()
     val stockWasteEmpty by gameVM.stockWasteEmpty.collectAsStateWithLifecycle()
     val animateInfo by gameVM.animateInfo.collectAsStateWithLifecycle()
     val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsStateWithLifecycle()
     val undoAnimation by gameVM.isUndoAnimation.collectAsStateWithLifecycle()
     val selectedGame by gameVM.selectedGame.collectAsStateWithLifecycle()
 
+    LaunchedEffect(key1 = settings.selectedGame) {
+        gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
+    }
+
     when (selectedGame) {
         is Games.AcesUpVariants -> {
             AcesUpBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.sevenWideFourTableauLayout,
-                animationDurations = animationDurations,
+                layout = screenLayouts.sevenWideFourTableauLayout,
+                animationDurations = gameVM.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
@@ -50,8 +56,8 @@ fun Board(
         is Games.GolfFamily -> {
             GolfBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.sevenWideLayout,
-                animationDurations = animationDurations,
+                layout = screenLayouts.sevenWideLayout,
+                animationDurations = gameVM.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
@@ -67,8 +73,8 @@ fun Board(
         is Games.SpiderFamily, is FortyThieves -> {
             TenWideBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.tenWideLayout,
-                animationDurations = animationDurations,
+                layout = screenLayouts.tenWideLayout,
+                animationDurations = gameVM.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 spiderAnimateInfo = spiderAnimateInfo,
@@ -90,8 +96,8 @@ fun Board(
         is FortyAndEight -> {
             FortyAndEightBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.tenWideEightTableauLayout,
-                animationDurations = animationDurations,
+                layout = screenLayouts.tenWideEightTableauLayout,
+                animationDurations = gameVM.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
@@ -111,8 +117,8 @@ fun Board(
         else -> {
             StandardBoard(
                 modifier = modifier,
-                layout = gameVM.screenLayouts.sevenWideLayout,
-                animationDurations = animationDurations,
+                layout = screenLayouts.sevenWideLayout,
+                animationDurations = gameVM.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,

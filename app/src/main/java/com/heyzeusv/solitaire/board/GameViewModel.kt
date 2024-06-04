@@ -2,6 +2,7 @@ package com.heyzeusv.solitaire.board
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.heyzeusv.solitaire.Settings
 import com.heyzeusv.solitaire.board.animation.AnimateInfo
 import com.heyzeusv.solitaire.board.piles.Card
 import com.heyzeusv.solitaire.board.animation.FlipCardInfo
@@ -12,13 +13,13 @@ import com.heyzeusv.solitaire.board.piles.Pile
 import com.heyzeusv.solitaire.board.piles.Stock
 import com.heyzeusv.solitaire.board.piles.Waste
 import com.heyzeusv.solitaire.board.piles.Tableau
-import com.heyzeusv.solitaire.board.layouts.ScreenLayouts
 import com.heyzeusv.solitaire.games.Easthaven
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.games.Golf
 import com.heyzeusv.solitaire.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
+import com.heyzeusv.solitaire.menu.settings.SettingsManager
 import com.heyzeusv.solitaire.util.GamePiles
 import com.heyzeusv.solitaire.util.MoveResult
 import com.heyzeusv.solitaire.util.MoveResult.*
@@ -31,7 +32,9 @@ import com.heyzeusv.solitaire.util.numInOrder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
@@ -42,12 +45,24 @@ import javax.inject.Inject
  *
  *  Stores and manages UI-related data in a lifecycle conscious way.
  *  Data can survive configuration changes.
+ *
+ *  @property ss Determines Random seed to use for deck shuffling.
+ *  @param settingsManager Allows for interaction with Settings Proto DataStore.
  */
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val ss: ShuffleSeed,
-    val screenLayouts: ScreenLayouts
+    settingsManager: SettingsManager,
 ) : ViewModel() {
+
+    val settingsFlow: StateFlow<Settings> = settingsManager.settingsData.stateIn(
+        scope = viewModelScope,
+        started = SharingStarted.Eagerly,
+        initialValue = Settings.getDefaultInstance()
+    )
+
+    val animationDurations: AnimationDurations
+        get() = AnimationDurations from settingsFlow.value.animationDurations
 
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     private val mutex = Mutex()
@@ -107,9 +122,6 @@ class GameViewModel @Inject constructor(
     private val _spiderAnimateInfo = MutableStateFlow<AnimateInfo?>(null)
     val spiderAnimateInfo: StateFlow<AnimateInfo?> get() = _spiderAnimateInfo
     fun updateSpiderAnimateInfo(newValue: AnimateInfo?) { _spiderAnimateInfo.value = newValue }
-
-    private var animationDurations: AnimationDurations = AnimationDurations.None
-    fun updateAutoComplete(newValue: AnimationDurations) { animationDurations = newValue }
 
     /**
      *  Goes through all the card piles in the game and resets them for either the same game or a
