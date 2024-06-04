@@ -3,6 +3,9 @@ package com.heyzeusv.solitaire.board
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -11,6 +14,7 @@ import com.heyzeusv.solitaire.board.layouts.ScreenLayouts
 import com.heyzeusv.solitaire.games.FortyAndEight
 import com.heyzeusv.solitaire.games.FortyThieves
 import com.heyzeusv.solitaire.games.Games
+import com.heyzeusv.solitaire.games.KlondikeTurnOne
 
 /**
  *  Displays the correct [Games] [Board] that depends on currently selected game.
@@ -31,11 +35,14 @@ fun Board(
     val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsStateWithLifecycle()
     val undoAnimation by gameVM.isUndoAnimation.collectAsStateWithLifecycle()
 
+    var selectedGame: Games by remember { mutableStateOf(KlondikeTurnOne) }
+
     LaunchedEffect(key1 = settings.selectedGame) {
-        gameVM.updateSelectedGame(Games from settings.selectedGame)
+        selectedGame = Games from settings.selectedGame
+        gameVM.updateSelectedGame(selectedGame)
     }
 
-    when (Games from settings.selectedGame) {
+    when (selectedGame) {
         is Games.AcesUpVariants -> {
             AcesUpBoard(
                 modifier = modifier,
@@ -82,7 +89,7 @@ fun Board(
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
                 isUndoAnimation = undoAnimation,
                 updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
-                drawAmount = gameVM.selectedGame.drawAmount,
+                drawAmount = selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,
@@ -103,7 +110,7 @@ fun Board(
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
                 isUndoAnimation = undoAnimation,
                 updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
-                drawAmount = gameVM.selectedGame.drawAmount,
+                drawAmount = selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,
@@ -124,7 +131,7 @@ fun Board(
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
                 isUndoAnimation = undoAnimation,
                 updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
-                drawAmount = gameVM.selectedGame.drawAmount,
+                drawAmount = selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,

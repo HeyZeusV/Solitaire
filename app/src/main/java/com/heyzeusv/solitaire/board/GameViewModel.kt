@@ -62,7 +62,7 @@ class GameViewModel @Inject constructor(
 
     private val animationDurations: AnimationDurations
         get() = AnimationDurations from settingsFlow.value.animationDurations
-    val selectedGame: Games
+    private val selectedGame: Games
         get() = Games from settingsFlow.value.selectedGame
 
     // ensures only one actionBefore/AfterAnimation occurs at a time.

@@ -34,8 +34,10 @@ import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.integerResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.heyzeusv.solitaire.R
 import com.heyzeusv.solitaire.board.GameViewModel
+import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.menu.settings.SettingsMenu
 import com.heyzeusv.solitaire.menu.stats.StatsMenu
 import com.heyzeusv.solitaire.util.composables.BaseButton
@@ -53,6 +55,7 @@ fun MenuContainer(
     menuVM: MenuViewModel,
     modifier: Modifier = Modifier
 ) {
+    val settings by gameVM.settingsFlow.collectAsStateWithLifecycle()
     val displayMenuButtons by menuVM.displayMenuButtons.collectAsState()
     val menuState by menuVM.menuState.collectAsState()
     Column(modifier = modifier) {
@@ -68,7 +71,7 @@ fun MenuContainer(
             updateMenuState = menuVM::updateMenuState,
             option = MenuState.Rules
         ) {
-            RulesMenu(selectedGame = gameVM.selectedGame) {
+            RulesMenu(selectedGame = Games from settings.selectedGame) {
                 menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)
             }
         }
