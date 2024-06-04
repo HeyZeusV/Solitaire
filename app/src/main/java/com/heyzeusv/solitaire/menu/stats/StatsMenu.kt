@@ -83,7 +83,7 @@ import com.heyzeusv.solitaire.util.theme.Purple80
 @Composable
 fun StatsMenu(isConnected: Boolean, menuVM: MenuViewModel) {
     val settings by menuVM.settingsFlow.collectAsState()
-    var selectedGame by remember { mutableStateOf(Games.getGameClass(settings.selectedGame)) }
+    var selectedGame by remember { mutableStateOf(Games.from(settings.selectedGame)) }
     val stats by menuVM.statsFlow.collectAsState()
     val selectedGamePersonalStats =
         stats.statsList.find { it.game == selectedGame.dataStoreEnum }

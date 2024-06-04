@@ -44,7 +44,7 @@ data class FsGameStats(
 }
 
 fun GameStats.toFsGameStats(): FsGameStats = FsGameStats(
-    game = Games.getGameClass(game).dbName,
+    game = Games.from(game).dbName,
     gamesPlayed = gamesPlayed,
     gamesWon = gamesWon,
     lowestMoves = lowestMoves,

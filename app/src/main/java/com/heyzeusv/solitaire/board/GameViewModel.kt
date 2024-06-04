@@ -16,7 +16,6 @@ import com.heyzeusv.solitaire.board.piles.Tableau
 import com.heyzeusv.solitaire.games.Easthaven
 import com.heyzeusv.solitaire.games.Games
 import com.heyzeusv.solitaire.games.Golf
-import com.heyzeusv.solitaire.games.KlondikeTurnOne
 import com.heyzeusv.solitaire.scoreboard.ScoreboardLogic
 import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.menu.settings.SettingsManager
@@ -47,12 +46,12 @@ import javax.inject.Inject
  *  Data can survive configuration changes.
  *
  *  @property ss Determines Random seed to use for deck shuffling.
- *  @param settingsManager Allows for interaction with Settings Proto DataStore.
+ *  @property settingsManager Allows for interaction with Settings Proto DataStore.
  */
 @HiltViewModel
 class GameViewModel @Inject constructor(
     private val ss: ShuffleSeed,
-    settingsManager: SettingsManager,
+    private val settingsManager: SettingsManager,
 ) : ViewModel() {
 
     val settingsFlow: StateFlow<Settings> = settingsManager.settingsData.stateIn(
@@ -61,21 +60,16 @@ class GameViewModel @Inject constructor(
         initialValue = Settings.getDefaultInstance()
     )
 
-    val animationDurations: AnimationDurations
+    private val animationDurations: AnimationDurations
         get() = AnimationDurations from settingsFlow.value.animationDurations
+    val selectedGame: Games
+        get() = Games from settingsFlow.value.selectedGame
 
     // ensures only one actionBefore/AfterAnimation occurs at a time.
     private val mutex = Mutex()
     private val spiderMutex = Mutex()
 
     val sbLogic: ScoreboardLogic = ScoreboardLogic(viewModelScope)
-
-    private val _selectedGame = MutableStateFlow<Games>(KlondikeTurnOne)
-    val selectedGame: StateFlow<Games> get() = _selectedGame
-    fun updateSelectedGame(newGame: Games) {
-        _selectedGame.value = newGame
-        resetAll(ResetOptions.NEW)
-    }
 
     private var shuffledDeck = emptyList<Card>()
 
@@ -128,12 +122,12 @@ class GameViewModel @Inject constructor(
      *  new game depending on [resetOption].
      */
     private fun reset(resetOption: ResetOptions) {
-        sbLogic.reset(_selectedGame.value.startingScore)
-        redealLeft = _selectedGame.value.redeals.amount
+        sbLogic.reset(selectedGame.startingScore)
+        redealLeft = selectedGame.redeals.amount
         when (resetOption) {
             ResetOptions.RESTART -> _stock.reset(shuffledDeck)
             ResetOptions.NEW -> {
-                shuffledDeck = _selectedGame.value.baseDeck.shuffled(ss.shuffleSeed)
+                shuffledDeck = selectedGame.baseDeck.shuffled(ss.shuffleSeed)
                 _stock.reset(shuffledDeck)
             }
         }
@@ -153,8 +147,8 @@ class GameViewModel @Inject constructor(
      */
     fun resetAll(resetOption: ResetOptions) {
         reset(resetOption)
-        _selectedGame.value.resetFoundation(foundation, stock)
-        _selectedGame.value.resetTableau(tableau, stock)
+        selectedGame.resetFoundation(foundation, stock)
+        selectedGame.resetTableau(tableau, stock)
         _stock.recordHistory()
     }
 
@@ -162,7 +156,7 @@ class GameViewModel @Inject constructor(
      *  Checks [selectedGame] value to determine which onStockClick to run.
      */
     fun onStockClick() {
-        when (_selectedGame.value) {
+        when (selectedGame) {
             is Games.SpiderFamily -> onStockClickSpider()
             is Easthaven, is Games.AcesUpVariants -> onStockClickMultiPile()
             is Games.GolfFamily -> onStockClickGolf()
@@ -177,7 +171,7 @@ class GameViewModel @Inject constructor(
     private fun onStockClickStandard() {
         // add card to waste if stock is not empty and flip it face up
         if (_stock.truePile.isNotEmpty()) {
-            val cards = _stock.truePile.take(_selectedGame.value.drawAmount.amount)
+            val cards = _stock.truePile.take(selectedGame.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
                 end = GamePiles.Waste,
@@ -186,7 +180,7 @@ class GameViewModel @Inject constructor(
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
-                    _stock.removeMany(_selectedGame.value.drawAmount.amount)
+                    _stock.removeMany(selectedGame.drawAmount.amount)
                     _waste.addAll(cards)
                     _stock.updateDisplayPile()
                 }
@@ -232,7 +226,7 @@ class GameViewModel @Inject constructor(
      *  Tableau piles, if so, calls [onStockClickMultiPile].
      */
     private fun onStockClickSpider() {
-        for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
+        for (i in 0 until selectedGame.numOfTableauPiles.amount) {
             if (_tableau[i].truePile.isEmpty()) return
         }
         onStockClickMultiPile()
@@ -245,9 +239,9 @@ class GameViewModel @Inject constructor(
      */
     private fun onStockClickMultiPile() {
         if (_stock.truePile.isNotEmpty()) {
-            val stockCards = _stock.truePile.take(_selectedGame.value.drawAmount.amount)
+            val stockCards = _stock.truePile.take(selectedGame.drawAmount.amount)
             val tableauIndices = mutableListOf<Int>()
-            for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
+            for (i in 0 until selectedGame.numOfTableauPiles.amount) {
                 tableauIndices.add(_tableau[i].truePile.size)
             }
             val aniInfo = AnimateInfo(
@@ -261,7 +255,7 @@ class GameViewModel @Inject constructor(
                 mutex.withLock {
                     _stock.removeMany(stockCards.size)
                     _tableau.forEachIndexed { index, tableau ->
-                        if (index < _selectedGame.value.numOfTableauPiles.amount) {
+                        if (index < selectedGame.numOfTableauPiles.amount) {
                             val stockCard: List<Card> = try {
                                 listOf(stockCards[index].copy(faceUp = true))
                             } catch (e: IndexOutOfBoundsException) {
@@ -290,7 +284,7 @@ class GameViewModel @Inject constructor(
      */
     private fun onStockClickGolf() {
         if (_stock.truePile.isNotEmpty()) {
-            val cards = _stock.truePile.take(_selectedGame.value.drawAmount.amount)
+            val cards = _stock.truePile.take(selectedGame.drawAmount.amount)
             val aniInfo = AnimateInfo(
                 start = GamePiles.Stock,
                 end = GamePiles.FoundationSpadesOne,
@@ -299,7 +293,7 @@ class GameViewModel @Inject constructor(
             )
             aniInfo.actionBeforeAnimation = {
                 mutex.withLock {
-                    _stock.removeMany(_selectedGame.value.drawAmount.amount)
+                    _stock.removeMany(selectedGame.drawAmount.amount)
                     _foundation[3].add(cards.first())
                     _stock.updateDisplayPile()
                 }
@@ -381,11 +375,11 @@ class GameViewModel @Inject constructor(
      */
     private fun autoComplete() {
         if (_autoCompleteActive.value) return
-        if (!_selectedGame.value.autocompleteAvailable) {
+        if (!selectedGame.autocompleteAvailable) {
             if (!gameWon()) return
         }
         if (_stock.truePile.isEmpty() && _waste.truePile.isEmpty()) {
-            if (!_selectedGame.value.autocompleteTableauCheck(tableau)) return
+            if (!selectedGame.autocompleteTableauCheck(tableau)) return
             viewModelScope.launch {
                 _isUndoAnimation.value = true
                 _autoCompleteActive.value = true
@@ -394,8 +388,8 @@ class GameViewModel @Inject constructor(
                         if (tableau.truePile.isEmpty()) return@forEach
                         val lastTCard = tableau.truePile.last()
                         _foundation.forEachIndexed { index, foundation ->
-                            if (index < _selectedGame.value.numOfFoundationPiles.amount) {
-                                if (selectedGame.value.canAddToFoundation(foundation, lastTCard)) {
+                            if (index < selectedGame.numOfFoundationPiles.amount) {
+                                if (selectedGame.canAddToFoundation(foundation, lastTCard)) {
                                     val aniInfo = AnimateInfo(
                                         start = tableau.gamePile,
                                         end = foundation.gamePile,
@@ -430,7 +424,7 @@ class GameViewModel @Inject constructor(
      *  Called during [autoComplete] and uses [Games.gameWon] to determine if user has won.
      */
     private fun gameWon(): Boolean {
-        return if (_selectedGame.value.gameWon(foundation)) {
+        return if (selectedGame.gameWon(foundation)) {
             _autoCompleteActive.value = false
             _gameWon.value = true
             true
@@ -451,7 +445,7 @@ class GameViewModel @Inject constructor(
         ifLegal: () -> Unit,
         actionBeforeAnimation: () -> Unit
     ): MoveResult {
-        return when (_selectedGame.value) {
+        return when (selectedGame) {
             is Games.SpiderFamily -> checkLegalMoveSpider(
                 cards = cards,
                 start = start,
@@ -495,8 +489,8 @@ class GameViewModel @Inject constructor(
         if (cards.size == 1) {
             val card = cards.first()
             _foundation.forEachIndexed { index, it ->
-                if (index < _selectedGame.value.numOfFoundationPiles.amount) {
-                    if (selectedGame.value.canAddToFoundation(it, card)) {
+                if (index < selectedGame.numOfFoundationPiles.amount) {
+                    if (selectedGame.canAddToFoundation(it, card)) {
                         val aniInfo = AnimateInfo(
                             start = start,
                             end = it.gamePile,
@@ -526,8 +520,8 @@ class GameViewModel @Inject constructor(
         }
         // try to add to non-empty tableau first
         _tableau.forEachIndexed { index, it ->
-            if (index < _selectedGame.value.numOfTableauPiles.amount) {
-                if (it.truePile.isNotEmpty() && _selectedGame.value.canAddToTableau(it, cards)) {
+            if (index < selectedGame.numOfTableauPiles.amount) {
+                if (it.truePile.isNotEmpty() && selectedGame.canAddToTableau(it, cards)) {
                     val endIndex = it.truePile.size
                     val aniInfo = AnimateInfo(
                         start = start,
@@ -557,8 +551,8 @@ class GameViewModel @Inject constructor(
             }
         }
         _tableau.forEachIndexed { index, it ->
-            if (index < _selectedGame.value.numOfTableauPiles.amount) {
-                if (it.truePile.isEmpty() && _selectedGame.value.canAddToTableau(it, cards)) {
+            if (index < selectedGame.numOfTableauPiles.amount) {
+                if (it.truePile.isEmpty() && selectedGame.canAddToTableau(it, cards)) {
                     val aniInfo = AnimateInfo(
                         start = start,
                         end = it.gamePile,
@@ -603,7 +597,7 @@ class GameViewModel @Inject constructor(
         // only one card can be added to Foundation at a time.
         if (cards.size == 1) {
             val card = cards.first()
-            if ((_selectedGame.value as Games.AcesUpVariants).canAddToFoundation(_tableau, card)) {
+            if ((selectedGame as Games.AcesUpVariants).canAddToFoundation(_tableau, card)) {
                 val aniInfo = AnimateInfo(
                     start = start,
                     end = _foundation[3].gamePile,
@@ -629,9 +623,9 @@ class GameViewModel @Inject constructor(
                 return MoveScore
             }
         }
-        for (i in 0 until _selectedGame.value.numOfTableauPiles.amount) {
+        for (i in 0 until selectedGame.numOfTableauPiles.amount) {
             val tmpTab = _tableau[i]
-            if (tmpTab.truePile.isEmpty() && _selectedGame.value.canAddToTableau(tmpTab, cards)) {
+            if (tmpTab.truePile.isEmpty() && selectedGame.canAddToTableau(tmpTab, cards)) {
                 val aniInfo = AnimateInfo(
                     start = start,
                     end = tmpTab.gamePile,
@@ -676,8 +670,8 @@ class GameViewModel @Inject constructor(
         var validTableau: Tableau? = null
         _tableau.forEachIndexed { index, it ->
             if (start != it.gamePile) {
-                if (index < _selectedGame.value.numOfTableauPiles.amount) {
-                    if (_selectedGame.value.canAddToTableau(it, cards)) {
+                if (index < selectedGame.numOfTableauPiles.amount) {
+                    if (selectedGame.canAddToTableau(it, cards)) {
                         if (validTableau == null) {
                             validTableau = it
                         } else {
@@ -734,7 +728,7 @@ class GameViewModel @Inject constructor(
         val last13Cards = tPile.truePile.takeLast(13)
         if (last13Cards.inOrder() && last13Cards.isNotMultiSuit() && last13Cards.allFaceUp()) {
             _foundation.forEachIndexed { index, foundation ->
-                if (index < _selectedGame.value.numOfFoundationPiles.amount) {
+                if (index < selectedGame.numOfFoundationPiles.amount) {
                     if (foundation.truePile.isEmpty()) {
                         val tCardIndex = tPile.truePile.indexOfLast { it == last13Cards.first() }
                         val spiderAniInfo = AnimateInfo(
@@ -878,6 +872,18 @@ class GameViewModel @Inject constructor(
             true
         } else {
             _waste.truePile.size <= 1 && _stock.truePile.isEmpty()
+        }
+    }
+
+    /**
+     *  Updates selected game in [Settings] DataStore and resets game board.
+     *
+     *  @param game The newly selected game.
+     */
+    fun updateSelectedGame(game: Games) {
+        viewModelScope.launch {
+            settingsManager.updateSelectedGame(game.dataStoreEnum)
+            resetAll(ResetOptions.NEW)
         }
     }
 

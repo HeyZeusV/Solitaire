@@ -105,7 +105,7 @@ sealed class Games : BaseGame(), GameInfo, GameRules {
         /**
          *  Returns [Games] subclass associated with given [dataStoreGame] from Proto DataSture [Game].
          */
-        fun getGameClass(dataStoreGame: Game): Games {
+        infix fun from(dataStoreGame: Game): Games {
             for (game in statsOrderedSubclasses) {
                 if (game.dataStoreEnum == dataStoreGame) return game
             }

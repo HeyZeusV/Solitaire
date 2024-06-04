@@ -57,7 +57,7 @@ fun GamesMenu(
     menuVM: MenuViewModel
 ) {
     val settings by menuVM.settingsFlow.collectAsState()
-    val selectedGame = Games.getGameClass(settings.selectedGame)
+    val selectedGame = Games.from(settings.selectedGame)
     val scope = rememberCoroutineScope()
 
     GamesMenu(
@@ -72,7 +72,8 @@ fun GamesMenu(
     ) { game, gameChanged ->
         scope.launch {
             if (gameChanged) {
-                menuVM.updateSelectedGame(game)
+//                menuVM.updateSelectedGame(game)
+                gameVM.updateSelectedGame(game)
                 delay(300)
             }
             menuVM.updateDisplayMenuButtonsAndMenuState(MenuState.ButtonsFromScreen)

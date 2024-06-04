@@ -6,6 +6,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.heyzeusv.solitaire.board.animation.AnimationDurations
 import com.heyzeusv.solitaire.board.layouts.ScreenLayouts
 import com.heyzeusv.solitaire.games.FortyAndEight
 import com.heyzeusv.solitaire.games.FortyThieves
@@ -29,18 +30,17 @@ fun Board(
     val animateInfo by gameVM.animateInfo.collectAsStateWithLifecycle()
     val spiderAnimateInfo by gameVM.spiderAnimateInfo.collectAsStateWithLifecycle()
     val undoAnimation by gameVM.isUndoAnimation.collectAsStateWithLifecycle()
-    val selectedGame by gameVM.selectedGame.collectAsStateWithLifecycle()
 
     LaunchedEffect(key1 = settings.selectedGame) {
-        gameVM.updateSelectedGame(Games.getGameClass(settings.selectedGame))
+        gameVM.updateSelectedGame(Games from settings.selectedGame)
     }
 
-    when (selectedGame) {
+    when (Games from settings.selectedGame) {
         is Games.AcesUpVariants -> {
             AcesUpBoard(
                 modifier = modifier,
                 layout = screenLayouts.sevenWideFourTableauLayout,
-                animationDurations = gameVM.animationDurations,
+                animationDurations = AnimationDurations from settings.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
@@ -57,7 +57,7 @@ fun Board(
             GolfBoard(
                 modifier = modifier,
                 layout = screenLayouts.sevenWideLayout,
-                animationDurations = gameVM.animationDurations,
+                animationDurations = AnimationDurations from settings.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
@@ -74,7 +74,7 @@ fun Board(
             TenWideBoard(
                 modifier = modifier,
                 layout = screenLayouts.tenWideLayout,
-                animationDurations = gameVM.animationDurations,
+                animationDurations = AnimationDurations from settings.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 spiderAnimateInfo = spiderAnimateInfo,
@@ -82,7 +82,7 @@ fun Board(
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
                 isUndoAnimation = undoAnimation,
                 updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
-                drawAmount = selectedGame.drawAmount,
+                drawAmount = gameVM.selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,
@@ -97,13 +97,13 @@ fun Board(
             FortyAndEightBoard(
                 modifier = modifier,
                 layout = screenLayouts.tenWideEightTableauLayout,
-                animationDurations = gameVM.animationDurations,
+                animationDurations = AnimationDurations from settings.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
                 isUndoAnimation = undoAnimation,
                 updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
-                drawAmount = selectedGame.drawAmount,
+                drawAmount = gameVM.selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,
@@ -118,13 +118,13 @@ fun Board(
             StandardBoard(
                 modifier = modifier,
                 layout = screenLayouts.sevenWideLayout,
-                animationDurations = gameVM.animationDurations,
+                animationDurations = AnimationDurations from settings.animationDurations,
                 animateInfo = animateInfo,
                 updateAnimateInfo = gameVM::updateAnimateInfo,
                 updateIsUndoEnabled = gameVM::updateIsUndoEnabled,
                 isUndoAnimation = undoAnimation,
                 updateIsUndoAnimation = gameVM::updateIsUndoAnimation,
-                drawAmount = selectedGame.drawAmount,
+                drawAmount = gameVM.selectedGame.drawAmount,
                 stock = gameVM.stock,
                 onStockClick = gameVM::onStockClick,
                 waste = gameVM.waste,
